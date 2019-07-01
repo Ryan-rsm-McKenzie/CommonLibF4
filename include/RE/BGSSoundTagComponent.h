@@ -8,6 +8,9 @@ namespace RE
 	class BGSSoundTagComponent : public BaseFormComponent
 	{
 	public:
+		inline static const void* RTTI = RTTI_BGSSoundTagComponent;
+
+
 		virtual ~BGSSoundTagComponent();									// 00
 
 		// override (BaseFormComponent)

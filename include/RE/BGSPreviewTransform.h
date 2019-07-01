@@ -2,12 +2,15 @@
 
 #include "RE/BaseFormComponent.h"
 
-class BGSPreviewTransform;
+
 namespace RE
 {
 	class BGSPreviewTransform : public BaseFormComponent
 	{
 	public:
+		inline static const void* RTTI = RTTI_BGSPreviewTransform;
+
+
 		virtual ~BGSPreviewTransform();	// 00
 
 		// override (BaseFormComponent)

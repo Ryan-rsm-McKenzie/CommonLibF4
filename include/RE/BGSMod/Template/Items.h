@@ -13,6 +13,9 @@ namespace RE
 			class Items : public BaseFormComponent
 			{
 			public:
+				inline static const void* RTTI = RTTI_BGSMod__Template__Items;
+
+
 				virtual ~Items();													// 00
 
 				// override (BaseFormComponent)

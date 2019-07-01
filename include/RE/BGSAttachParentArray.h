@@ -11,6 +11,9 @@ namespace RE
 		public BGSTypedKeywordValueArray<2>	// 08
 	{
 	public:
+		inline static const void* RTTI = RTTI_BGSAttachParentArray;
+
+
 		virtual ~BGSAttachParentArray();									// 00
 
 		// override (BaseFormComponent)
