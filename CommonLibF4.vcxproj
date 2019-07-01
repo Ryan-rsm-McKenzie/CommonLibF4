@@ -149,7 +149,7 @@
     <ClInclude Include="include\RE\BGSForcedLocRefType.h" />
     <ClInclude Include="include\RE\BGSKeywordForm.h" />
     <ClInclude Include="include\RE\BGSModelMaterialSwap.h" />
-    <ClInclude Include="include\RE\BGSModTemplateItems.h" />
+    <ClInclude Include="include\RE\BGSMod\Template\Items.h" />
     <ClInclude Include="include\RE\BGSNativeTerminalForm.h" />
     <ClInclude Include="include\RE\BGSNavmeshableObject.h" />
     <ClInclude Include="include\RE\BGSOpenCloseForm.h" />

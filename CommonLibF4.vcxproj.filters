@@ -162,9 +162,6 @@
     <ClInclude Include="include\RE\TESDataHandler.h">
       <Filter>include\RE\FileIO</Filter>
     </ClInclude>
-    <ClInclude Include="include\RE\BGSModTemplateItems.h">
-      <Filter>include\RE\BaseFormComponent\BGSMod\Template</Filter>
-    </ClInclude>
     <ClInclude Include="include\RE\BGSPreviewTransform.h">
       <Filter>include\RE\BaseFormComponent</Filter>
     </ClInclude>
@@ -203,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="include\REL\Relocation.h">
       <Filter>include\REL</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSMod\Template\Items.h">
+      <Filter>include\RE\BaseFormComponent\BGSMod\Template</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
