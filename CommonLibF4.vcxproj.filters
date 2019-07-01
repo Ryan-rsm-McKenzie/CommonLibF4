@@ -1,0 +1,228 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{57c9eac9-3a96-4dbf-8d19-cdddafb51688}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{aee06ac9-1bc5-42ef-858c-7657bb1ee832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE">
+      <UniqueIdentifier>{234678f4-a0d1-4ff8-9f0b-5aa0894408dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BSCore">
+      <UniqueIdentifier>{203cadeb-0a18-4753-857b-02c347fbdb47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE">
+      <UniqueIdentifier>{5edded4c-fcc9-4a3d-801c-2a7530db5469}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent">
+      <UniqueIdentifier>{9f8ec3a0-1388-461b-8d2e-6be6781dc655}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\TESForm">
+      <UniqueIdentifier>{2d5b8b81-f93d-40e4-a8dc-01d6081d5c59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\TESForm\TESObject">
+      <UniqueIdentifier>{030d7a54-5c32-4f48-9d44-3c56f3cba0a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject">
+      <UniqueIdentifier>{777d5d07-c54e-441d-a167-26e213e91d0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject\TESBoundAnimObject">
+      <UniqueIdentifier>{0c7ac4a6-41bb-4ba9-9438-7b0711b47dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject\TESBoundAnimObject\TESObjectACTI">
+      <UniqueIdentifier>{3a398bbb-4afd-4706-a04e-bc80d5a5a8ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\TESModel">
+      <UniqueIdentifier>{96b1d56b-6ea7-4896-9279-1b12b207ed01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\Components">
+      <UniqueIdentifier>{5610bf34-5189-4fd1-ad70-7b8a5db3ce09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject\TESBoundAnimObject\TESObjectACTI\TESFurniture">
+      <UniqueIdentifier>{37732e7c-be90-4a0d-8e16-ca7e7010f8c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\TESForm\Components">
+      <UniqueIdentifier>{4b3d7041-7946-4514-832d-e433cd18d439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\FileIO">
+      <UniqueIdentifier>{16550d88-0d4c-4b99-b469-a45e1de75d46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\FileIO">
+      <UniqueIdentifier>{e4fbb6e6-6e4c-4b6c-bedc-d5b303ccf32d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\BGSMod">
+      <UniqueIdentifier>{e4cc5635-ae99-4161-b022-b353a378f212}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\BaseFormComponent\BGSMod\Template">
+      <UniqueIdentifier>{234779a8-e759-4e1a-94be-2f5b9c5e8b80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\BSCore">
+      <UniqueIdentifier>{5241315a-7d48-47bf-a6a3-3b31bd3f5793}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\BaseFormComponent">
+      <UniqueIdentifier>{9367c024-206b-4960-a544-6ed19f7a4292}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\BaseFormComponent\Components">
+      <UniqueIdentifier>{bbef410f-93db-4067-b405-d35cb40175a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\F4SE">
+      <UniqueIdentifier>{e155027c-ddc9-48ee-abca-996851d8d62a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\F4SE">
+      <UniqueIdentifier>{7e1455b0-b4a2-4afb-8138-35c38b761092}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\REL">
+      <UniqueIdentifier>{9e55ad28-5096-4e22-bf65-180a3fd745e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\RE\BSCoreTypes.h">
+      <Filter>include\RE\BSCore</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ForceInclude.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Util.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BaseFormComponent.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESForm.h">
+      <Filter>include\RE\BaseFormComponent\TESForm</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESObject.h">
+      <Filter>include\RE\BaseFormComponent\TESForm\TESObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESBoundObject.h">
+      <Filter>include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESBoundAnimObject.h">
+      <Filter>include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject\TESBoundAnimObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESObjectACTI.h">
+      <Filter>include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject\TESBoundAnimObject\TESObjectACTI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESFullName.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BSFixedString.h">
+      <Filter>include\RE\BSCore</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESModel.h">
+      <Filter>include\RE\BaseFormComponent\TESModel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSModelMaterialSwap.h">
+      <Filter>include\RE\BaseFormComponent\TESModel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESMagicTargetForm.h">
+      <Filter>include\RE\BaseFormComponent\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSDestructibleObjectForm.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSOpenCloseForm.h">
+      <Filter>include\RE\BaseFormComponent\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\IKeywordFormBase.h">
+      <Filter>include\RE\BaseFormComponent\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSKeywordForm.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSPropertySheet.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSForcedLocRefType.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSNativeTerminalForm.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSNavmeshableObject.h">
+      <Filter>include\RE\BaseFormComponent\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESFurniture.h">
+      <Filter>include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject\TESBoundAnimObject\TESObjectACTI\TESFurniture</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSTerminal.h">
+      <Filter>include\RE\BaseFormComponent\TESForm\TESObject\TESBoundObject\TESBoundAnimObject\TESObjectACTI\TESFurniture</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\FormTypes.h">
+      <Filter>include\RE\BaseFormComponent\TESForm\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BSTArray.h">
+      <Filter>include\RE\BSCore</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Memory.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TESDataHandler.h">
+      <Filter>include\RE\FileIO</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSModTemplateItems.h">
+      <Filter>include\RE\BaseFormComponent\BGSMod\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSPreviewTransform.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSSoundTagComponent.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSTypedKeywordValueArray.h">
+      <Filter>include\RE\BaseFormComponent\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BGSAttachParentArray.h">
+      <Filter>include\RE\BaseFormComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\FileHash.h">
+      <Filter>include\RE\BaseFormComponent\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Condition.h">
+      <Filter>include\RE\BaseFormComponent\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BSSpinLock.h">
+      <Filter>include\RE\BSCore</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BSGlobalStringTable.h">
+      <Filter>include\RE\BSCore</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Atomic.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\function_ref.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Logger.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Offset.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\REL\Relocation.h">
+      <Filter>include\REL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\RE\TESDataHandler.cpp">
+      <Filter>src\RE\FileIO</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\BSSpinLock.cpp">
+      <Filter>src\RE\BSCore</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Condition.cpp">
+      <Filter>src\RE\BaseFormComponent\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\BSGlobalStringTable.cpp">
+      <Filter>src\RE\BSCore</Filter>
+    </ClCompile>
+    <ClCompile Include="src\F4SE\Logger.cpp">
+      <Filter>src\F4SE</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\BSFixedString.cpp">
+      <Filter>src\RE\BSCore</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
