@@ -120,6 +120,9 @@ namespace RE
 		}
 
 
+		FO_HEAP_REDEFINE_NEW();
+
+
 		// members
 		T*		_data;		// 00
 		UInt32	_capacity;	// 08

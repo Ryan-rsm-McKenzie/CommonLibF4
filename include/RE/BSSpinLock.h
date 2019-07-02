@@ -9,6 +9,8 @@ namespace RE
 		BSSpinLock();
 		~BSSpinLock() = default;
 
+		FO_HEAP_REDEFINE_NEW();
+
 	private:
 		enum
 		{

@@ -21,6 +21,8 @@ namespace RE
 		virtual void	LoadFromForm(TESForm* a_form);				// 04 - { return; }
 		virtual void	Unk_05();									// 05 - { return; }
 		virtual void	CopyFromBase(BaseFormComponent* a_other);	// 06 - { return; }
+
+		FO_HEAP_REDEFINE_NEW();
 	};
 	STATIC_ASSERT(sizeof(BaseFormComponent) == 0x8);
 }

@@ -8,6 +8,8 @@ namespace RE
 	public:
 		explicit operator bool() const;
 
+		FO_HEAP_REDEFINE_NEW();
+
 
 		// members
 		void* root;	// 0

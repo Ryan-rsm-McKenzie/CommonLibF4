@@ -76,6 +76,105 @@
     <Filter Include="include\REL">
       <UniqueIdentifier>{9e55ad28-5096-4e22-bf65-180a3fd745e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE\Scaleform">
+      <UniqueIdentifier>{affabe95-ee48-4ef2-8fac-d3f447cc4a23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel">
+      <UniqueIdentifier>{34e5482e-4070-48ec-abab-40a15c656154}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\RefCount">
+      <UniqueIdentifier>{b9d3cdd5-11a4-4964-b46d-1255e506682f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform">
+      <UniqueIdentifier>{a97fdf29-7696-4ab3-9e57-bbfc0c35e95b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Kernel">
+      <UniqueIdentifier>{dcdddf7e-2071-4388-9e39-fb9e9ad51707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Kernel\RefCount">
+      <UniqueIdentifier>{1dc68b3d-acf6-4fbe-9476-c59fd72a64e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\SFTypes">
+      <UniqueIdentifier>{627b31c7-0391-4749-b5d0-4895b5592eb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\SysAlloc">
+      <UniqueIdentifier>{4cd40fa6-321b-4a28-94b6-66360c96226a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\HeapMH">
+      <UniqueIdentifier>{7ebc478f-777f-44a3-a5e6-6801debee644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\HeapMH\SysAllocMalloc">
+      <UniqueIdentifier>{2e288f2a-ae37-4830-8b79-0594d1f108f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Kernel\SysAlloc">
+      <UniqueIdentifier>{88688ec9-5cdc-42e2-92c6-b433ed6cb71b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Kernel\HeapMH">
+      <UniqueIdentifier>{f7c36506-4a0e-45a6-b5cb-90448be23d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Kernel\HeapMH\SysAllocMalloc">
+      <UniqueIdentifier>{f7fb6b1a-5843-4ce6-aae7-b4bafd4057d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\Memory">
+      <UniqueIdentifier>{58788e25-5281-47f2-8964-477fcd6051f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\MemoryHeap">
+      <UniqueIdentifier>{4aae5886-90b3-47aa-a3d8-7af1315d7165}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\List">
+      <UniqueIdentifier>{0505f11c-9817-43af-abc5-18354eef848d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\Stats">
+      <UniqueIdentifier>{b98e255e-e668-4fc3-a7c7-a28d51b9513b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Kernel\MemoryHeap">
+      <UniqueIdentifier>{ce4d94f9-edc4-4cf8-b245-046006459b3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\AllocInfo">
+      <UniqueIdentifier>{47d93b13-c46e-4582-8f33-bed23d9986ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\Atomic">
+      <UniqueIdentifier>{516f88a8-c5c5-42d7-bfa6-b850b33b7643}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Kernel\Atomic">
+      <UniqueIdentifier>{b5b0fe66-00f3-4613-8376-18eae0d68102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Kernel\Memory">
+      <UniqueIdentifier>{dc736577-5b7c-4375-b22b-590b8d2dcb5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx">
+      <UniqueIdentifier>{f3686aa7-2e06-4b54-a4ab-d91a4967f796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\Player">
+      <UniqueIdentifier>{7f83d773-e4c3-4108-a358-26805adeaa68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render">
+      <UniqueIdentifier>{5f2d6fe1-9e36-45f7-aca8-7366821df074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render\Matrix3x4">
+      <UniqueIdentifier>{31cb1c2c-fc83-4bdf-b5a7-b41387d0ac43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render\Matrix4x4">
+      <UniqueIdentifier>{78e3214c-fc44-4ff1-b2cd-d5276914741e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render\Constants">
+      <UniqueIdentifier>{cc1038f5-bc76-4f3e-b2da-c1c1b77a3bec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\PlayerStats">
+      <UniqueIdentifier>{6b888417-d99a-43b2-8127-59cc25c769c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\GFx">
+      <UniqueIdentifier>{7fb70e78-bbea-44fa-baa8-7d01a58a7458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\GFx\Player">
+      <UniqueIdentifier>{d0df78c2-3e21-44bc-b420-d98790650fe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render\Matrix2x4">
+      <UniqueIdentifier>{ccea60c9-c2d7-494f-b3a6-0e857ba0b903}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render\Cxform">
+      <UniqueIdentifier>{c834042b-65d3-4f79-9688-3348999acfef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\RE\BSCoreTypes.h">
@@ -204,6 +303,96 @@
     <ClInclude Include="include\RE\BGSMod\Template\Items.h">
       <Filter>include\RE\BaseFormComponent\BGSMod\Template</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\RefCountImplCore.h">
+      <Filter>include\RE\Scaleform\Kernel\RefCount</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\RefCountImpl.h">
+      <Filter>include\RE\Scaleform\Kernel\RefCount</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\RefCountBaseStatImpl.h">
+      <Filter>include\RE\Scaleform\Kernel\RefCount</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\SFTypes.h">
+      <Filter>include\RE\Scaleform\Kernel\SFTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\SysAllocBase_SingletonSupport.h">
+      <Filter>include\RE\Scaleform\Kernel\SysAlloc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\SysAllocMalloc.h">
+      <Filter>include\RE\Scaleform\Kernel\HeapMH\SysAllocMalloc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\SysAlloc.h">
+      <Filter>include\RE\Scaleform\Kernel\SysAlloc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\SysAllocBase.h">
+      <Filter>include\RE\Scaleform\Kernel\SysAlloc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Memory.h">
+      <Filter>include\RE\Scaleform\Kernel\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\MemoryHeap.h">
+      <Filter>include\RE\Scaleform\Kernel\MemoryHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\ListNode.h">
+      <Filter>include\RE\Scaleform\Kernel\List</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Stats.h">
+      <Filter>include\RE\Scaleform\Kernel\Stats</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\SysAllocPaged.h">
+      <Filter>include\RE\Scaleform\Kernel\SysAlloc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\AllocInfo.h">
+      <Filter>include\RE\Scaleform\Kernel\AllocInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\StatBag.h">
+      <Filter>include\RE\Scaleform\Kernel\Stats</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\List.h">
+      <Filter>include\RE\Scaleform\Kernel\List</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Lock.h">
+      <Filter>include\RE\Scaleform\Kernel\Atomic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\NewOverrideBase.h">
+      <Filter>include\RE\Scaleform\Kernel\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\RefCountBase.h">
+      <Filter>include\RE\Scaleform\Kernel\RefCount</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\FunctionHandler.h">
+      <Filter>include\RE\Scaleform\GFx\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\Value.h">
+      <Filter>include\RE\Scaleform\GFx\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Matrix3x4.h">
+      <Filter>include\RE\Scaleform\Render\Matrix3x4</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Matrix3x4Data.h">
+      <Filter>include\RE\Scaleform\Render\Matrix3x4</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Matrix4x4.h">
+      <Filter>include\RE\Scaleform\Render\Matrix4x4</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Matrix4x4Data.h">
+      <Filter>include\RE\Scaleform\Render\Matrix4x4</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Constants.h">
+      <Filter>include\RE\Scaleform\Render\Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\PlayerStats.h">
+      <Filter>include\RE\Scaleform\GFx\PlayerStats</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Matrix2x4.h">
+      <Filter>include\RE\Scaleform\Render\Matrix2x4</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Matrix2x4Data.h">
+      <Filter>include\RE\Scaleform\Render\Matrix2x4</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Cxform.h">
+      <Filter>include\RE\Scaleform\Render\Cxform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\RE\TESDataHandler.cpp">
@@ -223,6 +412,33 @@
     </ClCompile>
     <ClCompile Include="src\RE\BSFixedString.cpp">
       <Filter>src\RE\BSCore</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\RefCountImplCore.cpp">
+      <Filter>src\RE\Scaleform\Kernel\RefCount</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\RefCountImpl.cpp">
+      <Filter>src\RE\Scaleform\Kernel\RefCount</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\SysAllocBase.cpp">
+      <Filter>src\RE\Scaleform\Kernel\SysAlloc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\SysAllocMalloc.cpp">
+      <Filter>src\RE\Scaleform\Kernel\HeapMH\SysAllocMalloc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\MemoryHeap.cpp">
+      <Filter>src\RE\Scaleform\Kernel\MemoryHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\SysAllocPaged.cpp">
+      <Filter>src\RE\Scaleform\Kernel\SysAlloc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\Lock.cpp">
+      <Filter>src\RE\Scaleform\Kernel\Atomic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\Memory.cpp">
+      <Filter>src\RE\Scaleform\Kernel\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\Value.cpp">
+      <Filter>src\RE\Scaleform\GFx\Player</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

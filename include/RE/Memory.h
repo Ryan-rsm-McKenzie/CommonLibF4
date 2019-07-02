@@ -8,16 +8,16 @@
 
 namespace RE
 {
-	inline void* malloc(std::size_t a_count)
+	inline void* malloc(std::size_t a_size)
 	{
-		return ::Heap_Allocate(a_count);
+		return CALL_MEMBER_FN(g_mainHeap, Allocate)(a_size, 0, false);
 	}
 
 
 	template <class T>
-	inline T* malloc(std::size_t a_count)
+	inline T* malloc(std::size_t a_size)
 	{
-		return static_cast<T*>(malloc(a_count));
+		return static_cast<T*>(malloc(a_size));
 	}
 
 
@@ -25,6 +25,12 @@ namespace RE
 	inline T* malloc()
 	{
 		return static_cast<T*>(malloc(sizeof(T)));
+	}
+
+
+	void* aligned_alloc(std::size_t a_alignment, std::size_t a_size)
+	{
+		return CALL_MEMBER_FN(g_mainHeap, Allocate)(a_size, a_alignment, true);
 	}
 
 
@@ -50,12 +56,18 @@ namespace RE
 
 	inline void free(void* a_ptr)
 	{
-		::Heap_Free(a_ptr);
+		CALL_MEMBER_FN(g_mainHeap, Free)(a_ptr, false);
+	}
+
+
+	inline void aligned_free(void* a_ptr)
+	{
+		CALL_MEMBER_FN(g_mainHeap, Free)(a_ptr, true);
 	}
 }
 
 
-#define TES_HEAP_REDEFINE_NEW()																										\
+#define FO_HEAP_REDEFINE_NEW()																									\
 	void*	operator new(std::size_t a_count)													{ return RE::malloc(a_count); }		\
 	void*	operator new[](std::size_t a_count)													{ return RE::malloc(a_count); }		\
 	void*	operator new([[maybe_unused]] std::size_t a_count, void* a_plcmnt)					{ return a_plcmnt; }				\

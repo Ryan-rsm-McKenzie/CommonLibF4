@@ -28,6 +28,7 @@ namespace RE
 	BSFixedString::BSFixedString(BSFixedString&& a_rhs) noexcept :
 		_data(std::move(a_rhs._data))
 	{
+
 		a_rhs._data = 0;
 	}
 
@@ -54,6 +55,10 @@ namespace RE
 
 	BSFixedString& BSFixedString::operator=(const BSFixedString& a_rhs)
 	{
+		if (this == &a_rhs) {
+			return *this;
+		}
+
 		dtor();
 		ctor(a_rhs.c_str(), true);
 		return *this;
@@ -62,6 +67,10 @@ namespace RE
 
 	BSFixedString& BSFixedString::operator=(BSFixedString&& a_rhs)
 	{
+		if (this == &a_rhs) {
+			return *this;
+		}
+
 		dtor();
 		_data = std::move(a_rhs._data);
 		a_rhs._data = 0;
@@ -119,41 +128,48 @@ namespace RE
 	}
 
 
-	const char* BSFixedString::data() const noexcept
+	const char* BSFixedString::data() const
 	{
 		return _data ? _data->GetDataU8() : "";
 	}
 
 
-	const char* BSFixedString::c_str() const noexcept
+	const char* BSFixedString::c_str() const
 	{
 		return data();
 	}
 
 
-	BSFixedString::operator std::string_view() const noexcept
+	BSFixedString::operator std::string_view() const
 	{
 		return { data(), size() };
 	}
 
 
-	bool BSFixedString::empty() const noexcept
+	bool BSFixedString::empty() const
 	{
 		return _data ? size() == 0 : true;
 	}
 
 
-	auto BSFixedString::size() const noexcept
+	auto BSFixedString::size() const
 		-> size_type
 	{
 		return _data ? _data->GetLength() : 0;
 	}
 
 
-	auto BSFixedString::length() const noexcept
+	auto BSFixedString::length() const
 		-> size_type
 	{
 		return size();
+	}
+
+
+	void BSFixedString::clear()
+	{
+		dtor();
+		ctor("", true);
 	}
 
 
@@ -215,6 +231,10 @@ namespace RE
 
 	BSFixedStringW& BSFixedStringW::operator=(const BSFixedStringW& a_rhs)
 	{
+		if (this == &a_rhs) {
+			return *this;
+		}
+
 		dtor();
 		ctor(a_rhs.c_str());
 		return *this;
@@ -223,6 +243,10 @@ namespace RE
 
 	BSFixedStringW& BSFixedStringW::operator=(BSFixedStringW&& a_rhs)
 	{
+		if (this == &a_rhs) {
+			return *this;
+		}
+
 		dtor();
 		_data = std::move(a_rhs._data);
 		a_rhs._data = 0;
@@ -280,41 +304,48 @@ namespace RE
 	}
 
 
-	const wchar_t* BSFixedStringW::data() const noexcept
+	const wchar_t* BSFixedStringW::data() const
 	{
 		return _data ? _data->GetDataU16() : L"";
 	}
 
 
-	const wchar_t* BSFixedStringW::c_str() const noexcept
+	const wchar_t* BSFixedStringW::c_str() const
 	{
 		return data();
 	}
 
 
-	BSFixedStringW::operator std::wstring_view() const noexcept
+	BSFixedStringW::operator std::wstring_view() const
 	{
 		return { data(), size() };
 	}
 
 
-	bool BSFixedStringW::empty() const noexcept
+	bool BSFixedStringW::empty() const
 	{
 		return size() == 0;
 	}
 
 
-	auto BSFixedStringW::size() const noexcept
+	auto BSFixedStringW::size() const
 		-> size_type
 	{
 		return _data ? _data->GetLength() : 0;
 	}
 
 
-	auto BSFixedStringW::length() const noexcept
+	auto BSFixedStringW::length() const
 		-> size_type
 	{
 		return size();
+	}
+
+
+	void BSFixedStringW::clear()
+	{
+		dtor();
+		ctor(L"");
 	}
 
 

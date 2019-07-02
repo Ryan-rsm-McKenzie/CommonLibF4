@@ -38,4 +38,6 @@ using SInt64 = signed long long;
 #include "Atomic.h"
 #include "Util.h"
 
+#include "RE/Scaleform/SFTypes.h"
 #include "RE/BSCoreTypes.h"
+#include "RE/Memory.h"
