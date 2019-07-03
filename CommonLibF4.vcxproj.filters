@@ -175,6 +175,39 @@
     <Filter Include="include\RE\Scaleform\Render\Cxform">
       <UniqueIdentifier>{c834042b-65d3-4f79-9688-3348999acfef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\Loader">
+      <UniqueIdentifier>{6b7d3edd-ae6f-44ff-89db-f3de16000be6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\GFx\Loader">
+      <UniqueIdentifier>{6babda95-5d43-4dd0-9c30-87b39f786355}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\Resource">
+      <UniqueIdentifier>{438cb51c-470f-49de-9260-4821f0234d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\ASMovieRootBase">
+      <UniqueIdentifier>{577f8128-52e0-4240-98dd-a02bf5aad3e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\CharacterDef">
+      <UniqueIdentifier>{d1a0b2b4-a7ad-4fac-be2e-7338ec7924cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\GFx\Resource">
+      <UniqueIdentifier>{7069ead9-9394-4038-8186-4b240d463872}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\GFx\CharacterDef">
+      <UniqueIdentifier>{95403aa5-4556-41e1-bb11-f3262e4013f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render\Types2D">
+      <UniqueIdentifier>{d2f4b53a-4202-4d89-ae57-39d81e71b052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\Tags">
+      <UniqueIdentifier>{d29e7071-8bc0-4e77-b29f-9483ded1d3ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\Types">
+      <UniqueIdentifier>{1a6706d3-8b36-4b4f-92b5-b6b48c1704fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\GFx\ASMovieRootBase">
+      <UniqueIdentifier>{d4a80fdc-2cff-4660-865d-9349061b1a39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\RE\BSCoreTypes.h">
@@ -393,6 +426,63 @@
     <ClInclude Include="include\RE\Scaleform\Render\Cxform.h">
       <Filter>include\RE\Scaleform\Render\Cxform</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Ptr.h">
+      <Filter>include\RE\Scaleform\Kernel\RefCount</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\Movie.h">
+      <Filter>include\RE\Scaleform\GFx\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\StateBag.h">
+      <Filter>include\RE\Scaleform\GFx\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\State.h">
+      <Filter>include\RE\Scaleform\GFx\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\FileTypeConstants.h">
+      <Filter>include\RE\Scaleform\GFx\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\ASMovieRootBase.h">
+      <Filter>include\RE\Scaleform\GFx\ASMovieRootBase</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\ASSupport.h">
+      <Filter>include\RE\Scaleform\GFx\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\CharacterDef.h">
+      <Filter>include\RE\Scaleform\GFx\CharacterDef</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\ResourceID.h">
+      <Filter>include\RE\Scaleform\GFx\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\Resource.h">
+      <Filter>include\RE\Scaleform\GFx\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\ResourceKey.h">
+      <Filter>include\RE\Scaleform\GFx\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\AtomicInt.h">
+      <Filter>include\RE\Scaleform\Kernel\Atomic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\AtomicValueBase.h">
+      <Filter>include\RE\Scaleform\Kernel\Atomic</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Rect.h">
+      <Filter>include\RE\Scaleform\Render\Types2D</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\RectData.h">
+      <Filter>include\RE\Scaleform\Render\Types2D</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Point.h">
+      <Filter>include\RE\Scaleform\Render\Types2D</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\TagType.h">
+      <Filter>include\RE\Scaleform\GFx\Tags</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\FocusMovedType.h">
+      <Filter>include\RE\Scaleform\GFx\Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\PlayState.h">
+      <Filter>include\RE\Scaleform\GFx\Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\RE\TESDataHandler.cpp">
@@ -439,6 +529,30 @@
     </ClCompile>
     <ClCompile Include="src\RE\Scaleform\GFx\Value.cpp">
       <Filter>src\RE\Scaleform\GFx\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\State.cpp">
+      <Filter>src\RE\Scaleform\GFx\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\StateBag.cpp">
+      <Filter>src\RE\Scaleform\GFx\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\ASSupport.cpp">
+      <Filter>src\RE\Scaleform\GFx\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\ResourceID.cpp">
+      <Filter>src\RE\Scaleform\GFx\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\ResourceKey.cpp">
+      <Filter>src\RE\Scaleform\GFx\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\Resource.cpp">
+      <Filter>src\RE\Scaleform\GFx\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\CharacterDef.cpp">
+      <Filter>src\RE\Scaleform\GFx\CharacterDef</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\ASMovieRootBase.cpp">
+      <Filter>src\RE\Scaleform\GFx\ASMovieRootBase</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
