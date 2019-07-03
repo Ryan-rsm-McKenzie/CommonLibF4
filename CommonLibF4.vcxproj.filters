@@ -208,6 +208,27 @@
     <Filter Include="src\RE\Scaleform\GFx\ASMovieRootBase">
       <UniqueIdentifier>{d4a80fdc-2cff-4660-865d-9349061b1a39}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel\Threads">
+      <UniqueIdentifier>{d0ae24c9-a8d2-41e6-96ba-e7e72fc71dcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render\Color">
+      <UniqueIdentifier>{aa59def7-e259-4961-bc6f-9130877e7bd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Render">
+      <UniqueIdentifier>{3cb3e7ca-01e2-45dd-86d9-c8871ad19ddd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Render\Color">
+      <UniqueIdentifier>{978d3fd5-9266-498a-bd32-bf8fac0d8d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render\Viewport">
+      <UniqueIdentifier>{a7e6e7b5-3c65-4a3e-af9f-96db3a593757}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\RE\Scaleform\Render\Viewport">
+      <UniqueIdentifier>{263119fb-5a5d-4ef5-b8bc-bc90b614dc95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx\PlayerImpl">
+      <UniqueIdentifier>{69ea42ff-06da-4192-a770-bff2981dee73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\RE\BSCoreTypes.h">
@@ -483,6 +504,27 @@
     <ClInclude Include="include\RE\Scaleform\GFx\PlayState.h">
       <Filter>include\RE\Scaleform\GFx\Types</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\ThreadID.h">
+      <Filter>include\RE\Scaleform\Kernel\Threads</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Color.h">
+      <Filter>include\RE\Scaleform\Render\Color</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Viewport.h">
+      <Filter>include\RE\Scaleform\Render\Viewport</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\Viewport.h">
+      <Filter>include\RE\Scaleform\GFx\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\MovieDef.h">
+      <Filter>include\RE\Scaleform\GFx\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\MemoryParams.h">
+      <Filter>include\RE\Scaleform\GFx\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\MovieImpl.h">
+      <Filter>include\RE\Scaleform\GFx\PlayerImpl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\RE\TESDataHandler.cpp">
@@ -553,6 +595,24 @@
     </ClCompile>
     <ClCompile Include="src\RE\Scaleform\GFx\ASMovieRootBase.cpp">
       <Filter>src\RE\Scaleform\GFx\ASMovieRootBase</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\Render\Color.cpp">
+      <Filter>src\RE\Scaleform\Render\Color</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\Render\Viewport.cpp">
+      <Filter>src\RE\Scaleform\Render\Viewport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\Viewport.cpp">
+      <Filter>src\RE\Scaleform\GFx\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\Movie.cpp">
+      <Filter>src\RE\Scaleform\GFx\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\MemoryParams.cpp">
+      <Filter>src\RE\Scaleform\GFx\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RE\Scaleform\GFx\MovieDef.cpp">
+      <Filter>src\RE\Scaleform\GFx\Player</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

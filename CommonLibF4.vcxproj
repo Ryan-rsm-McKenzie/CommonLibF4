@@ -178,7 +178,10 @@
     <ClInclude Include="include\RE\Scaleform\GFx\FileTypeConstants.h" />
     <ClInclude Include="include\RE\Scaleform\GFx\FocusMovedType.h" />
     <ClInclude Include="include\RE\Scaleform\GFx\FunctionHandler.h" />
+    <ClInclude Include="include\RE\Scaleform\GFx\MemoryParams.h" />
     <ClInclude Include="include\RE\Scaleform\GFx\Movie.h" />
+    <ClInclude Include="include\RE\Scaleform\GFx\MovieDef.h" />
+    <ClInclude Include="include\RE\Scaleform\GFx\MovieImpl.h" />
     <ClInclude Include="include\RE\Scaleform\GFx\PlayerStats.h" />
     <ClInclude Include="include\RE\Scaleform\GFx\PlayState.h" />
     <ClInclude Include="include\RE\Scaleform\GFx\Resource.h" />
@@ -188,6 +191,7 @@
     <ClInclude Include="include\RE\Scaleform\GFx\StateBag.h" />
     <ClInclude Include="include\RE\Scaleform\GFx\TagType.h" />
     <ClInclude Include="include\RE\Scaleform\GFx\Value.h" />
+    <ClInclude Include="include\RE\Scaleform\GFx\Viewport.h" />
     <ClInclude Include="include\RE\Scaleform\List.h" />
     <ClInclude Include="include\RE\Scaleform\ListNode.h" />
     <ClInclude Include="include\RE\Scaleform\Lock.h" />
@@ -199,6 +203,7 @@
     <ClInclude Include="include\RE\Scaleform\RefCountBaseStatImpl.h" />
     <ClInclude Include="include\RE\Scaleform\RefCountImpl.h" />
     <ClInclude Include="include\RE\Scaleform\RefCountImplCore.h" />
+    <ClInclude Include="include\RE\Scaleform\Render\Color.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Constants.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Cxform.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Matrix2x4.h" />
@@ -210,6 +215,7 @@
     <ClInclude Include="include\RE\Scaleform\Render\Point.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Rect.h" />
     <ClInclude Include="include\RE\Scaleform\Render\RectData.h" />
+    <ClInclude Include="include\RE\Scaleform\Render\Viewport.h" />
     <ClInclude Include="include\RE\Scaleform\SFTypes.h" />
     <ClInclude Include="include\RE\Scaleform\StatBag.h" />
     <ClInclude Include="include\RE\Scaleform\Stats.h" />
@@ -218,6 +224,7 @@
     <ClInclude Include="include\RE\Scaleform\SysAllocBase_SingletonSupport.h" />
     <ClInclude Include="include\RE\Scaleform\SysAllocMalloc.h" />
     <ClInclude Include="include\RE\Scaleform\SysAllocPaged.h" />
+    <ClInclude Include="include\RE\Scaleform\ThreadID.h" />
     <ClInclude Include="include\RE\TESBoundAnimObject.h" />
     <ClInclude Include="include\RE\TESBoundObject.h" />
     <ClInclude Include="include\RE\TESDataHandler.h" />
@@ -239,17 +246,23 @@
     <ClCompile Include="src\RE\Scaleform\GFx\ASMovieRootBase.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\ASSupport.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\CharacterDef.cpp" />
+    <ClCompile Include="src\RE\Scaleform\GFx\MemoryParams.cpp" />
+    <ClCompile Include="src\RE\Scaleform\GFx\Movie.cpp" />
+    <ClCompile Include="src\RE\Scaleform\GFx\MovieDef.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\Resource.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\ResourceID.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\ResourceKey.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\State.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\StateBag.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\Value.cpp" />
+    <ClCompile Include="src\RE\Scaleform\GFx\Viewport.cpp" />
     <ClCompile Include="src\RE\Scaleform\Lock.cpp" />
     <ClCompile Include="src\RE\Scaleform\Memory.cpp" />
     <ClCompile Include="src\RE\Scaleform\MemoryHeap.cpp" />
     <ClCompile Include="src\RE\Scaleform\RefCountImpl.cpp" />
     <ClCompile Include="src\RE\Scaleform\RefCountImplCore.cpp" />
+    <ClCompile Include="src\RE\Scaleform\Render\Color.cpp" />
+    <ClCompile Include="src\RE\Scaleform\Render\Viewport.cpp" />
     <ClCompile Include="src\RE\Scaleform\SysAllocBase.cpp" />
     <ClCompile Include="src\RE\Scaleform\SysAllocMalloc.cpp" />
     <ClCompile Include="src\RE\Scaleform\SysAllocPaged.cpp" />
