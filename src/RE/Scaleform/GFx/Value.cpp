@@ -1217,7 +1217,7 @@ namespace RE
 
 			void Value::AcquireManagedValue(const Value& a_src)
 			{
-				assert(a_src._value.data && (a_src._objectInterface != NULL));
+				assert(a_src._value.data && (a_src._objectInterface != 0));
 				_objectInterface = a_src._objectInterface;
 				_objectInterface->ObjectAddRef(this, _value.data);
 			}
@@ -1225,9 +1225,9 @@ namespace RE
 
 			void Value::ReleaseManagedValue()
 			{
-				assert(_value.data && (_objectInterface != NULL));
+				assert(_value.data && (_objectInterface != 0));
 				_objectInterface->ObjectRelease(this, _value.data);
-				_objectInterface = NULL;
+				_objectInterface = 0;
 			}
 		}
 	}

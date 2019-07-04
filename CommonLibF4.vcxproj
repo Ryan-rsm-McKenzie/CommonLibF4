@@ -161,12 +161,15 @@
     <ClInclude Include="include\RE\BSCoreTypes.h" />
     <ClInclude Include="include\RE\BSFixedString.h" />
     <ClInclude Include="include\RE\BSGlobalStringTable.h" />
+    <ClInclude Include="include\RE\BSInputEventUser.h" />
     <ClInclude Include="include\RE\BSSpinLock.h" />
     <ClInclude Include="include\RE\BSTArray.h" />
     <ClInclude Include="include\RE\Condition.h" />
     <ClInclude Include="include\RE\FileHash.h" />
     <ClInclude Include="include\RE\FormTypes.h" />
+    <ClInclude Include="include\RE\GameMenuBase.h" />
     <ClInclude Include="include\RE\IKeywordFormBase.h" />
+    <ClInclude Include="include\RE\IMenu.h" />
     <ClInclude Include="include\RE\Memory.h" />
     <ClInclude Include="include\RE\Offset.h" />
     <ClInclude Include="include\RE\Scaleform\AllocInfo.h" />
@@ -225,6 +228,8 @@
     <ClInclude Include="include\RE\Scaleform\SysAllocMalloc.h" />
     <ClInclude Include="include\RE\Scaleform\SysAllocPaged.h" />
     <ClInclude Include="include\RE\Scaleform\ThreadID.h" />
+    <ClInclude Include="include\RE\SWFToCodeFunctionHandler.h" />
+    <ClInclude Include="include\RE\TerminalMenu.h" />
     <ClInclude Include="include\RE\TESBoundAnimObject.h" />
     <ClInclude Include="include\RE\TESBoundObject.h" />
     <ClInclude Include="include\RE\TESDataHandler.h" />

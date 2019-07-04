@@ -229,6 +229,21 @@
     <Filter Include="include\RE\Scaleform\GFx\PlayerImpl">
       <UniqueIdentifier>{69ea42ff-06da-4192-a770-bff2981dee73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE\Menus">
+      <UniqueIdentifier>{23e4d92f-dba1-4d1e-a184-fe17c29cd997}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Input">
+      <UniqueIdentifier>{a604cdf1-49e2-41f1-bff5-b810625c68b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Menus\SWFToCodeFunctionHandler">
+      <UniqueIdentifier>{1e993d36-a4b3-4d84-a079-d17c84f29162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Menus\SWFToCodeFunctionHandler\IMenu">
+      <UniqueIdentifier>{8ddfe46a-2378-4b23-bfb0-bd29544c39db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Menus\SWFToCodeFunctionHandler\IMenu\GameMenuBase">
+      <UniqueIdentifier>{5f09bf74-41e7-4e0f-9d27-f2d3ddac2609}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\RE\BSCoreTypes.h">
@@ -524,6 +539,21 @@
     </ClInclude>
     <ClInclude Include="include\RE\Scaleform\GFx\MovieImpl.h">
       <Filter>include\RE\Scaleform\GFx\PlayerImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\IMenu.h">
+      <Filter>include\RE\Menus\SWFToCodeFunctionHandler\IMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\BSInputEventUser.h">
+      <Filter>include\RE\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\SWFToCodeFunctionHandler.h">
+      <Filter>include\RE\Menus\SWFToCodeFunctionHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\GameMenuBase.h">
+      <Filter>include\RE\Menus\SWFToCodeFunctionHandler\IMenu\GameMenuBase</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\TerminalMenu.h">
+      <Filter>include\RE\Menus\SWFToCodeFunctionHandler\IMenu\GameMenuBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
