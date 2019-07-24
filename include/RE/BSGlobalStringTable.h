@@ -8,7 +8,7 @@ namespace RE
 	class BSGlobalStringTable
 	{
 	public:
-		enum CRC32HashMask
+		enum HashMask
 		{
 			kEntryIndexMask = 0xFFFF,
 			kLockIndexMask = 0x7F
@@ -58,7 +58,7 @@ namespace RE
 
 			Entry*			next;				// 00
 			UInt16			flagsAndRefCount;	// 08
-			UInt16			idx;				// 0A
+			UInt16			hash;				// 0A
 			UInt32			unk0C;				// 0C
 			LengthAndRef	lengthAndRef;		// 10
 			CharT			data[0];			// 18
@@ -76,8 +76,8 @@ namespace RE
 		STATIC_ASSERT(sizeof(Lock) == 0x10);
 
 
-		Entry*	entries[0x10000];	// 00000 - index with (static_cast<UInt16>(crc32Hash))
-		Lock	locks[0x80];		// 80000 - index with (crc32Hash & 0x7F)
+		Entry*	entries[0x10000];	// 00000 - index with hash & kEntryIndexMask
+		Lock	locks[0x80];		// 80000 - index with hash & kLockIndexMask
 		Flag	flags;				// 80800
 		UInt8	pad80801;			// 80801
 		UInt16	pad80802;			// 80802

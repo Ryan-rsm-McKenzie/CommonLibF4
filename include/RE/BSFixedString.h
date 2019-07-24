@@ -19,8 +19,8 @@ namespace RE
 		BSFixedString();
 		BSFixedString(const BSFixedString& a_rhs);
 		BSFixedString(BSFixedString&& a_rhs) noexcept;
-		BSFixedString(const char* a_rhs, bool a_ci = true);	// ci == case-insensitive
-		BSFixedString(const std::string_view& a_rhs, bool a_ci = true);	// must be null terminated
+		BSFixedString(const char* a_rhs, bool a_cs = true);	// cs == case-sensitive
+		BSFixedString(const std::string_view& a_rhs, bool a_cs = true);	// must be null terminated
 
 		// (destructor)
 		~BSFixedString();
@@ -70,7 +70,7 @@ namespace RE
 		FO_HEAP_REDEFINE_NEW();
 
 	private:
-		void ctor(const char* a_string, bool a_ci);
+		void ctor(const char* a_string, bool a_cs);
 		void dtor();	// post: _data == 0
 
 
@@ -129,16 +129,16 @@ namespace RE
 		// Operations
 		void clear();
 
-		inline friend bool operator==(const BSFixedString& a_lhs, const char* a_rhs) { return std::wcscmp(a_lhs.c_str(), a_rhs) == 0; }
-		inline friend bool operator!=(const BSFixedString& a_lhs, const char* a_rhs) { return !(a_lhs == a_rhs); }
-		inline friend bool operator==(const char* a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
-		inline friend bool operator!=(const char* a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
-		inline friend bool operator==(const BSFixedString& a_lhs, const BSFixedString& a_rhs) { return (a_lhs == a_rhs.c_str()); }
-		inline friend bool operator!=(const BSFixedString& a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
-		inline friend bool operator==(const BSFixedString& a_lhs, const std::string_view& a_rhs) { return a_lhs == a_rhs.data(); }
-		inline friend bool operator!=(const BSFixedString& a_lhs, const std::string_view& a_rhs) { return !(a_lhs == a_rhs); }
-		inline friend bool operator==(const std::string_view& a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
-		inline friend bool operator!=(const std::string_view& a_lhs, const BSFixedString& a_rhs) { return !(a_rhs == a_lhs); }
+		inline friend bool operator==(const BSFixedStringW& a_lhs, const wchar_t* a_rhs) { return std::wcscmp(a_lhs.c_str(), a_rhs) == 0; }
+		inline friend bool operator!=(const BSFixedStringW& a_lhs, const wchar_t* a_rhs) { return !(a_lhs == a_rhs); }
+		inline friend bool operator==(const wchar_t* a_lhs, const BSFixedStringW& a_rhs) { return a_rhs == a_lhs; }
+		inline friend bool operator!=(const wchar_t* a_lhs, const BSFixedStringW& a_rhs) { return !(a_lhs == a_rhs); }
+		inline friend bool operator==(const BSFixedStringW& a_lhs, const BSFixedStringW& a_rhs) { return (a_lhs == a_rhs.c_str()); }
+		inline friend bool operator!=(const BSFixedStringW& a_lhs, const BSFixedStringW& a_rhs) { return !(a_lhs == a_rhs); }
+		inline friend bool operator==(const BSFixedStringW& a_lhs, const std::wstring_view& a_rhs) { return a_lhs == a_rhs.data(); }
+		inline friend bool operator!=(const BSFixedStringW& a_lhs, const std::wstring_view& a_rhs) { return !(a_lhs == a_rhs); }
+		inline friend bool operator==(const std::wstring_view& a_lhs, const BSFixedStringW& a_rhs) { return a_rhs == a_lhs; }
+		inline friend bool operator!=(const std::wstring_view& a_lhs, const BSFixedStringW& a_rhs) { return !(a_rhs == a_lhs); }
 
 		FO_HEAP_REDEFINE_NEW();
 
