@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RE/BGSModTemplateItems.h"
+#include "RE/BGSMod/Template/Items.h"
 #include "RE/BGSPreviewTransform.h"
 #include "RE/BGSSoundTagComponent.h"
 #include "RE/TESObject.h"

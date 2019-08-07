@@ -11,7 +11,7 @@ namespace RE
 			inline static const void* RTTI = RTTI_Scaleform__RefCountImplCore;
 
 
-			inline RefCountImplCore();
+			RefCountImplCore();
 			virtual ~RefCountImplCore() = default;	// 00
 
 			SInt32 GetRefCount() const;

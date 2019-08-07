@@ -9,7 +9,7 @@ namespace RE
 	{
 		namespace GFx
 		{
-			Movie* MovieDef::CreateInstance(bool a_initFirstFrame = false, UPInt a_memoryArena = 0, ActionControl * a_actionControl = 0, Render::ThreadCommandQueue * a_queue = 0)
+			Movie* MovieDef::CreateInstance(bool a_initFirstFrame, UPInt a_memoryArena, ActionControl* a_actionControl, Render::ThreadCommandQueue* a_queue)
 			{
 				MemoryParams memParams(a_memoryArena);
 				return CreateInstance(memParams, a_initFirstFrame, a_actionControl, a_queue);

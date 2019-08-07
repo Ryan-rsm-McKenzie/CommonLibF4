@@ -9,7 +9,7 @@ namespace RE
 	namespace Scaleform
 	{
 		template <class T, UInt32 STAT>
-		class RefCountBase : public RefCountBaseStatImpl<RefCountImpl, Stat>
+		class RefCountBase : public RefCountBaseStatImpl<RefCountImpl, STAT>
 		{
 		public:
 			enum { kStatType = STAT };

@@ -28,7 +28,7 @@ namespace RE
 	}
 
 
-	void* aligned_alloc(std::size_t a_alignment, std::size_t a_size)
+	inline void* aligned_alloc(std::size_t a_alignment, std::size_t a_size)
 	{
 		return CALL_MEMBER_FN(g_mainHeap, Allocate)(a_size, a_alignment, true);
 	}
@@ -67,7 +67,7 @@ namespace RE
 }
 
 
-#define FO_HEAP_REDEFINE_NEW()																									\
+#define FO_HEAP_REDEFINE_NEW()																										\
 	void*	operator new(std::size_t a_count)													{ return RE::malloc(a_count); }		\
 	void*	operator new[](std::size_t a_count)													{ return RE::malloc(a_count); }		\
 	void*	operator new([[maybe_unused]] std::size_t a_count, void* a_plcmnt)					{ return a_plcmnt; }				\

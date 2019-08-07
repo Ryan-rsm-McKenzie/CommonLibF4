@@ -53,6 +53,21 @@ namespace RE
 				Flag	flags;			// 28
 			};
 			STATIC_ASSERT(sizeof(Viewport) == 0x2C);
+
+
+			inline Viewport::Viewport() :
+				bufferWidth(0),
+				bufferHeight(0),
+				left(0),
+				top(0),
+				width(0),
+				height(0),
+				scissorLeft(0),
+				scissorTop(0),
+				scissorWidth(0),
+				scissorHeight(0),
+				flags(Flag::kNone)
+			{}
 		}
 	}
 }

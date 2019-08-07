@@ -61,9 +61,10 @@ namespace RE
 				StateType GetStateType() const;
 
 			protected:
-				StateType _type;	// 08
+				StateType	_type;	// 10
+				UInt32		_pad14;	// 14
 			};
-			STATIC_ASSERT(sizeof(State) == 0x14);
+			STATIC_ASSERT(sizeof(State) == 0x18);
 		}
 	}
 }

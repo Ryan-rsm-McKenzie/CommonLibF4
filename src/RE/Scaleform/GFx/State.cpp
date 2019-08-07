@@ -9,7 +9,7 @@ namespace RE
 		{
 			State::State(StateType a_state) :
 				_type(a_state),
-				_pad0C(0)
+				_pad14(0)
 			{}
 
 

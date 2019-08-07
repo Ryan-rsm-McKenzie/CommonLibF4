@@ -20,6 +20,13 @@ namespace RE
 				float	aspectRatio;	// 30
 			};
 			STATIC_ASSERT(sizeof(Viewport) == 0x34);
+
+
+			inline Viewport::Viewport() :
+				Render::Viewport(),
+				scale(1.0),
+				aspectRatio(1.0)
+			{}
 		}
 	}
 }

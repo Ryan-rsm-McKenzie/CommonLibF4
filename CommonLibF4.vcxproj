@@ -260,14 +260,12 @@
     <ClCompile Include="src\RE\Scaleform\GFx\State.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\StateBag.cpp" />
     <ClCompile Include="src\RE\Scaleform\GFx\Value.cpp" />
-    <ClCompile Include="src\RE\Scaleform\GFx\Viewport.cpp" />
     <ClCompile Include="src\RE\Scaleform\Lock.cpp" />
     <ClCompile Include="src\RE\Scaleform\Memory.cpp" />
     <ClCompile Include="src\RE\Scaleform\MemoryHeap.cpp" />
     <ClCompile Include="src\RE\Scaleform\RefCountImpl.cpp" />
     <ClCompile Include="src\RE\Scaleform\RefCountImplCore.cpp" />
     <ClCompile Include="src\RE\Scaleform\Render\Color.cpp" />
-    <ClCompile Include="src\RE\Scaleform\Render\Viewport.cpp" />
     <ClCompile Include="src\RE\Scaleform\SysAllocBase.cpp" />
     <ClCompile Include="src\RE\Scaleform\SysAllocMalloc.cpp" />
     <ClCompile Include="src\RE\Scaleform\SysAllocPaged.cpp" />

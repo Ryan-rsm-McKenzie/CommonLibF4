@@ -50,7 +50,7 @@ namespace RE
 				virtual void					ReadButtonActions(LoadProcess* a_proc, ButtonDef* a_buttonDef, TagType a_tagType) = 0;																																					// 0D
 				virtual void					ReadButton2ActionConditions(LoadProcess* a_proc, ButtonDef* a_buttonDef, TagType a_tagType) = 0;																																		// 0E
 			};
-			STATIC_ASSERT(sizeof(ASSupport) == 0x14);
+			STATIC_ASSERT(sizeof(ASSupport) == 0x18);
 		}
 	}
 }

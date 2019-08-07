@@ -223,9 +223,6 @@
     <Filter Include="include\RE\Scaleform\Render\Viewport">
       <UniqueIdentifier>{a7e6e7b5-3c65-4a3e-af9f-96db3a593757}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\RE\Scaleform\Render\Viewport">
-      <UniqueIdentifier>{263119fb-5a5d-4ef5-b8bc-bc90b614dc95}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\RE\Scaleform\GFx\PlayerImpl">
       <UniqueIdentifier>{69ea42ff-06da-4192-a770-bff2981dee73}</UniqueIdentifier>
     </Filter>
@@ -628,12 +625,6 @@
     </ClCompile>
     <ClCompile Include="src\RE\Scaleform\Render\Color.cpp">
       <Filter>src\RE\Scaleform\Render\Color</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RE\Scaleform\Render\Viewport.cpp">
-      <Filter>src\RE\Scaleform\Render\Viewport</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RE\Scaleform\GFx\Viewport.cpp">
-      <Filter>src\RE\Scaleform\GFx\Player</Filter>
     </ClCompile>
     <ClCompile Include="src\RE\Scaleform\GFx\Movie.cpp">
       <Filter>src\RE\Scaleform\GFx\Player</Filter>
