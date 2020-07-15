@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include=".clang-format" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{234214ad-cd92-4a20-a25a-03dc3c495a1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\F4SE">
+      <UniqueIdentifier>{10a39dcf-4b72-44be-987e-4d69f297538c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\F4SE\Impl">
+      <UniqueIdentifier>{69ab6f93-c095-4086-b3c6-d7345063a065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\REL">
+      <UniqueIdentifier>{6472008f-5b82-40f4-b35b-e3161da49ebe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\F4SE\Impl\PCH.h">
+      <Filter>include\F4SE\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\REL\Relocation.h">
+      <Filter>include\REL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="include\F4SE\Impl\PCH.cpp">
+      <Filter>include\F4SE\Impl</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
