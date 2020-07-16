@@ -62,6 +62,7 @@ namespace REL
 	class IDManager;
 	class Module;
 	class Offset;
+	class Segment;
 	class Version;
 
 	template <class>
@@ -166,7 +167,10 @@ namespace REL
 
 	template <
 		class F,
-		class... Args>
+		class... Args,
+		std::enable_if_t<
+			std::is_invocable_v<F, Args...>,
+			int> = 0>
 	std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args) noexcept(
 		std::is_nothrow_invocable<F, Args...>)
 	{
@@ -184,6 +188,35 @@ namespace REL
 			static_assert(false);
 		}
 	}
+
+	void safe_write(std::uintptr_t a_dst, const void* a_src, std::size_t a_count)
+	{
+		DWORD				  old{ 0 };
+		[[maybe_unused]] BOOL success{ false };
+		success = VirtualProtect(reinterpret_cast<void*>(a_dst), a_count, PAGE_EXECUTE_READWRITE, std::addressof(old));
+		if (success != 0) {
+			std::memcpy(reinterpret_cast<void*>(a_dst), a_src, a_count);
+			success = VirtualProtect(reinterpret_cast<void*>(a_dst), a_count, old, std::addressof(old));
+		}
+
+		assert(success != 0);
+	}
+
+	template <class T>
+	void safe_write(std::uintptr_t a_dst, T* a_data)
+	{
+		safe_write(a_dst, a_data, sizeof(T));
+	}
+
+	void safe_write(std::uintptr_t a_dst, char a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	void safe_write(std::uintptr_t a_dst, std::uint8_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	void safe_write(std::uintptr_t a_dst, std::int8_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	void safe_write(std::uintptr_t a_dst, std::uint16_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	void safe_write(std::uintptr_t a_dst, std::int16_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	void safe_write(std::uintptr_t a_dst, std::uint32_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	void safe_write(std::uintptr_t a_dst, std::int32_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	void safe_write(std::uintptr_t a_dst, std::uint64_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	void safe_write(std::uintptr_t a_dst, std::int64_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
 
 	class Version
 	{
@@ -244,6 +277,39 @@ namespace REL
 	[[nodiscard]] constexpr bool operator>(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) > 0; }
 	[[nodiscard]] constexpr bool operator>=(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) >= 0; }
 
+	class Segment
+	{
+	public:
+		enum Name : std::size_t
+		{
+			text,
+			interpr,
+			idata,
+			rdata,
+			data,
+			pdata,
+			tls,
+			total
+		};
+
+		constexpr Segment() noexcept = default;
+
+		constexpr Segment(std::uintptr_t a_proxyBase, std::uintptr_t a_address, std::uintptr_t a_size) noexcept :
+			_proxyBase(a_proxyBase),
+			_address(a_address),
+			_size(a_size)
+		{}
+
+		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
+		[[nodiscard]] constexpr std::size_t	   offset() const noexcept { address() - _proxyBase; }
+		[[nodiscard]] constexpr std::size_t	   size() const noexcept { _size; }
+
+	private:
+		std::uintptr_t _proxyBase{ 0 };
+		std::uintptr_t _address{ 0 };
+		std::size_t	   _size{ 0 };
+	};
+
 	class Module
 	{
 	public:
@@ -253,25 +319,55 @@ namespace REL
 			return singleton;
 		}
 
-		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
+		[[nodiscard]] constexpr std::uintptr_t base() const noexcept { return _base; }
+		[[nodiscard]] constexpr Version		   version() const noexcept { return _version; }
+
+		[[nodiscard]] constexpr Segment segment(Segment::Name a_segment) noexcept { return _segments[a_segment]; }
+
+	private:
+		inline Module() { load(); }
+
+		Module(const Module&) = delete;
+		Module(Module&&) = delete;
+
+		~Module() noexcept = default;
+
+		Module& operator=(const Module&) = delete;
+		Module& operator=(Module&&) = delete;
 
 		inline void load()
 		{
-			constexpr auto filename = L"Fallout4.exe"sv;
-
-			auto handle = GetModuleHandleW(filename.data());
+			auto handle = GetModuleHandleW(FILENAME.data());
 			if (handle == nullptr) {
 				throw std::runtime_error("Failed to obtain module handle"s);
 			}
-			_address = reinterpret_cast<std::uintptr_t>(handle);
+			_base = reinterpret_cast<std::uintptr_t>(handle);
 
+			load_version();
+			load_segments();
+		}
+
+		inline void load_segments()
+		{
+			auto		dosHeader = reinterpret_cast<const IMAGE_DOS_HEADER*>(_base);
+			auto		ntHeader = adjust_pointer<IMAGE_NT_HEADERS64>(dosHeader, dosHeader->e_lfanew);
+			const auto* sections = IMAGE_FIRST_SECTION(ntHeader);
+			const auto	size = std::min<std::size_t>(ntHeader->FileHeader.NumberOfSections, _segments.size());
+			for (std::size_t i = 0; i < size; ++i) {
+				const auto& section = sections[i];
+				_segments[i] = Segment{ _base, _base + section.VirtualAddress, section.Misc.VirtualSize };
+			}
+		}
+
+		inline void load_version()
+		{
 			DWORD			  dummy;
-			std::vector<char> buf(GetFileVersionInfoSizeW(filename.data(), std::addressof(dummy)));
+			std::vector<char> buf(GetFileVersionInfoSizeW(FILENAME.data(), std::addressof(dummy)));
 			if (buf.size() == 0) {
 				throw std::runtime_error("Failed to obtain file version info size"s);
 			}
 
-			if (!GetFileVersionInfoW(filename.data(), 0, static_cast<DWORD>(buf.size()), buf.data())) {
+			if (!GetFileVersionInfoW(FILENAME.data(), 0, static_cast<DWORD>(buf.size()), buf.data())) {
 				throw std::runtime_error("Failed to obtain file version info"s);
 			}
 
@@ -289,20 +385,11 @@ namespace REL
 			}
 		}
 
-		[[nodiscard]] constexpr Version version() const noexcept { return _version; }
+		static constexpr auto FILENAME = L"Fallout4.exe"sv;
 
-	private:
-		constexpr Module() noexcept = default;
-		Module(const Module&) = delete;
-		Module(Module&&) = delete;
-
-		~Module() noexcept = default;
-
-		Module& operator=(const Module&) = delete;
-		Module& operator=(Module&&) = delete;
-
-		Version		   _version;
-		std::uintptr_t _address{ 0 };
+		std::array<Segment, Segment::total> _segments;
+		Version								_version;
+		std::uintptr_t						_base{ 0 };
 	};
 
 	class IDDatabase
@@ -312,31 +399,6 @@ namespace REL
 		{
 			static IDDatabase singleton;
 			return singleton;
-		}
-
-		inline void load()
-		{
-			const auto	 version = Module::get().version();
-			std::wstring path(L"F4SE/Plugins/version-"sv);
-			path += version.wstring();
-			path += L".bin"sv;
-
-			_mmap.map(path);
-			_id2offset = stl::span(
-				reinterpret_cast<const mapping*>(_mmap.data() + sizeof(std::uint64_t)),
-				*reinterpret_cast<const std::uint64_t*>(_mmap.data()));
-
-#ifndef NDEBUG
-			_offset2id.clear();
-			_offset2id.reserve(_id2offset.size());
-			_offset2id.insert(_offset2id.begin(), _id2offset.begin(), _id2offset.end());
-			std::sort(
-				_offset2id.begin(),
-				_offset2id.end(),
-				[](auto&& a_lhs, auto&& a_rhs) {
-					return a_lhs.offset < a_rhs.offset;
-				});
-#endif
 		}
 
 		[[nodiscard]] inline std::size_t id2offset(std::uint64_t a_id)
@@ -493,7 +555,8 @@ namespace REL
 			std::uint64_t offset;
 		};
 
-		IDDatabase() noexcept = default;
+		inline IDDatabase() { load(); }
+
 		IDDatabase(const IDDatabase&) = delete;
 		IDDatabase(IDDatabase&&) = delete;
 
@@ -501,6 +564,31 @@ namespace REL
 
 		IDDatabase& operator=(const IDDatabase&) = delete;
 		IDDatabase& operator=(IDDatabase&&) = delete;
+
+		inline void load()
+		{
+			const auto	 version = Module::get().version();
+			std::wstring path(L"F4SE/Plugins/version-"sv);
+			path += version.wstring();
+			path += L".bin"sv;
+
+			_mmap.map(path);
+			_id2offset = stl::span(
+				reinterpret_cast<const mapping*>(_mmap.data() + sizeof(std::uint64_t)),
+				*reinterpret_cast<const std::uint64_t*>(_mmap.data()));
+
+#ifndef NDEBUG
+			_offset2id.clear();
+			_offset2id.reserve(_id2offset.size());
+			_offset2id.insert(_offset2id.begin(), _id2offset.begin(), _id2offset.end());
+			std::sort(
+				_offset2id.begin(),
+				_offset2id.end(),
+				[](auto&& a_lhs, auto&& a_rhs) {
+					return a_lhs.offset < a_rhs.offset;
+				});
+#endif
+		}
 
 		memory_map				 _mmap;
 		stl::span<const mapping> _id2offset;
@@ -525,10 +613,10 @@ namespace REL
 		}
 
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-		[[nodiscard]] inline std::size_t	   offset() const noexcept { return address() - base(); }
+		[[nodiscard]] inline std::size_t	   offset() const { return address() - base(); }
 
 	private:
-		[[nodiscard]] static inline std::uintptr_t base() noexcept { return Module::get().address(); }
+		[[nodiscard]] static inline std::uintptr_t base() { return Module::get().base(); }
 
 		std::uintptr_t _address{ 0 };
 	};
@@ -549,10 +637,10 @@ namespace REL
 		}
 
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-		[[nodiscard]] inline std::size_t	   offset() const noexcept { return address() - base(); }
+		[[nodiscard]] inline std::size_t	   offset() const { return address() - base(); }
 
 	private:
-		[[nodiscard]] static inline std::uintptr_t base() noexcept { return Module::get().address(); }
+		[[nodiscard]] static inline std::uintptr_t base() { return Module::get().base(); }
 		[[nodiscard]] static inline std::size_t	   convert(std::uint64_t a_id) { return IDDatabase::get().id2offset(a_id); }
 
 		std::uintptr_t _address{ 0 };
@@ -672,7 +760,7 @@ namespace REL
 		[[nodiscard]] std::size_t	 offset() const { offset() - base(); }
 
 	private:
-		[[nodiscard]] static std::uintptr_t base() noexcept { return Module::get().address(); }
+		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
 
 		value_type _impl;
 	};

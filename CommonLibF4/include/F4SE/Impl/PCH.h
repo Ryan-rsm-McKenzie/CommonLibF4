@@ -51,6 +51,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <memory>
 #include <sstream>
 #include <stdexcept>
@@ -77,261 +78,6 @@ namespace F4SE
 		{
 			using underlying_type_t = std::underlying_type_t<Enum>;
 			return static_cast<underlying_type_t>(a_val);
-		}
-
-		// + operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator+(Enum a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<Enum>(
-				static_cast<underlying_type_t>(a_lhs) +
-				static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// += operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		constexpr Enum& operator+=(Enum& a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return a_lhs = static_cast<Enum>(
-					   static_cast<underlying_type_t>(a_lhs) +
-					   static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// - operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator-(Enum a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<Enum>(
-				static_cast<underlying_type_t>(a_lhs) -
-				static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// -= operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		constexpr Enum& operator-=(Enum& a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return a_lhs = static_cast<Enum>(
-					   static_cast<underlying_type_t>(a_lhs) -
-					   static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// ~ operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator~(Enum a_val) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<Enum>(~static_cast<underlying_type_t>(a_val));
-		}
-
-		// & operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator&(Enum a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<Enum>(
-				static_cast<underlying_type_t>(a_lhs) &
-				static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// &= operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		constexpr Enum& operator&=(Enum& a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return a_lhs = static_cast<Enum>(
-					   static_cast<underlying_type_t>(a_lhs) &
-					   static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// | operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator|(Enum a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<Enum>(
-				static_cast<underlying_type_t>(a_lhs) |
-				static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// |= operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		constexpr Enum& operator|=(Enum& a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return a_lhs = static_cast<Enum>(
-					   static_cast<underlying_type_t>(a_lhs) |
-					   static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// ^ operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator^(Enum a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<Enum>(
-				static_cast<underlying_type_t>(a_lhs) ^
-				static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// ^= operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		constexpr Enum& operator^=(Enum& a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return a_lhs = static_cast<Enum>(
-					   static_cast<underlying_type_t>(a_lhs) ^
-					   static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// << operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator<<(Enum a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<Enum>(
-				static_cast<underlying_type_t>(a_lhs)
-				<< static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// <<= operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		constexpr Enum& operator<<=(Enum& a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return a_lhs = static_cast<Enum>(
-					   static_cast<underlying_type_t>(a_lhs)
-					   << static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// >> operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator>>(Enum a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<Enum>(
-				static_cast<underlying_type_t>(a_lhs) >>
-				static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// >>= operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		constexpr Enum& operator>>=(Enum& a_lhs, Enum a_rhs) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return a_lhs = static_cast<Enum>(
-					   static_cast<underlying_type_t>(a_lhs) >>
-					   static_cast<underlying_type_t>(a_rhs));
-		}
-
-		// prefix ++ operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		constexpr Enum& operator++(Enum& a_this) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return a_this = static_cast<Enum>(
-					   static_cast<underlying_type_t>(a_this) +
-					   static_cast<underlying_type_t>(1));
-		}
-
-		// postfix ++ operator
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr Enum operator++(Enum& a_this, int) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			auto tmp = a_this;
-			a_this = static_cast<Enum>(
-				static_cast<underlying_type_t>(a_this) +
-				static_cast<underlying_type_t>(1));
-			return tmp;
 		}
 
 		template <class To, class From>
@@ -392,8 +138,209 @@ namespace F4SE
 	namespace stl
 	{
 		using nonstd::span;
+
+		template <class, class, class = void>
+		class enumeration;
+
+		template <
+			class Enum,
+			class Underlying>
+		class enumeration<
+			Enum,
+			Underlying,
+			std::enable_if_t<
+				std::conjunction_v<
+					std::is_enum<Enum>,
+					std::is_integral<Underlying>>>>
+		{
+		public:
+			using enum_type = Enum;
+			using underlying_type = Underlying;
+
+			constexpr enumeration() noexcept = default;
+
+			constexpr enumeration(const enumeration&) noexcept = default;
+
+			constexpr enumeration(enumeration&&) noexcept = default;
+
+			template <class U2>
+			constexpr enumeration(enumeration<Enum, U2> a_rhs) noexcept :
+				_impl(static_cast<underlying_type>(a_rhs.get()))
+			{}
+
+			constexpr enumeration(enum_type a_value) noexcept :
+				_impl(static_cast<underlying_type>(a_value))
+			{}
+
+			~enumeration() noexcept = default;
+
+			constexpr enumeration& operator=(const enumeration&) noexcept = default;
+			constexpr enumeration& operator=(enumeration&&) noexcept = default;
+
+			template <class U2>
+			constexpr enumeration& operator=(enumeration<Enum, U2> a_rhs) noexcept
+			{
+				_impl = static_cast<underlying_type>(a_rhs.get());
+			}
+
+			constexpr enumeration& operator=(enum_type a_value) noexcept
+			{
+				_impl = static_cast<underlying_type>(a_value);
+				return *this;
+			}
+
+			[[nodiscard]] explicit constexpr operator bool() const noexcept { return _impl != 0; }
+
+			[[nodiscard]] constexpr enum_type operator*() const noexcept { return get(); }
+			[[nodiscard]] constexpr enum_type get() const noexcept { return static_cast<enum_type>(_impl); }
+
+		private:
+			underlying_type _impl{ 0 };
+		};
+
+		template <class E>
+		enumeration(E) -> enumeration<E, std::underlying_type_t<E>>;
 	}
 }
+
+#define F4SE_MAKE_LOGICAL_OP(a_op)                                                                          \
+	template <                                                                                              \
+		class E,                                                                                            \
+		class U1,                                                                                           \
+		class U2>                                                                                           \
+	[[nodiscard]] constexpr bool operator a_op(enumeration<E, U1> a_lhs, enumeration<E, U2> a_rhs) noexcept \
+	{                                                                                                       \
+		return a_lhs.get() a_op a_rhs.get();                                                                \
+	}                                                                                                       \
+                                                                                                            \
+	template <                                                                                              \
+		class E,                                                                                            \
+		class U>                                                                                            \
+	[[nodiscard]] constexpr bool operator a_op(enumeration<E, U> a_lhs, E a_rhs) noexcept                   \
+	{                                                                                                       \
+		return a_lhs.get() a_op a_rhs;                                                                      \
+	}
+
+#define F4SE_MAKE_ARITHMETIC_OP(a_op)                                                        \
+	template <                                                                               \
+		class E,                                                                             \
+		class U>                                                                             \
+	[[nodiscard]] constexpr auto operator a_op(enumeration<E, U> a_enum, U a_shift) noexcept \
+		->enumeration<E, U>                                                                  \
+	{                                                                                        \
+		return static_cast<E>(static_cast<U>(a_enum.get()) a_op a_shift);                    \
+	}                                                                                        \
+                                                                                             \
+	template <                                                                               \
+		class E,                                                                             \
+		class U>                                                                             \
+	constexpr auto operator a_op##=(enumeration<E, U>& a_enum, U a_shift) noexcept           \
+		->enumeration<E, U>&                                                                 \
+	{                                                                                        \
+		return a_enum = a_enum a_op a_shift;                                                 \
+	}
+
+#define F4SE_MAKE_ENUMERATION_OP(a_op)                                                                      \
+	template <                                                                                              \
+		class E,                                                                                            \
+		class U1,                                                                                           \
+		class U2>                                                                                           \
+	[[nodiscard]] constexpr auto operator a_op(enumeration<E, U1> a_lhs, enumeration<E, U2> a_rhs) noexcept \
+		->enumeration<E, std::common_type_t<U1, U2>>                                                        \
+	{                                                                                                       \
+		return static_cast<E>(static_cast<U1>(a_lhs.get()) a_op static_cast<U2>(a_rhs.get()));              \
+	}                                                                                                       \
+                                                                                                            \
+	template <                                                                                              \
+		class E,                                                                                            \
+		class U>                                                                                            \
+	[[nodiscard]] constexpr auto operator a_op(enumeration<E, U> a_lhs, E a_rhs) noexcept                   \
+		->enumeration<E, U>                                                                                 \
+	{                                                                                                       \
+		return static_cast<E>(static_cast<U>(a_lhs.get()) a_op static_cast<U>(a_rhs));                      \
+	}                                                                                                       \
+                                                                                                            \
+	template <                                                                                              \
+		class E,                                                                                            \
+		class U1,                                                                                           \
+		class U2>                                                                                           \
+	constexpr auto operator a_op##=(enumeration<E, U1>& a_lhs, enumeration<E, U2> a_rhs) noexcept           \
+		->enumeration<E, U1>&                                                                               \
+	{                                                                                                       \
+		return a_lhs = a_lhs a_op a_rhs;                                                                    \
+	}                                                                                                       \
+                                                                                                            \
+	template <                                                                                              \
+		class E,                                                                                            \
+		class U>                                                                                            \
+	constexpr auto operator a_op##=(enumeration<E, U>& a_lhs, E a_rhs) noexcept                             \
+		->enumeration<E, U>&                                                                                \
+	{                                                                                                       \
+		return a_lhs = a_lhs a_op a_rhs;                                                                    \
+	}
+
+#define F4SE_MAKE_INCREMENTER_OP(a_op)                                                       \
+	template <                                                                               \
+		class E,                                                                             \
+		class U>                                                                             \
+	constexpr auto operator a_op##a_op(enumeration<E, U>& a_lhs) noexcept                    \
+		->enumeration<E, U>&                                                                 \
+	{                                                                                        \
+		return a_lhs a_op## = static_cast<E>(1);                                             \
+	}                                                                                        \
+                                                                                             \
+	template <                                                                               \
+		class E,                                                                             \
+		class U>                                                                             \
+	[[nodiscard]] constexpr auto operator a_op##a_op(enumeration<E, U>& a_lhs, int) noexcept \
+		->enumeration<E, U>                                                                  \
+	{                                                                                        \
+		auto	   tmp = a_lhs;                                                              \
+		a_op##a_op a_lhs;                                                                    \
+		return tmp;                                                                          \
+	}
+
+namespace F4SE
+{
+	namespace stl
+	{
+		template <
+			class E,
+			class U>
+		[[nodiscard]] constexpr auto operator~(enumeration<E, U> a_enum) noexcept
+			-> enumeration<E, U>
+		{
+			return static_cast<E>(~static_cast<U>(a_enum.get()));
+		}
+
+		F4SE_MAKE_LOGICAL_OP(==);
+		F4SE_MAKE_LOGICAL_OP(!=);
+		F4SE_MAKE_LOGICAL_OP(<);
+		F4SE_MAKE_LOGICAL_OP(<=);
+		F4SE_MAKE_LOGICAL_OP(>);
+		F4SE_MAKE_LOGICAL_OP(>=);
+
+		F4SE_MAKE_ARITHMETIC_OP(<<);
+		F4SE_MAKE_ENUMERATION_OP(<<);
+		F4SE_MAKE_ARITHMETIC_OP(>>);
+		F4SE_MAKE_ENUMERATION_OP(>>);
+
+		F4SE_MAKE_ENUMERATION_OP(|);
+		F4SE_MAKE_ENUMERATION_OP(&);
+		F4SE_MAKE_ENUMERATION_OP(^);
+
+		F4SE_MAKE_ENUMERATION_OP(+);
+		F4SE_MAKE_ENUMERATION_OP(-);
+
+		F4SE_MAKE_INCREMENTER_OP(+);  // ++
+		F4SE_MAKE_INCREMENTER_OP(-);  // --
+	}
+}
+
+#undef F4SE_MAKE_INCREMENTER_OP
+#undef F4SE_MAKE_ENUMERATION_OP
+#undef F4SE_MAKE_ARITHMETIC_OP
+#undef F4SE_MAKE_LOGICAL_OP
 
 namespace RE
 {
