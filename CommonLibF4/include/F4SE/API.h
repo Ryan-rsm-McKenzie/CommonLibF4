@@ -13,7 +13,7 @@ namespace F4SE
 	class TaskInterface;
 	class ObjectInterface;
 
-	[[nodiscard]] bool Init(const LoadInterface* a_intfc);
+	[[nodiscard]] bool Init(const LoadInterface* a_intfc) noexcept;
 
 	[[nodiscard]] PluginHandle	GetPluginHandle() noexcept;
 	[[nodiscard]] std::uint32_t GetReleaseIndex() noexcept;

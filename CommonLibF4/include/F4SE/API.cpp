@@ -1,6 +1,7 @@
 #include "API.h"
 
 #include "F4SE/Interfaces.h"
+#include "F4SE/Logger.h"
 
 namespace F4SE
 {
@@ -37,27 +38,32 @@ namespace F4SE
 		};
 	}
 
-	bool Init(const LoadInterface* a_intfc)
+	bool Init(const LoadInterface* a_intfc) noexcept
 	{
-		if (!a_intfc) {
+		try {
+			if (!a_intfc) {
+				throw std::runtime_error("interface is null");
+			}
+
+			(void)REL::Module::get();
+			(void)REL::IDDatabase::get();
+
+			auto&		storage = detail::APIStorage::get();
+			const auto& intfc = *a_intfc;
+
+			storage.pluginHandle = intfc.GetPluginHandle();
+			storage.releaseIndex = intfc.GetReleaseIndex();
+
+			storage.messagingInterface = static_cast<MessagingInterface*>(intfc.QueryInterface(LoadInterface::kMessaging));
+			storage.scaleformInterface = static_cast<ScaleformInterface*>(intfc.QueryInterface(LoadInterface::kScaleform));
+			storage.papyrusInterface = static_cast<PapyrusInterface*>(intfc.QueryInterface(LoadInterface::kPapyrus));
+			storage.serializationInterface = static_cast<SerializationInterface*>(intfc.QueryInterface(LoadInterface::kSerialization));
+			storage.taskInterface = static_cast<TaskInterface*>(intfc.QueryInterface(LoadInterface::kTask));
+			storage.objectInterface = static_cast<ObjectInterface*>(intfc.QueryInterface(LoadInterface::kObject));
+		} catch (const std::exception& e) {
+			log::error(e.what());
 			return false;
 		}
-
-		(void)REL::Module::get();
-		(void)REL::IDDatabase::get();
-
-		auto&		storage = detail::APIStorage::get();
-		const auto& intfc = *a_intfc;
-
-		storage.pluginHandle = intfc.GetPluginHandle();
-		storage.releaseIndex = intfc.GetReleaseIndex();
-
-		storage.messagingInterface = static_cast<MessagingInterface*>(intfc.QueryInterface(LoadInterface::kMessaging));
-		storage.scaleformInterface = static_cast<ScaleformInterface*>(intfc.QueryInterface(LoadInterface::kScaleform));
-		storage.papyrusInterface = static_cast<PapyrusInterface*>(intfc.QueryInterface(LoadInterface::kPapyrus));
-		storage.serializationInterface = static_cast<SerializationInterface*>(intfc.QueryInterface(LoadInterface::kSerialization));
-		storage.taskInterface = static_cast<TaskInterface*>(intfc.QueryInterface(LoadInterface::kTask));
-		storage.objectInterface = static_cast<ObjectInterface*>(intfc.QueryInterface(LoadInterface::kObject));
 
 		return true;
 	}

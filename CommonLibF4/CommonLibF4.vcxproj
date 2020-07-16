@@ -226,6 +226,7 @@
     <ClInclude Include="include\F4SE\F4SE.h" />
     <ClInclude Include="include\F4SE\Impl\PCH.h" />
     <ClInclude Include="include\F4SE\Interfaces.h" />
+    <ClInclude Include="include\F4SE\Logger.h" />
     <ClInclude Include="include\REL\Relocation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

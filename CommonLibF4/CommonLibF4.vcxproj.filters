@@ -30,6 +30,9 @@
     <ClInclude Include="include\F4SE\Interfaces.h">
       <Filter>include\F4SE</Filter>
     </ClInclude>
+    <ClInclude Include="include\F4SE\Logger.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
     <ClInclude Include="include\REL\Relocation.h">
       <Filter>include\REL</Filter>
     </ClInclude>

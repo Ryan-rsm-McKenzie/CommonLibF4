@@ -63,6 +63,7 @@
 #include <vector>
 
 #include <nonstd/span.hpp>
+#include <spdlog/spdlog.h>
 
 namespace F4SE
 {
