@@ -18,16 +18,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\F4SE\API.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\F4SE.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
     <ClInclude Include="include\F4SE\Impl\PCH.h">
       <Filter>include\F4SE\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Interfaces.h">
+      <Filter>include\F4SE</Filter>
     </ClInclude>
     <ClInclude Include="include\REL\Relocation.h">
       <Filter>include\REL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\F4SE\API.cpp">
+      <Filter>include\F4SE</Filter>
+    </ClCompile>
     <ClCompile Include="include\F4SE\Impl\PCH.cpp">
       <Filter>include\F4SE\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="include\F4SE\Interfaces.cpp">
+      <Filter>include\F4SE</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

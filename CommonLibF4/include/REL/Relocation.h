@@ -231,6 +231,10 @@ namespace REL
 			_impl(a_version)
 		{}
 
+		constexpr Version(value_type a_v1, value_type a_v2, value_type a_v3, value_type a_v4) noexcept :
+			_impl{ a_v1, a_v2, a_v3, a_v4 }
+		{}
+
 		[[nodiscard]] constexpr reference		operator[](std::size_t a_idx) noexcept { return _impl[a_idx]; }
 		[[nodiscard]] constexpr const_reference operator[](std::size_t a_idx) const noexcept { return _impl[a_idx]; }
 
@@ -301,8 +305,8 @@ namespace REL
 		{}
 
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-		[[nodiscard]] constexpr std::size_t	   offset() const noexcept { address() - _proxyBase; }
-		[[nodiscard]] constexpr std::size_t	   size() const noexcept { _size; }
+		[[nodiscard]] constexpr std::size_t	   offset() const noexcept { return address() - _proxyBase; }
+		[[nodiscard]] constexpr std::size_t	   size() const noexcept { return _size; }
 
 	private:
 		std::uintptr_t _proxyBase{ 0 };
@@ -395,7 +399,7 @@ namespace REL
 	class IDDatabase
 	{
 	public:
-		static inline IDDatabase& get()
+		[[nodiscard]] static inline IDDatabase& get()
 		{
 			static IDDatabase singleton;
 			return singleton;
@@ -735,10 +739,10 @@ namespace REL
 			class U = value_type,
 			std::enable_if_t<
 				std::conjunction_v<
-					std::is_pointer_v<U>,
+					std::is_pointer<U>,
 					std::disjunction<
-						std::is_class_v<U>,
-						std::is_enum_v<U>>>,
+						std::is_class<U>,
+						std::is_enum<U>>>,
 				int> = 0>
 		[[nodiscard]] auto operator->() const noexcept
 		{

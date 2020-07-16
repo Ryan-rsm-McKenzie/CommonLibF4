@@ -52,7 +52,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <functional>
 #include <memory>
+#include <optional>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -355,3 +357,5 @@ namespace REL
 	using namespace ::F4SE::util;
 	namespace stl = ::F4SE::stl;
 }
+
+#include "REL/Relocation.h"
