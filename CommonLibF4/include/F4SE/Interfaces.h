@@ -113,12 +113,12 @@ namespace F4SE
 		}
 
 	public:
-		[[nodiscard]] inline REL::Version  EditorVersion() const noexcept { return MakeVersion(GetProxy().editorVersion); }
-		[[nodiscard]] inline REL::Version  F4SEVersion() const noexcept { return MakeVersion(GetProxy().f4seVersion); }
-		[[nodiscard]] inline PluginHandle  GetPluginHandle() const { return GetProxy().GetPluginHandle(); }
+		[[nodiscard]] inline REL::Version EditorVersion() const noexcept { return MakeVersion(GetProxy().editorVersion); }
+		[[nodiscard]] inline REL::Version F4SEVersion() const noexcept { return MakeVersion(GetProxy().f4seVersion); }
+		[[nodiscard]] inline PluginHandle GetPluginHandle() const { return GetProxy().GetPluginHandle(); }
 		[[nodiscard]] inline std::uint32_t GetReleaseIndex() const { return GetProxy().GetReleaseIndex(); }
-		[[nodiscard]] inline bool		   IsEditor() const noexcept { return GetProxy().isEditor != 0; }
-		[[nodiscard]] inline REL::Version  RuntimeVersion() const noexcept { return MakeVersion(GetProxy().runtimeVersion); }
+		[[nodiscard]] inline bool IsEditor() const noexcept { return GetProxy().isEditor != 0; }
+		[[nodiscard]] inline REL::Version RuntimeVersion() const noexcept { return MakeVersion(GetProxy().runtimeVersion); }
 	};
 
 	class LoadInterface :
@@ -170,18 +170,18 @@ namespace F4SE
 
 		struct Message
 		{
-			const char*	  sender;
+			const char* sender;
 			std::uint32_t type;
 			std::uint32_t dataLen;
-			void*		  data;
+			void* data;
 		};
 
 		using EventCallback = void F4SEAPI(Message* a_msg);
 
 		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 
-		bool RegisterListener(const char* a_sender, EventCallback* a_handler) const;
-		bool Dispatch(std::uint32_t a_messageType, void* a_data, std::uint32_t a_dataLen, const char* a_receiver) const;
+		bool RegisterListener(stl::zstring a_sender, EventCallback* a_handler) const;
+		bool Dispatch(std::uint32_t a_messageType, void* a_data, std::uint32_t a_dataLen, stl::zstring a_receiver) const;
 
 		[[nodiscard]] void* GetEventDispatcher(std::uint32_t a_dispatcherID) const
 		{
@@ -207,10 +207,7 @@ namespace F4SE
 
 		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 
-		inline bool Register(const char* a_name, RegisterCallback* a_callback) const
-		{
-			return GetProxy().Register(a_name, a_callback);
-		}
+		bool Register(stl::zstring a_name, RegisterCallback* a_callback) const;
 	};
 
 	class SerializationInterface
@@ -227,7 +224,7 @@ namespace F4SE
 			kVersion = 1,
 		};
 
-		using EventCallback = void		F4SEAPI(const SerializationInterface* a_intfc);
+		using EventCallback = void F4SEAPI(const SerializationInterface* a_intfc);
 		using FormDeleteCallback = void F4SEAPI(std::uint64_t a_handle);
 
 		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().version; }
@@ -238,33 +235,12 @@ namespace F4SE
 		void SetLoadCallback(EventCallback* a_callback) const;
 		void SetFormDeleteCallback(FormDeleteCallback* a_callback) const;
 
-		inline bool WriteRecord(std::uint32_t a_type, std::uint32_t a_version, const void* a_buf, std::uint32_t a_length) const
-		{
-			return GetProxy().WriteRecord(a_type, a_version, a_buf, a_length);
-		}
+		bool WriteRecord(std::uint32_t a_type, std::uint32_t a_version, const void* a_buf, std::uint32_t a_length) const;
+		bool OpenRecord(std::uint32_t a_type, std::uint32_t a_version) const;
+		bool WriteRecordData(const void* a_buf, std::uint32_t a_length) const;
+		bool GetNextRecordInfo(std::uint32_t& a_type, std::uint32_t& a_version, std::uint32_t& a_length) const;
 
-		inline bool OpenRecord(std::uint32_t a_type, std::uint32_t a_version) const
-		{
-			return GetProxy().OpenRecord(a_type, a_version);
-		}
-
-		inline bool WriteRecordData(const void* a_buf, std::uint32_t a_length) const
-		{
-			return GetProxy().WriteRecordData(a_buf, a_length);
-		}
-
-		inline bool GetNextRecordInfo(std::uint32_t& a_type, std::uint32_t& a_version, std::uint32_t& a_length) const
-		{
-			return GetProxy().GetNextRecordInfo(
-				std::addressof(a_type),
-				std::addressof(a_version),
-				std::addressof(a_length));
-		}
-
-		inline std::uint32_t ReadRecordData(void* a_buf, std::uint32_t a_length) const
-		{
-			return GetProxy().ReadRecordData(a_buf, a_length);
-		}
+		std::uint32_t ReadRecordData(void* a_buf, std::uint32_t a_length) const;
 
 		[[nodiscard]] inline std::optional<std::uint64_t> ResolveHandle(std::uint64_t a_handle) const
 		{
@@ -306,11 +282,11 @@ namespace F4SE
 
 		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 
-		inline bool Register(RegisterFunctions* a_callback) const { return GetProxy().Register(a_callback); }
+		bool Register(RegisterFunctions* a_callback) const;
 
-		inline void GetExternalEventRegistrations(const char* a_eventName, void* a_data, RegistrantFunctor* a_functor) const
+		inline void GetExternalEventRegistrations(stl::zstring a_eventName, void* a_data, RegistrantFunctor* a_functor) const
 		{
-			GetProxy().GetExternalEventRegistrations(a_eventName, a_data, a_functor);
+			GetProxy().GetExternalEventRegistrations(a_eventName.data(), a_data, a_functor);
 		}
 	};
 
@@ -371,16 +347,16 @@ namespace F4SE
 			kVersion = 1
 		};
 
-		[[nodiscard]] inline std::uint32_t	   Version() const noexcept { return GetProxy().interfaceVersion; }
-		[[nodiscard]] DelayFunctorManager&	   GetDelayFunctorManager() const { return GetProxy().GetDelayFunctorManager(); }
-		[[nodiscard]] ObjectRegistry&		   GetObjectRegistry() const { return GetProxy().GetObjectRegistry(); }
+		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
+		[[nodiscard]] DelayFunctorManager& GetDelayFunctorManager() const { return GetProxy().GetDelayFunctorManager(); }
+		[[nodiscard]] ObjectRegistry& GetObjectRegistry() const { return GetProxy().GetObjectRegistry(); }
 		[[nodiscard]] PersistentObjectStorage& GetPersistentObjectStorage() const { return GetProxy().GetPersistentObjectStorage(); }
 	};
 
 	struct PluginInfo
 	{
 		std::uint32_t infoVersion;
-		const char*	  name;
+		const char* name;
 		std::uint32_t version;
 	};
 }

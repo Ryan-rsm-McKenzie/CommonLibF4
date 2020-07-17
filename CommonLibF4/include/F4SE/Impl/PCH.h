@@ -1,13 +1,13 @@
 #pragma once
 
-#define WINVER		 0x0601	 // Windows 7
+#define WINVER 0x0601  // Windows 7
 #define _WIN32_WINNT 0x0601
 
 #define WIN32_LEAN_AND_MEAN
 
 #define NOGDICAPMASKS
 #define NOVIRTUALKEYCODES
-#define NOWINMESSAGES
+//#define NOWINMESSAGES
 #define NOWINSTYLES
 #define NOSYSMETRICS
 #define NOMENUS
@@ -20,17 +20,17 @@
 #define NOATOM
 #define NOCLIPBOARD
 #define NOCOLOR
-#define NOCTLMGR
+//#define NOCTLMGR
 #define NODRAWTEXT
 #define NOGDI
 #define NOKERNEL
-#define NOUSER
+//#define NOUSER
 #define NONLS
 #define NOMB
 #define NOMEMMGR
 #define NOMETAFILE
 #define NOMINMAX
-#define NOMSG
+//#define NOMSG
 #define NOOPENFILE
 #define NOSCROLL
 #define NOSERVICE
@@ -47,12 +47,16 @@
 
 #include <Windows.h>
 
+#include <ShlObj.h>
+
 #include <array>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <filesystem>
 #include <functional>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <sstream>
@@ -114,7 +118,7 @@ namespace F4SE
 				union
 				{
 					std::remove_cv_t<std::remove_reference_t<From>> from;
-					std::remove_cv_t<std::remove_reference_t<To>>	to;
+					std::remove_cv_t<std::remove_reference_t<To>> to;
 				};
 
 				from = std::forward<From>(a_from);
@@ -141,6 +145,9 @@ namespace F4SE
 	namespace stl
 	{
 		using nonstd::span;
+
+		using zstring = std::string_view;
+		using zwstring = std::wstring_view;
 
 		template <class, class, class = void>
 		class enumeration;
@@ -298,7 +305,7 @@ namespace F4SE
 	[[nodiscard]] constexpr auto operator a_op##a_op(enumeration<E, U>& a_lhs, int) noexcept \
 		->enumeration<E, U>                                                                  \
 	{                                                                                        \
-		auto	   tmp = a_lhs;                                                              \
+		auto tmp = a_lhs;                                                                    \
 		a_op##a_op a_lhs;                                                                    \
 		return tmp;                                                                          \
 	}

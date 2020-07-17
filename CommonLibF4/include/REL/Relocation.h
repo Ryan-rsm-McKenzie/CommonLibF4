@@ -152,7 +152,7 @@ namespace REL
 			class F,
 			class First,
 			class... Rest>
-		decltype(auto) invoke_member_function_non_pod(F&& a_func, First&& a_first, Rest&&... a_rest) noexcept(
+		inline decltype(auto) invoke_member_function_non_pod(F&& a_func, First&& a_first, Rest&&... a_rest) noexcept(
 			std::is_nothrow_invocable_v<F, First, Rest...>)
 		{
 			using result_t = std::invoke_result_t<F, First, Rest...>;
@@ -171,7 +171,7 @@ namespace REL
 		std::enable_if_t<
 			std::is_invocable_v<F, Args...>,
 			int> = 0>
-	std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args) noexcept(
+	inline std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args) noexcept(
 		std::is_nothrow_invocable<F, Args...>)
 	{
 		if constexpr (std::is_function_v<F>) {
@@ -189,9 +189,9 @@ namespace REL
 		}
 	}
 
-	void safe_write(std::uintptr_t a_dst, const void* a_src, std::size_t a_count)
+	inline void safe_write(std::uintptr_t a_dst, const void* a_src, std::size_t a_count)
 	{
-		DWORD				  old{ 0 };
+		DWORD old{ 0 };
 		[[maybe_unused]] BOOL success{ false };
 		success = VirtualProtect(reinterpret_cast<void*>(a_dst), a_count, PAGE_EXECUTE_READWRITE, std::addressof(old));
 		if (success != 0) {
@@ -203,20 +203,20 @@ namespace REL
 	}
 
 	template <class T>
-	void safe_write(std::uintptr_t a_dst, T* a_data)
+	inline void safe_write(std::uintptr_t a_dst, const T& a_data)
 	{
-		safe_write(a_dst, a_data, sizeof(T));
+		safe_write(a_dst, std::addressof(a_data), sizeof(T));
 	}
 
-	void safe_write(std::uintptr_t a_dst, char a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	void safe_write(std::uintptr_t a_dst, std::uint8_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	void safe_write(std::uintptr_t a_dst, std::int8_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	void safe_write(std::uintptr_t a_dst, std::uint16_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	void safe_write(std::uintptr_t a_dst, std::int16_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	void safe_write(std::uintptr_t a_dst, std::uint32_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	void safe_write(std::uintptr_t a_dst, std::int32_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	void safe_write(std::uintptr_t a_dst, std::uint64_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	void safe_write(std::uintptr_t a_dst, std::int64_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, char a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, std::uint8_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, std::int8_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, std::uint16_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, std::int16_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, std::uint32_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, std::int32_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, std::uint64_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
+	inline void safe_write(std::uintptr_t a_dst, std::int64_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
 
 	class Version
 	{
@@ -235,7 +235,7 @@ namespace REL
 			_impl{ a_v1, a_v2, a_v3, a_v4 }
 		{}
 
-		[[nodiscard]] constexpr reference		operator[](std::size_t a_idx) noexcept { return _impl[a_idx]; }
+		[[nodiscard]] constexpr reference operator[](std::size_t a_idx) noexcept { return _impl[a_idx]; }
 		[[nodiscard]] constexpr const_reference operator[](std::size_t a_idx) const noexcept { return _impl[a_idx]; }
 
 		[[nodiscard]] int constexpr compare(const Version& a_rhs) const noexcept
@@ -305,13 +305,21 @@ namespace REL
 		{}
 
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-		[[nodiscard]] constexpr std::size_t	   offset() const noexcept { return address() - _proxyBase; }
-		[[nodiscard]] constexpr std::size_t	   size() const noexcept { return _size; }
+		[[nodiscard]] constexpr std::size_t offset() const noexcept { return address() - _proxyBase; }
+		[[nodiscard]] constexpr std::size_t size() const noexcept { return _size; }
+
+		[[nodiscard]] inline void* pointer() const noexcept { return reinterpret_cast<void*>(address()); }
+
+		template <class T>
+		[[nodiscard]] inline T* pointer() const noexcept
+		{
+			return static_cast<T*>(pointer());
+		}
 
 	private:
 		std::uintptr_t _proxyBase{ 0 };
 		std::uintptr_t _address{ 0 };
-		std::size_t	   _size{ 0 };
+		std::size_t _size{ 0 };
 	};
 
 	class Module
@@ -324,9 +332,17 @@ namespace REL
 		}
 
 		[[nodiscard]] constexpr std::uintptr_t base() const noexcept { return _base; }
-		[[nodiscard]] constexpr Version		   version() const noexcept { return _version; }
+		[[nodiscard]] constexpr Version version() const noexcept { return _version; }
 
 		[[nodiscard]] constexpr Segment segment(Segment::Name a_segment) noexcept { return _segments[a_segment]; }
+
+		[[nodiscard]] inline void* pointer() const noexcept { return reinterpret_cast<void*>(base()); }
+
+		template <class T>
+		[[nodiscard]] inline T* pointer() const noexcept
+		{
+			return static_cast<T*>(pointer());
+		}
 
 	private:
 		inline Module() { load(); }
@@ -353,10 +369,10 @@ namespace REL
 
 		inline void load_segments()
 		{
-			auto		dosHeader = reinterpret_cast<const IMAGE_DOS_HEADER*>(_base);
-			auto		ntHeader = adjust_pointer<IMAGE_NT_HEADERS64>(dosHeader, dosHeader->e_lfanew);
+			auto dosHeader = reinterpret_cast<const IMAGE_DOS_HEADER*>(_base);
+			auto ntHeader = adjust_pointer<IMAGE_NT_HEADERS64>(dosHeader, dosHeader->e_lfanew);
 			const auto* sections = IMAGE_FIRST_SECTION(ntHeader);
-			const auto	size = std::min<std::size_t>(ntHeader->FileHeader.NumberOfSections, _segments.size());
+			const auto size = std::min<std::size_t>(ntHeader->FileHeader.NumberOfSections, _segments.size());
 			for (std::size_t i = 0; i < size; ++i) {
 				const auto& section = sections[i];
 				_segments[i] = Segment{ _base, _base + section.VirtualAddress, section.Misc.VirtualSize };
@@ -365,7 +381,7 @@ namespace REL
 
 		inline void load_version()
 		{
-			DWORD			  dummy;
+			DWORD dummy;
 			std::vector<char> buf(GetFileVersionInfoSizeW(FILENAME.data(), std::addressof(dummy)));
 			if (buf.size() == 0) {
 				throw std::runtime_error("Failed to obtain file version info size"s);
@@ -376,7 +392,7 @@ namespace REL
 			}
 
 			LPVOID verBuf;
-			UINT   verLen;
+			UINT verLen;
 			if (!VerQueryValueW(buf.data(), L"\\StringFileInfo\\040904B0\\ProductVersion", std::addressof(verBuf), std::addressof(verLen))) {
 				throw std::runtime_error("Failed to query value"s);
 			}
@@ -392,8 +408,8 @@ namespace REL
 		static constexpr auto FILENAME = L"Fallout4.exe"sv;
 
 		std::array<Segment, Segment::total> _segments;
-		Version								_version;
-		std::uintptr_t						_base{ 0 };
+		Version _version;
+		std::uintptr_t _base{ 0 };
 	};
 
 	class IDDatabase
@@ -412,13 +428,13 @@ namespace REL
 			}
 
 			mapping elem{ a_id, 0 };
-			auto	it = std::lower_bound(
-				   _id2offset.begin(),
-				   _id2offset.end(),
-				   elem,
-				   [](auto&& a_lhs, auto&& a_rhs) {
-					   return a_lhs.id < a_rhs.id;
-				   });
+			auto it = std::lower_bound(
+				_id2offset.begin(),
+				_id2offset.end(),
+				elem,
+				[](auto&& a_lhs, auto&& a_rhs) {
+					return a_lhs.id < a_rhs.id;
+				});
 			if (it == _id2offset.end()) {
 				throw std::runtime_error("id not found"s);
 			}
@@ -434,13 +450,13 @@ namespace REL
 			}
 
 			mapping elem{ 0, a_offset };
-			auto	it = std::lower_bound(
-				   _offset2id.begin(),
-				   _offset2id.end(),
-				   elem,
-				   [](auto&& a_lhs, auto&& a_rhs) {
-					   return a_lhs.offset < a_rhs.offset;
-				   });
+			auto it = std::lower_bound(
+				_offset2id.begin(),
+				_offset2id.end(),
+				elem,
+				[](auto&& a_lhs, auto&& a_rhs) {
+					return a_lhs.offset < a_rhs.offset;
+				});
 			if (it == _offset2id.end()) {
 				throw std::runtime_error("offset not found"s);
 			}
@@ -485,7 +501,7 @@ namespace REL
 				return *this;
 			}
 
-			inline void map(std::wstring_view a_fileName)
+			inline void map(stl::zwstring a_fileName)
 			{
 				_file = CreateFileW(
 					a_fileName.data(),
@@ -548,8 +564,8 @@ namespace REL
 			[[nodiscard]] constexpr const std::byte* data() const noexcept { return static_cast<const std::byte*>(_view); }
 
 		private:
-			HANDLE		_file{ INVALID_HANDLE_VALUE };
-			HANDLE		_mapping{ nullptr };
+			HANDLE _file{ INVALID_HANDLE_VALUE };
+			HANDLE _mapping{ nullptr };
 			const void* _view{ nullptr };
 		};
 
@@ -571,7 +587,7 @@ namespace REL
 
 		inline void load()
 		{
-			const auto	 version = Module::get().version();
+			const auto version = Module::get().version();
 			std::wstring path(L"F4SE/Plugins/version-"sv);
 			path += version.wstring();
 			path += L".bin"sv;
@@ -594,7 +610,7 @@ namespace REL
 #endif
 		}
 
-		memory_map				 _mmap;
+		memory_map _mmap;
 		stl::span<const mapping> _id2offset;
 #ifndef NDEBUG
 		std::vector<mapping> _offset2id;
@@ -617,7 +633,7 @@ namespace REL
 		}
 
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-		[[nodiscard]] inline std::size_t	   offset() const { return address() - base(); }
+		[[nodiscard]] inline std::size_t offset() const { return address() - base(); }
 
 	private:
 		[[nodiscard]] static inline std::uintptr_t base() { return Module::get().base(); }
@@ -641,11 +657,11 @@ namespace REL
 		}
 
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-		[[nodiscard]] inline std::size_t	   offset() const { return address() - base(); }
+		[[nodiscard]] inline std::size_t offset() const { return address() - base(); }
 
 	private:
 		[[nodiscard]] static inline std::uintptr_t base() { return Module::get().base(); }
-		[[nodiscard]] static inline std::size_t	   convert(std::uint64_t a_id) { return IDDatabase::get().id2offset(a_id); }
+		[[nodiscard]] static inline std::size_t convert(std::uint64_t a_id) { return IDDatabase::get().id2offset(a_id); }
 
 		std::uintptr_t _address{ 0 };
 	};
@@ -761,7 +777,7 @@ namespace REL
 		}
 
 		[[nodiscard]] std::uintptr_t address() const { return unrestricted_cast<std::uintptr_t>(_impl); }
-		[[nodiscard]] std::size_t	 offset() const { offset() - base(); }
+		[[nodiscard]] std::size_t offset() const { offset() - base(); }
 
 	private:
 		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }

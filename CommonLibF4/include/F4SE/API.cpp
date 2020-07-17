@@ -10,24 +10,24 @@ namespace F4SE
 		struct APIStorage
 		{
 		public:
-			[[nodiscard]] static APIStorage& get()
+			[[nodiscard]] static APIStorage& get() noexcept
 			{
 				static APIStorage singleton;
 				return singleton;
 			}
 
-			PluginHandle  pluginHandle{ static_cast<PluginHandle>(-1) };
+			PluginHandle pluginHandle{ static_cast<PluginHandle>(-1) };
 			std::uint32_t releaseIndex{ 0 };
 
-			MessagingInterface*		messagingInterface{ nullptr };
-			ScaleformInterface*		scaleformInterface{ nullptr };
-			PapyrusInterface*		papyrusInterface{ nullptr };
+			MessagingInterface* messagingInterface{ nullptr };
+			ScaleformInterface* scaleformInterface{ nullptr };
+			PapyrusInterface* papyrusInterface{ nullptr };
 			SerializationInterface* serializationInterface{ nullptr };
-			TaskInterface*			taskInterface{ nullptr };
-			ObjectInterface*		objectInterface{ nullptr };
+			TaskInterface* taskInterface{ nullptr };
+			ObjectInterface* objectInterface{ nullptr };
 
 		private:
-			APIStorage() = default;
+			APIStorage() noexcept = default;
 			APIStorage(const APIStorage&) = delete;
 			APIStorage(APIStorage&&) = delete;
 
@@ -42,13 +42,13 @@ namespace F4SE
 	{
 		try {
 			if (!a_intfc) {
-				throw std::runtime_error("interface is null");
+				throw std::runtime_error("interface is null"s);
 			}
 
 			(void)REL::Module::get();
 			(void)REL::IDDatabase::get();
 
-			auto&		storage = detail::APIStorage::get();
+			auto& storage = detail::APIStorage::get();
 			const auto& intfc = *a_intfc;
 
 			storage.pluginHandle = intfc.GetPluginHandle();

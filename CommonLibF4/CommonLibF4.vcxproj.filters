@@ -33,6 +33,9 @@
     <ClInclude Include="include\F4SE\Logger.h">
       <Filter>include\F4SE</Filter>
     </ClInclude>
+    <ClInclude Include="include\F4SE\Trampoline.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
     <ClInclude Include="include\REL\Relocation.h">
       <Filter>include\REL</Filter>
     </ClInclude>
@@ -45,6 +48,9 @@
       <Filter>include\F4SE\Impl</Filter>
     </ClCompile>
     <ClCompile Include="include\F4SE\Interfaces.cpp">
+      <Filter>include\F4SE</Filter>
+    </ClCompile>
+    <ClCompile Include="include\F4SE\Trampoline.cpp">
       <Filter>include\F4SE</Filter>
     </ClCompile>
   </ItemGroup>

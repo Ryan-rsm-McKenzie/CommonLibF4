@@ -11,7 +11,7 @@
 			spdlog::string_view_t a_fmt,                                                                                                        \
 			const Args&... a_args,                                                                                                              \
 			const char* a_file = __builtin_FILE(),                                                                                              \
-			int			a_line = __builtin_LINE(),                                                                                              \
+			int a_line = __builtin_LINE(),                                                                                                      \
 			const char* a_function = __builtin_FUNCTION())                                                                                      \
 		{                                                                                                                                       \
 			spdlog::log(spdlog::source_loc{ a_file, a_line, a_function }, spdlog::level::a_type, a_fmt, a_args...);                             \
@@ -23,9 +23,9 @@
 	{                                                                                                                                           \
 		a_func(                                                                                                                                 \
 			spdlog::string_view_t a_fmt,                                                                                                        \
-			const char*			  a_file = __builtin_FILE(),                                                                                    \
-			int					  a_line = __builtin_LINE(),                                                                                    \
-			const char*			  a_function = __builtin_FUNCTION())                                                                            \
+			const char* a_file = __builtin_FILE(),                                                                                              \
+			int a_line = __builtin_LINE(),                                                                                                      \
+			const char* a_function = __builtin_FUNCTION())                                                                                      \
 		{                                                                                                                                       \
 			spdlog::log(spdlog::source_loc{ a_file, a_line, a_function }, spdlog::level::a_type, std::string_view(a_fmt.data(), a_fmt.size())); \
 		}                                                                                                                                       \
@@ -44,6 +44,20 @@ namespace F4SE
 		F4SE_MAKE_SOURCE_LOGGER(warn, warn);
 		F4SE_MAKE_SOURCE_LOGGER(error, err);
 		F4SE_MAKE_SOURCE_LOGGER(critical, critical);
+
+		[[nodiscard]] inline std::filesystem::path log_directory()
+		{
+			wchar_t* buffer{ nullptr };
+			auto result = SHGetKnownFolderPath(FOLDERID_Documents, KNOWN_FOLDER_FLAG::KF_FLAG_DEFAULT, nullptr, std::addressof(buffer));
+			std::unique_ptr<wchar_t[], decltype(&CoTaskMemFree)> knownPath(buffer, CoTaskMemFree);
+			if (!knownPath || result != S_OK) {
+				throw std::runtime_error("failed to get known folder path"s);
+			}
+
+			std::filesystem::path path = knownPath.get();
+			path /= "My Games/Fallout4/F4SE"sv;
+			return path;
+		}
 	}
 }
 

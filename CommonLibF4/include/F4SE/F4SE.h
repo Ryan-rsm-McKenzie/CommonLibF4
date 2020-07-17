@@ -4,3 +4,5 @@
 
 #include "F4SE/API.h"
 #include "F4SE/Interfaces.h"
+#include "F4SE/Logger.h"
+#include "F4SE/Trampoline.h"

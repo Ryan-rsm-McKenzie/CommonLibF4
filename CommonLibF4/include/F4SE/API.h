@@ -15,13 +15,13 @@ namespace F4SE
 
 	[[nodiscard]] bool Init(const LoadInterface* a_intfc) noexcept;
 
-	[[nodiscard]] PluginHandle	GetPluginHandle() noexcept;
+	[[nodiscard]] PluginHandle GetPluginHandle() noexcept;
 	[[nodiscard]] std::uint32_t GetReleaseIndex() noexcept;
 
-	[[nodiscard]] const MessagingInterface*		GetMessagingInterface() noexcept;
-	[[nodiscard]] const ScaleformInterface*		GetScaleformInterface() noexcept;
-	[[nodiscard]] const PapyrusInterface*		GetPapyrusInterface() noexcept;
+	[[nodiscard]] const MessagingInterface* GetMessagingInterface() noexcept;
+	[[nodiscard]] const ScaleformInterface* GetScaleformInterface() noexcept;
+	[[nodiscard]] const PapyrusInterface* GetPapyrusInterface() noexcept;
 	[[nodiscard]] const SerializationInterface* GetSerializationInterface() noexcept;
-	[[nodiscard]] const TaskInterface*			GetTaskInterface() noexcept;
-	[[nodiscard]] const ObjectInterface*		GetObjectInterface() noexcept;
+	[[nodiscard]] const TaskInterface* GetTaskInterface() noexcept;
+	[[nodiscard]] const ObjectInterface* GetObjectInterface() noexcept;
 }
