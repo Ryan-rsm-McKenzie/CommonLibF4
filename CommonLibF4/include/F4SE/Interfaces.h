@@ -181,7 +181,7 @@ namespace F4SE
 		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 
 		bool RegisterListener(stl::zstring a_sender, EventCallback* a_handler) const;
-		bool Dispatch(std::uint32_t a_messageType, void* a_data, std::uint32_t a_dataLen, stl::zstring a_receiver) const;
+		bool Dispatch(std::uint32_t a_messageType, void* a_data, std::uint32_t a_dataLen, const char* a_receiver) const;
 
 		[[nodiscard]] void* GetEventDispatcher(std::uint32_t a_dispatcherID) const
 		{

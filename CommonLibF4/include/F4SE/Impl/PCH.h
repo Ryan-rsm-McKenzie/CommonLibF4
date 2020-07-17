@@ -397,15 +397,15 @@ namespace F4SE
 namespace RE
 {
 	using namespace std::literals;
-	using namespace ::F4SE::util;
-	namespace stl = ::F4SE::stl;
+	using namespace F4SE::util;
+	namespace stl = F4SE::stl;
 }
 
 namespace REL
 {
 	using namespace std::literals;
-	using namespace ::F4SE::util;
-	namespace stl = ::F4SE::stl;
+	using namespace F4SE::util;
+	namespace stl = F4SE::stl;
 }
 
 #include "REL/Relocation.h"

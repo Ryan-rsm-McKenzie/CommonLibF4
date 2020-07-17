@@ -18,7 +18,7 @@ namespace F4SE
 		return success;
 	}
 
-	bool MessagingInterface::Dispatch(std::uint32_t a_messageType, void* a_data, std::uint32_t a_dataLen, stl::zstring a_receiver) const
+	bool MessagingInterface::Dispatch(std::uint32_t a_messageType, void* a_data, std::uint32_t a_dataLen, const char* a_receiver) const
 	{
 		const auto success =
 			GetProxy().Dispatch(
@@ -26,9 +26,9 @@ namespace F4SE
 				a_messageType,
 				a_data,
 				a_dataLen,
-				a_receiver.data());
+				a_receiver);
 		if (!success) {
-			log::warn("failed to dispatch to {}", a_receiver);
+			log::warn("failed to dispatch to {}", (a_receiver ? a_receiver : "all listeners"));
 		}
 		return success;
 	}
