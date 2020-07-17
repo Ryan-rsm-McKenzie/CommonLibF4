@@ -149,6 +149,48 @@ namespace F4SE
 		using zstring = std::string_view;
 		using zwstring = std::wstring_view;
 
+		struct source_location
+		{
+		public:
+			constexpr source_location() noexcept = default;
+			constexpr source_location(const source_location&) noexcept = default;
+			constexpr source_location(source_location&&) noexcept = default;
+
+			~source_location() noexcept = default;
+
+			constexpr source_location& operator=(const source_location&) noexcept = default;
+			constexpr source_location& operator=(source_location&&) noexcept = default;
+
+			[[nodiscard]] static constexpr source_location current(
+				std::uint_least32_t a_line = __builtin_LINE(),
+				std::uint_least32_t a_column = __builtin_COLUMN(),
+				const char* a_fileName = __builtin_FILE(),
+				const char* a_functionName = __builtin_FUNCTION()) noexcept { return { a_line, a_column, a_fileName, a_functionName }; }
+
+			[[nodiscard]] constexpr std::uint_least32_t line() const noexcept { return _line; }
+			[[nodiscard]] constexpr std::uint_least32_t column() const noexcept { return _column; }
+			[[nodiscard]] constexpr const char* file_name() const noexcept { return _fileName; }
+			[[nodiscard]] constexpr const char* function_name() const noexcept { return _functionName; }
+
+		protected:
+			constexpr source_location(
+				std::uint_least32_t a_line,
+				std::uint_least32_t a_column,
+				const char* a_fileName,
+				const char* a_functionName) noexcept :
+				_line(a_line),
+				_column(a_column),
+				_fileName(a_fileName),
+				_functionName(a_functionName)
+			{}
+
+		private:
+			std::uint_least32_t _line{ 0 };
+			std::uint_least32_t _column{ 0 };
+			const char* _fileName{ "" };
+			const char* _functionName{ "" };
+		};
+
 		template <class, class, class = void>
 		class enumeration;
 

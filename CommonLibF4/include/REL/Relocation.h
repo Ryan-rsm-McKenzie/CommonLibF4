@@ -56,6 +56,17 @@
 	REL_MAKE_MEMBER_FUNCTION_NON_POD_TYPE_HELPER(&, ##__VA_ARGS__) \
 	REL_MAKE_MEMBER_FUNCTION_NON_POD_TYPE_HELPER(&&, ##__VA_ARGS__)
 
+#define REL_THROW_EXCEPTION(a_what)                       \
+	{                                                     \
+		const auto src = stl::source_location::current(); \
+		throw std::runtime_error(                         \
+			fmt::format(                                  \
+				FMT_STRING("{}({}): {}"),                 \
+				src.file_name(),                          \
+				src.line(),                               \
+				a_what##sv));                             \
+	}
+
 namespace REL
 {
 	class ID;
@@ -325,7 +336,7 @@ namespace REL
 	class Module
 	{
 	public:
-		[[nodiscard]] static inline Module& get() noexcept
+		[[nodiscard]] static inline Module& get()
 		{
 			static Module singleton;
 			return singleton;
@@ -359,7 +370,7 @@ namespace REL
 		{
 			auto handle = GetModuleHandleW(FILENAME.data());
 			if (handle == nullptr) {
-				throw std::runtime_error("Failed to obtain module handle"s);
+				REL_THROW_EXCEPTION("failed to obtain module handle");
 			}
 			_base = reinterpret_cast<std::uintptr_t>(handle);
 
@@ -384,23 +395,23 @@ namespace REL
 			DWORD dummy;
 			std::vector<char> buf(GetFileVersionInfoSizeW(FILENAME.data(), std::addressof(dummy)));
 			if (buf.size() == 0) {
-				throw std::runtime_error("Failed to obtain file version info size"s);
+				REL_THROW_EXCEPTION("failed to obtain file version info size");
 			}
 
 			if (!GetFileVersionInfoW(FILENAME.data(), 0, static_cast<DWORD>(buf.size()), buf.data())) {
-				throw std::runtime_error("Failed to obtain file version info"s);
+				REL_THROW_EXCEPTION("failed to obtain file version info");
 			}
 
 			LPVOID verBuf;
 			UINT verLen;
 			if (!VerQueryValueW(buf.data(), L"\\StringFileInfo\\040904B0\\ProductVersion", std::addressof(verBuf), std::addressof(verLen))) {
-				throw std::runtime_error("Failed to query value"s);
+				REL_THROW_EXCEPTION("failed to query value");
 			}
 
-			std::istringstream ss(
-				std::string(static_cast<const char*>(verBuf), verLen));
-			std::string token;
-			for (std::size_t i = 0; i < 4 && std::getline(ss, token, '.'); ++i) {
+			std::wistringstream ss(
+				std::wstring(static_cast<const wchar_t*>(verBuf), verLen));
+			std::wstring token;
+			for (std::size_t i = 0; i < 4 && std::getline(ss, token, L'.'); ++i) {
 				_version[i] = static_cast<std::uint16_t>(std::stoi(token));
 			}
 		}
@@ -424,7 +435,7 @@ namespace REL
 		[[nodiscard]] inline std::size_t id2offset(std::uint64_t a_id)
 		{
 			if (_id2offset.empty()) {
-				throw std::runtime_error("data is empty"s);
+				REL_THROW_EXCEPTION("data is empty");
 			}
 
 			mapping elem{ a_id, 0 };
@@ -436,7 +447,7 @@ namespace REL
 					return a_lhs.id < a_rhs.id;
 				});
 			if (it == _id2offset.end()) {
-				throw std::runtime_error("id not found"s);
+				REL_THROW_EXCEPTION("id not found");
 			}
 
 			return static_cast<std::size_t>(it->offset);
@@ -446,7 +457,7 @@ namespace REL
 		[[nodiscard]] inline std::uint64_t offset2id(std::size_t a_offset)
 		{
 			if (_offset2id.empty()) {
-				throw std::runtime_error("data is empty"s);
+				REL_THROW_EXCEPTION("data is empty");
 			}
 
 			mapping elem{ 0, a_offset };
@@ -458,7 +469,7 @@ namespace REL
 					return a_lhs.offset < a_rhs.offset;
 				});
 			if (it == _offset2id.end()) {
-				throw std::runtime_error("offset not found"s);
+				REL_THROW_EXCEPTION("offset not found");
 			}
 
 			return it->id;
@@ -512,7 +523,7 @@ namespace REL
 					FILE_ATTRIBUTE_NORMAL,
 					nullptr);
 				if (_file == INVALID_HANDLE_VALUE) {
-					throw std::runtime_error("failed to create file"s);
+					REL_THROW_EXCEPTION("failed to create file");
 				}
 
 				_mapping = CreateFileMappingW(
@@ -523,7 +534,7 @@ namespace REL
 					0,
 					a_fileName.data());
 				if (_mapping == nullptr) {
-					throw std::runtime_error("failed to create file mapping"s);
+					REL_THROW_EXCEPTION("failed to create file mapping");
 				}
 
 				_view = MapViewOfFile(
@@ -533,7 +544,7 @@ namespace REL
 					0,
 					0);
 				if (_view == nullptr) {
-					throw std::runtime_error("failed to map view of file"s);
+					REL_THROW_EXCEPTION("failed to map view of file");
 				}
 			}
 
@@ -588,7 +599,7 @@ namespace REL
 		inline void load()
 		{
 			const auto version = Module::get().version();
-			std::wstring path(L"F4SE/Plugins/version-"sv);
+			std::wstring path(L"Data/F4SE/Plugins/version-"sv);
 			path += version.wstring();
 			path += L".bin"sv;
 
@@ -785,6 +796,8 @@ namespace REL
 		value_type _impl;
 	};
 }
+
+#undef REL_THROW_EXCEPTION
 
 #undef REL_MAKE_MEMBER_FUNCTION_NON_POD_TYPE
 #undef REL_MAKE_MEMBER_FUNCTION_NON_POD_TYPE_HELPER

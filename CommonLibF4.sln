@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AddressLibGen", "AddressLib
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AddressLibDecoder", "AddressLibDecoder\AddressLibDecoder.vcxproj", "{AD99ED08-FDCD-4854-9942-DED0D4AC9673}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ExampleProject", "ExampleProject\ExampleProject.vcxproj", "{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{AD99ED08-FDCD-4854-9942-DED0D4AC9673}.Release|x64.Build.0 = Release|x64
 		{AD99ED08-FDCD-4854-9942-DED0D4AC9673}.Release|x86.ActiveCfg = Release|Win32
 		{AD99ED08-FDCD-4854-9942-DED0D4AC9673}.Release|x86.Build.0 = Release|Win32
+		{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}.Debug|x64.ActiveCfg = Debug|x64
+		{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}.Debug|x64.Build.0 = Debug|x64
+		{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}.Debug|x86.ActiveCfg = Debug|Win32
+		{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}.Debug|x86.Build.0 = Debug|Win32
+		{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}.Release|x64.ActiveCfg = Release|x64
+		{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}.Release|x64.Build.0 = Release|x64
+		{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}.Release|x86.ActiveCfg = Release|Win32
+		{851C96A4-BCE4-4BC2-9A29-4AE40B78358B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -36,6 +36,16 @@ namespace F4SE
 			APIStorage& operator=(const APIStorage&) = delete;
 			APIStorage& operator=(APIStorage&&) = delete;
 		};
+
+		template <class T>
+		T* QueryInterface(const LoadInterface* a_intfc, std::uint32_t a_id)
+		{
+			auto result = static_cast<T*>(a_intfc->QueryInterface(a_id));
+			if (result && result->Version() > T::kVersion) {
+				log::warn("interface definition is out of date");
+			}
+			return result;
+		}
 	}
 
 	bool Init(const LoadInterface* a_intfc) noexcept
@@ -54,12 +64,12 @@ namespace F4SE
 			storage.pluginHandle = intfc.GetPluginHandle();
 			storage.releaseIndex = intfc.GetReleaseIndex();
 
-			storage.messagingInterface = static_cast<MessagingInterface*>(intfc.QueryInterface(LoadInterface::kMessaging));
-			storage.scaleformInterface = static_cast<ScaleformInterface*>(intfc.QueryInterface(LoadInterface::kScaleform));
-			storage.papyrusInterface = static_cast<PapyrusInterface*>(intfc.QueryInterface(LoadInterface::kPapyrus));
-			storage.serializationInterface = static_cast<SerializationInterface*>(intfc.QueryInterface(LoadInterface::kSerialization));
-			storage.taskInterface = static_cast<TaskInterface*>(intfc.QueryInterface(LoadInterface::kTask));
-			storage.objectInterface = static_cast<ObjectInterface*>(intfc.QueryInterface(LoadInterface::kObject));
+			storage.messagingInterface = detail::QueryInterface<MessagingInterface>(a_intfc, LoadInterface::kMessaging);
+			storage.scaleformInterface = detail::QueryInterface<ScaleformInterface>(a_intfc, LoadInterface::kScaleform);
+			storage.papyrusInterface = detail::QueryInterface<PapyrusInterface>(a_intfc, LoadInterface::kPapyrus);
+			storage.serializationInterface = detail::QueryInterface<SerializationInterface>(a_intfc, LoadInterface::kSerialization);
+			storage.taskInterface = detail::QueryInterface<TaskInterface>(a_intfc, LoadInterface::kTask);
+			storage.objectInterface = detail::QueryInterface<ObjectInterface>(a_intfc, LoadInterface::kObject);
 		} catch (const std::exception& e) {
 			log::error(e.what());
 			return false;

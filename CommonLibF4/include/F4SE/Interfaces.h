@@ -355,6 +355,11 @@ namespace F4SE
 
 	struct PluginInfo
 	{
+		enum : std::uint32_t
+		{
+			kVersion = 1
+		};
+
 		std::uint32_t infoVersion;
 		const char* name;
 		std::uint32_t version;

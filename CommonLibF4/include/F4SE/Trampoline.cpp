@@ -22,7 +22,7 @@ namespace F4SE
 
 		MEMORY_BASIC_INFORMATION mbi;
 		do {
-			if (!VirtualQuery(reinterpret_cast<void*>(min), &mbi, sizeof(mbi))) {
+			if (!VirtualQuery(reinterpret_cast<void*>(min), std::addressof(mbi), sizeof(mbi))) {
 				log::error("VirtualQuery failed with code: 0x{:08X}"sv, GetLastError());
 				return nullptr;
 			}
