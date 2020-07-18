@@ -185,18 +185,16 @@ namespace REL
 	inline std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args) noexcept(
 		std::is_nothrow_invocable<F, Args...>)
 	{
-		if constexpr (std::is_function_v<F>) {
-			return a_func(std::forward<Args>(a_args)...);
-		} else if constexpr (std::is_member_function_pointer_v<F>) {
+		if constexpr (std::is_member_function_pointer_v<std::decay_t<F>>) {
 			if constexpr (detail::is_x64_pod_v<std::invoke_result_t<F, Args...>>) {	 // member functions == free functions in x64
-				using func_t = detail::member_function_pod_type_t<F>;
+				using func_t = detail::member_function_pod_type_t<std::decay_t<F>>;
 				auto func = unrestricted_cast<func_t*>(std::forward<F>(a_func));
-				return func(std::forward<Args>(a_args));
+				return func(std::forward<Args>(a_args)...);
 			} else {  // shift args to insert result
 				return detail::invoke_member_function_non_pod(std::forward<F>(a_func), std::forward<Args>(a_args)...);
 			}
 		} else {
-			static_assert(false);
+			return std::forward<F>(a_func)(std::forward<Args>(a_args)...);
 		}
 	}
 
@@ -218,16 +216,6 @@ namespace REL
 	{
 		safe_write(a_dst, std::addressof(a_data), sizeof(T));
 	}
-
-	inline void safe_write(std::uintptr_t a_dst, char a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	inline void safe_write(std::uintptr_t a_dst, std::uint8_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	inline void safe_write(std::uintptr_t a_dst, std::int8_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	inline void safe_write(std::uintptr_t a_dst, std::uint16_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	inline void safe_write(std::uintptr_t a_dst, std::int16_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	inline void safe_write(std::uintptr_t a_dst, std::uint32_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	inline void safe_write(std::uintptr_t a_dst, std::int32_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	inline void safe_write(std::uintptr_t a_dst, std::uint64_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
-	inline void safe_write(std::uintptr_t a_dst, std::int64_t a_data) { safe_write(a_dst, std::addressof(a_data)); }
 
 	class Version
 	{
@@ -768,8 +756,8 @@ namespace REL
 				std::conjunction_v<
 					std::is_pointer<U>,
 					std::disjunction<
-						std::is_class<U>,
-						std::is_enum<U>>>,
+						std::is_class<std::remove_pointer_t<U>>,
+						std::is_enum<std::remove_pointer_t<U>>>>,
 				int> = 0>
 		[[nodiscard]] auto operator->() const noexcept
 		{

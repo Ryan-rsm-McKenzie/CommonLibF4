@@ -220,8 +220,16 @@ namespace F4SE
 				_impl(static_cast<underlying_type>(a_rhs.get()))
 			{}
 
-			constexpr enumeration(enum_type a_value) noexcept :
-				_impl(static_cast<underlying_type>(a_value))
+			template <
+				class... Args,
+				std::enable_if_t<
+					std::conjunction_v<
+						std::is_same<
+							Args,
+							enum_type>...>,
+					int> = 0>
+			constexpr enumeration(Args... a_values) noexcept :
+				_impl((static_cast<underlying_type>(a_values) | ...))
 			{}
 
 			~enumeration() noexcept = default;
@@ -241,10 +249,78 @@ namespace F4SE
 				return *this;
 			}
 
-			[[nodiscard]] explicit constexpr operator bool() const noexcept { return _impl != 0; }
+			[[nodiscard]] explicit constexpr operator bool() const noexcept { return _impl != static_cast<underlying_type>(0); }
 
 			[[nodiscard]] constexpr enum_type operator*() const noexcept { return get(); }
 			[[nodiscard]] constexpr enum_type get() const noexcept { return static_cast<enum_type>(_impl); }
+			[[nodiscard]] constexpr underlying_type underlying() const noexcept { return _impl; }
+
+			template <
+				class... Args,
+				std::enable_if_t<
+					std::conjunction_v<
+						std::is_same<
+							Args,
+							enum_type>...>,
+					int> = 0>
+			constexpr enumeration& set(Args... a_args) noexcept
+			{
+				_impl |= (static_cast<underlying_type>(a_args) | ...);
+				return *this;
+			}
+
+			template <
+				class... Args,
+				std::enable_if_t<
+					std::conjunction_v<
+						std::is_same<
+							Args,
+							enum_type>...>,
+					int> = 0>
+			constexpr enumeration& reset(Args... a_args) noexcept
+			{
+				_impl &= ~(static_cast<underlying_type>(a_args) | ...);
+				return *this;
+			}
+
+			template <
+				class... Args,
+				std::enable_if_t<
+					std::conjunction_v<
+						std::is_same<
+							Args,
+							enum_type>...>,
+					int> = 0>
+			[[nodiscard]] constexpr bool any(Args... a_args) const noexcept
+			{
+				return (_impl & (static_cast<underlying_type>(a_args) | ...)) != static_cast<underlying_type>(0);
+			}
+
+			template <
+				class... Args,
+				std::enable_if_t<
+					std::conjunction_v<
+						std::is_same<
+							Args,
+							enum_type>...>,
+					int> = 0>
+			[[nodiscard]] constexpr bool all(Args... a_args) const noexcept
+			{
+				return (_impl & (static_cast<underlying_type>(a_args) | ...)) == (static_cast<underlying_type>(a_args) | ...);
+			}
+
+			template <
+				class... Args,
+				std::enable_if_t<
+					std::conjunction_v<
+						std::is_same<
+							Args,
+							enum_type>...>,
+					int> = 0>
+			[[nodiscard]] constexpr bool none(Args... a_args) const noexcept
+			{
+				return (_impl & (static_cast<underlying_type>(a_args) | ...)) == static_cast<underlying_type>(0);
+			}
 
 		private:
 			underlying_type _impl{ 0 };
@@ -271,6 +347,14 @@ namespace F4SE
 	[[nodiscard]] constexpr bool operator a_op(enumeration<E, U> a_lhs, E a_rhs) noexcept                   \
 	{                                                                                                       \
 		return a_lhs.get() a_op a_rhs;                                                                      \
+	}                                                                                                       \
+                                                                                                            \
+	template <                                                                                              \
+		class E,                                                                                            \
+		class U>                                                                                            \
+	[[nodiscard]] constexpr bool operator a_op(E a_lhs, enumeration<E, U> a_rhs) noexcept                   \
+	{                                                                                                       \
+		return a_lhs a_op a_rhs.get();                                                                      \
 	}
 
 #define F4SE_MAKE_ARITHMETIC_OP(a_op)                                                        \
@@ -314,6 +398,15 @@ namespace F4SE
                                                                                                             \
 	template <                                                                                              \
 		class E,                                                                                            \
+		class U>                                                                                            \
+	[[nodiscard]] constexpr auto operator a_op(E a_lhs, enumeration<E, U> a_rhs) noexcept                   \
+		->enumeration<E, U>                                                                                 \
+	{                                                                                                       \
+		return static_cast<E>(static_cast<U>(a_lhs) a_op static_cast<U>(a_rhs.get()));                      \
+	}                                                                                                       \
+                                                                                                            \
+	template <                                                                                              \
+		class E,                                                                                            \
 		class U1,                                                                                           \
 		class U2>                                                                                           \
 	constexpr auto operator a_op##=(enumeration<E, U1>& a_lhs, enumeration<E, U2> a_rhs) noexcept           \
@@ -329,6 +422,15 @@ namespace F4SE
 		->enumeration<E, U>&                                                                                \
 	{                                                                                                       \
 		return a_lhs = a_lhs a_op a_rhs;                                                                    \
+	}                                                                                                       \
+                                                                                                            \
+	template <                                                                                              \
+		class E,                                                                                            \
+		class U>                                                                                            \
+	constexpr auto operator a_op##=(E& a_lhs, enumeration<E, U> a_rhs) noexcept                             \
+		->E&                                                                                                \
+	{                                                                                                       \
+		return a_lhs = *(a_lhs a_op a_rhs);                                                                 \
 	}
 
 #define F4SE_MAKE_INCREMENTER_OP(a_op)                                                       \
