@@ -5,7 +5,7 @@
 
 namespace F4SE
 {
-	bool MessagingInterface::RegisterListener(stl::zstring a_sender, EventCallback* a_handler) const
+	bool MessagingInterface::RegisterListener(EventCallback* a_handler, stl::zstring a_sender) const
 	{
 		const auto success =
 			GetProxy().RegisterListener(

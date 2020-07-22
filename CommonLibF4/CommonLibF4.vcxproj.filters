@@ -13,6 +13,15 @@
     <Filter Include="include\F4SE\Impl">
       <UniqueIdentifier>{69ab6f93-c095-4086-b3c6-d7345063a065}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE">
+      <UniqueIdentifier>{068c1698-7d85-452e-bafa-00e2d057e16c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Bethesda">
+      <UniqueIdentifier>{32c9d02d-a5dd-4eaf-a6f0-72a2dd5446a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\NetImmerse">
+      <UniqueIdentifier>{06a3583c-f81c-457f-819a-993d53dac474}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\REL">
       <UniqueIdentifier>{6472008f-5b82-40f4-b35b-e3161da49ebe}</UniqueIdentifier>
     </Filter>
@@ -38,6 +47,21 @@
     </ClInclude>
     <ClInclude Include="include\F4SE\Version.h">
       <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\MemoryManager.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiRTTI.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NiRTTI_IDs.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\RTTI.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\RTTI_IDs.h">
+      <Filter>include\RE</Filter>
     </ClInclude>
     <ClInclude Include="include\REL\Relocation.h">
       <Filter>include\REL</Filter>

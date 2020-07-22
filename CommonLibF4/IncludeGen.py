@@ -3,23 +3,20 @@ import os
 HEADER_TYPES = (".h", ".hpp", ".hxx")
 SOURCE_TYPES = (".c", ".cpp", ".cxx")
 
-def make_f4se_header():
-	oldDir = os.getcwd()
-	os.chdir("include")
-
-	out = open("F4SE/F4SE.h", "w", encoding="utf-8")
+def make_header(a_directory, a_filename, a_recursive):
+	out = open(a_directory + "/" + a_filename, "w", encoding="utf-8")
 	out.write("#pragma once\n")
 	out.write("\n")
 	out.write('#include "F4SE/Impl/PCH.h"\n')
 	out.write("\n")
 
 	tmp = list()
-	for dirpath, dirnames, filenames in os.walk("F4SE"):
-		if dirnames.count("Impl") > 0:
-			dirnames.remove("Impl")
+	for dirpath, dirnames, filenames in os.walk(a_directory):
+		if not a_recursive:
+			dirnames.clear()
 
 		for filename in filenames:
-			if filename.endswith(HEADER_TYPES) and filename != "F4SE.h":
+			if filename.endswith(HEADER_TYPES) and filename != a_filename:
 				path = os.path.join(dirpath, filename)
 				tmp.append(os.path.normpath(path))
 
@@ -33,13 +30,12 @@ def make_f4se_header():
 		out.write(file)
 		out.write('"\n')
 
-	os.chdir(oldDir)
-
 def main():
-	cur = os.path.dirname(os.path.realpath(__file__))
+	cur = os.path.dirname(os.path.realpath(__file__)) + "/include"
 	os.chdir(cur)
 
-	make_f4se_header()
+	make_header("F4SE", "F4SE.h", False)
+	make_header("RE", "Fallout.h", True)
 
 if __name__ == "__main__":
 	main()

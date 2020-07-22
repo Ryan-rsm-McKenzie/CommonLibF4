@@ -1,5 +1,10 @@
 #pragma once
 
+#pragma warning(error : 4715)  // 'function' : not all control paths return a value
+
+#pragma warning(disable : 4200)	 // nonstandard extension used : zero-sized array in struct/union
+#pragma warning(disable : 4686)	 // 'user-defined type' : possible change in behavior, change in UDT return calling convention
+
 #define WINVER 0x0601  // Windows 7
 #define _WIN32_WINNT 0x0601
 
@@ -44,6 +49,9 @@
 #define NOPROFILER
 #define NODEFERWINDOWPOS
 #define NOMCX
+
+#define SPDLOG_COMPILED_LIB
+#define XBYAK_NO_OP_NAMES
 
 #include <Windows.h>
 
@@ -511,3 +519,6 @@ namespace REL
 }
 
 #include "REL/Relocation.h"
+
+#include "RE/NiRTTI_IDs.h"
+#include "RE/RTTI_IDs.h"

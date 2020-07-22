@@ -333,7 +333,7 @@ namespace REL
 		[[nodiscard]] constexpr std::uintptr_t base() const noexcept { return _base; }
 		[[nodiscard]] constexpr Version version() const noexcept { return _version; }
 
-		[[nodiscard]] constexpr Segment segment(Segment::Name a_segment) noexcept { return _segments[a_segment]; }
+		[[nodiscard]] constexpr Segment segment(Segment::Name a_segment) const noexcept { return _segments[a_segment]; }
 
 		[[nodiscard]] inline void* pointer() const noexcept { return reinterpret_cast<void*>(base()); }
 
@@ -374,7 +374,18 @@ namespace REL
 			const auto size = std::min<std::size_t>(ntHeader->FileHeader.NumberOfSections, _segments.size());
 			for (std::size_t i = 0; i < size; ++i) {
 				const auto& section = sections[i];
-				_segments[i] = Segment{ _base, _base + section.VirtualAddress, section.Misc.VirtualSize };
+				const auto it = std::find_if(
+					SEGMENTS.begin(),
+					SEGMENTS.end(),
+					[&](auto&& a_elem) {
+						constexpr auto size = std::extent_v<decltype(section.Name)>;
+						const auto len = std::min(a_elem.size(), size);
+						return std::memcmp(a_elem.data(), section.Name, len) == 0;
+					});
+				if (it != SEGMENTS.end()) {
+					const auto idx = static_cast<std::size_t>(std::distance(SEGMENTS.begin(), it));
+					_segments[idx] = Segment{ _base, _base + section.VirtualAddress, section.Misc.VirtualSize };
+				}
 			}
 		}
 
@@ -406,6 +417,16 @@ namespace REL
 
 		static constexpr auto FILENAME = L"Fallout4.exe"sv;
 
+		static constexpr std::array SEGMENTS{
+			".text"sv,
+			".interpr"sv,
+			".idata"sv,
+			".rdata"sv,
+			".data"sv,
+			".pdata"sv,
+			".tls"sv
+		};
+
 		std::array<Segment, Segment::total> _segments;
 		Version _version;
 		std::uintptr_t _base{ 0 };
@@ -420,7 +441,7 @@ namespace REL
 			return singleton;
 		}
 
-		[[nodiscard]] inline std::size_t id2offset(std::uint64_t a_id)
+		[[nodiscard]] inline std::size_t id2offset(std::uint64_t a_id) const
 		{
 			if (_id2offset.empty()) {
 				REL_THROW_EXCEPTION("data is empty");
@@ -441,8 +462,8 @@ namespace REL
 			return static_cast<std::size_t>(it->offset);
 		}
 
-#ifndef NDEBUG
-		[[nodiscard]] inline std::uint64_t offset2id(std::size_t a_offset)
+#if !defined(NDEBUG)
+		[[nodiscard]] inline std::uint64_t offset2id(std::size_t a_offset) const
 		{
 			if (_offset2id.empty()) {
 				REL_THROW_EXCEPTION("data is empty");
@@ -596,7 +617,7 @@ namespace REL
 				reinterpret_cast<const mapping*>(_mmap.data() + sizeof(std::uint64_t)),
 				*reinterpret_cast<const std::uint64_t*>(_mmap.data()));
 
-#ifndef NDEBUG
+#if !defined(NDEBUG)
 			_offset2id.clear();
 			_offset2id.reserve(_id2offset.size());
 			_offset2id.insert(_offset2id.begin(), _id2offset.begin(), _id2offset.end());
@@ -611,7 +632,7 @@ namespace REL
 
 		memory_map _mmap;
 		stl::span<const mapping> _id2offset;
-#ifndef NDEBUG
+#if !defined(NDEBUG)
 		std::vector<mapping> _offset2id;
 #endif
 	};
@@ -621,23 +642,23 @@ namespace REL
 	public:
 		constexpr Offset() noexcept = default;
 
-		explicit inline Offset(std::size_t a_offset) noexcept :
-			_address(base() + a_offset)
+		constexpr Offset(std::size_t a_offset) noexcept :
+			_offset(a_offset)
 		{}
 
-		inline Offset& operator=(std::size_t a_offset) noexcept
+		constexpr Offset& operator=(std::size_t a_offset) noexcept
 		{
-			_address = base() + a_offset;
+			_offset = a_offset;
 			return *this;
 		}
 
-		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-		[[nodiscard]] inline std::size_t offset() const { return address() - base(); }
+		[[nodiscard]] inline std::uintptr_t address() const { return base() + offset(); }
+		[[nodiscard]] constexpr std::size_t offset() const noexcept { return _offset; }
 
 	private:
 		[[nodiscard]] static inline std::uintptr_t base() { return Module::get().base(); }
 
-		std::uintptr_t _address{ 0 };
+		std::size_t _offset{ 0 };
 	};
 
 	class ID
@@ -645,31 +666,37 @@ namespace REL
 	public:
 		constexpr ID() noexcept = default;
 
-		explicit inline ID(std::uint64_t a_id) :
-			_address(base() + convert(a_id))
+		explicit constexpr ID(std::uint64_t a_id) noexcept :
+			_id(a_id)
 		{}
 
-		inline ID& operator=(std::uint64_t a_id)
+		constexpr ID& operator=(std::uint64_t a_id) noexcept
 		{
-			_address = base() + convert(a_id);
+			_id = a_id;
 			return *this;
 		}
 
-		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-		[[nodiscard]] inline std::size_t offset() const { return address() - base(); }
+		[[nodiscard]] inline std::uintptr_t address() const { return base() + offset(); }
+		[[nodiscard]] inline std::size_t offset() const { return IDDatabase::get().id2offset(_id); }
 
 	private:
 		[[nodiscard]] static inline std::uintptr_t base() { return Module::get().base(); }
-		[[nodiscard]] static inline std::size_t convert(std::uint64_t a_id) { return IDDatabase::get().id2offset(a_id); }
 
-		std::uintptr_t _address{ 0 };
+		std::uint64_t _id{ 0 };
 	};
 
 	template <class T>
 	class Relocation
 	{
 	public:
-		using value_type = T;
+		using value_type =
+			std::conditional_t<
+				std::disjunction_v<
+					std::is_member_pointer<T>,
+					std::is_function<
+						std::remove_pointer_t<T>>>,
+				std::decay_t<T>,
+				T>;
 
 		template <
 			class U = value_type,
@@ -777,6 +804,8 @@ namespace REL
 
 		[[nodiscard]] std::uintptr_t address() const { return unrestricted_cast<std::uintptr_t>(_impl); }
 		[[nodiscard]] std::size_t offset() const { offset() - base(); }
+
+		[[nodiscard]] value_type get() const noexcept(std::is_nothrow_copy_constructible_v<value_type>) { return _impl; }
 
 	private:
 		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }

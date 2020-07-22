@@ -1,20 +1,25 @@
 extern "C" bool DLLEXPORT F4SEPlugin_Query(const F4SE::QueryInterface* a_f4se, F4SE::PluginInfo* a_info)
 {
+	// ExampleProject
 	try {
+#ifndef NDEBUG
+		auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
+#else
 		auto path = logger::log_directory() / "ExampleProject.log";
-		auto log = spdlog::basic_logger_mt("global log", path.string(), true);
+		auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path.string(), true);
+#endif
+
+		auto log = std::make_shared<spdlog::logger>("global log", std::move(sink));
 
 #ifndef NDEBUG
-		log->set_level(spdlog::level::debug);
-		log->flush_on(spdlog::level::debug);
-		log->sinks().push_back(std::make_shared<spdlog::sinks::msvc_sink_mt>());
+		log->set_level(spdlog::level::trace);
 #else
 		log->set_level(spdlog::level::info);
 		log->flush_on(spdlog::level::warn);
 #endif
 
-		spdlog::set_default_logger(log);
-		spdlog::set_pattern("%g(%#): %v");
+		spdlog::set_default_logger(std::move(log));
+		spdlog::set_pattern("%g(%#): [%^%l%$] %v");
 
 		a_info->infoVersion = F4SE::PluginInfo::kVersion;
 		a_info->name = "ExampleProject";
