@@ -22,6 +22,9 @@
     <Filter Include="include\RE\NetImmerse">
       <UniqueIdentifier>{06a3583c-f81c-457f-819a-993d53dac474}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE\Scaleform">
+      <UniqueIdentifier>{0f680cb3-9ee4-4948-ae14-905b8d7e0766}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\REL">
       <UniqueIdentifier>{6472008f-5b82-40f4-b35b-e3161da49ebe}</UniqueIdentifier>
     </Filter>
