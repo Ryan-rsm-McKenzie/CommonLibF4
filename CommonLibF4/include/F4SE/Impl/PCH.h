@@ -4,6 +4,7 @@
 
 #pragma warning(disable : 4200)	 // nonstandard extension used : zero-sized array in struct/union
 #pragma warning(disable : 4686)	 // 'user-defined type' : possible change in behavior, change in UDT return calling convention
+#pragma warning(disable : 5220)	 // 'user-defined type': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 
 #define WINVER 0x0601  // Windows 7
 #define _WIN32_WINNT 0x0601
@@ -66,6 +67,7 @@
 #include <functional>
 #include <limits>
 #include <memory>
+#include <new>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
@@ -76,6 +78,8 @@
 
 #include <nonstd/span.hpp>
 #include <spdlog/spdlog.h>
+
+#include "F4SE/Impl/Atomic.h"
 
 namespace F4SE
 {

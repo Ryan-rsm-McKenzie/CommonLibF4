@@ -25,6 +25,12 @@
     <Filter Include="include\RE\Scaleform">
       <UniqueIdentifier>{0f680cb3-9ee4-4948-ae14-905b8d7e0766}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE\Scaleform\GFx">
+      <UniqueIdentifier>{ad38e393-86a8-4a0c-87b9-273c1a146b82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel">
+      <UniqueIdentifier>{3d370608-e3e3-4bcd-9341-381a649833f7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\REL">
       <UniqueIdentifier>{6472008f-5b82-40f4-b35b-e3161da49ebe}</UniqueIdentifier>
     </Filter>
@@ -35,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="include\F4SE\F4SE.h">
       <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Impl\Atomic.h">
+      <Filter>include\F4SE\Impl</Filter>
     </ClInclude>
     <ClInclude Include="include\F4SE\Impl\PCH.h">
       <Filter>include\F4SE\Impl</Filter>
@@ -54,6 +63,9 @@
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Fallout.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
@@ -65,6 +77,39 @@
     </ClInclude>
     <ClInclude Include="include\RE\RTTI_IDs.h">
       <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Loader.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Player.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Resource.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_AllocInfo.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Atomic.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_List.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Memory.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_MemoryHeap.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_RefCount.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Stats.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_SysAlloc.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
     </ClInclude>
     <ClInclude Include="include\REL\Relocation.h">
       <Filter>include\REL</Filter>

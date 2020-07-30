@@ -257,6 +257,7 @@
   <ItemGroup>
     <ClInclude Include="include\F4SE\API.h" />
     <ClInclude Include="include\F4SE\F4SE.h" />
+    <ClInclude Include="include\F4SE\Impl\Atomic.h" />
     <ClInclude Include="include\F4SE\Impl\PCH.h" />
     <ClInclude Include="include\F4SE\Interfaces.h" />
     <ClInclude Include="include\F4SE\Logger.h" />
@@ -264,10 +265,22 @@
     <ClInclude Include="include\F4SE\Version.h" />
     <ClInclude Include="include\REL\Relocation.h" />
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h" />
+    <ClInclude Include="include\RE\Fallout.h" />
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h" />
     <ClInclude Include="include\RE\NiRTTI_IDs.h" />
     <ClInclude Include="include\RE\RTTI.h" />
     <ClInclude Include="include\RE\RTTI_IDs.h" />
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Loader.h" />
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Player.h" />
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Resource.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_AllocInfo.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Atomic.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_List.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Memory.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_MemoryHeap.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_RefCount.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Stats.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_SysAlloc.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

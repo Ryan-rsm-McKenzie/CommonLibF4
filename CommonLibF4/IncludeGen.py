@@ -3,7 +3,9 @@ import os
 HEADER_TYPES = (".h", ".hpp", ".hxx")
 SOURCE_TYPES = (".c", ".cpp", ".cxx")
 
-def make_header(a_directory, a_filename, a_recursive):
+def make_header(a_directory, a_filename, a_exclude):
+	a_exclude.add(a_filename)
+
 	out = open(a_directory + "/" + a_filename, "w", encoding="utf-8")
 	out.write("#pragma once\n")
 	out.write("\n")
@@ -12,11 +14,15 @@ def make_header(a_directory, a_filename, a_recursive):
 
 	tmp = list()
 	for dirpath, dirnames, filenames in os.walk(a_directory):
-		if not a_recursive:
-			dirnames.clear()
+		rem = list()
+		for dirname in dirnames:
+			if dirname in a_exclude:
+				rem.append(dirname)
+		for todo in rem:
+			dirnames.remove(todo)
 
 		for filename in filenames:
-			if filename.endswith(HEADER_TYPES) and filename != a_filename:
+			if filename not in a_exclude and filename.endswith(HEADER_TYPES):
 				path = os.path.join(dirpath, filename)
 				tmp.append(os.path.normpath(path))
 
@@ -34,8 +40,8 @@ def main():
 	cur = os.path.dirname(os.path.realpath(__file__)) + "/include"
 	os.chdir(cur)
 
-	make_header("F4SE", "F4SE.h", False)
-	make_header("RE", "Fallout.h", True)
+	make_header("F4SE", "F4SE.h", {"Impl"})
+	make_header("RE", "Fallout.h", {"NiRTTI_IDs.h", "RTTI_IDs.h"})
 
 if __name__ == "__main__":
 	main()
