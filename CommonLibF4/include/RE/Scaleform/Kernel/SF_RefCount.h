@@ -6,6 +6,9 @@ namespace RE
 {
 	namespace Scaleform
 	{
+		class RefCountImpl;
+		class RefCountImplCore;
+
 		class RefCountImplCore
 		{
 		public:
@@ -33,7 +36,7 @@ namespace RE
 		};
 		static_assert(sizeof(RefCountImpl) == 0x10);
 
-		template <class Base, int>
+		template <class Base, std::int32_t>
 		class RefCountBaseStatImpl :
 			public Base	 // 00
 		{
@@ -44,7 +47,7 @@ namespace RE
 		};
 		//static_assert(sizeof(RefCountBaseStatImpl<void*, 0>) == 0x10);
 
-		template <class, int STAT>
+		template <class, std::int32_t STAT>
 		class RefCountBase :
 			public RefCountBaseStatImpl<RefCountImpl, STAT>	 // 00
 		{

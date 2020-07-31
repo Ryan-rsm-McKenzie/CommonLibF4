@@ -695,72 +695,37 @@ namespace REL
 				std::decay_t<T>,
 				T>;
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_default_constructible_v<U>,
-				int> = 0>
-		Relocation() noexcept(std::is_nothrow_default_constructible_v<U>) :
-			_impl{}
+		constexpr Relocation() noexcept :
+			_impl{ 0 }
 		{}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_copy_constructible_v<U>,
-				int> = 0>
-		explicit Relocation(std::uintptr_t a_address) noexcept(std::is_nothrow_copy_constructible_v<U>) :
-			_impl{ unrestricted_cast<value_type>(a_address) }
+		explicit constexpr Relocation(std::uintptr_t a_address) noexcept :
+			_impl{ a_address }
 		{}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_copy_constructible_v<U>,
-				int> = 0>
-		explicit Relocation(Offset a_offset) noexcept(std::is_nothrow_copy_constructible_v<U>) :
-			_impl{ unrestricted_cast<value_type>(a_offset.address()) }
+		explicit Relocation(Offset a_offset) :
+			_impl{ a_offset.address() }
 		{}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_copy_constructible_v<U>,
-				int> = 0>
-		explicit Relocation(ID a_id) noexcept(std::is_nothrow_copy_constructible_v<U>) :
-			_impl{ unrestricted_cast<value_type>(a_id.address()) }
+		explicit Relocation(ID a_id) :
+			_impl{ a_id.address() }
 		{}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_copy_assignable_v<U>,
-				int> = 0>
-		Relocation& operator=(std::uintptr_t a_address) noexcept(std::is_nothrow_copy_assignable_v<U>)
+		constexpr Relocation& operator=(std::uintptr_t a_address) noexcept
 		{
-			_impl = unrestricted_cast<value_type>(a_address);
+			_impl = a_address;
 			return *this;
 		}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_copy_assignable_v<U>,
-				int> = 0>
-		Relocation& operator=(Offset a_offset) noexcept(std::is_nothrow_copy_assignable_v<U>)
+		Relocation& operator=(Offset a_offset)
 		{
-			_impl = unrestricted_cast<value_type>(a_offset.address());
+			_impl = a_offset.address();
 			return *this;
 		}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_copy_assignable_v<U>,
-				int> = 0>
-		Relocation& operator=(ID a_id) noexcept(std::is_nothrow_copy_assignable_v<U>)
+		Relocation& operator=(ID a_id)
 		{
-			_impl = unrestricted_cast<value_type>(a_id.address());
+			_impl = a_id.address();
 			return *this;
 		}
 
@@ -771,7 +736,7 @@ namespace REL
 				int> = 0>
 		[[nodiscard]] decltype(auto) operator*() const noexcept
 		{
-			return *_impl;
+			return *get();
 		}
 
 		template <
@@ -785,7 +750,7 @@ namespace REL
 				int> = 0>
 		[[nodiscard]] auto operator->() const noexcept
 		{
-			return _impl;
+			return get();
 		}
 
 		template <
@@ -796,18 +761,18 @@ namespace REL
 		std::invoke_result_t<const value_type&, Args&&...> operator()(Args&&... a_args) const noexcept(
 			std::is_nothrow_invocable_v<const value_type&, Args&&...>)
 		{
-			return REL::invoke(_impl, std::forward<Args>(a_args)...);
+			return REL::invoke(get(), std::forward<Args>(a_args)...);
 		}
 
-		[[nodiscard]] std::uintptr_t address() const { return unrestricted_cast<std::uintptr_t>(_impl); }
+		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _impl; }
 		[[nodiscard]] std::size_t offset() const { offset() - base(); }
 
-		[[nodiscard]] value_type get() const noexcept(std::is_nothrow_copy_constructible_v<value_type>) { return _impl; }
+		[[nodiscard]] value_type get() const noexcept(std::is_nothrow_copy_constructible_v<value_type>) { return unrestricted_cast<value_type>(_impl); }
 
 	private:
 		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
 
-		value_type _impl;
+		std::uintptr_t _impl;
 	};
 }
 

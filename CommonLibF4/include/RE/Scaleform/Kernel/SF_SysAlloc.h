@@ -10,6 +10,9 @@ namespace RE
 			class SegVisitor;
 		}
 
+		class SysAllocBase;
+		class SysAllocPaged;
+
 		class SysAllocBase
 		{
 		public:

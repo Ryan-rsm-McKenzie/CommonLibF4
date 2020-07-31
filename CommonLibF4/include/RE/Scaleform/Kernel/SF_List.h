@@ -22,5 +22,13 @@ namespace RE
 			ListNode<B> root;  // 00
 		};
 		//static_assert(sizeof(List<void*>) == 0x10);
+
+		template <class T, class Accessor>
+		class List2
+		{
+		public:
+			// members
+			T root;	 // 00
+		};
 	}
 }

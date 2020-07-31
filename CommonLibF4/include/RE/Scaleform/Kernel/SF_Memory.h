@@ -4,10 +4,10 @@
 
 namespace RE
 {
-	class MemoryHeap;
-
 	namespace Scaleform
 	{
+		class Memory;
+
 		class Memory
 		{
 		public:
@@ -213,3 +213,17 @@ namespace RE
 	inline void operator delete[](void* a_ptr, std::size_t) { RE::Scaleform::free(a_ptr); }                             \
 	inline void operator delete(void* a_ptr, std::size_t, std::align_val_t) { RE::Scaleform::free(a_ptr); }             \
 	inline void operator delete[](void* a_ptr, std::size_t, std::align_val_t) { RE::Scaleform::free(a_ptr); }
+
+namespace RE
+{
+	namespace Scaleform
+	{
+		template <std::int32_t>
+		class NewOverrideBase
+		{
+		public:
+			SF_HEAP_REDEFINE_NEW(NewOverrideBase)
+		};
+		//static_assert(std::is_empty_v<NewOverrideBase<0>>);
+	}
+}

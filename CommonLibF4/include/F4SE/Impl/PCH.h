@@ -3,8 +3,9 @@
 #pragma warning(error : 4715)  // 'function' : not all control paths return a value
 
 #pragma warning(disable : 4200)	 // nonstandard extension used : zero-sized array in struct/union
+#pragma warning(disable : 4371)	 // 'classname': layout of class may have changed from a previous version of the compiler due to better packing of member 'member'
 #pragma warning(disable : 4686)	 // 'user-defined type' : possible change in behavior, change in UDT return calling convention
-#pragma warning(disable : 5220)	 // 'user-defined type': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
+#pragma warning(disable : 5220)	 // 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 
 #define WINVER 0x0601  // Windows 7
 #define _WIN32_WINNT 0x0601
@@ -58,8 +59,11 @@
 
 #include <ShlObj.h>
 
+#undef GetFileAttributes
+
 #include <array>
 #include <cassert>
+#include <cstdarg>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -100,7 +104,7 @@ namespace F4SE
 		}
 
 		template <class To, class From>
-		[[nodiscard]] inline To unrestricted_cast(From a_from)
+		[[nodiscard]] inline To unrestricted_cast(From a_from) noexcept(std::is_nothrow_move_assignable_v<From>)
 		{
 			if constexpr (std::is_same_v<
 							  std::remove_cv_t<From>,

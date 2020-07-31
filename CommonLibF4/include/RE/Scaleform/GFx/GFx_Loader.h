@@ -63,6 +63,25 @@ namespace RE
 			};
 			static_assert(sizeof(State) == 0x18);
 
+			class ActionControl :
+				public State  // 00
+			{
+			public:
+				enum class ActionControlFlags : std::uint32_t
+				{
+					Action_Verbose = 0x01,
+					Action_ErrorSuppress = 0x02,
+					Action_LogRootFilenames = 0x04,
+					Action_LogChildFilenames = 0x08,
+					Action_LogAllFilenames = 0x04 | 0x08,
+					Action_LongFilenames = 0x10
+				};
+
+				// members
+				stl::enumeration<ActionControlFlags, std::uint32_t> actionFlags;  // 18
+			};
+			static_assert(sizeof(ActionControl) == 0x20);
+
 			class StateBag :
 				public FileTypeConstants  // 00
 			{
@@ -97,6 +116,25 @@ namespace RE
 				}
 			};
 			static_assert(sizeof(StateBag) == 0x8);
+
+			struct ExporterInfo
+			{
+			public:
+				enum class ExportFlagConstants : std::uint32_t
+				{
+					kGlyphTexturesExported = 1 << 0,
+					kGradientTexturesExported = 1 << 1,
+					kGlyphsStripped = 1 << 4
+				};
+
+				// members
+				stl::enumeration<FileTypeConstants::FileFormatType, std::int32_t> format;  // 00
+				const char* prefix;														   // 08
+				const char* swfName;													   // 10
+				std::uint16_t version;													   // 18
+				stl::enumeration<ExportFlagConstants, std::uint32_t> exportFlags;		   // 1C
+			};
+			static_assert(sizeof(ExporterInfo) == 0x20);
 		}
 	}
 }
