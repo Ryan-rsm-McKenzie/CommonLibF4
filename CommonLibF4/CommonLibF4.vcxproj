@@ -253,6 +253,7 @@
     </ClCompile>
     <ClCompile Include="include\F4SE\Interfaces.cpp" />
     <ClCompile Include="include\F4SE\Trampoline.cpp" />
+    <ClCompile Include="include\RE\Bethesda\BSFixedString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\F4SE\API.h" />
@@ -264,6 +265,8 @@
     <ClInclude Include="include\F4SE\Trampoline.h" />
     <ClInclude Include="include\F4SE\Version.h" />
     <ClInclude Include="include\REL\Relocation.h" />
+    <ClInclude Include="include\RE\Bethesda\BSFixedString.h" />
+    <ClInclude Include="include\RE\Bethesda\BSStringPool.h" />
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h" />
     <ClInclude Include="include\RE\Fallout.h" />
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h" />

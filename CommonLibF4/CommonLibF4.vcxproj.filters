@@ -63,6 +63,12 @@
     <ClInclude Include="include\F4SE\Version.h">
       <Filter>include\F4SE</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSFixedString.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSStringPool.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -181,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="include\F4SE\Trampoline.cpp">
       <Filter>include\F4SE</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSFixedString.cpp">
+      <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

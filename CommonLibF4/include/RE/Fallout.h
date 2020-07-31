@@ -2,6 +2,8 @@
 
 #include "F4SE/Impl/PCH.h"
 
+#include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/BSStringPool.h"
 #include "RE/Bethesda/MemoryManager.h"
 #include "RE/NetImmerse/NiRTTI.h"
 #include "RE/RTTI.h"

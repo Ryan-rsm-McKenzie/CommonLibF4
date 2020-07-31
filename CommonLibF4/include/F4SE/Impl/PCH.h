@@ -3,6 +3,7 @@
 #pragma warning(error : 4715)  // 'function' : not all control paths return a value
 
 #pragma warning(disable : 4200)	 // nonstandard extension used : zero-sized array in struct/union
+#pragma warning(disable : 4324)	 // 'struct_name' : structure was padded due to __declspec(align())
 #pragma warning(disable : 4371)	 // 'classname': layout of class may have changed from a previous version of the compiler due to better packing of member 'member'
 #pragma warning(disable : 4686)	 // 'user-defined type' : possible change in behavior, change in UDT return calling convention
 #pragma warning(disable : 5220)	 // 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
@@ -76,6 +77,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 #include <vector>
