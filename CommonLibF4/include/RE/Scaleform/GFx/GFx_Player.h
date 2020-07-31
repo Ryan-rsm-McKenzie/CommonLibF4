@@ -19,6 +19,8 @@ namespace RE
 			class MemoryContext;
 			class Movie;
 			class MovieDef;
+			class MovieImpl;
+			class Value;
 			class Viewport;
 
 			struct MemoryParams;
@@ -140,6 +142,93 @@ namespace RE
 				}
 			};
 			static_assert(sizeof(MovieDef) == 0x20);
+
+			class Value
+			{
+			public:
+				enum class ValueType : std::int32_t
+				{
+					kUndefined,
+					kNull,
+					kBoolean,
+					kInt,
+					kUInt,
+					kNumber,
+					kString,
+
+					kStringW,
+
+					kObject,
+					kArray,
+					kDisplayObject,
+					kClosure,
+
+					kOrphanedBit = 1 << 5,
+					kManagedBit = 1 << 6,
+					kConvertBit = 1 << 7,
+
+					kTypeMask = kConvertBit | 0x0F,
+
+					kConvertBoolean = kConvertBit | kBoolean,
+					kConvertInt = kConvertBit | kInt,
+					kConvertUInt = kConvertBit | kUInt,
+					kConvertNumber = kConvertBit | kNumber,
+					kConvertString = kConvertBit | kString,
+					kConvertStringW = kConvertBit | kStringW
+				};
+
+				union ValueUnion
+				{
+					std::int32_t int32;
+					std::uint32_t uint32;
+					double number;
+					bool boolean;
+					const char* string;
+					const char** mstring;
+					const wchar_t* wstring;
+					void* data{ nullptr };
+				};
+				static_assert(sizeof(ValueUnion) == 0x8);
+
+				class ObjectInterface :
+					public NewOverrideBase<327>
+				{
+				public:
+					class ObjVisitor
+					{
+					public:
+						virtual ~ObjVisitor() = default;  // 00
+
+						// add
+						virtual bool IncludeAS3PublicMembers() const { return false; }	 // 01
+						virtual void Visit(const char* a_name, const Value& a_val) = 0;	 // 02
+					};
+					static_assert(sizeof(ObjVisitor) == 0x8);
+
+					class ArrVisitor
+					{
+					public:
+						virtual ~ArrVisitor() = default;
+
+						// add
+						virtual void Visit(std::uint32_t a_idx, const Value& a_val) = 0;  // 00
+					};
+					static_assert(sizeof(ArrVisitor) == 0x8);
+
+					virtual ~ObjectInterface() = default;  // 00
+
+					// members
+					MovieImpl* movieRoot;  // 08
+				};
+				static_assert(sizeof(ObjectInterface) == 0x10);
+
+				// members
+				ObjectInterface* objectInterface{ nullptr };	 // 00
+				stl::enumeration<ValueType, std::int32_t> type;	 // 08
+				ValueUnion value;								 // 10
+				std::size_t dataAux{ 0 };						 // 18
+			};
+			static_assert(sizeof(Value) == 0x20);
 
 			using MovieDisplayHandle = Render::DisplayHandle<Render::TreeRoot>;
 
