@@ -98,5 +98,11 @@ namespace RE
 			WaitCondition stateWaitCondition;  // 50
 		};
 		static_assert(sizeof(Event) == 0x58);
+
+		inline ThreadId GetCurrentThreadId()
+		{
+			return reinterpret_cast<ThreadId>(
+				static_cast<std::uintptr_t>(::GetCurrentThreadId()));
+		}
 	}
 }

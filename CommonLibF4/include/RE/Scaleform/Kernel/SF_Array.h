@@ -33,6 +33,7 @@ namespace RE
 		struct ArrayDataBase
 		{
 		public:
+			// members
 			T* data;			// 00
 			std::size_t size;	// 08
 			SizePolicy policy;	// 10
@@ -49,6 +50,7 @@ namespace RE
 		class ArrayBase
 		{
 		public:
+			// membrs
 			ArrayData data;	 // 0
 		};
 

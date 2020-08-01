@@ -113,6 +113,7 @@ namespace RE
 				return GetGlobalHeap()->GetAllocHeap(a_ptr);
 			}
 		};
+		static_assert(std::is_empty_v<Memory>);
 
 		[[nodiscard]] inline void* malloc(std::size_t a_size)
 		{

@@ -253,7 +253,9 @@
     </ClCompile>
     <ClCompile Include="include\F4SE\Interfaces.cpp" />
     <ClCompile Include="include\F4SE\Trampoline.cpp" />
+    <ClCompile Include="include\RE\Bethesda\Atomic.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSFixedString.cpp" />
+    <ClCompile Include="include\RE\Bethesda\NiRect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\F4SE\API.h" />
@@ -265,9 +267,16 @@
     <ClInclude Include="include\F4SE\Trampoline.h" />
     <ClInclude Include="include\F4SE\Version.h" />
     <ClInclude Include="include\REL\Relocation.h" />
+    <ClInclude Include="include\RE\Bethesda\Atomic.h" />
     <ClInclude Include="include\RE\Bethesda\BSFixedString.h" />
+    <ClInclude Include="include\RE\Bethesda\BSInputEventUser.h" />
     <ClInclude Include="include\RE\Bethesda\BSStringPool.h" />
+    <ClInclude Include="include\RE\Bethesda\IMenu.h" />
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h" />
+    <ClInclude Include="include\RE\Bethesda\NiRect.h" />
+    <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h" />
+    <ClInclude Include="include\RE\Bethesda\UIMessage.h" />
+    <ClInclude Include="include\RE\Bethesda\UserEvents.h" />
     <ClInclude Include="include\RE\Fallout.h" />
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h" />
     <ClInclude Include="include\RE\NiRTTI_IDs.h" />

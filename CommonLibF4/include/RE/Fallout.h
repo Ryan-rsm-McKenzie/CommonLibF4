@@ -2,9 +2,16 @@
 
 #include "F4SE/Impl/PCH.h"
 
+#include "RE/Bethesda/Atomic.h"
 #include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/BSInputEventUser.h"
 #include "RE/Bethesda/BSStringPool.h"
+#include "RE/Bethesda/IMenu.h"
 #include "RE/Bethesda/MemoryManager.h"
+#include "RE/Bethesda/NiRect.h"
+#include "RE/Bethesda/SWFToCodeFunctionHandler.h"
+#include "RE/Bethesda/UIMessage.h"
+#include "RE/Bethesda/UserEvents.h"
 #include "RE/NetImmerse/NiRTTI.h"
 #include "RE/RTTI.h"
 #include "RE/Scaleform/GFx/GFx_Loader.h"

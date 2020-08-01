@@ -16,6 +16,7 @@ namespace RE
 		namespace GFx
 		{
 			class ASMovieRootBase;
+			class FunctionHandler;
 			class MemoryContext;
 			class Movie;
 			class MovieDef;
@@ -106,40 +107,30 @@ namespace RE
 				};
 				static_assert(sizeof(ResourceVisitor) == 0x8);
 
-				virtual std::uint32_t GetVersion() const = 0;																																// 04
-				virtual std::uint32_t GetLoadingFrame() const = 0;																															// 05
-				virtual float GetWidth() const = 0;																																			// 06
-				virtual float GetHeight() const = 0;																																		// 07
-				virtual std::uint32_t GetFrameCount() const = 0;																															// 08
-				virtual float GetFrameRate() const = 0;																																		// 09
-				virtual RectF GetFrameRect() const = 0;																																		// 0A
-				virtual std::uint32_t GetSWFFlags() const = 0;																																// 0B
-				virtual const char* GetFileURL() const = 0;																																	// 0C
-				virtual void WaitForLoadFinish(bool a_cancel = false) const = 0;																											// 0D
-				virtual void WaitForFrame(std::uint32_t a_frame) const = 0;																													// 0E
-				virtual FileAttrFlags GetFileAttributes() const = 0;																														// 0F
-				virtual std::uint32_t GetMetadata(char* a_buff, std::uint32_t a_buffSize) const = 0;																						// 10
-				virtual MemoryHeap* GetLoadDataHeap() const = 0;																															// 11
-				virtual MemoryHeap* GetBindDataHeap() const = 0;																															// 12
-				virtual MemoryHeap* GetImageHeap() const = 0;																																// 13
-				virtual Resource* GetMovieDataResource() const = 0;																															// 14
-				virtual const ExporterInfo* GetExporterInfo() const = 0;																													// 15
-				virtual MemoryContext* CreateMemoryContext(const char* a_heapName, const MemoryParams& a_memParams, bool a_debugHeap) = 0;													// 16
-				virtual Movie* CreateInstance1(MemoryContext* a_memContext, bool a_initFirstFrame, ActionControl* a_actionControl, Render::ThreadCommandQueue* a_queue = nullptr) = 0;		// 17
-				virtual Movie* CreateInstance2(const MemoryParams& a_memParams, bool a_initFirstFrame, ActionControl* a_actionControl, Render::ThreadCommandQueue* a_queue = nullptr) = 0;	// 18
-				virtual void VisitImportedMovies(ImportVisitor* a_visitor) = 0;																												// 19
-				virtual void VisitResources(ResourceVisitor* a_visitor, VisitResourceMask a_visitMask = VisitResourceMask::kAllImages) = 0;													// 1A
-				virtual Resource* GetResource(const char* a_exportName) const = 0;																											// 1B
-
-				inline Movie* CreateInstance(MemoryContext* a_memContext, bool a_initFirstFrame, ActionControl* a_actionControl, Render::ThreadCommandQueue* a_queue = nullptr)
-				{
-					return CreateInstance1(a_memContext, a_initFirstFrame, a_actionControl, a_queue);
-				}
-
-				inline Movie* CreateInstance(const MemoryParams& a_memParams, bool a_initFirstFrame, ActionControl* a_actionControl, Render::ThreadCommandQueue* a_queue = nullptr)
-				{
-					return CreateInstance2(a_memParams, a_initFirstFrame, a_actionControl, a_queue);
-				}
+				virtual std::uint32_t GetVersion() const = 0;																															   // 04
+				virtual std::uint32_t GetLoadingFrame() const = 0;																														   // 05
+				virtual float GetWidth() const = 0;																																		   // 06
+				virtual float GetHeight() const = 0;																																	   // 07
+				virtual std::uint32_t GetFrameCount() const = 0;																														   // 08
+				virtual float GetFrameRate() const = 0;																																	   // 09
+				virtual RectF GetFrameRect() const = 0;																																	   // 0A
+				virtual std::uint32_t GetSWFFlags() const = 0;																															   // 0B
+				virtual const char* GetFileURL() const = 0;																																   // 0C
+				virtual void WaitForLoadFinish(bool a_cancel = false) const = 0;																										   // 0D
+				virtual void WaitForFrame(std::uint32_t a_frame) const = 0;																												   // 0E
+				virtual FileAttrFlags GetFileAttributes() const = 0;																													   // 0F
+				virtual std::uint32_t GetMetadata(char* a_buff, std::uint32_t a_buffSize) const = 0;																					   // 10
+				virtual MemoryHeap* GetLoadDataHeap() const = 0;																														   // 11
+				virtual MemoryHeap* GetBindDataHeap() const = 0;																														   // 12
+				virtual MemoryHeap* GetImageHeap() const = 0;																															   // 13
+				virtual Resource* GetMovieDataResource() const = 0;																														   // 14
+				virtual const ExporterInfo* GetExporterInfo() const = 0;																												   // 15
+				virtual MemoryContext* CreateMemoryContext(const char* a_heapName, const MemoryParams& a_memParams, bool a_debugHeap) = 0;												   // 16
+				virtual Movie* CreateInstance(const MemoryParams& a_memParams, bool a_initFirstFrame, ActionControl* a_actionControl, Render::ThreadCommandQueue* a_queue = nullptr) = 0;  // 18
+				virtual Movie* CreateInstance(MemoryContext* a_memContext, bool a_initFirstFrame, ActionControl* a_actionControl, Render::ThreadCommandQueue* a_queue = nullptr) = 0;	   // 17
+				virtual void VisitImportedMovies(ImportVisitor* a_visitor) = 0;																											   // 19
+				virtual void VisitResources(ResourceVisitor* a_visitor, VisitResourceMask a_visitMask = VisitResourceMask::kAllImages) = 0;												   // 1A
+				virtual Resource* GetResource(const char* a_exportName) const = 0;																										   // 1B
 			};
 			static_assert(sizeof(MovieDef) == 0x20);
 
@@ -179,6 +170,97 @@ namespace RE
 
 				union ValueUnion
 				{
+					constexpr ValueUnion() noexcept :
+						data(nullptr)
+					{}
+
+					constexpr ValueUnion(const ValueUnion& a_rhs) noexcept :
+						data(a_rhs.data)
+					{}
+
+					constexpr ValueUnion(ValueUnion&& a_rhs) noexcept :
+						data(a_rhs.data)
+					{
+						a_rhs.data = nullptr;
+					}
+
+					constexpr ValueUnion(std::int32_t a_rhs) noexcept :
+						int32(a_rhs)
+					{}
+
+					constexpr ValueUnion(std::uint32_t a_rhs) noexcept :
+						uint32(a_rhs)
+					{}
+
+					constexpr ValueUnion(double a_rhs) noexcept :
+						number(a_rhs)
+					{}
+
+					constexpr ValueUnion(bool a_rhs) noexcept :
+						boolean(a_rhs)
+					{}
+
+					constexpr ValueUnion(const char* a_rhs) noexcept :
+						string(a_rhs)
+					{}
+
+					constexpr ValueUnion(const wchar_t* a_rhs) noexcept :
+						wstring(a_rhs)
+					{}
+
+					constexpr ValueUnion& operator=(const ValueUnion& a_rhs) noexcept
+					{
+						if (this != std::addressof(a_rhs)) {
+							data = a_rhs.data;
+						}
+						return *this;
+					}
+
+					constexpr ValueUnion& operator=(ValueUnion&& a_rhs) noexcept
+					{
+						if (this != std::addressof(a_rhs)) {
+							data = a_rhs.data;
+							a_rhs.data = nullptr;
+						}
+						return *this;
+					}
+
+					constexpr ValueUnion& operator=(std::int32_t a_rhs) noexcept
+					{
+						int32 = a_rhs;
+						return *this;
+					}
+
+					constexpr ValueUnion& operator=(std::uint32_t a_rhs) noexcept
+					{
+						uint32 = a_rhs;
+						return *this;
+					}
+
+					constexpr ValueUnion& operator=(double a_rhs) noexcept
+					{
+						number = a_rhs;
+						return *this;
+					}
+
+					constexpr ValueUnion& operator=(bool a_rhs) noexcept
+					{
+						boolean = a_rhs;
+						return *this;
+					}
+
+					constexpr ValueUnion& operator=(const char* a_rhs) noexcept
+					{
+						string = a_rhs;
+						return *this;
+					}
+
+					constexpr ValueUnion& operator=(const wchar_t* a_rhs) noexcept
+					{
+						wstring = a_rhs;
+						return *this;
+					}
+
 					std::int32_t int32;
 					std::uint32_t uint32;
 					double number;
@@ -186,7 +268,7 @@ namespace RE
 					const char* string;
 					const char** mstring;
 					const wchar_t* wstring;
-					void* data{ nullptr };
+					void* data;
 				};
 				static_assert(sizeof(ValueUnion) == 0x8);
 
@@ -217,18 +299,259 @@ namespace RE
 
 					virtual ~ObjectInterface() = default;  // 00
 
+					inline void ObjectAddRef(Value* a_val, void* a_obj)
+					{
+						using func_t = decltype(&ObjectInterface::ObjectRelease);
+						REL::Relocation<func_t> func{ REL::ID(244786) };
+						return func(this, a_val, a_obj);
+					}
+
+					inline void ObjectRelease(Value* a_val, void* a_obj)
+					{
+						using func_t = decltype(&ObjectInterface::ObjectRelease);
+						REL::Relocation<func_t> func{ REL::ID(856221) };
+						return func(this, a_val, a_obj);
+					}
+
 					// members
 					MovieImpl* movieRoot;  // 08
 				};
 				static_assert(sizeof(ObjectInterface) == 0x10);
 
+				constexpr Value() noexcept = default;
+
+				inline Value(const Value& a_rhs) :
+					_type(a_rhs._type),
+					_value(a_rhs._value),
+					_dataAux(a_rhs._dataAux)
+				{
+					if (a_rhs.IsManagedValue()) {
+						AcquireManagedValue(a_rhs);
+					}
+				}
+
+				constexpr Value(Value&& a_rhs) noexcept :
+					_objectInterface(a_rhs._objectInterface),
+					_type(a_rhs._type),
+					_value(std::move(a_rhs._value)),
+					_dataAux(a_rhs._dataAux)
+				{
+					a_rhs._objectInterface = nullptr;
+					a_rhs._type = ValueType::kUndefined;
+					a_rhs._dataAux = 0;
+				}
+
+				constexpr Value(std::nullptr_t) noexcept :
+					_type(ValueType::kNull)
+				{}
+
+				constexpr Value(std::int32_t a_rhs) noexcept :
+					_type(ValueType::kInt),
+					_value(a_rhs)
+				{}
+
+				constexpr Value(std::uint32_t a_rhs) noexcept :
+					_type(ValueType::kUInt),
+					_value(a_rhs)
+				{}
+
+				constexpr Value(double a_rhs) noexcept :
+					_type(ValueType::kNumber),
+					_value(a_rhs)
+				{}
+
+				constexpr Value(bool a_rhs) noexcept :
+					_type(ValueType::kBoolean),
+					_value(a_rhs)
+				{}
+
+				constexpr Value(const char* a_rhs) noexcept :
+					_type(ValueType::kString),
+					_value(a_rhs)
+				{}
+
+				constexpr Value(const wchar_t* a_rhs) noexcept :
+					_type(ValueType::kStringW),
+					_value(a_rhs)
+				{}
+
+				inline ~Value()
+				{
+					if (IsManagedValue()) {
+						ReleaseManagedValue();
+					}
+
+					_type = ValueType::kUndefined;
+				}
+
+				inline Value& operator=(const Value& a_rhs)
+				{
+					if (this != std::addressof(a_rhs)) {
+						if (IsManagedValue()) {
+							ReleaseManagedValue();
+						}
+
+						_type = a_rhs._type;
+						_value = a_rhs._value;
+						_dataAux = a_rhs._dataAux;
+
+						if (a_rhs.IsManagedValue()) {
+							AcquireManagedValue(a_rhs);
+						}
+					}
+					return *this;
+				}
+
+				inline Value& operator=(Value&& a_rhs)
+				{
+					if (this != std::addressof(a_rhs)) {
+						if (IsManagedValue()) {
+							ReleaseManagedValue();
+						}
+
+						_objectInterface = a_rhs._objectInterface;
+						a_rhs._objectInterface = nullptr;
+
+						_type = a_rhs._type;
+						a_rhs._type = ValueType::kUndefined;
+
+						_value = std::move(a_rhs._value);
+
+						_dataAux = a_rhs._dataAux;
+						a_rhs._dataAux = 0;
+					}
+					return *this;
+				}
+
+				constexpr Value& operator=(std::nullptr_t) noexcept
+				{
+					if (IsManagedValue()) {
+						ReleaseManagedValue();
+					}
+
+					_type = ValueType::kNull;
+					return *this;
+				}
+
+				constexpr Value& operator=(std::int32_t a_rhs) noexcept
+				{
+					if (IsManagedValue()) {
+						ReleaseManagedValue();
+					}
+
+					_type = ValueType::kInt;
+					_value = a_rhs;
+					return *this;
+				}
+
+				constexpr Value& operator=(std::uint32_t a_rhs) noexcept
+				{
+					if (IsManagedValue()) {
+						ReleaseManagedValue();
+					}
+
+					_type = ValueType::kUInt;
+					_value = a_rhs;
+					return *this;
+				}
+
+				constexpr Value& operator=(double a_rhs) noexcept
+				{
+					if (IsManagedValue()) {
+						ReleaseManagedValue();
+					}
+
+					_type = ValueType::kNumber;
+					_value = a_rhs;
+					return *this;
+				}
+
+				constexpr Value& operator=(bool a_rhs) noexcept
+				{
+					if (IsManagedValue()) {
+						ReleaseManagedValue();
+					}
+
+					_type = ValueType::kBoolean;
+					_value = a_rhs;
+					return *this;
+				}
+
+				constexpr Value& operator=(const char* a_rhs) noexcept
+				{
+					if (IsManagedValue()) {
+						ReleaseManagedValue();
+					}
+
+					_type = ValueType::kString;
+					_value = a_rhs;
+					return *this;
+				}
+
+				constexpr Value& operator=(const wchar_t* a_rhs) noexcept
+				{
+					if (IsManagedValue()) {
+						ReleaseManagedValue();
+					}
+
+					_type = ValueType::kStringW;
+					_value = a_rhs;
+					return *this;
+				}
+
+				inline void AcquireManagedValue(const Value& a_rhs)
+				{
+					assert(a_rhs._value.data && a_rhs._objectInterface);
+					_objectInterface = a_rhs._objectInterface;
+					_objectInterface->ObjectAddRef(this, _value.data);
+				}
+
+				[[nodiscard]] constexpr bool IsManagedValue() const noexcept
+				{
+					const auto managed = _type.all(ValueType::kManagedBit);
+					assert(managed ? _objectInterface != nullptr : true);
+					return managed;
+				}
+
+				inline void ReleaseManagedValue()
+				{
+					assert(_value.data && _objectInterface);
+					_objectInterface->ObjectRelease(this, _value.data);
+					_objectInterface = nullptr;
+				}
+
 				// members
-				ObjectInterface* objectInterface{ nullptr };	 // 00
-				stl::enumeration<ValueType, std::int32_t> type;	 // 08
-				ValueUnion value;								 // 10
-				std::size_t dataAux{ 0 };						 // 18
+				ObjectInterface* _objectInterface{ nullptr };							   // 00
+				stl::enumeration<ValueType, std::int32_t> _type{ ValueType::kUndefined };  // 08
+				ValueUnion _value{};													   // 10
+				std::size_t _dataAux{ 0 };												   // 18
 			};
 			static_assert(sizeof(Value) == 0x20);
+
+			class FunctionHandler :
+				public RefCountBase<FunctionHandler, 2>
+			{
+			public:
+				struct Params
+				{
+				public:
+					// members
+					Value* retVal;			 // 00
+					Movie* movie;			 // 08
+					Value* self;			 // 10
+					Value* argsWithThisRef;	 // 18
+					Value* args;			 // 20
+					std::uint32_t argCount;	 // 28
+					void* userData;			 // 30
+				};
+				static_assert(sizeof(Params) == 0x38);
+
+				virtual ~FunctionHandler() = default;  // 00
+
+				// add
+				virtual void Call(const Params& a_params) = 0;	// 01
+			};
+			static_assert(sizeof(FunctionHandler) == 0x10);
 
 			using MovieDisplayHandle = Render::DisplayHandle<Render::TreeRoot>;
 
@@ -362,8 +685,8 @@ namespace RE
 				virtual void SuspendGC(bool a_suspend) = 0;																														 // 32
 				virtual void ScheduleGC() = 0;																																	 // 33
 				virtual void PrintObjectsReport(ReportFlags a_flags = ReportFlags::kNone, Log* a_log = nullptr, const char* a_swfName = nullptr) = 0;							 // 34
-				virtual RectF TranslateToScreen1(const RectF& a_pt, Matrix2F* a_userMatrix = nullptr) = 0;																		 // 35
-				virtual Render::PointF TranslateToScreen2(const Render::PointF& a_pt, Matrix2F* a_userMatrix = nullptr) = 0;													 // 36
+				virtual Render::PointF TranslateToScreen(const Render::PointF& a_pt, Matrix2F* a_userMatrix = nullptr) = 0;														 // 36
+				virtual RectF TranslateToScreen(const RectF& a_pt, Matrix2F* a_userMatrix = nullptr) = 0;																		 // 35
 				virtual bool TranslateLocalToScreen(const char* a_pathToCharacter, const Render::PointF& a_pt, Render::PointF* a_presPt, Matrix2F* a_userMatrix = nullptr) = 0;	 // 37
 				virtual bool SetControllerFocusGroup(std::uint32_t a_controllerIdx, std::uint32_t a_focusGroupIndex) = 0;														 // 38
 				virtual std::uint32_t GetControllerFocusGroup(std::uint32_t a_controllerIdx) const = 0;																			 // 39
@@ -383,16 +706,6 @@ namespace RE
 					using func_t = decltype(&Movie::Release);
 					REL::Relocation<func_t> func{ REL::ID(404814) };
 					return func(this);
-				}
-
-				inline RectF TranslateToScreen(const RectF& a_pt, Matrix2F* a_userMatrix = nullptr)
-				{
-					return TranslateToScreen1(a_pt, a_userMatrix);
-				}
-
-				inline Render::PointF TranslateToScreen(const Render::PointF& a_pt, Matrix2F* a_userMatrix = nullptr)
-				{
-					return TranslateToScreen2(a_pt, a_userMatrix);
 				}
 
 				// members

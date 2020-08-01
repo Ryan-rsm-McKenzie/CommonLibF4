@@ -131,6 +131,8 @@ namespace RE
 			virtual void CheckIntegrity() const = 0;																							 // 21
 			virtual void GetUserDebugStats(RootStats* a_stats) const = 0;																		 // 22
 
+			inline void AssignToCurrentThread() { ownerThreadID = ::GetCurrentThreadId(); }
+
 			// members
 			std::size_t selfSize;			  // 18
 			volatile std::uint32_t refCount;  // 20
