@@ -14,6 +14,8 @@ namespace RE
 	class BSInputEventUser
 	{
 	public:
+		static constexpr auto RTTI{ RTTI_BSInputEventUser };
+
 		virtual ~BSInputEventUser() = default;	// 00
 
 		// add

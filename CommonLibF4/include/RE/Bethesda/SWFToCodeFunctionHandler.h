@@ -8,6 +8,8 @@ namespace RE
 		public Scaleform::GFx::FunctionHandler	// 00
 	{
 	public:
+		static constexpr auto RTTI{ RTTI_SWFToCodeFunctionHandler };
+
 		virtual ~SWFToCodeFunctionHandler() = default;
 
 		// add

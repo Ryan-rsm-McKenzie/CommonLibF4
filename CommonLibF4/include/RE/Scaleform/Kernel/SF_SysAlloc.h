@@ -16,6 +16,8 @@ namespace RE
 		class SysAllocBase
 		{
 		public:
+			static constexpr auto RTTI{ RTTI_Scaleform__SysAllocBase };
+
 			virtual ~SysAllocBase() = default;	// 00
 
 			// add
@@ -28,6 +30,7 @@ namespace RE
 			public SysAllocBase	 // 00
 		{
 		public:
+			static constexpr auto RTTI{ RTTI_Scaleform__SysAllocPaged };
 		};
 		static_assert(sizeof(SysAllocPaged) == 0x8);
 	}

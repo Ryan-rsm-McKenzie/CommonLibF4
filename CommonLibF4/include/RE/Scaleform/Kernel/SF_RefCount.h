@@ -12,6 +12,8 @@ namespace RE
 		class RefCountImplCore
 		{
 		public:
+			static constexpr auto RTTI{ RTTI_Scaleform__RefCountImplCore };
+
 			RefCountImplCore() = default;
 			virtual ~RefCountImplCore() = default;	// 00
 
@@ -25,6 +27,10 @@ namespace RE
 			public RefCountImplCore	 // 00
 		{
 		public:
+			static constexpr auto RTTI{ RTTI_Scaleform__RefCountImpl };
+
+			virtual ~RefCountImpl() = default;	// 00
+
 			inline void AddRef() { InterlockedExchangeAdd(std::addressof(refCount), 1); }
 
 			inline void Release()

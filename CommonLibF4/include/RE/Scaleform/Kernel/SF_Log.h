@@ -22,6 +22,9 @@ namespace RE
 		class Log :
 			public RefCountBase<Log, 2>	 // 00
 		{
+		public:
+			static constexpr auto RTTI{ RTTI_Scaleform__Log };
+
 			virtual ~Log();
 
 			// add

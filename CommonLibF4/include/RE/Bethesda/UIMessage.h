@@ -42,6 +42,8 @@ namespace RE
 	class UIMessage
 	{
 	public:
+		static constexpr auto RTTI{ RTTI_UIMessage };
+
 		virtual ~UIMessage() = default;	 // 00
 
 		virtual IUIMessageData* QData() { return nullptr; }				 // 02
@@ -57,6 +59,8 @@ namespace RE
 		public UIMessage  // 00
 	{
 	public:
+		static constexpr auto RTTI{ RTTI_IUIMessageData };
+
 		// override (UIMessage)
 		IUIMessageData* QData() override { return this; }			   // 02
 		const IUIMessageData* QData() const override { return this; }  // 01
@@ -67,6 +71,8 @@ namespace RE
 		public IUIMessageData  // 00
 	{
 	public:
+		static constexpr auto RTTI{ RTTI_BSUIScaleformData };
+
 		// members
 		Scaleform::GFx::Event* scaleformEvent{ nullptr };  // 18
 	};

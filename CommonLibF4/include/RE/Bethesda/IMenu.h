@@ -56,6 +56,8 @@ namespace RE
 		public BSInputEventUser			  // 10
 	{
 	public:
+		static constexpr auto RTTI{ RTTI_IMenu };
+
 		virtual ~IMenu()  // 00
 		{
 			if (uiMovie) {
