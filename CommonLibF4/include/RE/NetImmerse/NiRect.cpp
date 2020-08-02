@@ -1,4 +1,4 @@
-#include "RE/Bethesda/NiRect.h"
+#include "RE/NetImmerse/NiRect.h"
 
 namespace RE
 {

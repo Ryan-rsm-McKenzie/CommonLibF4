@@ -1,10 +1,10 @@
 #include "RE/Bethesda/Atomic.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSInputEventUser.h"
-#include "RE/Bethesda/NiRect.h"
 #include "RE/Bethesda/SWFToCodeFunctionHandler.h"
 #include "RE/Bethesda/UIMessage.h"
 #include "RE/Bethesda/UserEvents.h"
+#include "RE/NetImmerse/NiRect.h"
 
 namespace RE
 {
@@ -57,6 +57,9 @@ namespace RE
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_IMenu };
+
+		using SWFToCodeFunctionHandler::operator new;
+		using SWFToCodeFunctionHandler::operator delete;
 
 		virtual ~IMenu()  // 00
 		{

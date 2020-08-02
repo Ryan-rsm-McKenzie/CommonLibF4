@@ -1,6 +1,5 @@
 extern "C" bool DLLEXPORT F4SEPlugin_Query(const F4SE::QueryInterface* a_f4se, F4SE::PluginInfo* a_info)
 {
-	// ExampleProject
 	try {
 #ifndef NDEBUG
 		auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();

@@ -7,7 +7,10 @@
 #pragma warning(disable : 4266)	 // 'function' : no override available for virtual member function from base 'type'; function is hidden
 #pragma warning(disable : 4324)	 // 'struct_name' : structure was padded due to __declspec(align())
 #pragma warning(disable : 4371)	 // 'classname': layout of class may have changed from a previous version of the compiler due to better packing of member 'member'
+#pragma warning(disable : 4625)	 // 'derived class' : copy constructor was implicitly defined as deleted because a base class copy constructor is inaccessible or deleted
+#pragma warning(disable : 4626)	 // 'derived class' : assignment operator was implicitly defined as deleted because a base class assignment operator is inaccessible or deleted
 #pragma warning(disable : 4686)	 // 'user-defined type' : possible change in behavior, change in UDT return calling convention
+#pragma warning(disable : 5204)	 // 'type-name': class has virtual functions, but its trivial destructor is not virtual; instances of objects derived from this class may not be destructed correctly
 #pragma warning(disable : 5220)	 // 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 
 #define WINVER 0x0601  // Windows 7
@@ -64,8 +67,10 @@
 
 #undef GetFileAttributes
 
+#include <algorithm>
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstdarg>
 #include <cstddef>
 #include <cstdint>
@@ -168,6 +173,96 @@ namespace F4SE
 
 		using zstring = std::string_view;
 		using zwstring = std::wstring_view;
+
+		namespace detail
+		{
+			template <class, class, class...>
+			struct _can_construct_at :
+				std::false_type
+			{};
+
+			template <class T, class... Args>
+			struct _can_construct_at<
+				std::void_t<
+					decltype(::new (std::declval<void*>()) T(std::declval<Args>()...))>,
+				T,
+				Args...> :
+				std::true_type
+			{};
+
+			template <class T, class... Args>
+			struct can_construct_at :
+				_can_construct_at<void, T, Args...>
+			{};
+
+			template <class T, class... Args>
+			inline constexpr bool can_construct_at_v = can_construct_at<T, Args...>::value;
+		}
+
+		template <class T>
+		struct is_bounded_array :
+			std::false_type
+		{};
+
+		template <class T, std::size_t N>
+		struct is_bounded_array<T[N]> :
+			std::true_type
+		{};
+
+		template <class T>
+		inline constexpr bool is_bounded_array_v = is_bounded_array<T>::value;
+
+		template <class T>
+		struct is_unbounded_array :
+			std::false_type
+		{};
+
+		template <class T>
+		struct is_unbounded_array<T[]> :
+			std::true_type
+		{};
+
+		template <class T>
+		inline constexpr bool is_unbounded_array_v = is_unbounded_array<T>::value;
+
+		template <class T>
+		struct remove_cvref
+		{
+			using type =
+				std::remove_cv_t<
+					std::remove_reference_t<T>>;
+		};
+
+		template <class T>
+		using remove_cvref_t = typename remove_cvref<T>::type;
+
+		template <
+			class T,
+			class... Args,
+			std::enable_if_t<
+				std::conjunction_v<
+					detail::can_construct_at<T, Args...>,
+					std::is_constructible<T, Args...>>,	 // more strict
+				int> = 0>
+		inline T* construct_at(T* a_ptr, Args&&... a_args)
+		{
+			return ::new (
+				const_cast<void*>(
+					static_cast<const volatile void*>(a_ptr)))
+				T(std::forward<Args>(a_args)...);
+		}
+
+		template <class T>
+		inline void destroy_at(T* a_ptr)
+		{
+			if constexpr (std::is_array_v<T>) {
+				for (auto& elem : *a_ptr) {
+					destroy_at(std::addressof(elem));
+				}
+			} else {
+				a_ptr->~T();
+			}
+		}
 
 		struct source_location
 		{

@@ -63,5 +63,13 @@ namespace RE
 
 			kNone
 		};
+
+		enum class SENDER_ID : std::int32_t
+		{
+			kNone,
+			kGameplay,
+			kMenu,
+			kScript
+		};
 	};
 }

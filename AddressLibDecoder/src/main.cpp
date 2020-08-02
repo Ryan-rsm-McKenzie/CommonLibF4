@@ -1,7 +1,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -9,40 +8,47 @@
 #include <type_traits>
 #include <utility>
 
+#include <boost/filesystem.hpp>
+#include <boost/iostreams/device/mapped_file.hpp>
+#include <fmt/format.h>
+#include <nonstd/span.hpp>
+
 using namespace std::literals;
+
+struct Pair
+{
+	std::uint64_t id;
+	std::uint64_t offset;
+};
 
 int main(int a_argc, char* a_argv[])
 {
 	try {
-		std::ifstream input;
+		boost::iostreams::mapped_file_source input;
 		std::ofstream output;
-		const auto read_binary = [&input](auto& a_data) {
-			input.read(
-				reinterpret_cast<char*>(std::addressof(a_data)),
-				sizeof(std::remove_reference_t<decltype(a_data)>));
-		};
 
 		for (int i = 1; i < a_argc; ++i) {
-			std::filesystem::path filename = a_argv[static_cast<std::size_t>(i)];
-			input.open(filename, std::ios::in | std::ios::binary);
+			boost::filesystem::path filename = a_argv[static_cast<std::size_t>(i)];
+			input.open(filename);
 			if (!input.is_open()) {
 				throw std::runtime_error("failed to open: "s + filename.string());
 			}
 
-			filename.replace_extension(".txt"sv);
-			output.open(filename, std::ios::out | std::ios::trunc);
+			filename.replace_extension(".txt");
+			output.open(filename.c_str(), std::ios::out | std::ios::trunc);
 			if (!output.is_open()) {
 				throw std::runtime_error("failed to open: "s + filename.string());
 			}
 
-			std::uint64_t size = 0;
-			read_binary(size);
-			while (size--) {
-				std::uint64_t id = 0;
-				std::uint64_t offset = 0;
-				read_binary(id);
-				read_binary(offset);
-				output << std::dec << id << '\t' << std::hex << offset << '\n';
+			nonstd::span data(
+				reinterpret_cast<const Pair*>(input.data() + sizeof(std::uint64_t)),
+				*reinterpret_cast<const std::uint64_t*>(input.data()));
+			if (!data.empty()) {
+				const auto width = fmt::format(FMT_STRING("{}"), data.back().id);
+				const auto format = fmt::format(FMT_STRING("{{: >{}}}\t{{:0>7X}}\n"), width.length());
+				for (const auto& elem : data) {
+					output << fmt::format(format, elem.id, elem.offset);
+				}
 			}
 
 			input.close();

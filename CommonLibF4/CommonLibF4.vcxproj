@@ -255,7 +255,10 @@
     <ClCompile Include="include\F4SE\Trampoline.cpp" />
     <ClCompile Include="include\RE\Bethesda\Atomic.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSFixedString.cpp" />
-    <ClCompile Include="include\RE\Bethesda\NiRect.cpp" />
+    <ClCompile Include="include\RE\Bethesda\BSLock.cpp" />
+    <ClCompile Include="include\RE\Bethesda\BSPointerHandle.cpp" />
+    <ClCompile Include="include\RE\Bethesda\BSSpring.cpp" />
+    <ClCompile Include="include\RE\NetImmerse\NiRect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\F4SE\API.h" />
@@ -269,15 +272,30 @@
     <ClInclude Include="include\REL\Relocation.h" />
     <ClInclude Include="include\RE\Bethesda\Atomic.h" />
     <ClInclude Include="include\RE\Bethesda\BSFixedString.h" />
+    <ClInclude Include="include\RE\Bethesda\BSInputEventReceiver.h" />
     <ClInclude Include="include\RE\Bethesda\BSInputEventUser.h" />
+    <ClInclude Include="include\RE\Bethesda\BSLock.h" />
+    <ClInclude Include="include\RE\Bethesda\BSPointerHandle.h" />
+    <ClInclude Include="include\RE\Bethesda\BSSpring.h" />
     <ClInclude Include="include\RE\Bethesda\BSStringPool.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTArray.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTEvent.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTOptional.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTSingleton.h" />
+    <ClInclude Include="include\RE\Bethesda\Events.h" />
     <ClInclude Include="include\RE\Bethesda\IMenu.h" />
+    <ClInclude Include="include\RE\Bethesda\IMovementInterface.h" />
+    <ClInclude Include="include\RE\Bethesda\InputEvent.h" />
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h" />
-    <ClInclude Include="include\RE\Bethesda\NiRect.h" />
+    <ClInclude Include="include\RE\Bethesda\PlayerControls.h" />
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h" />
     <ClInclude Include="include\RE\Bethesda\UIMessage.h" />
     <ClInclude Include="include\RE\Bethesda\UserEvents.h" />
     <ClInclude Include="include\RE\Fallout.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiPoint2.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiPoint3.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiSmartPointer.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiRect.h" />
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h" />
     <ClInclude Include="include\RE\NiRTTI_IDs.h" />
     <ClInclude Include="include\RE\RTTI.h" />

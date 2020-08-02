@@ -1,0 +1,122 @@
+#pragma once
+
+#include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/BSPointerHandle.h"
+#include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/BSTOptional.h"
+#include "RE/Bethesda/UserEvents.h"
+#include "RE/NetImmerse/NiSmartPointer.h"
+
+namespace RE
+{
+	class TESObjectREFR;
+
+	enum class QuickContainerMode : std::int32_t
+	{
+		kLoot,
+		kTeammate,
+		kPowerArmor,
+		kTurret,
+		kWorkshop,
+		kCrafting,
+		kStealing,
+		kStealingPowerArmor
+	};
+
+	template <class T>
+	struct BSTValueEvent
+	{
+	public:
+		// members
+		BSTOptional<T> optionalValue;  // 00
+	};
+
+	struct InventoryItemDisplayData
+	{
+	public:
+		// members
+		BSFixedStringCS itemName;		// 00
+		std::uint32_t itemCount;		// 08
+		std::uint32_t equipState;		// 0C
+		std::uint32_t filterFlag;		// 10
+		bool isLegendary;				// 14
+		bool isFavorite;				// 15
+		bool isTaggedForSearch;			// 16
+		bool isBetterThanEquippedItem;	// 17
+	};
+	static_assert(sizeof(InventoryItemDisplayData) == 0x18);
+
+	class MenuModeChangeEvent
+	{
+	public:
+		// members
+		BSFixedString menuName;	 // 00
+		bool enteringMenuMode;	 // 08
+	};
+	static_assert(sizeof(MenuModeChangeEvent) == 0x10);
+
+	class MenuOpenCloseEvent
+	{
+	public:
+		// members
+		BSFixedString menuName;	 // 00
+		bool opening;			 // 08
+	};
+	static_assert(sizeof(MenuOpenCloseEvent) == 0x10);
+
+	struct QuickContainerStateData
+	{
+	public:
+		// members
+		BSTSmallArray<InventoryItemDisplayData, 5> itemData;	  // 00
+		ObjectRefHandle containerRef;							  // 88
+		ObjectRefHandle inventoryRef;							  // 8C
+		BSFixedStringCS aButtonText;							  // 90
+		BSFixedString containerName;							  // 98
+		BSFixedStringCS perkButtonText;							  // A0
+		std::int32_t selectedClipIndex;							  // A8
+		stl::enumeration<QuickContainerMode, std::int32_t> mode;  // AC
+		bool perkButtonEnabled;									  // B0
+		bool isNewContainer;									  // B1
+		bool addedDroppedItems;									  // B2
+		bool isLocked;											  // B3
+		bool buttonAEnabled;									  // B4
+		bool buttonXEnabled;									  // B5
+		bool refreshContainerSize;								  // B6
+		bool containerActivated;								  // B7
+	};
+	static_assert(sizeof(QuickContainerStateData) == 0xB8);
+
+	class QuickContainerStateEvent :
+		public BSTValueEvent<QuickContainerStateData>  // 00
+	{
+	public:
+	};
+	static_assert(sizeof(QuickContainerStateEvent) == 0xC0);
+
+	struct TESFurnitureEvent
+	{
+	public:
+		enum class FurnitureEventType : std::int32_t
+		{
+			kEnter,
+			kExit
+		};
+
+		// members
+		NiPointer<TESObjectREFR> actor;							  // 00
+		NiPointer<TESObjectREFR> targetFurniture;				  // 08
+		stl::enumeration<FurnitureEventType, std::int32_t> type;  // 10
+	};
+	static_assert(sizeof(TESFurnitureEvent) == 0x18);
+
+	class UserEventEnabledEvent
+	{
+	public:
+		// members
+		stl::enumeration<UserEvents::USER_EVENT_FLAG, std::int32_t> newUserEventFlag;  // 0
+		stl::enumeration<UserEvents::USER_EVENT_FLAG, std::int32_t> oldUserEventFlag;  // 4
+		stl::enumeration<UserEvents::SENDER_ID, std::int32_t> senderID;				   // 8
+	};
+	static_assert(sizeof(UserEventEnabledEvent) == 0xC);
+}

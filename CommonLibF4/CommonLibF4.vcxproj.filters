@@ -69,19 +69,52 @@
     <ClInclude Include="include\RE\Bethesda\BSFixedString.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSInputEventReceiver.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSInputEventUser.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSLock.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSPointerHandle.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSSpring.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSStringPool.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTArray.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTEvent.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTOptional.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTSingleton.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Events.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\IMenu.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\IMovementInterface.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\InputEvent.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
-    <ClInclude Include="include\RE\Bethesda\NiRect.h">
+    <ClInclude Include="include\RE\Bethesda\PlayerControls.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h">
@@ -96,7 +129,19 @@
     <ClInclude Include="include\RE\Fallout.h">
       <Filter>include\RE</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiPoint2.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiPoint3.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiRect.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiSmartPointer.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NiRTTI_IDs.h">
@@ -215,8 +260,17 @@
     <ClCompile Include="include\RE\Bethesda\BSFixedString.cpp">
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
-    <ClCompile Include="include\RE\Bethesda\NiRect.cpp">
+    <ClCompile Include="include\RE\Bethesda\BSLock.cpp">
       <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSPointerHandle.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSSpring.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\NetImmerse\NiRect.cpp">
+      <Filter>include\RE\NetImmerse</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

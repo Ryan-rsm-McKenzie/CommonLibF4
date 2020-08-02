@@ -31,10 +31,10 @@ namespace RE
 				a_rhs._data = nullptr;
 			}
 
-			inline BSFixedString(const_pointer a_string)
+			inline BSFixedString(std::basic_string_view<value_type> a_string)
 			{
-				if (a_string) {
-					GetEntry<value_type>(_data, a_string, CI);
+				if (!a_string.empty()) {
+					GetEntry<value_type>(_data, a_string.data(), CI);
 				}
 			}
 
@@ -57,11 +57,11 @@ namespace RE
 				return *this;
 			}
 
-			inline BSFixedString& operator=(const_pointer a_string)
+			inline BSFixedString& operator=(std::basic_string_view<value_type> a_string)
 			{
 				try_release();
-				if (a_string) {
-					GetEntry<value_type>(_data, a_string, CI);
+				if (!a_string.empty()) {
+					GetEntry<value_type>(_data, a_string.data(), CI);
 				}
 				return *this;
 			}

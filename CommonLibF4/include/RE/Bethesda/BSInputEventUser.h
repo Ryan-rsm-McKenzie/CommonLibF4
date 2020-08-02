@@ -1,16 +1,10 @@
 #pragma once
 
+#include "RE/Bethesda/InputEvent.h"
+#include "RE/Bethesda/MemoryManager.h"
+
 namespace RE
 {
-	class ButtonEvent;
-	class CharacterEvent;
-	class CursorMoveEvent;
-	class DeviceConnectEvent;
-	class InputEvent;
-	class KinectEvent;
-	class MouseMoveEvent;
-	class ThumbstickEvent;
-
 	class BSInputEventUser
 	{
 	public:
@@ -28,8 +22,10 @@ namespace RE
 		virtual void HandleEvent(const DeviceConnectEvent*) { return; }		 // 03
 		virtual void HandleEvent(const KinectEvent*) { return; }			 // 02
 
+		F4_HEAP_REDEFINE_NEW(BSInputEventUser);
+
 		// members
-		bool inputEventHandlingEnabled;	 // 08
+		bool inputEventHandlingEnabled{ true };	 // 08
 	};
 	static_assert(sizeof(BSInputEventUser) == 0x10);
 }
