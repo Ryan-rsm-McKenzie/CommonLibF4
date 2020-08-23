@@ -1,8 +1,9 @@
 # CommonLibF4
 
 ## Build Dependencies
-* [Boost.Atomic](https://www.boost.org/)
-* [Boost.Iostreams](https://www.boost.org/)
+* [Boost](https://www.boost.org/)
+	* Atomic
+	* Iostreams
 * [span lite](https://github.com/martinmoene/span-lite)
 * [spdlog](https://github.com/gabime/spdlog)
 * [Visual Studio Community 2019 Preview+](https://visualstudio.microsoft.com/vs/preview/)
