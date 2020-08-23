@@ -113,6 +113,15 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI_PlayerControls };
 
+		static PlayerControls* GetSingleton()
+		{
+			REL::Relocation<PlayerControls**> singleton{ REL::ID(544871) };
+			return *singleton;
+		}
+
+		void RegisterHandler(PlayerInputHandler* a_handler) { DoRegisterHandler(a_handler, false); }
+		void RegisterHandler(HeldStateHandler* a_handler) { DoRegisterHandler(a_handler, true); }
+
 		// members
 		PlayerControlsData data;						// 044
 		BSTArray<PlayerInputHandler*> handlers;			// 090
@@ -139,6 +148,14 @@ namespace RE
 		bool blockPlayerInput;							// 251
 		float cameraAutoRotationX;						// 254
 		float cameraAutoRotationY;						// 258
+
+	private:
+		void DoRegisterHandler(PlayerInputHandler* a_handler, bool a_isHeldStateHandler)
+		{
+			using func_t = decltype(&PlayerControls::DoRegisterHandler);
+			REL::Relocation<func_t> func{ REL::ID(177801) };
+			return func(this, a_handler, a_isHeldStateHandler);
+		}
 	};
 	static_assert(sizeof(PlayerControls) == 0x260);
 }

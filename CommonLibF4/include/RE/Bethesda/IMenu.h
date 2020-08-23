@@ -1,3 +1,5 @@
+#pragma once
+
 #include "RE/Bethesda/Atomic.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSInputEventUser.h"

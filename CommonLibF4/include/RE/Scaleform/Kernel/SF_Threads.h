@@ -54,7 +54,11 @@ namespace RE
 				using SizePolicyType = ArrayConstPolicy<0, 16, true>;
 				using HandlerArrayType = Array<HandlerStruct, 2, SizePolicyType>;
 
-				void AddRef() { InterlockedExchangeAdd(std::addressof(refCount.value), 1); }
+				void AddRef()
+				{
+					stl::atomic_ref myRefCount{ refCount.value };
+					++myRefCount;
+				}
 
 				// members
 				AtomicInt<std::int32_t> refCount;  // 00
@@ -104,7 +108,7 @@ namespace RE
 		inline ThreadId GetCurrentThreadId()
 		{
 			return reinterpret_cast<ThreadId>(
-				static_cast<std::uintptr_t>(::GetCurrentThreadId()));
+				static_cast<std::uintptr_t>(WinAPI::GetCurrentThreadID()));
 		}
 	}
 }

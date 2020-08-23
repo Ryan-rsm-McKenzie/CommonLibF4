@@ -45,10 +45,10 @@
     <ClInclude Include="include\F4SE\F4SE.h">
       <Filter>include\F4SE</Filter>
     </ClInclude>
-    <ClInclude Include="include\F4SE\Impl\Atomic.h">
+    <ClInclude Include="include\F4SE\Impl\PCH.h">
       <Filter>include\F4SE\Impl</Filter>
     </ClInclude>
-    <ClInclude Include="include\F4SE\Impl\PCH.h">
+    <ClInclude Include="include\F4SE\Impl\WinAPI.h">
       <Filter>include\F4SE\Impl</Filter>
     </ClInclude>
     <ClInclude Include="include\F4SE\Interfaces.h">
@@ -93,10 +93,22 @@
     <ClInclude Include="include\RE\Bethesda\BSTEvent.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTHashMap.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTimer.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTOptional.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTSingleton.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTTuple.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\CRC.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\Events.h">
@@ -118,6 +130,9 @@
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\UI.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\UIMessage.h">
@@ -248,7 +263,13 @@
     <ClCompile Include="include\F4SE\Impl\PCH.cpp">
       <Filter>include\F4SE\Impl</Filter>
     </ClCompile>
+    <ClCompile Include="include\F4SE\Impl\WinAPI.cpp">
+      <Filter>include\F4SE\Impl</Filter>
+    </ClCompile>
     <ClCompile Include="include\F4SE\Interfaces.cpp">
+      <Filter>include\F4SE</Filter>
+    </ClCompile>
+    <ClCompile Include="include\F4SE\Logger.cpp">
       <Filter>include\F4SE</Filter>
     </ClCompile>
     <ClCompile Include="include\F4SE\Trampoline.cpp">
@@ -269,8 +290,20 @@
     <ClCompile Include="include\RE\Bethesda\BSSpring.cpp">
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\CRC.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\InputEvent.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
     <ClCompile Include="include\RE\NetImmerse\NiRect.cpp">
       <Filter>include\RE\NetImmerse</Filter>
     </ClCompile>
+    <ClCompile Include="include\REL\Relocation.cpp">
+      <Filter>include\REL</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="CommonLibF4.natvis" />
   </ItemGroup>
 </Project>

@@ -131,7 +131,7 @@ namespace RE
 			virtual void CheckIntegrity() const = 0;																							 // 21
 			virtual void GetUserDebugStats(RootStats* a_stats) const = 0;																		 // 22
 
-			inline void AssignToCurrentThread() { ownerThreadID = ::GetCurrentThreadId(); }
+			inline void AssignToCurrentThread() { ownerThreadID = WinAPI::GetCurrentThreadID(); }
 
 			// members
 			std::size_t selfSize;			  // 18

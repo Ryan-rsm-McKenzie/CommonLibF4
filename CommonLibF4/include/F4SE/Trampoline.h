@@ -12,8 +12,8 @@ namespace F4SE
 
 			const auto remainder = a_number % a_multiple;
 			return remainder == 0 ?
-					   a_number :
-					   a_number + a_multiple - remainder;
+						 a_number :
+						 a_number + a_multiple - remainder;
 		}
 
 		[[nodiscard]] constexpr std::size_t rounddown(std::size_t a_number, std::size_t a_multiple) noexcept
@@ -24,15 +24,15 @@ namespace F4SE
 
 			const auto remainder = a_number % a_multiple;
 			return remainder == 0 ?
-					   a_number :
-					   a_number - remainder;
+						 a_number :
+						 a_number - remainder;
 		}
 	}
 
 	class Trampoline
 	{
 	public:
-		using deleter_t = std::function<void(void* a_mem, std::size_t a_size)>;
+		using deleter_type = std::function<void(void* a_mem, std::size_t a_size)>;
 
 		Trampoline() = default;
 		Trampoline(const Trampoline&) = delete;
@@ -60,7 +60,7 @@ namespace F4SE
 		inline void create(std::size_t a_size, void* a_module)
 		{
 			if (a_size == 0) {
-				throw std::runtime_error("cannot create a trampoline with a zero size"s);
+				stl::report_and_fail("cannot create a trampoline with a zero size"sv);
 			}
 
 			if (!a_module) {
@@ -70,18 +70,18 @@ namespace F4SE
 
 			auto mem = do_create(a_size, reinterpret_cast<std::uintptr_t>(a_module));
 			if (!mem) {
-				throw std::runtime_error("failed to create trampoline"s);
+				stl::report_and_fail("failed to create trampoline"sv);
 			}
 
 			set_trampoline(mem, a_size,
 				[](void* a_mem, std::size_t) {
-					VirtualFree(a_mem, 0, MEM_RELEASE);
+					WinAPI::VirtualFree(a_mem, 0, (WinAPI::MEM_RELEASE));
 				});
 		}
 
 		inline void set_trampoline(void* a_trampoline, std::size_t a_size) { set_trampoline(a_trampoline, a_size, {}); }
 
-		inline void set_trampoline(void* a_trampoline, std::size_t a_size, deleter_t a_deleter)
+		inline void set_trampoline(void* a_trampoline, std::size_t a_size, deleter_type a_deleter)
 		{
 			auto trampoline = static_cast<std::byte*>(a_trampoline);
 			if (trampoline) {
@@ -105,6 +105,16 @@ namespace F4SE
 			log_stats();
 			return result;
 		}
+
+#if defined(XBYAK32) || defined(XBYAK64)
+		[[nodiscard]] inline void* allocate(Xbyak::CodeGenerator& a_code)
+		{
+			auto result = do_allocate(a_code.getSize());
+			log_stats();
+			std::memcpy(result, a_code.getCode(), a_code.getSize());
+			return result;
+		}
+#endif
 
 		template <class T>
 		[[nodiscard]] inline T* allocate()
@@ -164,7 +174,7 @@ namespace F4SE
 		template <std::size_t N, class F>
 		inline std::uintptr_t write_call(std::uintptr_t a_src, F a_dst)
 		{
-			return write_branch<N>(a_src, unrestricted_cast<std::uintptr_t>(a_dst));
+			return write_call<N>(a_src, unrestricted_cast<std::uintptr_t>(a_dst));
 		}
 
 	private:
@@ -173,7 +183,7 @@ namespace F4SE
 		[[nodiscard]] inline void* do_allocate(std::size_t a_size)
 		{
 			if (a_size > free_size()) {
-				throw std::runtime_error("Failed to handle allocation request"s);
+				stl::report_and_fail("Failed to handle allocation request"sv);
 			}
 
 			auto mem = _data + _size;
@@ -212,16 +222,19 @@ namespace F4SE
 			static_assert(sizeof(TrampolineAssembly) == 0xE);
 #pragma pack(pop)
 
-			const auto disp = static_cast<std::ptrdiff_t>(
-				reinterpret_cast<std::uintptr_t>(_data) -
-				(a_src + sizeof(SrcAssembly)));
-			if (!in_range(disp)) {
-				throw std::runtime_error("displacement is out of range"s);
+			TrampolineAssembly* mem = nullptr;
+			if (const auto it = _5branches.find(a_dst); it != _5branches.end()) {
+				mem = reinterpret_cast<TrampolineAssembly*>(it->second);
+			} else {
+				mem = allocate<TrampolineAssembly>();
+				_5branches.emplace(a_dst, reinterpret_cast<std::byte*>(mem));
 			}
 
-			auto mem = allocate<TrampolineAssembly>();
-			if (!mem) {
-				throw std::runtime_error("trampoline ran out of space"s);
+			const auto disp =
+				reinterpret_cast<const std::byte*>(mem) -
+				reinterpret_cast<const std::byte*>(a_src + sizeof(SrcAssembly));
+			if (!in_range(disp)) {	// the trampoline should already be in range, so this should never happen
+				stl::report_and_fail("displacement is out of range"sv);
 			}
 
 			SrcAssembly assembly;
@@ -251,16 +264,19 @@ namespace F4SE
 			static_assert(sizeof(Assembly) == 0x6);
 #pragma pack(pop)
 
-			const auto disp = static_cast<std::ptrdiff_t>(
-				reinterpret_cast<std::uintptr_t>(_data) -
-				(a_src + sizeof(Assembly)));
-			if (!in_range(disp)) {
-				throw std::runtime_error("displacement is out of range"s);
+			std::uintptr_t* mem = nullptr;
+			if (const auto it = _6branches.find(a_dst); it != _6branches.end()) {
+				mem = reinterpret_cast<std::uintptr_t*>(it->second);
+			} else {
+				mem = allocate<std::uintptr_t>();
+				_6branches.emplace(a_dst, reinterpret_cast<std::byte*>(mem));
 			}
 
-			auto mem = allocate<std::uintptr_t>();
-			if (!mem) {
-				throw std::runtime_error("trampoline ran out of space"s);
+			const auto disp =
+				reinterpret_cast<const std::byte*>(mem) -
+				reinterpret_cast<const std::byte*>(a_src + sizeof(Assembly));
+			if (!in_range(disp)) {	// the trampoline should already be in range, so this should never happen
+				stl::report_and_fail("displacement is out of range"sv);
 			}
 
 			Assembly assembly;
@@ -292,6 +308,8 @@ namespace F4SE
 
 		inline void move_from(Trampoline&& a_rhs)
 		{
+			_5branches = std::move(a_rhs._5branches);
+			_6branches = std::move(a_rhs._6branches);
 			_name = std::move(a_rhs._name);
 
 			_deleter = std::move(a_rhs._deleter);
@@ -322,13 +340,17 @@ namespace F4SE
 				_deleter(_data, _capacity);
 			}
 
+			_5branches.clear();
+			_6branches.clear();
 			_data = nullptr;
 			_capacity = 0;
 			_size = 0;
 		}
 
+		std::map<std::uintptr_t, std::byte*> _5branches;
+		std::map<std::uintptr_t, std::byte*> _6branches;
 		std::string _name{ "Default Trampoline"sv };
-		deleter_t _deleter;
+		deleter_type _deleter;
 		std::byte* _data{ nullptr };
 		std::size_t _capacity{ 0 };
 		std::size_t _size{ 0 };

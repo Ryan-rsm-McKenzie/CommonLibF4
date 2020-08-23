@@ -36,6 +36,8 @@ namespace RE
 		kVirtualKeyboard
 	};
 
+	class IDEvent;
+
 	class InputEvent
 	{
 	public:
@@ -54,6 +56,76 @@ namespace RE
 		virtual bool HasIDCode() const { return false; }				// 02
 		virtual const BSFixedString& QUserEvent() const { return {}; }	// 03
 
+		template <
+			class T,
+			std::enable_if_t<
+				std::conjunction_v<
+					std::is_base_of<InputEvent, T>,
+					std::negation<
+						std::is_same<
+							stl::remove_cvref_t<T>,
+							IDEvent>>>,
+				int> = 0>
+		[[nodiscard]] T* As() noexcept
+		{
+			if (*eventType == T::TYPE) {
+				return static_cast<T*>(this);
+			} else {
+				return nullptr;
+			}
+		}
+
+		template <
+			class T,
+			std::enable_if_t<
+				std::conjunction_v<
+					std::is_base_of<InputEvent, T>,
+					std::negation<
+						std::is_same<
+							stl::remove_cvref_t<T>,
+							IDEvent>>>,
+				int> = 0>
+		[[nodiscard]] const T* As() const noexcept
+		{
+			if (*eventType == T::TYPE) {
+				return static_cast<const T*>(this);
+			} else {
+				return nullptr;
+			}
+		}
+
+		template <
+			class T,
+			std::enable_if_t<
+				std::is_same_v<
+					stl::remove_cvref_t<T>,
+					IDEvent>,
+				int> = 0>
+		[[nodiscard]] T* As()
+		{
+			if (HasIDCode()) {
+				return static_cast<T*>(this);
+			} else {
+				return nullptr;
+			}
+		}
+
+		template <
+			class T,
+			std::enable_if_t<
+				std::is_same_v<
+					stl::remove_cvref_t<T>,
+					IDEvent>,
+				int> = 0>
+		[[nodiscard]] const T* As() const
+		{
+			if (HasIDCode()) {
+				return static_cast<const T*>(this);
+			} else {
+				return nullptr;
+			}
+		}
+
 		// members
 		stl::enumeration<INPUT_DEVICE, std::int32_t> device{ INPUT_DEVICE::kNone };				// 08
 		std::int32_t deviceID{ 0 };																// 0C
@@ -69,6 +141,7 @@ namespace RE
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_CharacterEvent };
+		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kChar };
 
 		virtual ~CharacterEvent() = default;  // 00
 
@@ -77,11 +150,15 @@ namespace RE
 	};
 	static_assert(sizeof(CharacterEvent) == 0x30);
 
+	extern template CharacterEvent* InputEvent::As() noexcept;
+	extern template const CharacterEvent* InputEvent::As() const noexcept;
+
 	class DeviceConnectEvent :
 		public InputEvent  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_DeviceConnectEvent };
+		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kDeviceConnect };
 
 		virtual ~DeviceConnectEvent() = default;  // 00
 
@@ -89,6 +166,9 @@ namespace RE
 		bool connected{ true };	 // 28
 	};
 	static_assert(sizeof(DeviceConnectEvent) == 0x30);
+
+	extern template DeviceConnectEvent* InputEvent::As() noexcept;
+	extern template const DeviceConnectEvent* InputEvent::As() const noexcept;
 
 	class IDEvent :
 		public InputEvent  // 00
@@ -109,11 +189,15 @@ namespace RE
 	};
 	static_assert(sizeof(IDEvent) == 0x38);
 
+	extern template IDEvent* InputEvent::As();
+	extern template const IDEvent* InputEvent::As() const;
+
 	class ButtonEvent :
 		public IDEvent	// 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_ButtonEvent };
+		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kButton };
 
 		virtual ~ButtonEvent() = default;  // 00
 
@@ -123,11 +207,15 @@ namespace RE
 	};
 	static_assert(sizeof(ButtonEvent) == 0x40);
 
+	extern template ButtonEvent* InputEvent::As() noexcept;
+	extern template const ButtonEvent* InputEvent::As() const noexcept;
+
 	class CursorMoveEvent :
 		public IDEvent	// 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_CursorMoveEvent };
+		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kCursorMove };
 
 		virtual ~CursorMoveEvent() = default;  // 00
 
@@ -137,11 +225,15 @@ namespace RE
 	};
 	static_assert(sizeof(CursorMoveEvent) == 0x40);
 
+	extern template CursorMoveEvent* InputEvent::As() noexcept;
+	extern template const CursorMoveEvent* InputEvent::As() const noexcept;
+
 	class KinectEvent :
 		public IDEvent	// 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_KinectEvent };
+		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kKinect };
 
 		virtual ~KinectEvent() = default;  // 00
 
@@ -150,11 +242,15 @@ namespace RE
 	};
 	static_assert(sizeof(KinectEvent) == 0x40);
 
+	extern template KinectEvent* InputEvent::As() noexcept;
+	extern template const KinectEvent* InputEvent::As() const noexcept;
+
 	class MouseMoveEvent :
 		public IDEvent	// 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_MouseMoveEvent };
+		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kMouseMove };
 
 		virtual ~MouseMoveEvent() = default;  // 00
 
@@ -164,17 +260,21 @@ namespace RE
 	};
 	static_assert(sizeof(MouseMoveEvent) == 0x40);
 
+	extern template MouseMoveEvent* InputEvent::As() noexcept;
+	extern template const MouseMoveEvent* InputEvent::As() const noexcept;
+
 	class ThumbstickEvent :
 		public IDEvent	// 00
 	{
 	public:
+		static constexpr auto RTTI{ RTTI_ThumbstickEvent };
+		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kTumbstick };
+
 		enum THUMBSTICK_ID : std::int32_t
 		{
 			kLeft = 0xB,
 			kRight = 0xC,
 		};
-
-		static constexpr auto RTTI{ RTTI_ThumbstickEvent };
 
 		virtual ~ThumbstickEvent() = default;  // 00
 
@@ -185,4 +285,7 @@ namespace RE
 		DIRECTION_VAL currDir{ DIRECTION_VAL::kNone };	// 44
 	};
 	static_assert(sizeof(ThumbstickEvent) == 0x48);
+
+	extern template ThumbstickEvent* InputEvent::As() noexcept;
+	extern template const ThumbstickEvent* InputEvent::As() const noexcept;
 }

@@ -117,6 +117,7 @@
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>PCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,6 +179,7 @@ copy "$(TargetDir)$(TargetName).pdb" "$(Fallout4Path)\Data\F4SE\Plugins\$(Target
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>PCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

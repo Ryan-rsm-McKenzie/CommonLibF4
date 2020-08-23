@@ -1,12 +1,13 @@
 #pragma once
 
 #include "RE/Bethesda/BSStringPool.h"
+#include "RE/Bethesda/CRC.h"
 
 namespace RE
 {
 	namespace detail
 	{
-		template <class CharT, bool CI>
+		template <class CharT, bool CS>
 		class BSFixedString
 		{
 		public:
@@ -34,7 +35,7 @@ namespace RE
 			inline BSFixedString(std::basic_string_view<value_type> a_string)
 			{
 				if (!a_string.empty()) {
-					GetEntry<value_type>(_data, a_string.data(), CI);
+					GetEntry<value_type>(_data, a_string.data(), CS);
 				}
 			}
 
@@ -61,7 +62,7 @@ namespace RE
 			{
 				try_release();
 				if (!a_string.empty()) {
-					GetEntry<value_type>(_data, a_string.data(), CI);
+					GetEntry<value_type>(_data, a_string.data(), CS);
 				}
 				return *this;
 			}
@@ -115,7 +116,7 @@ namespace RE
 		private:
 			[[nodiscard]] static int strncmp(const char* a_lhs, const char* a_rhs, std::size_t a_length)
 			{
-				if constexpr (CI) {
+				if constexpr (CS) {
 					return std::strncmp(a_lhs, a_rhs, a_length);
 				} else {
 					return _strnicmp(a_lhs, a_rhs, a_length);
@@ -124,7 +125,7 @@ namespace RE
 
 			[[nodiscard]] static int strncmp(const wchar_t* a_lhs, const wchar_t* a_rhs, std::size_t a_length)
 			{
-				if constexpr (CI) {
+				if constexpr (CS) {
 					return std::wcsncmp(a_lhs, a_rhs, a_length);
 				} else {
 					return _wcsnicmp(a_lhs, a_rhs, a_length);
@@ -156,4 +157,19 @@ namespace RE
 	using BSFixedStringCS = detail::BSFixedString<char, true>;
 	using BSFixedStringW = detail::BSFixedString<wchar_t, false>;
 	using BSFixedStringWCS = detail::BSFixedString<wchar_t, true>;
+
+	template <class CharT, bool CS>
+	struct BSCRC32<detail::BSFixedString<CharT, CS>>
+	{
+	public:
+		[[nodiscard]] inline std::uint32_t operator()(const detail::BSFixedString<CharT, CS>& a_key) const noexcept
+		{
+			return BSCRC32<typename detail::BSFixedString<CharT, CS>::const_pointer>()(a_key.data());
+		}
+	};
+
+	extern template struct BSCRC32<BSFixedString>;
+	extern template struct BSCRC32<BSFixedStringCS>;
+	extern template struct BSCRC32<BSFixedStringW>;
+	extern template struct BSCRC32<BSFixedStringWCS>;
 }

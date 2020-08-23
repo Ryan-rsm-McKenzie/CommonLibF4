@@ -7,65 +7,19 @@
 #pragma warning(disable : 4266)	 // 'function' : no override available for virtual member function from base 'type'; function is hidden
 #pragma warning(disable : 4324)	 // 'struct_name' : structure was padded due to __declspec(align())
 #pragma warning(disable : 4371)	 // 'classname': layout of class may have changed from a previous version of the compiler due to better packing of member 'member'
+#pragma warning(disable : 4623)	 // 'derived class' : default constructor was implicitly defined as deleted because a base class default constructor is inaccessible or deleted
 #pragma warning(disable : 4625)	 // 'derived class' : copy constructor was implicitly defined as deleted because a base class copy constructor is inaccessible or deleted
 #pragma warning(disable : 4626)	 // 'derived class' : assignment operator was implicitly defined as deleted because a base class assignment operator is inaccessible or deleted
 #pragma warning(disable : 4686)	 // 'user-defined type' : possible change in behavior, change in UDT return calling convention
+#pragma warning(disable : 5027)	 // 'type': move assignment operator was implicitly defined as deleted
+#pragma warning(disable : 5053)	 // support for 'explicit(<expr>)' in C++17 and earlier is a vendor extension
 #pragma warning(disable : 5204)	 // 'type-name': class has virtual functions, but its trivial destructor is not virtual; instances of objects derived from this class may not be destructed correctly
 #pragma warning(disable : 5220)	 // 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 
 #define WINVER 0x0601  // Windows 7
 #define _WIN32_WINNT 0x0601
 
-#define WIN32_LEAN_AND_MEAN
-
-#define NOGDICAPMASKS
-#define NOVIRTUALKEYCODES
-//#define NOWINMESSAGES
-#define NOWINSTYLES
-#define NOSYSMETRICS
-#define NOMENUS
-#define NOICONS
-#define NOKEYSTATES
-#define NOSYSCOMMANDS
-#define NORASTEROPS
-#define NOSHOWWINDOW
-#define OEMRESOURCE
-#define NOATOM
-#define NOCLIPBOARD
-#define NOCOLOR
-//#define NOCTLMGR
-#define NODRAWTEXT
-#define NOGDI
-#define NOKERNEL
-//#define NOUSER
-#define NONLS
-#define NOMB
-#define NOMEMMGR
-#define NOMETAFILE
-#define NOMINMAX
-//#define NOMSG
-#define NOOPENFILE
-#define NOSCROLL
-#define NOSERVICE
-#define NOSOUND
-#define NOTEXTMETRIC
-#define NOWH
-#define NOWINOFFSETS
-#define NOCOMM
-#define NOKANJI
-#define NOHELP
-#define NOPROFILER
-#define NODEFERWINDOWPOS
-#define NOMCX
-
 #define SPDLOG_COMPILED_LIB
-#define XBYAK_NO_OP_NAMES
-
-#include <Windows.h>
-
-#include <ShlObj.h>
-
-#undef GetFileAttributes
 
 #include <algorithm>
 #include <array>
@@ -78,101 +32,37 @@
 #include <filesystem>
 #include <functional>
 #include <limits>
+#include <map>
 #include <memory>
 #include <new>
 #include <optional>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
+#include <boost/atomic.hpp>
+#include <boost/iostreams/device/mapped_file.hpp>
 #include <nonstd/span.hpp>
 #include <spdlog/spdlog.h>
 
-#include "F4SE/Impl/Atomic.h"
+#include "F4SE/Impl/WinAPI.h"
 
 namespace F4SE
 {
 	using namespace std::literals;
 
-	inline namespace util
-	{
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr auto to_underlying(Enum a_val) noexcept
-		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<underlying_type_t>(a_val);
-		}
-
-		template <class To, class From>
-		[[nodiscard]] inline To unrestricted_cast(From a_from) noexcept(std::is_nothrow_move_assignable_v<From>)
-		{
-			if constexpr (std::is_same_v<
-							  std::remove_cv_t<From>,
-							  std::remove_cv_t<To>>) {
-				return To{ a_from };
-
-				// From != To
-			} else if constexpr (std::is_reference_v<From>) {
-				return unrestricted_cast<To>(std::addressof(a_from));
-
-				// From: NOT reference
-			} else if constexpr (std::is_reference_v<To>) {
-				return *unrestricted_cast<
-					std::add_pointer_t<
-						std::remove_reference_t<To>>>(a_from);
-
-				// To: NOT reference
-			} else if constexpr (std::is_pointer_v<From> &&
-								 std::is_pointer_v<To>) {
-				return static_cast<To>(
-					const_cast<void*>(
-						static_cast<const volatile void*>(a_from)));
-			} else if constexpr ((std::is_pointer_v<From> && std::is_integral_v<To>) ||
-								 (std::is_integral_v<From> && std::is_pointer_v<To>)) {
-				return reinterpret_cast<To>(a_from);
-			} else {
-				union
-				{
-					std::remove_cv_t<std::remove_reference_t<From>> from;
-					std::remove_cv_t<std::remove_reference_t<To>> to;
-				};
-
-				from = std::forward<From>(a_from);
-				return to;
-			}
-		}
-
-		template <class T, class U>
-		[[nodiscard]] inline auto adjust_pointer(U* a_ptr, std::ptrdiff_t a_adjust) noexcept
-		{
-			auto addr = a_ptr ? reinterpret_cast<std::uintptr_t>(a_ptr) + a_adjust : 0;
-			if constexpr (std::is_const_v<U> && std::is_volatile_v<U>) {
-				return reinterpret_cast<std::add_cv_t<T>*>(addr);
-			} else if constexpr (std::is_const_v<U>) {
-				return reinterpret_cast<std::add_const_t<T>*>(addr);
-			} else if constexpr (std::is_volatile_v<U>) {
-				return reinterpret_cast<std::add_volatile_t<T>*>(addr);
-			} else {
-				return reinterpret_cast<T*>(addr);
-			}
-		}
-	}
-
 	namespace stl
 	{
 		using nonstd::span;
 
-		using zstring = std::string_view;
-		using zwstring = std::wstring_view;
+		template <class CharT>
+		using basic_zstring = std::basic_string_view<CharT>;
+
+		using zstring = basic_zstring<char>;
+		using zwstring = basic_zstring<wchar_t>;
 
 		namespace detail
 		{
@@ -305,6 +195,35 @@ namespace F4SE
 			const char* _fileName{ "" };
 			const char* _functionName{ "" };
 		};
+
+		[[noreturn]] inline void report_and_fail(zstring a_msg, source_location a_loc = source_location::current())
+		{
+			const auto maxPath = WinAPI::GetMaxPath();
+			std::vector<char> buf;
+			buf.reserve(maxPath);
+			buf.resize(maxPath / 2);
+			std::uint32_t result = 0;
+			do {
+				buf.resize(buf.size() * 2);
+				result = WinAPI::GetModuleFileName(
+					WinAPI::GetCurrentModule(),
+					buf.data(),
+					static_cast<std::uint32_t>(buf.size()));
+			} while (result && result == buf.size() && buf.size() <= std::numeric_limits<std::uint32_t>::max());
+
+			const auto caption = [&]() {
+				if (result && result != buf.size()) {
+					std::filesystem::path p(buf.begin(), buf.begin() + result);
+					return p.filename().string() +
+						   fmt::format(FMT_STRING(": {}({})"), a_loc.file_name(), a_loc.line());
+				} else {
+					return std::string{};
+				}
+			}();
+
+			WinAPI::MessageBox(nullptr, a_msg.data(), (caption.empty() ? nullptr : caption.c_str()), 0);
+			std::_Exit(EXIT_FAILURE);
+		}
 
 		template <class, class, class = void>
 		class enumeration;
@@ -564,7 +483,7 @@ namespace F4SE
 	[[nodiscard]] constexpr auto operator a_op##a_op(enumeration<E, U>& a_lhs, int) noexcept \
 		->enumeration<E, U>                                                                  \
 	{                                                                                        \
-		auto tmp = a_lhs;                                                                    \
+		const auto tmp = a_lhs;                                                              \
 		a_op##a_op a_lhs;                                                                    \
 		return tmp;                                                                          \
 	}
@@ -603,6 +522,135 @@ namespace F4SE
 
 		F4SE_MAKE_INCREMENTER_OP(+);  // ++
 		F4SE_MAKE_INCREMENTER_OP(-);  // --
+
+		template <class T>
+		class atomic_ref :
+			public boost::atomic_ref<std::remove_cv_t<T>>
+		{
+		private:
+			using super = boost::atomic_ref<std::remove_cv_t<T>>;
+
+		public:
+			using value_type = typename super::value_type;
+
+			explicit atomic_ref(T& a_obj) noexcept(std::is_nothrow_constructible_v<super, value_type&>) :
+				super(const_cast<value_type&>(a_obj))
+			{}
+
+			using super::super;
+			using super::operator=;
+		};
+
+		template <class T>
+		atomic_ref(T&) -> atomic_ref<T>;
+
+		template class atomic_ref<std::int8_t>;
+		template class atomic_ref<std::uint8_t>;
+		template class atomic_ref<std::int16_t>;
+		template class atomic_ref<std::uint16_t>;
+		template class atomic_ref<std::int32_t>;
+		template class atomic_ref<std::uint32_t>;
+		template class atomic_ref<std::int64_t>;
+		template class atomic_ref<std::uint64_t>;
+
+		static_assert(atomic_ref<std::int8_t>::is_always_lock_free);
+		static_assert(atomic_ref<std::uint8_t>::is_always_lock_free);
+		static_assert(atomic_ref<std::int16_t>::is_always_lock_free);
+		static_assert(atomic_ref<std::uint16_t>::is_always_lock_free);
+		static_assert(atomic_ref<std::int32_t>::is_always_lock_free);
+		static_assert(atomic_ref<std::uint32_t>::is_always_lock_free);
+		static_assert(atomic_ref<std::int64_t>::is_always_lock_free);
+		static_assert(atomic_ref<std::uint64_t>::is_always_lock_free);
+	}
+
+	inline namespace util
+	{
+		// owning pointer
+		template <
+			class T,
+			class = std::enable_if_t<
+				std::is_pointer_v<T>>>
+		using owner = T;
+
+		// non-owning pointer
+		template <
+			class T,
+			class = std::enable_if_t<
+				std::is_pointer_v<T>>>
+		using observer = T;
+
+		// non-null pointer
+		template <
+			class T,
+			class = std::enable_if_t<
+				std::is_pointer_v<T>>>
+		using not_null = T;
+
+		template <
+			class Enum,
+			std::enable_if_t<
+				std::is_enum_v<
+					Enum>,
+				int> = 0>
+		[[nodiscard]] constexpr auto to_underlying(Enum a_val) noexcept
+		{
+			using underlying_type_t = std::underlying_type_t<Enum>;
+			return static_cast<underlying_type_t>(a_val);
+		}
+
+		template <class To, class From>
+		[[nodiscard]] inline To unrestricted_cast(From a_from)
+		{
+			if constexpr (std::is_same_v<
+							  std::remove_cv_t<From>,
+							  std::remove_cv_t<To>>) {
+				return To{ a_from };
+
+				// From != To
+			} else if constexpr (std::is_reference_v<From>) {
+				return unrestricted_cast<To>(std::addressof(a_from));
+
+				// From: NOT reference
+			} else if constexpr (std::is_reference_v<To>) {
+				return *unrestricted_cast<
+					std::add_pointer_t<
+						std::remove_reference_t<To>>>(a_from);
+
+				// To: NOT reference
+			} else if constexpr (std::is_pointer_v<From> &&
+								 std::is_pointer_v<To>) {
+				return static_cast<To>(
+					const_cast<void*>(
+						static_cast<const volatile void*>(a_from)));
+			} else if constexpr ((std::is_pointer_v<From> && std::is_integral_v<To>) ||
+								 (std::is_integral_v<From> && std::is_pointer_v<To>)) {
+				return reinterpret_cast<To>(a_from);
+			} else {
+				union
+				{
+					std::remove_cv_t<std::remove_reference_t<From>> from;
+					std::remove_cv_t<std::remove_reference_t<To>> to;
+				};
+
+				from = std::forward<From>(a_from);
+				return to;
+			}
+		}
+
+		template <class T, class U>
+		[[nodiscard]] inline auto adjust_pointer(U* a_ptr, std::ptrdiff_t a_adjust) noexcept
+		{
+			auto addr = a_ptr ? reinterpret_cast<std::uintptr_t>(a_ptr) + a_adjust : 0;
+			if constexpr (std::is_const_v<U> && std::is_volatile_v<U>) {
+				return reinterpret_cast<std::add_cv_t<T>*>(addr);
+			} else if constexpr (std::is_const_v<U>) {
+				return reinterpret_cast<std::add_const_t<T>*>(addr);
+			} else if constexpr (std::is_volatile_v<U>) {
+				return reinterpret_cast<std::add_volatile_t<T>*>(addr);
+			} else {
+				return reinterpret_cast<T*>(addr);
+			}
+		}
 	}
 }
 
@@ -613,16 +661,18 @@ namespace F4SE
 
 namespace RE
 {
-	using namespace std::literals;
-	using namespace F4SE::util;
-	namespace stl = F4SE::stl;
+	using namespace ::std::literals;
+	using namespace ::F4SE::util;
+	namespace stl = ::F4SE::stl;
+	namespace WinAPI = ::F4SE::WinAPI;
 }
 
 namespace REL
 {
-	using namespace std::literals;
-	using namespace F4SE::util;
-	namespace stl = F4SE::stl;
+	using namespace ::std::literals;
+	using namespace ::F4SE::util;
+	namespace stl = ::F4SE::stl;
+	namespace WinAPI = ::F4SE::WinAPI;
 }
 
 #include "REL/Relocation.h"

@@ -2,9 +2,163 @@
 
 namespace RE
 {
+	namespace CompactingStore
+	{
+		class Store;
+	}
+
+	enum class MEM_CONTEXT : std::int32_t;
+
+	class BSSmallBlockAllocator;
+
+	struct HeapStats;
+	struct MemoryStats;
+
+	class IMemoryStoreBase
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_IMemoryStoreBase };
+
+		virtual ~IMemoryStoreBase() = default;	// 00
+
+		// add
+		virtual std::size_t Size(void const* a_mem) const = 0;			// 01
+		virtual void GetMemoryStats(MemoryStats* a_stats) = 0;			// 02
+		virtual bool ContainsBlockImpl(const void* a_block) const = 0;	// 03
+	};
+	static_assert(sizeof(IMemoryStoreBase) == 0x8);
+
+	class IMemoryStore :
+		public IMemoryStoreBase	 // 0
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_IMemoryStore };
+
+		virtual ~IMemoryStore() = default;	// 00
+
+		// add
+		virtual void* AllocateAlignImpl(std::size_t a_size, std::uint32_t a_alignment) = 0;													// 04
+		virtual void DeallocateAlignImpl(void*& a_block) = 0;																				// 05
+		virtual void* TryAllocateImpl([[maybe_unused]] std::size_t a_size, [[maybe_unused]] std::uint32_t a_alignment) { return nullptr; }	// 06
+	};
+	static_assert(sizeof(IMemoryStore) == 0x8);
+
+	class IMemoryHeap :
+		public IMemoryStore	 // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_IMemoryHeap };
+
+		virtual ~IMemoryHeap() = default;
+
+		// override (IMemoryStore)
+		bool ContainsBlockImpl(const void* a_block) const override { return PointerInHeap(a_block); }							   // 03
+		void* AllocateAlignImpl(std::size_t a_size, std::uint32_t a_alignment) override { return Allocate(a_size, a_alignment); }  // 04
+		void DeallocateAlignImpl(void*& a_block) override { Deallocate(a_block, 0); }											   // 05
+
+		// add
+		virtual const char* GetName() const = 0;											   // 07
+		virtual void* Allocate(std::size_t a_size, std::uint32_t a_alignment) = 0;			   // 08
+		virtual void Deallocate(void* a_mem, std::uint32_t) = 0;							   // 09
+		virtual bool PointerInHeap(const void* a_pointer) const = 0;						   // 0A
+		virtual std::size_t TotalSize(const void* a_pointer) const = 0;						   // 0B
+		virtual void GetHeapStats(HeapStats* a_stats, bool a_fullBlockInfo) = 0;			   // 0C
+		virtual bool ShouldTrySmallBlockPools(std::size_t a_size, MEM_CONTEXT a_context) = 0;  // 0D
+		virtual std::uint32_t GetPageSize() const = 0;										   // 0E
+	};
+	static_assert(sizeof(IMemoryHeap) == 0x8);
+
+	class ScrapHeap :
+		public IMemoryStore	 // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_ScrapHeap };
+
+		struct Block
+		{
+		public:
+			// members
+			std::size_t sizeFlags;	// 00
+			Block* prev;			// 08
+		};
+		static_assert(sizeof(Block) == 0x10);
+
+		struct FreeBlock :
+			public Block  // 00
+		{
+		public:
+			// members
+			FreeBlock* left;   // 10
+			FreeBlock* right;  // 18
+		};
+		static_assert(sizeof(FreeBlock) == 0x20);
+
+		struct FreeTreeNode :
+			public FreeBlock  // 00
+		{
+		public:
+			// members
+			FreeTreeNode** root;		 // 20
+			FreeTreeNode* leftNode;		 // 28
+			FreeTreeNode* rightNode;	 // 30
+			std::size_t parentAndBlack;	 // 38
+		};
+		static_assert(sizeof(FreeTreeNode) == 0x40);
+
+		virtual ~ScrapHeap() { WinAPI::VirtualFree(baseAddress, 0, (WinAPI::MEM_RELEASE)); }
+
+		// override (IMemoryStore)
+		std::size_t Size(void const* a_mem) const override { return *static_cast<const std::size_t*>(a_mem) & ~(std::size_t{ 3 } << 62); }	// 01
+		void GetMemoryStats(MemoryStats*) override { return; }																				// 02
+		bool ContainsBlockImpl(const void* a_block) const override { return baseAddress <= a_block && a_block <= endAddress; }				// 03
+		void* AllocateAlignImpl(std::size_t a_size, std::uint32_t a_alignment) override { return Allocate(a_size, a_alignment); }			// 04
+		void DeallocateAlignImpl(void*& a_block) override { Deallocate(a_block), a_block = nullptr; }										// 05
+
+		inline void* Allocate(std::size_t a_size, std::size_t a_alignment)
+		{
+			using func_t = decltype(&ScrapHeap::Allocate);
+			REL::Relocation<func_t> func{ REL::ID(1085394) };
+			return func(this, a_size, a_alignment);
+		}
+
+		inline void Deallocate(void* a_mem)
+		{
+			using func_t = decltype(&ScrapHeap::Deallocate);
+			REL::Relocation<func_t> func{ REL::ID(923307) };
+			return func(this, a_mem);
+		}
+
+		// members
+		FreeBlock* smallBlocks[6]{ nullptr };	  // 08
+		FreeTreeNode* freeList{ nullptr };		  // 38
+		Block* lastBlock{ nullptr };			  // 40
+		std::byte* baseAddress{ nullptr };		  // 48
+		std::byte* endAddress{ nullptr };		  // 50
+		std::byte* commitEnd{ nullptr };		  // 58
+		std::size_t reserveSize;				  // 60
+		std::size_t minCommit{ 1 << 17 };		  // 68
+		std::size_t totalAllocated{ 0 };		  // 70
+		std::uint32_t keepPagesRequest{ 0 };	  // 78
+		std::uint32_t totalFreeBlocks{ 0 };		  // 7C
+		std::uint32_t freeSmallBlocks{ 0 };		  // 80
+		std::uint32_t totalAllocatedBlocks{ 0 };  // 84
+		std::uint32_t pmpBarrier{ 0 };			  // 88
+	};
+	static_assert(sizeof(ScrapHeap) == 0x90);
+
 	class MemoryManager
 	{
 	public:
+		struct ThreadScrapHeap
+		{
+		public:
+			// members
+			ScrapHeap heap;												 // 00
+			ThreadScrapHeap* next{ nullptr };							 // 90
+			std::uint32_t owningThread{ WinAPI::GetCurrentThreadID() };	 // 98
+		};
+		static_assert(sizeof(ThreadScrapHeap) == 0xA0);
+
 		[[nodiscard]] static inline MemoryManager& GetSingleton()
 		{
 			using func_t = decltype(&MemoryManager::GetSingleton);
@@ -34,7 +188,29 @@ namespace RE
 		}
 
 		// members
-		std::uint8_t unk[0x480];  // 000
+		bool initialized{ false };								// 000
+		std::uint16_t numHeaps{ 0 };							// 002
+		std::uint16_t numPhysicalHeaps{ 0 };					// 004
+		IMemoryHeap** heaps{ nullptr };							// 008
+		bool* allowOtherContextAllocs{ nullptr };				// 010
+		IMemoryHeap* heapsByContext[127]{ nullptr };			// 018
+		ThreadScrapHeap* threadScrapHeap{ nullptr };			// 410
+		IMemoryHeap** physicalHeaps{ nullptr };					// 418
+		IMemoryHeap* bigAllocHeap{ nullptr };					// 420
+		IMemoryHeap* emergencyHeap{ nullptr };					// 428
+		BSSmallBlockAllocator* smallBlockAllocator{ nullptr };	// 430
+		CompactingStore::Store* compactingStore{ nullptr };		// 438
+		IMemoryHeap* externalHavokAllocator{ nullptr };			// 440
+		bool specialHeaps{ false };								// 448
+		bool allowPoolUse{ true };								// 449
+		std::uint32_t sysAllocBytes{ 0 };						// 44C
+		std::uint32_t mallocBytes{ 0 };							// 450
+		std::uint32_t alignmentForPools{ 4 };					// 454
+		std::uint32_t mainThreadMemoryProblemPassSignal{ 0 };	// 458
+		std::size_t failedAllocationSize{ 0 };					// 460
+		std::uint32_t numMemoryProblemPassesRun{ 0 };			// 468
+		std::size_t timeOfLastMemoryProblemPass{ 0 };			// 470
+		IMemoryHeap* defaultHeap{ nullptr };					// 478
 	};
 	static_assert(sizeof(MemoryManager) == 0x480);
 
@@ -99,7 +275,7 @@ namespace RE
 		if (mem) {                                                                                                      \
 			return mem;                                                                                                 \
 		} else {                                                                                                        \
-			throw std::bad_alloc();                                                                                     \
+			stl::report_and_fail("out of memory"sv);                                                                    \
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \
@@ -109,7 +285,7 @@ namespace RE
 		if (mem) {                                                                                                      \
 			return mem;                                                                                                 \
 		} else {                                                                                                        \
-			throw std::bad_alloc();                                                                                     \
+			stl::report_and_fail("out of memory"sv);                                                                    \
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \
@@ -119,7 +295,7 @@ namespace RE
 		if (mem) {                                                                                                      \
 			return mem;                                                                                                 \
 		} else {                                                                                                        \
-			throw std::bad_alloc();                                                                                     \
+			stl::report_and_fail("out of memory"sv);                                                                    \
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \
@@ -129,7 +305,7 @@ namespace RE
 		if (mem) {                                                                                                      \
 			return mem;                                                                                                 \
 		} else {                                                                                                        \
-			throw std::bad_alloc();                                                                                     \
+			stl::report_and_fail("out of memory"sv);                                                                    \
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \

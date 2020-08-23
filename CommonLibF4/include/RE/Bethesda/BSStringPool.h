@@ -11,7 +11,8 @@ namespace RE
 			enum : std::uint16_t
 			{
 				kShallow = 1 << 14,
-				kWide = 1 << 15
+				kWide = 1 << 15,
+				kRefCountMask = 0x3FFF
 			};
 
 			static inline void release(Entry*& a_entry)
@@ -23,9 +24,14 @@ namespace RE
 
 			inline void acquire()
 			{
-				if ((_flags & 0x3FFF) < 0x3FFF) {
-					InterlockedIncrement(std::addressof(_flags));
-				}
+				stl::atomic_ref flags{ _flags };
+				std::uint16_t expected{ 0 };
+				do {
+					expected = flags;
+					if ((expected & kRefCountMask) >= kRefCountMask) {
+						break;
+					}
+				} while (!flags.compare_exchange_weak(expected, static_cast<std::uint16_t>(expected + 1)));
 			}
 
 			[[nodiscard]] constexpr std::uint16_t crc() const noexcept { return _crc; }

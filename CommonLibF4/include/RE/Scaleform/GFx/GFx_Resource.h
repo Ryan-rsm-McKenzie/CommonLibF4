@@ -116,11 +116,16 @@ namespace RE
 				virtual std::uint32_t GetResourceTypeCode() const;	// 02
 				virtual ResourceReport* GetResourceReport();		// 03
 
-				inline void AddRef() { InterlockedExchangeAdd(std::addressof(refCount.value), 1); }
+				inline void AddRef()
+				{
+					stl::atomic_ref myRefCount{ refCount.value };
+					++myRefCount;
+				}
 
 				inline void Release()
 				{
-					if (InterlockedDecrement(std::addressof(refCount.value)) == 0) {
+					stl::atomic_ref myRefCount{ refCount.value };
+					if (--myRefCount == 0) {
 						delete lib;
 						lib = nullptr;
 						delete this;

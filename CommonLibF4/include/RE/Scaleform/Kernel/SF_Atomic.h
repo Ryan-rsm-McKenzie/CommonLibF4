@@ -27,7 +27,7 @@ namespace RE
 		{
 		public:
 			// members
-			CRITICAL_SECTION cs;  // 00
+			WinAPI::CRITICAL_SECTION cs;  // 00
 		};
 		static_assert(sizeof(Lock) == 0x28);
 	}

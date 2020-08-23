@@ -16,26 +16,32 @@ namespace RE
 			_value(a_rhs)
 		{}
 
-		inline T operator++() { return InterlockedIncrement(std::addressof(_value)); }
+		inline T operator++()
+		{
+			stl::atomic_ref value{ _value };
+			return ++value;
+		}
 
 		[[nodiscard]] inline T operator++(int)
 		{
-			const auto old = _value;
-			++(*this);
-			return old;
+			stl::atomic_ref value{ _value };
+			return value++;
 		}
 
-		inline T operator--() { return InterlockedDecrement(std::addressof(_value)); }
+		inline T operator--()
+		{
+			stl::atomic_ref value{ _value };
+			return --value;
+		}
 
 		[[nodiscard]] inline T operator--(int)
 		{
-			const auto old = _value;
-			--(*this);
-			return old;
+			stl::atomic_ref value{ _value };
+			return value--;
 		}
 
 		// members
-		std::add_volatile_t<T> _value{};  // 0
+		value_type _value{};  // 0
 	};
 
 	extern template class BSTAtomicValue<std::int32_t>;

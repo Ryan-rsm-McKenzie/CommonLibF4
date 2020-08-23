@@ -56,17 +56,6 @@
 	REL_MAKE_MEMBER_FUNCTION_NON_POD_TYPE_HELPER(&, ##__VA_ARGS__) \
 	REL_MAKE_MEMBER_FUNCTION_NON_POD_TYPE_HELPER(&&, ##__VA_ARGS__)
 
-#define REL_THROW_EXCEPTION(a_what)                       \
-	{                                                     \
-		const auto src = stl::source_location::current(); \
-		throw std::runtime_error(                         \
-			fmt::format(                                  \
-				FMT_STRING("{}({}): {}"),                 \
-				src.file_name(),                          \
-				src.line(),                               \
-				a_what##sv));                             \
-	}
-
 namespace REL
 {
 	class ID;
@@ -197,12 +186,21 @@ namespace REL
 
 	inline void safe_write(std::uintptr_t a_dst, const void* a_src, std::size_t a_count)
 	{
-		DWORD old{ 0 };
-		[[maybe_unused]] BOOL success{ false };
-		success = VirtualProtect(reinterpret_cast<void*>(a_dst), a_count, PAGE_EXECUTE_READWRITE, std::addressof(old));
+		std::uint32_t old{ 0 };
+		auto success =
+			WinAPI::VirtualProtect(
+				reinterpret_cast<void*>(a_dst),
+				a_count,
+				(WinAPI::PAGE_EXECUTE_READWRITE),
+				std::addressof(old));
 		if (success != 0) {
 			std::memcpy(reinterpret_cast<void*>(a_dst), a_src, a_count);
-			success = VirtualProtect(reinterpret_cast<void*>(a_dst), a_count, old, std::addressof(old));
+			success =
+				WinAPI::VirtualProtect(
+					reinterpret_cast<void*>(a_dst),
+					a_count,
+					old,
+					std::addressof(old));
 		}
 
 		assert(success != 0);
@@ -212,6 +210,12 @@ namespace REL
 	inline void safe_write(std::uintptr_t a_dst, const T& a_data)
 	{
 		safe_write(a_dst, std::addressof(a_data), sizeof(T));
+	}
+
+	template <class T>
+	inline void safe_write(std::uintptr_t a_dst, stl::span<T> a_data)
+	{
+		safe_write(a_dst, a_data.data(), a_data.size_bytes());
 	}
 
 	class Version
@@ -353,9 +357,9 @@ namespace REL
 
 		inline void load()
 		{
-			auto handle = GetModuleHandleW(FILENAME.data());
+			auto handle = WinAPI::GetModuleHandle(FILENAME.data());
 			if (handle == nullptr) {
-				REL_THROW_EXCEPTION("failed to obtain module handle");
+				stl::report_and_fail("failed to obtain module handle"sv);
 			}
 			_base = reinterpret_cast<std::uintptr_t>(handle);
 
@@ -363,45 +367,24 @@ namespace REL
 			load_segments();
 		}
 
-		inline void load_segments()
-		{
-			auto dosHeader = reinterpret_cast<const IMAGE_DOS_HEADER*>(_base);
-			auto ntHeader = adjust_pointer<IMAGE_NT_HEADERS64>(dosHeader, dosHeader->e_lfanew);
-			const auto* sections = IMAGE_FIRST_SECTION(ntHeader);
-			const auto size = std::min<std::size_t>(ntHeader->FileHeader.NumberOfSections, _segments.size());
-			for (std::size_t i = 0; i < size; ++i) {
-				const auto& section = sections[i];
-				const auto it = std::find_if(
-					SEGMENTS.begin(),
-					SEGMENTS.end(),
-					[&](auto&& a_elem) {
-						constexpr auto size = std::extent_v<decltype(section.Name)>;
-						const auto len = std::min(a_elem.size(), size);
-						return std::memcmp(a_elem.data(), section.Name, len) == 0;
-					});
-				if (it != SEGMENTS.end()) {
-					const auto idx = static_cast<std::size_t>(std::distance(SEGMENTS.begin(), it));
-					_segments[idx] = Segment{ _base, _base + section.VirtualAddress, section.Misc.VirtualSize };
-				}
-			}
-		}
+		void load_segments();
 
 		inline void load_version()
 		{
-			DWORD dummy;
-			std::vector<char> buf(GetFileVersionInfoSizeW(FILENAME.data(), std::addressof(dummy)));
+			std::uint32_t dummy;
+			std::vector<char> buf(WinAPI::GetFileVersionInfoSize(FILENAME.data(), std::addressof(dummy)));
 			if (buf.size() == 0) {
-				REL_THROW_EXCEPTION("failed to obtain file version info size");
+				stl::report_and_fail("failed to obtain file version info size"sv);
 			}
 
-			if (!GetFileVersionInfoW(FILENAME.data(), 0, static_cast<DWORD>(buf.size()), buf.data())) {
-				REL_THROW_EXCEPTION("failed to obtain file version info");
+			if (!WinAPI::GetFileVersionInfo(FILENAME.data(), 0, static_cast<std::uint32_t>(buf.size()), buf.data())) {
+				stl::report_and_fail("failed to obtain file version info"sv);
 			}
 
-			LPVOID verBuf;
-			UINT verLen;
-			if (!VerQueryValueW(buf.data(), L"\\StringFileInfo\\040904B0\\ProductVersion", std::addressof(verBuf), std::addressof(verLen))) {
-				REL_THROW_EXCEPTION("failed to query value");
+			void* verBuf{ nullptr };
+			std::uint32_t verLen{ 0 };
+			if (!WinAPI::VerQueryValue(buf.data(), L"\\StringFileInfo\\040904B0\\ProductVersion", std::addressof(verBuf), std::addressof(verLen))) {
+				stl::report_and_fail("failed to query value"sv);
 			}
 
 			std::wistringstream ss(
@@ -441,11 +424,11 @@ namespace REL
 		[[nodiscard]] inline std::size_t id2offset(std::uint64_t a_id) const
 		{
 			if (_id2offset.empty()) {
-				REL_THROW_EXCEPTION("data is empty");
+				stl::report_and_fail("data is empty"sv);
 			}
 
-			mapping elem{ a_id, 0 };
-			auto it = std::lower_bound(
+			const mapping_t elem{ a_id, 0 };
+			const auto it = std::lower_bound(
 				_id2offset.begin(),
 				_id2offset.end(),
 				elem,
@@ -453,7 +436,7 @@ namespace REL
 					return a_lhs.id < a_rhs.id;
 				});
 			if (it == _id2offset.end()) {
-				REL_THROW_EXCEPTION("id not found");
+				stl::report_and_fail("id not found"sv);
 			}
 
 			return static_cast<std::size_t>(it->offset);
@@ -463,11 +446,11 @@ namespace REL
 		[[nodiscard]] inline std::uint64_t offset2id(std::size_t a_offset) const
 		{
 			if (_offset2id.empty()) {
-				REL_THROW_EXCEPTION("data is empty");
+				stl::report_and_fail("data is empty"sv);
 			}
 
-			mapping elem{ 0, a_offset };
-			auto it = std::lower_bound(
+			const mapping_t elem{ 0, a_offset };
+			const auto it = std::lower_bound(
 				_offset2id.begin(),
 				_offset2id.end(),
 				elem,
@@ -475,7 +458,7 @@ namespace REL
 					return a_lhs.offset < a_rhs.offset;
 				});
 			if (it == _offset2id.end()) {
-				REL_THROW_EXCEPTION("offset not found");
+				stl::report_and_fail("offset not found"sv);
 			}
 
 			return it->id;
@@ -483,110 +466,7 @@ namespace REL
 #endif
 
 	private:
-		class memory_map
-		{
-		public:
-			constexpr memory_map() noexcept = default;
-
-			memory_map(const memory_map&) = delete;
-
-			constexpr memory_map(memory_map&& a_rhs) noexcept :
-				_file(a_rhs._file),
-				_mapping(a_rhs._mapping),
-				_view(a_rhs._view)
-			{
-				a_rhs._file = INVALID_HANDLE_VALUE;
-				a_rhs._mapping = nullptr;
-				a_rhs._view = nullptr;
-			}
-
-			inline ~memory_map() { unmap(); }
-
-			memory_map& operator=(const memory_map&) = delete;
-
-			constexpr memory_map& operator=(memory_map&& a_rhs) noexcept
-			{
-				if (this != std::addressof(a_rhs)) {
-					_file = a_rhs._file;
-					_mapping = a_rhs._mapping;
-					_view = a_rhs._view;
-
-					a_rhs._file = INVALID_HANDLE_VALUE;
-					a_rhs._mapping = nullptr;
-					a_rhs._view = nullptr;
-				}
-				return *this;
-			}
-
-			inline void map(stl::zwstring a_fileName)
-			{
-				_file = CreateFileW(
-					a_fileName.data(),
-					FILE_GENERIC_READ,
-					FILE_SHARE_READ,
-					nullptr,
-					OPEN_EXISTING,
-					FILE_ATTRIBUTE_NORMAL,
-					nullptr);
-				if (_file == INVALID_HANDLE_VALUE) {
-					REL_THROW_EXCEPTION("failed to create file");
-				}
-
-				_mapping = CreateFileMappingW(
-					_file,
-					nullptr,
-					PAGE_READONLY,
-					0,
-					0,
-					a_fileName.data());
-				if (_mapping == nullptr) {
-					REL_THROW_EXCEPTION("failed to create file mapping");
-				}
-
-				_view = MapViewOfFile(
-					_mapping,
-					FILE_MAP_READ,
-					0,
-					0,
-					0);
-				if (_view == nullptr) {
-					REL_THROW_EXCEPTION("failed to map view of file");
-				}
-			}
-
-			inline void unmap()
-			{
-				if (_view != nullptr) {
-					if (UnmapViewOfFile(_view) == 0) {
-						assert(false);
-					}
-					_view = nullptr;
-				}
-
-				if (_mapping != nullptr) {
-					if (CloseHandle(_mapping) == 0) {
-						assert(false);
-					}
-					_mapping = nullptr;
-				}
-
-				if (_file != INVALID_HANDLE_VALUE) {
-					if (CloseHandle(_file) == 0) {
-						assert(false);
-					}
-					_file = INVALID_HANDLE_VALUE;
-				}
-			}
-
-			[[nodiscard]] constexpr const std::byte* data() const noexcept { return static_cast<const std::byte*>(_view); }
-
-		private:
-			HANDLE _file{ INVALID_HANDLE_VALUE };
-			HANDLE _mapping{ nullptr };
-			const void* _view{ nullptr };
-		};
-
-		struct mapping
+		struct mapping_t
 		{
 			std::uint64_t id;
 			std::uint64_t offset;
@@ -605,14 +485,15 @@ namespace REL
 		inline void load()
 		{
 			const auto version = Module::get().version();
-			std::wstring path(L"Data/F4SE/Plugins/version-"sv);
-			path += version.wstring();
-			path += L".bin"sv;
+			auto path = "Data/F4SE/Plugins/version-"s;
+			path += version.string();
+			path += ".bin"sv;
 
-			_mmap.map(path);
-			_id2offset = stl::span(
-				reinterpret_cast<const mapping*>(_mmap.data() + sizeof(std::uint64_t)),
-				*reinterpret_cast<const std::uint64_t*>(_mmap.data()));
+			_mmap.open(path);
+			_id2offset = stl::span{
+				reinterpret_cast<const mapping_t*>(_mmap.data() + sizeof(std::uint64_t)),
+				*reinterpret_cast<const std::uint64_t*>(_mmap.data())
+			};
 
 #if !defined(NDEBUG)
 			_offset2id.clear();
@@ -627,10 +508,10 @@ namespace REL
 #endif
 		}
 
-		memory_map _mmap;
-		stl::span<const mapping> _id2offset;
+		boost::iostreams::mapped_file_source _mmap;
+		stl::span<const mapping_t> _id2offset;
 #if !defined(NDEBUG)
-		std::vector<mapping> _offset2id;
+		std::vector<mapping_t> _offset2id;
 #endif
 	};
 
@@ -695,9 +576,7 @@ namespace REL
 				std::decay_t<T>,
 				T>;
 
-		constexpr Relocation() noexcept :
-			_impl{ 0 }
-		{}
+		constexpr Relocation() noexcept = default;
 
 		explicit constexpr Relocation(std::uintptr_t a_address) noexcept :
 			_impl{ a_address }
@@ -767,16 +646,18 @@ namespace REL
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _impl; }
 		[[nodiscard]] std::size_t offset() const { offset() - base(); }
 
-		[[nodiscard]] value_type get() const noexcept(std::is_nothrow_copy_constructible_v<value_type>) { return unrestricted_cast<value_type>(_impl); }
+		[[nodiscard]] value_type get() const noexcept(std::is_nothrow_copy_constructible_v<value_type>)
+		{
+			assert(_impl != 0);
+			return unrestricted_cast<value_type>(_impl);
+		}
 
 	private:
 		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
 
-		std::uintptr_t _impl;
+		std::uintptr_t _impl{ 0 };
 	};
 }
-
-#undef REL_THROW_EXCEPTION
 
 #undef REL_MAKE_MEMBER_FUNCTION_NON_POD_TYPE
 #undef REL_MAKE_MEMBER_FUNCTION_NON_POD_TYPE_HELPER

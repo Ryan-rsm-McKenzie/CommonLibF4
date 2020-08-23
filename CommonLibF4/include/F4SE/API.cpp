@@ -48,34 +48,27 @@ namespace F4SE
 		}
 	}
 
-	bool Init(const LoadInterface* a_intfc) noexcept
+	void Init(const LoadInterface* a_intfc) noexcept
 	{
-		try {
-			if (!a_intfc) {
-				throw std::runtime_error("interface is null"s);
-			}
-
-			(void)REL::Module::get();
-			(void)REL::IDDatabase::get();
-
-			auto& storage = detail::APIStorage::get();
-			const auto& intfc = *a_intfc;
-
-			storage.pluginHandle = intfc.GetPluginHandle();
-			storage.releaseIndex = intfc.GetReleaseIndex();
-
-			storage.messagingInterface = detail::QueryInterface<MessagingInterface>(a_intfc, LoadInterface::kMessaging);
-			storage.scaleformInterface = detail::QueryInterface<ScaleformInterface>(a_intfc, LoadInterface::kScaleform);
-			storage.papyrusInterface = detail::QueryInterface<PapyrusInterface>(a_intfc, LoadInterface::kPapyrus);
-			storage.serializationInterface = detail::QueryInterface<SerializationInterface>(a_intfc, LoadInterface::kSerialization);
-			storage.taskInterface = detail::QueryInterface<TaskInterface>(a_intfc, LoadInterface::kTask);
-			storage.objectInterface = detail::QueryInterface<ObjectInterface>(a_intfc, LoadInterface::kObject);
-		} catch (const std::exception& e) {
-			log::error(e.what());
-			return false;
+		if (!a_intfc) {
+			stl::report_and_fail("interface is null"sv);
 		}
 
-		return true;
+		(void)REL::Module::get();
+		(void)REL::IDDatabase::get();
+
+		auto& storage = detail::APIStorage::get();
+		const auto& intfc = *a_intfc;
+
+		storage.pluginHandle = intfc.GetPluginHandle();
+		storage.releaseIndex = intfc.GetReleaseIndex();
+
+		storage.messagingInterface = detail::QueryInterface<MessagingInterface>(a_intfc, LoadInterface::kMessaging);
+		storage.scaleformInterface = detail::QueryInterface<ScaleformInterface>(a_intfc, LoadInterface::kScaleform);
+		storage.papyrusInterface = detail::QueryInterface<PapyrusInterface>(a_intfc, LoadInterface::kPapyrus);
+		storage.serializationInterface = detail::QueryInterface<SerializationInterface>(a_intfc, LoadInterface::kSerialization);
+		storage.taskInterface = detail::QueryInterface<TaskInterface>(a_intfc, LoadInterface::kTask);
+		storage.objectInterface = detail::QueryInterface<ObjectInterface>(a_intfc, LoadInterface::kObject);
 	}
 
 	PluginHandle GetPluginHandle() noexcept

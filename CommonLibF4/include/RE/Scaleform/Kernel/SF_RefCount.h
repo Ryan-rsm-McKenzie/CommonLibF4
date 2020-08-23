@@ -31,11 +31,16 @@ namespace RE
 
 			virtual ~RefCountImpl() = default;	// 00
 
-			inline void AddRef() { InterlockedExchangeAdd(std::addressof(refCount), 1); }
+			inline void AddRef()
+			{
+				stl::atomic_ref myRefCount{ refCount };
+				++refCount;
+			}
 
 			inline void Release()
 			{
-				if (InterlockedDecrement(std::addressof(refCount)) == 0) {
+				stl::atomic_ref myRefCount{ refCount };
+				if (--myRefCount == 0) {
 					delete this;
 				}
 			}

@@ -9,6 +9,7 @@
 
 namespace RE
 {
+	class BGSMessage;
 	class TESObjectREFR;
 
 	enum class QuickContainerMode : std::int32_t
@@ -54,6 +55,15 @@ namespace RE
 		bool enteringMenuMode;	 // 08
 	};
 	static_assert(sizeof(MenuModeChangeEvent) == 0x10);
+
+	class MenuModeCounterChangedEvent
+	{
+	public:
+		// members
+		BSFixedString menuName;	 // 00
+		bool incrementing;		 // 08
+	};
+	static_assert(sizeof(MenuModeCounterChangedEvent) == 0x10);
 
 	class MenuOpenCloseEvent
 	{
@@ -109,6 +119,15 @@ namespace RE
 		stl::enumeration<FurnitureEventType, std::int32_t> type;  // 10
 	};
 	static_assert(sizeof(TESFurnitureEvent) == 0x18);
+
+	class TutorialEvent
+	{
+	public:
+		// members
+		BSFixedString eventName;	 // 00
+		const BGSMessage* assocMsg;	 // 08
+	};
+	static_assert(sizeof(TutorialEvent) == 0x10);
 
 	class UserEventEnabledEvent
 	{

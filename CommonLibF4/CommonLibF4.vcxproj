@@ -121,7 +121,7 @@
       <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4686;4514;4710;4711;4820;5045;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <TreatSpecificWarningsAsErrors>%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <ShowIncludes>false</ShowIncludes>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,7 +154,6 @@
       <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4686;4514;4710;4711;4820;5045;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <TreatSpecificWarningsAsErrors>%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,7 +187,7 @@
       <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4686;4514;4710;4711;4820;5045;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <TreatSpecificWarningsAsErrors>%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <ShowIncludes>false</ShowIncludes>
+      <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -221,7 +220,6 @@
       <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4686;4514;4710;4711;4820;5045;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <TreatSpecificWarningsAsErrors>%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
-      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -251,20 +249,25 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="include\F4SE\Impl\WinAPI.cpp" />
     <ClCompile Include="include\F4SE\Interfaces.cpp" />
+    <ClCompile Include="include\F4SE\Logger.cpp" />
     <ClCompile Include="include\F4SE\Trampoline.cpp" />
+    <ClCompile Include="include\REL\Relocation.cpp" />
     <ClCompile Include="include\RE\Bethesda\Atomic.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSFixedString.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSLock.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSPointerHandle.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSSpring.cpp" />
+    <ClCompile Include="include\RE\Bethesda\CRC.cpp" />
+    <ClCompile Include="include\RE\Bethesda\InputEvent.cpp" />
     <ClCompile Include="include\RE\NetImmerse\NiRect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\F4SE\API.h" />
     <ClInclude Include="include\F4SE\F4SE.h" />
-    <ClInclude Include="include\F4SE\Impl\Atomic.h" />
     <ClInclude Include="include\F4SE\Impl\PCH.h" />
+    <ClInclude Include="include\F4SE\Impl\WinAPI.h" />
     <ClInclude Include="include\F4SE\Interfaces.h" />
     <ClInclude Include="include\F4SE\Logger.h" />
     <ClInclude Include="include\F4SE\Trampoline.h" />
@@ -280,8 +283,12 @@
     <ClInclude Include="include\RE\Bethesda\BSStringPool.h" />
     <ClInclude Include="include\RE\Bethesda\BSTArray.h" />
     <ClInclude Include="include\RE\Bethesda\BSTEvent.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTHashMap.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTimer.h" />
     <ClInclude Include="include\RE\Bethesda\BSTOptional.h" />
     <ClInclude Include="include\RE\Bethesda\BSTSingleton.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTTuple.h" />
+    <ClInclude Include="include\RE\Bethesda\CRC.h" />
     <ClInclude Include="include\RE\Bethesda\Events.h" />
     <ClInclude Include="include\RE\Bethesda\IMenu.h" />
     <ClInclude Include="include\RE\Bethesda\IMovementInterface.h" />
@@ -289,6 +296,7 @@
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h" />
     <ClInclude Include="include\RE\Bethesda\PlayerControls.h" />
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h" />
+    <ClInclude Include="include\RE\Bethesda\UI.h" />
     <ClInclude Include="include\RE\Bethesda\UIMessage.h" />
     <ClInclude Include="include\RE\Bethesda\UserEvents.h" />
     <ClInclude Include="include\RE\Fallout.h" />
@@ -328,6 +336,9 @@
     <ClInclude Include="include\RE\Scaleform\Render\Render_TreeNode.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Render_Types2D.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Render_Viewport.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="CommonLibF4.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

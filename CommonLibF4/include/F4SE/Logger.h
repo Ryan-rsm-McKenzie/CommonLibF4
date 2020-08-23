@@ -7,9 +7,12 @@
 	template <class... Args>                                              \
 	struct F4SE_MAYBE_UNUSED a_func                                       \
 	{                                                                     \
+		a_func() = delete;                                                \
+                                                                          \
+		template <class T>                                                \
 		a_func(                                                           \
-			spdlog::string_view_t a_fmt,                                  \
-			const Args&... a_args,                                        \
+			T&& a_fmt,                                                    \
+			Args&&... a_args,                                             \
 			stl::source_location a_loc = stl::source_location::current()) \
 		{                                                                 \
 			spdlog::log(                                                  \
@@ -18,32 +21,13 @@
 					static_cast<int>(a_loc.line()),                       \
 					a_loc.function_name() },                              \
 				spdlog::level::a_type,                                    \
-				a_fmt,                                                    \
-				a_args...);                                               \
+				std::forward<T>(a_fmt),                                   \
+				std::forward<Args>(a_args)...);                           \
 		}                                                                 \
 	};                                                                    \
                                                                           \
-	template <>                                                           \
-	struct F4SE_MAYBE_UNUSED a_func<>                                     \
-	{                                                                     \
-		a_func(                                                           \
-			spdlog::string_view_t a_fmt,                                  \
-			stl::source_location a_loc = stl::source_location::current()) \
-		{                                                                 \
-			spdlog::log(                                                  \
-				spdlog::source_loc{                                       \
-					a_loc.file_name(),                                    \
-					static_cast<int>(a_loc.line()),                       \
-					a_loc.function_name() },                              \
-				spdlog::level::a_type,                                    \
-				std::string_view(                                         \
-					a_fmt.data(),                                         \
-					a_fmt.size()));                                       \
-		}                                                                 \
-	};                                                                    \
-                                                                          \
-	template <class... Args>                                              \
-	a_func(spdlog::string_view_t, const Args&...) -> a_func<Args...>;
+	template <class T, class... Args>                                     \
+	a_func(T&&, Args&&...) -> a_func<Args...>;
 
 namespace F4SE
 {
@@ -56,19 +40,7 @@ namespace F4SE
 		F4SE_MAKE_SOURCE_LOGGER(error, err);
 		F4SE_MAKE_SOURCE_LOGGER(critical, critical);
 
-		[[nodiscard]] inline std::filesystem::path log_directory()
-		{
-			wchar_t* buffer{ nullptr };
-			auto result = SHGetKnownFolderPath(FOLDERID_Documents, KNOWN_FOLDER_FLAG::KF_FLAG_DEFAULT, nullptr, std::addressof(buffer));
-			std::unique_ptr<wchar_t[], decltype(&CoTaskMemFree)> knownPath(buffer, CoTaskMemFree);
-			if (!knownPath || result != S_OK) {
-				throw std::runtime_error("failed to get known folder path"s);
-			}
-
-			std::filesystem::path path = knownPath.get();
-			path /= "My Games/Fallout4/F4SE"sv;
-			return path;
-		}
+		[[nodiscard]] std::optional<std::filesystem::path> log_directory();
 	}
 }
 

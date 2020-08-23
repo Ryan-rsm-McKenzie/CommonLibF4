@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="F4SE::stl::enumeration&lt;*&gt;">
+		<DisplayString>{static_cast&lt;$T1&gt;(_impl),en}</DisplayString>
+	</Type>
+
+	<Type Name="RE::BSTArray&lt;*,BSTArrayHeapAllocator&gt;">
+		<DisplayString>{{ size={_size} }}</DisplayString>
+		<Expand>
+			<Item Name="[capacity]">_capacity</Item>
+			<ArrayItems>
+				<Size>_size</Size>
+				<ValuePointer>($T1*)_data</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::BSTArray&lt;*,BSTSmallArrayHeapAllocator&lt;*&gt;&gt;">
+		<DisplayString>{{ size={_size} }}</DisplayString>
+		<Expand>
+			<Item Name="[capacity]">_capacity &amp; ~kLocalAlloc</Item>
+			<ArrayItems>
+				<Size>_size</Size>
+				<ValuePointer Condition="(_capacity &amp; kLocalAlloc) != 0">($T1*)_data.local</ValuePointer>
+				<ValuePointer Condition="(_capacity &amp; kLocalAlloc) == 0">($T1*)_data.heap</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::BSStaticArray&lt;*&gt;">
+		<DisplayString>{{ size={_size} }}</DisplayString>
+		<Expand>
+			<ArrayItems>
+				<Size>_size</Size>
+				<ValuePointer>($T1*)_data</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::BSTSmallSharedArray&lt;*&gt;">
+		<DisplayString>{{ size={_size} }}</DisplayString>
+		<Expand>
+			<ArrayItems>
+				<Size>_size</Size>
+				<ValuePointer Condition="_size &gt; 0">($T1*)_data.heap</ValuePointer>
+				<ValuePointer Condition="_size &lt;= 0">($T1*)_data.local</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::BSTScatterTable&lt;*&gt;">
+		<DisplayString>{{ size={_capacity - _freeCount} }}</DisplayString>
+		<Expand>
+			<CustomListItems MaxItemsPerView="1000">
+				<Variable Name="iter" InitialValue="_allocator._entries"/>
+				<Variable Name="end" InitialValue="iter + _capacity"/>
+
+				<Size>_capacity - _freeCount</Size>
+				<Loop Condition="iter != end">
+					<If Condition="iter-&gt;next != nullptr">
+						<Item>iter-&gt;value</Item>
+					</If>
+					<Exec>++iter</Exec>
+				</Loop>
+			</CustomListItems>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::BSTScatterTable&lt;*&gt;::iterator_base&lt;*&gt;">
+		<DisplayString Condition="_entry != _end">{_entry->value}</DisplayString>
+		<DisplayString Condition="_entry == _end">end</DisplayString>
+		<Expand>
+			<Item Condition="_entry != _end" Name="[value]">_entry->value</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::BSTTuple&lt;*&gt;">
+		<DisplayString>({first}, {second})</DisplayString>
+		<Expand>
+			<Item Name="first">first</Item>
+			<Item Name="second">second</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::detail::BSFixedString&lt;*&gt;">
+		<DisplayString Condition="_data != nullptr">{_data,na}</DisplayString>
+		<DisplayString Condition="_data == nullptr">&quot;&quot;</DisplayString>
+		<StringView Condition="_data != nullptr">_data,na</StringView>
+		<StringView Condition="_data == nullptr">&quot;&quot;</StringView>
+		<Expand>
+			<Item Name="[size]" Condition="_data != nullptr">((RE::BSStringPool::Entry*)_data - 1)-&gt;_length &amp; 0xFFFFFF</Item>
+			<Item Name="[size]" Condition="_data == nullptr">0</Item>
+			<ArrayItems>
+				<Size Condition="_data != nullptr">((RE::BSStringPool::Entry*)_data - 1)-&gt;_length &amp; 0xFFFFFF</Size>
+				<Size Condition="_data == nullptr">0</Size>
+				<ValuePointer>_data</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+</AutoVisualizer>

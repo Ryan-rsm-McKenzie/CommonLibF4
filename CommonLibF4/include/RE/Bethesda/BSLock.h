@@ -21,12 +21,13 @@ namespace RE
 
 		inline void unlock()
 		{
-			if (_lockCount == 1) {
+			stl::atomic_ref lockCount{ _lockCount };
+			std::uint32_t expected{ 1 };
+			if (lockCount == expected) {
 				_owningThread = 0;
-				_mm_mfence();
-				InterlockedCompareExchange(std::addressof(_lockCount), 0, 1);
+				lockCount.compare_exchange_strong(expected, 0);
 			} else {
-				InterlockedDecrement(std::addressof(_lockCount));
+				--lockCount;
 			}
 		}
 
