@@ -16,7 +16,7 @@ namespace RE
 			using pointer = value_type*;
 			using const_pointer = const value_type*;
 			using reference = value_type&;
-			using const_reference = const reference&;
+			using const_reference = const value_type&;
 
 			constexpr BSFixedString() noexcept = default;
 
@@ -32,12 +32,30 @@ namespace RE
 				a_rhs._data = nullptr;
 			}
 
-			inline BSFixedString(std::basic_string_view<value_type> a_string)
+			inline BSFixedString(const_pointer a_string)
 			{
-				if (!a_string.empty()) {
-					GetEntry<value_type>(_data, a_string.data(), CS);
+				if (a_string) {
+					GetEntry<value_type>(_data, a_string, CS);
 				}
 			}
+
+			template <
+				class T,
+				std::enable_if_t<
+					std::conjunction_v<
+						std::is_convertible<const T&, std::basic_string_view<value_type>>,
+						std::negation<
+							std::is_convertible<const T&, const_pointer>>>,
+					int> = 0>
+			inline BSFixedString(const T& a_string)
+			{
+				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
+				if (!view.empty()) {
+					GetEntry<value_type>(_data, view.data(), CS);
+				}
+			}
+
+			inline ~BSFixedString() { try_release(); }
 
 			inline BSFixedString& operator=(const BSFixedString& a_rhs)
 			{
@@ -58,14 +76,35 @@ namespace RE
 				return *this;
 			}
 
-			inline BSFixedString& operator=(std::basic_string_view<value_type> a_string)
+			inline BSFixedString& operator=(const_pointer a_string)
 			{
 				try_release();
-				if (!a_string.empty()) {
-					GetEntry<value_type>(_data, a_string.data(), CS);
+				if (a_string) {
+					GetEntry<value_type>(_data, a_string, CS);
 				}
 				return *this;
 			}
+
+			template <
+				class T,
+				std::enable_if_t<
+					std::conjunction_v<
+						std::is_convertible<const T&, std::basic_string_view<value_type>>,
+						std::negation<
+							std::is_convertible<const T&, const_pointer>>>,
+					int> = 0>
+			inline BSFixedString& operator=(const T& a_string)
+			{
+				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
+				try_release();
+				if (!view.empty()) {
+					GetEntry<value_type>(_data, view.data(), CS);
+				}
+				return *this;
+			}
+
+			[[nodiscard]] inline const_reference front() const noexcept { return data()[0]; }
+			[[nodiscard]] inline const_reference back() const noexcept { return data()[size() - 1]; }
 
 			[[nodiscard]] inline const_pointer data() const noexcept
 			{
@@ -112,6 +151,11 @@ namespace RE
 			[[nodiscard]] inline friend bool operator!=(const BSFixedString& a_lhs, std::basic_string_view<value_type> a_rhs) { return !(a_lhs == a_rhs); }
 			[[nodiscard]] inline friend bool operator==(std::basic_string_view<value_type> a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
 			[[nodiscard]] inline friend bool operator!=(std::basic_string_view<value_type> a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
+
+			[[nodiscard]] inline friend bool operator==(const BSFixedString& a_lhs, const_pointer a_rhs) { return a_lhs == std::basic_string_view<value_type>(a_rhs ? a_rhs : EMPTY); }
+			[[nodiscard]] inline friend bool operator!=(const BSFixedString& a_lhs, const_pointer a_rhs) { return !(a_lhs == a_rhs); }
+			[[nodiscard]] inline friend bool operator==(const_pointer a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
+			[[nodiscard]] inline friend bool operator!=(const_pointer a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
 
 		private:
 			[[nodiscard]] static int strncmp(const char* a_lhs, const char* a_rhs, std::size_t a_length)
