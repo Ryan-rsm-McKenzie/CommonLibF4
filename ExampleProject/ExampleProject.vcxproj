@@ -106,7 +106,6 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <CompileAs>CompileAsCpp</CompileAs>
       <UseFullPaths>false</UseFullPaths>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -116,7 +115,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>PCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:alignedNew /Zc:auto /Zc:char8_t /Zc:__cplusplus /Zc:externC /Zc:externConstexpr /Zc:forScope /Zc:hiddenFriend /Zc:implicitNoexcept /Zc:lambda /Zc:noexceptTypes /Zc:preprocessor /Zc:referenceBinding /Zc:rvalueCast /Zc:sizedDealloc /Zc:strictStrings /Zc:ternary /Zc:threadSafeInit /Zc:tlsGuards /Zc:trigraphs /Zc:wchar_t %(AdditionalOptions)</AdditionalOptions>
       <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
@@ -138,7 +137,6 @@ copy "$(TargetDir)$(TargetName).pdb" "$(Fallout4Path)\Data\F4SE\Plugins\$(Target
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <CompileAs>CompileAsCpp</CompileAs>
       <UseFullPaths>false</UseFullPaths>
       <TreatSpecificWarningsAsErrors>4715;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
@@ -147,7 +145,7 @@ copy "$(TargetDir)$(TargetName).pdb" "$(Fallout4Path)\Data\F4SE\Plugins\$(Target
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>PCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:alignedNew /Zc:auto /Zc:char8_t /Zc:__cplusplus /Zc:externC /Zc:externConstexpr /Zc:forScope /Zc:hiddenFriend /Zc:implicitNoexcept /Zc:lambda /Zc:noexceptTypes /Zc:preprocessor /Zc:referenceBinding /Zc:rvalueCast /Zc:sizedDealloc /Zc:strictStrings /Zc:ternary /Zc:threadSafeInit /Zc:tlsGuards /Zc:trigraphs /Zc:wchar_t %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -168,7 +166,6 @@ copy "$(TargetDir)$(TargetName).pdb" "$(Fallout4Path)\Data\F4SE\Plugins\$(Target
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <CompileAs>CompileAsCpp</CompileAs>
       <UseFullPaths>false</UseFullPaths>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -178,7 +175,7 @@ copy "$(TargetDir)$(TargetName).pdb" "$(Fallout4Path)\Data\F4SE\Plugins\$(Target
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>PCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:alignedNew /Zc:auto /Zc:char8_t /Zc:__cplusplus /Zc:externC /Zc:externConstexpr /Zc:forScope /Zc:hiddenFriend /Zc:implicitNoexcept /Zc:lambda /Zc:noexceptTypes /Zc:preprocessor /Zc:referenceBinding /Zc:rvalueCast /Zc:sizedDealloc /Zc:strictStrings /Zc:ternary /Zc:threadSafeInit /Zc:tlsGuards /Zc:trigraphs /Zc:wchar_t %(AdditionalOptions)</AdditionalOptions>
       <RemoveUnreferencedCodeData>false</RemoveUnreferencedCodeData>
     </ClCompile>
     <Link>
@@ -200,7 +197,6 @@ copy "$(TargetDir)$(TargetName).pdb" "$(Fallout4Path)\Data\F4SE\Plugins\$(Target
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <CompileAs>CompileAsCpp</CompileAs>
       <UseFullPaths>false</UseFullPaths>
       <TreatSpecificWarningsAsErrors>4715;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
@@ -209,7 +205,7 @@ copy "$(TargetDir)$(TargetName).pdb" "$(Fallout4Path)\Data\F4SE\Plugins\$(Target
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>PCH.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:externConstexpr /Zc:ternary /Zc:throwingNew /Zc:noexceptTypes /Zc:preprocessor /Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/experimental:external /external:anglebrackets /external:W0 /Zc:alignedNew /Zc:auto /Zc:char8_t /Zc:__cplusplus /Zc:externC /Zc:externConstexpr /Zc:forScope /Zc:hiddenFriend /Zc:implicitNoexcept /Zc:lambda /Zc:noexceptTypes /Zc:preprocessor /Zc:referenceBinding /Zc:rvalueCast /Zc:sizedDealloc /Zc:strictStrings /Zc:ternary /Zc:threadSafeInit /Zc:tlsGuards /Zc:trigraphs /Zc:wchar_t %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -196,52 +196,74 @@ namespace F4SE
 			const char* _functionName{ "" };
 		};
 
-		[[noreturn]] inline void report_and_fail(zstring a_msg, source_location a_loc = source_location::current())
+		[[noreturn]] inline void report_and_fail(std::string_view a_msg, source_location a_loc = source_location::current())
 		{
-			const auto maxPath = WinAPI::GetMaxPath();
-			std::vector<char> buf;
-			buf.reserve(maxPath);
-			buf.resize(maxPath / 2);
-			std::uint32_t result = 0;
-			do {
-				buf.resize(buf.size() * 2);
-				result = WinAPI::GetModuleFileName(
-					WinAPI::GetCurrentModule(),
-					buf.data(),
-					static_cast<std::uint32_t>(buf.size()));
-			} while (result && result == buf.size() && buf.size() <= std::numeric_limits<std::uint32_t>::max());
+			const auto body = [&]() {
+				constexpr std::array directories{
+					"include/"sv,
+					"src/"sv,
+				};
 
-			const auto caption = [&]() {
+				const std::filesystem::path p = a_loc.file_name();
+				const auto filename = p.generic_string();
+				std::string_view fileview = filename;
+
+				constexpr auto npos = std::string::npos;
+				std::size_t pos = npos;
+				std::size_t off = 0;
+				for (const auto& dir : directories) {
+					pos = fileview.find(dir);
+					if (pos != npos) {
+						off = dir.length();
+						break;
+					}
+				}
+
+				if (pos != npos) {
+					fileview = fileview.substr(pos + off);
+				}
+
+				return fmt::format(FMT_STRING("{}({}): {}"), fileview, a_loc.line(), a_msg);
+			}();
+
+			const auto caption = []() -> std::string {
+				const auto maxPath = WinAPI::GetMaxPath();
+				std::vector<char> buf;
+				buf.reserve(maxPath);
+				buf.resize(maxPath / 2);
+				std::uint32_t result = 0;
+				do {
+					buf.resize(buf.size() * 2);
+					result = WinAPI::GetModuleFileName(
+						WinAPI::GetCurrentModule(),
+						buf.data(),
+						static_cast<std::uint32_t>(buf.size()));
+				} while (result && result == buf.size() && buf.size() <= std::numeric_limits<std::uint32_t>::max());
+
 				if (result && result != buf.size()) {
 					std::filesystem::path p(buf.begin(), buf.begin() + result);
-					return p.filename().string() +
-						   fmt::format(FMT_STRING(": {}({})"), a_loc.file_name(), a_loc.line());
+					return p.filename().string();
 				} else {
-					return std::string{};
+					return {};
 				}
 			}();
 
+			assert(false);
 			WinAPI::MessageBox(nullptr, a_msg.data(), (caption.empty() ? nullptr : caption.c_str()), 0);
 			std::_Exit(EXIT_FAILURE);
 		}
 
-		template <class, class, class = void>
-		class enumeration;
-
 		template <
 			class Enum,
-			class Underlying>
-		class enumeration<
-			Enum,
-			Underlying,
-			std::enable_if_t<
-				std::conjunction_v<
-					std::is_enum<Enum>,
-					std::is_integral<Underlying>>>>
+			class Underlying = std::underlying_type_t<Enum>>
+		class enumeration
 		{
 		public:
 			using enum_type = Enum;
 			using underlying_type = Underlying;
+
+			static_assert(std::is_enum_v<enum_type>, "enum_type must be an enum");
+			static_assert(std::is_integral_v<underlying_type>, "underlying_type must be an integral");
 
 			constexpr enumeration() noexcept = default;
 
@@ -360,8 +382,11 @@ namespace F4SE
 			underlying_type _impl{ 0 };
 		};
 
-		template <class E>
-		enumeration(E) -> enumeration<E, std::underlying_type_t<E>>;
+		template <class... Args>
+		enumeration(Args...) -> enumeration<
+			std::common_type_t<Args...>,
+			std::underlying_type_t<
+				std::common_type_t<Args...>>>;
 	}
 }
 
@@ -679,3 +704,5 @@ namespace REL
 
 #include "RE/NiRTTI_IDs.h"
 #include "RE/RTTI_IDs.h"
+
+#include "RE/msvc/memory.h"

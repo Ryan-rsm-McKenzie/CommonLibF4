@@ -20,14 +20,14 @@ namespace RE
 			{
 			public:
 				// members
-				std::uint32_t flags;	  // 00
-				std::size_t minAlign;	  // 08
-				std::size_t granularity;  // 10
-				std::size_t reserve;	  // 18
-				std::size_t threshold;	  // 20
-				std::size_t limit;		  // 28
-				std::size_t heapID;		  // 30
-				std::size_t arena;		  // 38
+				std::uint32_t flags{ 0 };								// 00
+				std::size_t minAlign{ 16 };								// 08
+				std::size_t granularity{ 8 * 1024 };					// 10
+				std::size_t reserve{ 8 * 1024 };						// 18
+				std::size_t threshold{ static_cast<std::size_t>(-1) };	// 20
+				std::size_t limit{ 0 };									// 28
+				std::size_t heapID{ 0 };								// 30
+				std::size_t arena{ 0 };									// 38
 			};
 			static_assert(sizeof(HeapDesc) == 0x40);
 

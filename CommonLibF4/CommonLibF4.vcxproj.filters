@@ -19,6 +19,9 @@
     <Filter Include="include\RE\Bethesda">
       <UniqueIdentifier>{32c9d02d-a5dd-4eaf-a6f0-72a2dd5446a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE\msvc">
+      <UniqueIdentifier>{489dbcb2-a771-4423-b687-ca3999b77dce}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\RE\NetImmerse">
       <UniqueIdentifier>{06a3583c-f81c-457f-819a-993d53dac474}</UniqueIdentifier>
     </Filter>
@@ -81,10 +84,19 @@
     <ClInclude Include="include\RE\Bethesda\BSPointerHandle.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSScaleformManager.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSSpring.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSStringPool.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSStringT.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSSystemFileStreamer.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTArray.h">
@@ -129,6 +141,9 @@
     <ClInclude Include="include\RE\Bethesda\PlayerControls.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Settings.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -138,11 +153,17 @@
     <ClInclude Include="include\RE\Bethesda\UIMessage.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\UIMessageQueue.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\UserEvents.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Fallout.h">
       <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\msvc\memory.h">
+      <Filter>include\RE\msvc</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiPoint2.h">
       <Filter>include\RE\NetImmerse</Filter>
@@ -167,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="include\RE\RTTI_IDs.h">
       <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_ASMovieRootBase.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Scaleform\GFx\GFx_Loader.h">
       <Filter>include\RE\Scaleform\GFx</Filter>
@@ -287,6 +311,9 @@
     <ClCompile Include="include\RE\Bethesda\BSPointerHandle.cpp">
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSScaleformManager.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
     <ClCompile Include="include\RE\Bethesda\BSSpring.cpp">
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
@@ -296,8 +323,14 @@
     <ClCompile Include="include\RE\Bethesda\InputEvent.cpp">
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\Settings.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
     <ClCompile Include="include\RE\NetImmerse\NiRect.cpp">
       <Filter>include\RE\NetImmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Scaleform\GFx\GFx_Player.cpp">
+      <Filter>include\RE\Scaleform\GFx</Filter>
     </ClCompile>
     <ClCompile Include="include\REL\Relocation.cpp">
       <Filter>include\REL</Filter>

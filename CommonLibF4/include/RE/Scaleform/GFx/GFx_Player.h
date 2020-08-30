@@ -48,14 +48,14 @@ namespace RE
 			{
 			public:
 				// members
-				MemoryHeap::HeapDesc desc;				 // 00
-				float heapLimitMultiplier;				 // 40
-				std::uint32_t maxCollectionRoots;		 // 44
-				std::uint32_t framesBetweenCollections;	 // 48
-				std::uint32_t initialDynamicLimit;		 // 4C
-				std::uint32_t runsToUpgradeGen;			 // 50
-				std::uint32_t runsToCollectYoung;		 // 54
-				std::uint32_t runsToCollectOld;			 // 58
+				MemoryHeap::HeapDesc desc;												   // 00
+				float heapLimitMultiplier{ 0.25F };										   // 40
+				std::uint32_t maxCollectionRoots{ static_cast<std::uint32_t>(-1) };		   // 44
+				std::uint32_t framesBetweenCollections{ static_cast<std::uint32_t>(-1) };  // 48
+				std::uint32_t initialDynamicLimit{ static_cast<std::uint32_t>(-1) };	   // 4C
+				std::uint32_t runsToUpgradeGen{ static_cast<std::uint32_t>(-1) };		   // 50
+				std::uint32_t runsToCollectYoung{ static_cast<std::uint32_t>(-1) };		   // 54
+				std::uint32_t runsToCollectOld{ static_cast<std::uint32_t>(-1) };		   // 58
 			};
 			static_assert(sizeof(MemoryParams) == 0x60);
 
@@ -107,6 +107,7 @@ namespace RE
 				};
 				static_assert(sizeof(ResourceVisitor) == 0x8);
 
+				// add
 				virtual std::uint32_t GetVersion() const = 0;																															   // 04
 				virtual std::uint32_t GetLoadingFrame() const = 0;																														   // 05
 				virtual float GetWidth() const = 0;																																		   // 06
@@ -131,6 +132,17 @@ namespace RE
 				virtual void VisitImportedMovies(ImportVisitor* a_visitor) = 0;																											   // 19
 				virtual void VisitResources(ResourceVisitor* a_visitor, VisitResourceMask a_visitMask = VisitResourceMask::kAllImages) = 0;												   // 1A
 				virtual Resource* GetResource(const char* a_exportName) const = 0;																										   // 1B
+
+				[[nodiscard]] inline Movie* CreateInstance(
+					bool a_initFirstFrame = false,
+					std::size_t a_memoryArena = 0,
+					ActionControl* a_actionControl = nullptr,
+					Render::ThreadCommandQueue* a_queue = nullptr)
+				{
+					MemoryParams memParams;
+					memParams.desc.arena = a_memoryArena;
+					return CreateInstance(memParams, a_initFirstFrame, a_actionControl, a_queue);
+				}
 			};
 			static_assert(sizeof(MovieDef) == 0x20);
 
@@ -298,6 +310,27 @@ namespace RE
 					static_assert(sizeof(ArrVisitor) == 0x8);
 
 					virtual ~ObjectInterface() = default;  // 00
+
+					inline bool HasMember(void* a_data, const char* a_name, bool a_isdobj) const
+					{
+						using func_t = decltype(&ObjectInterface::HasMember);
+						REL::Relocation<func_t> func{ REL::ID(788691) };
+						return func(this, a_data, a_name, a_isdobj);
+					}
+
+					inline bool GetMember(void* a_data, const char* a_name, Value* a_val, bool a_isdobj) const
+					{
+						using func_t = decltype(&ObjectInterface::GetMember);
+						REL::Relocation<func_t> func{ REL::ID(1517430) };
+						return func(this, a_data, a_name, a_val, a_isdobj);
+					}
+
+					inline bool SetMember(void* a_data, const char* a_name, const Value& a_value, bool a_isdobj)
+					{
+						using func_t = decltype(&ObjectInterface::SetMember);
+						REL::Relocation<func_t> func{ REL::ID(1360149) };
+						return func(this, a_data, a_name, a_value, a_isdobj);
+					}
 
 					inline void ObjectAddRef(Value* a_val, void* a_obj)
 					{
@@ -499,6 +532,50 @@ namespace RE
 					return *this;
 				}
 
+				[[nodiscard]] constexpr ValueType GetType() const noexcept { return *(_type & ValueType::kTypeMask); }
+
+				[[nodiscard]] constexpr bool IsDisplayObject() const noexcept { return GetType() == ValueType::kDisplayObject; }
+				[[nodiscard]] constexpr bool IsNumber() const noexcept { return GetType() == ValueType::kNumber; }
+
+				[[nodiscard]] constexpr bool IsObject() const noexcept
+				{
+					switch (GetType()) {
+					case ValueType::kObject:
+					case ValueType::kArray:
+					case ValueType::kDisplayObject:
+						return true;
+					default:
+						return false;
+					}
+				}
+
+				[[nodiscard]] constexpr bool IsUndefined() const noexcept { return GetType() == ValueType::kUndefined; }
+
+				[[nodiscard]] constexpr double GetNumber() const
+				{
+					assert(IsNumber());
+					return _value.number;
+				}
+
+				inline bool HasMember(stl::zstring a_name) const
+				{
+					assert(IsObject());
+					return _objectInterface->HasMember(_value.data, a_name.data(), IsDisplayObject());
+				}
+
+				inline bool GetMember(stl::zstring a_name, Value* a_val) const
+				{
+					assert(IsObject());
+					return _objectInterface->GetMember(_value.data, a_name.data(), a_val, IsDisplayObject());
+				}
+
+				inline bool SetMember(stl::zstring a_name, const Value& a_val)
+				{
+					assert(IsObject());
+					return _objectInterface->SetMember(_value.data, a_name.data(), a_val, IsDisplayObject());
+				}
+
+			private:
 				inline void AcquireManagedValue(const Value& a_rhs)
 				{
 					assert(a_rhs._value.data && a_rhs._objectInterface);
@@ -702,6 +779,8 @@ namespace RE
 				virtual void ForceUpdateImages() = 0;																															 // 41
 				virtual void MakeAreaVisible(const Render::RectF& a_screenRect, const Render::RectF& a_box, MakeAllVisibleFlags a_flags = MakeAllVisibleFlags::kNone) = 0;		 // 42
 				virtual void RestoreViewport() = 0;																																 // 43
+
+				bool GetVariable(Value* a_val, const char* a_pathToVar) const;
 
 				inline void Release()
 				{

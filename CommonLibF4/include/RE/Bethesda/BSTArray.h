@@ -399,9 +399,7 @@ namespace RE
 
 			const auto newSize = a_rhs.size();
 			const auto newData = allocate(newCapacity);
-			for (size_type i = 0; i < newSize; ++i) {
-				stl::construct_at(newData + i, a_rhs[i]);
-			}
+			std::uninitialized_copy_n(newData, newSize, a_rhs.begin());
 
 			set_allocator_traits(newData, newCapacity);
 			set_size(newSize);
@@ -418,9 +416,7 @@ namespace RE
 			const auto newCapacity = a_count;
 			const auto newSize = a_count;
 			const auto newData = allocate(newCapacity);
-			for (size_type i = 0; i < newSize; ++i) {
-				stl::construct_at(newData + i);
-			}
+			std::uninitialized_default_construct_n(newData, newSize);
 
 			set_allocator_traits(newData, newCapacity);
 			set_size(newSize);

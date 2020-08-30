@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/MemoryManager.h"
 
 namespace RE
 {
@@ -48,6 +49,8 @@ namespace RE
 
 		virtual IUIMessageData* QData() { return nullptr; }				 // 02
 		virtual const IUIMessageData* QData() const { return nullptr; }	 // 01
+
+		F4_HEAP_REDEFINE_NEW(UIMessage);
 
 		// members
 		BSFixedString menu;																  // 08

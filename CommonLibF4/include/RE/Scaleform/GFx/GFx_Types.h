@@ -26,6 +26,13 @@ namespace RE
 				kPlaying,
 				kStopped
 			};
+
+			enum class FocusMovedType
+			{
+				kByMouse = 1,
+				kByKeyboard,
+				kByAS
+			};
 		}
 	}
 }

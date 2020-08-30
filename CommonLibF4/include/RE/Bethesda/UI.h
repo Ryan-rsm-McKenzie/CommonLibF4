@@ -22,34 +22,44 @@ namespace RE
 	struct UIMenuEntry
 	{
 	public:
-		using Create_t = IMenu*(const UIMessage*);
+		using Create_t = IMenu*(const UIMessage&);
 		using StaticUpdate_t = void();
 
 		// members
-		Scaleform::Ptr<IMenu> menu;	   // 00
-		Create_t* create;			   // 08
-		StaticUpdate_t* staticUpdate;  // 10
+		Scaleform::Ptr<IMenu> menu;				  // 00
+		Create_t* create;						  // 08
+		StaticUpdate_t* staticUpdate{ nullptr };  // 10
 	};
 	static_assert(sizeof(UIMenuEntry) == 0x18);
 
 	class UI :
-		public BSInputEventReceiver,								// 000
-		public BSTSingletonSDM<UI, BSTSingletonSDMOpStaticBuffer>,	// 010
-		public BSTEventSource<MenuOpenCloseEvent>,					// 018
-		public BSTEventSource<MenuModeChangeEvent>,					// 070
-		public BSTEventSource<MenuModeCounterChangedEvent>,			// 0C8
-		public BSTEventSource<TutorialEvent>						// 120
+		public BSInputEventReceiver,						 // 000
+		public BSTSingletonSDM<UI>,							 // 010
+		public BSTEventSource<MenuOpenCloseEvent>,			 // 018
+		public BSTEventSource<MenuModeChangeEvent>,			 // 070
+		public BSTEventSource<MenuModeCounterChangedEvent>,	 // 0C8
+		public BSTEventSource<TutorialEvent>				 // 120
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_UI };
 
+		using Create_t = typename UIMenuEntry::Create_t;
+		using StaticUpdate_t = typename UIMenuEntry::StaticUpdate_t;
+
 		// add
-		virtual ~UI() = default;
+		virtual ~UI() = default;  // 01
 
 		[[nodiscard]] static UI* GetSingleton()
 		{
 			REL::Relocation<UI**> singleton{ REL::ID(548587) };
 			return *singleton;
+		}
+
+		inline void RegisterMenu(const char* a_menu, Create_t* a_create, StaticUpdate_t* a_staticUpdate = nullptr)
+		{
+			using func_t = decltype(&UI::RegisterMenu);
+			REL::Relocation<func_t> func{ REL::ID(1519575) };
+			return func(this, a_menu, a_create, a_staticUpdate);
 		}
 
 		// members

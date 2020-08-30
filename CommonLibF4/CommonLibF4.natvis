@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="REL::Relocation&lt;*&gt;">
+		<DisplayString>{($T1)_impl}</DisplayString>
+		<Expand>
+			<Item Name="[object]">($T1)_impl</Item>
+		</Expand>
+	</Type>
+	
 	<Type Name="F4SE::stl::enumeration&lt;*&gt;">
 		<DisplayString>{static_cast&lt;$T1&gt;(_impl),en}</DisplayString>
 	</Type>
@@ -93,6 +100,18 @@
 			<ArrayItems>
 				<Size Condition="_data != nullptr">((RE::BSStringPool::Entry*)_data - 1)-&gt;_length &amp; 0xFFFFFF</Size>
 				<Size Condition="_data == nullptr">0</Size>
+				<ValuePointer>_data</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::BSStringT&lt;*&gt;">
+		<DisplayString>{_data,[_size]}</DisplayString>
+		<Expand>
+			<Item Name="[size]">_size</Item>
+			<Item Name="[capacity]">_capacity</Item>
+			<ArrayItems>
+				<Size>_size</Size>
 				<ValuePointer>_data</ValuePointer>
 			</ArrayItems>
 		</Expand>

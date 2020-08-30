@@ -101,14 +101,14 @@ namespace RE
 	static_assert(sizeof(HeldStateHandler) == 0x28);
 
 	class PlayerControls :
-		BSInputEventReceiver,											// 000
-		BSTEventSink<MenuOpenCloseEvent>,								// 010
-		BSTEventSink<MenuModeChangeEvent>,								// 018
-		BSTEventSink<TESFurnitureEvent>,								// 020
-		BSTEventSink<UserEventEnabledEvent>,							// 028
-		IMovementPlayerControls,										// 030
-		BSTEventSink<QuickContainerStateEvent>,							// 038
-		BSTSingletonSDM<PlayerControls, BSTSingletonSDMOpStaticBuffer>	// 040
+		BSInputEventReceiver,					 // 000
+		BSTEventSink<MenuOpenCloseEvent>,		 // 010
+		BSTEventSink<MenuModeChangeEvent>,		 // 018
+		BSTEventSink<TESFurnitureEvent>,		 // 020
+		BSTEventSink<UserEventEnabledEvent>,	 // 028
+		IMovementPlayerControls,				 // 030
+		BSTEventSink<QuickContainerStateEvent>,	 // 038
+		BSTSingletonSDM<PlayerControls>			 // 040
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_PlayerControls };

@@ -24,7 +24,7 @@ namespace RE
 		using value_type = T;
 	};
 
-	template <class T, template <class> class Buffer>
+	template <class T, template <class> class Buffer = BSTSingletonSDMOpStaticBuffer>
 	struct BSTSingletonSDM :
 		public BSTSingletonSDMBase<BSTSDMTraits<T, Buffer<T>>>
 	{
