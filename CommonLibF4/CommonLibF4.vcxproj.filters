@@ -1,0 +1,342 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include=".clang-format" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{234214ad-cd92-4a20-a25a-03dc3c495a1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\F4SE">
+      <UniqueIdentifier>{10a39dcf-4b72-44be-987e-4d69f297538c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\F4SE\Impl">
+      <UniqueIdentifier>{69ab6f93-c095-4086-b3c6-d7345063a065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE">
+      <UniqueIdentifier>{068c1698-7d85-452e-bafa-00e2d057e16c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Bethesda">
+      <UniqueIdentifier>{32c9d02d-a5dd-4eaf-a6f0-72a2dd5446a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\msvc">
+      <UniqueIdentifier>{489dbcb2-a771-4423-b687-ca3999b77dce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\NetImmerse">
+      <UniqueIdentifier>{06a3583c-f81c-457f-819a-993d53dac474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform">
+      <UniqueIdentifier>{0f680cb3-9ee4-4948-ae14-905b8d7e0766}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\GFx">
+      <UniqueIdentifier>{ad38e393-86a8-4a0c-87b9-273c1a146b82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Kernel">
+      <UniqueIdentifier>{3d370608-e3e3-4bcd-9341-381a649833f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\RE\Scaleform\Render">
+      <UniqueIdentifier>{799fdcf6-ef99-492b-94e2-63b03d2517a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\REL">
+      <UniqueIdentifier>{6472008f-5b82-40f4-b35b-e3161da49ebe}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\F4SE\API.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\F4SE.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Impl\PCH.h">
+      <Filter>include\F4SE\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Impl\WinAPI.h">
+      <Filter>include\F4SE\Impl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Interfaces.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Logger.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Trampoline.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\F4SE\Version.h">
+      <Filter>include\F4SE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Atomic.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSFixedString.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSInputEventReceiver.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSInputEventUser.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSLock.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSPointerHandle.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSScaleformManager.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSSpring.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSStringPool.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSStringT.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSSystemFileStreamer.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTArray.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTEvent.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTHashMap.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTimer.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTOptional.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTSingleton.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTTuple.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\CRC.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Events.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\IMenu.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\IMovementInterface.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\InputEvent.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\MemoryManager.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\PlayerControls.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Settings.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\UI.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\UIMessage.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\UIMessageQueue.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\UserEvents.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Fallout.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\msvc\memory.h">
+      <Filter>include\RE\msvc</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiPoint2.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiPoint3.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiRect.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiRTTI.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiSmartPointer.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NiRTTI_IDs.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\RTTI.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\RTTI_IDs.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_ASMovieRootBase.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Loader.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Log.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Player.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Resource.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\GFx\GFx_Types.h">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Allocator.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_AllocInfo.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Array.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Atomic.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_List.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Log.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Memory.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_MemoryHeap.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_RefCount.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Stats.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_SysAlloc.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_Threads.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Color.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Constants.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Containers.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Context.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Matrix2x4.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Matrix3x4.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Matrix4x4.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_ThreadCommandQueue.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_TreeNode.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Types2D.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Render\Render_Viewport.h">
+      <Filter>include\RE\Scaleform\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="include\REL\Relocation.h">
+      <Filter>include\REL</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="include\F4SE\API.cpp">
+      <Filter>include\F4SE</Filter>
+    </ClCompile>
+    <ClCompile Include="include\F4SE\Impl\PCH.cpp">
+      <Filter>include\F4SE\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="include\F4SE\Impl\WinAPI.cpp">
+      <Filter>include\F4SE\Impl</Filter>
+    </ClCompile>
+    <ClCompile Include="include\F4SE\Interfaces.cpp">
+      <Filter>include\F4SE</Filter>
+    </ClCompile>
+    <ClCompile Include="include\F4SE\Logger.cpp">
+      <Filter>include\F4SE</Filter>
+    </ClCompile>
+    <ClCompile Include="include\F4SE\Trampoline.cpp">
+      <Filter>include\F4SE</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\Atomic.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSFixedString.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSLock.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSPointerHandle.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSScaleformManager.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\BSSpring.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\CRC.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\InputEvent.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\Settings.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\NetImmerse\NiRect.cpp">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Scaleform\GFx\GFx_Player.cpp">
+      <Filter>include\RE\Scaleform\GFx</Filter>
+    </ClCompile>
+    <ClCompile Include="include\REL\Relocation.cpp">
+      <Filter>include\REL</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="CommonLibF4.natvis" />
+  </ItemGroup>
+</Project>
