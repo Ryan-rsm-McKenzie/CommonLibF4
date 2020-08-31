@@ -3,6 +3,8 @@
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSStringT.h"
 #include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/BSTList.h"
+#include "RE/Bethesda/BSTTuple.h"
 #include "RE/Bethesda/MemoryManager.h"
 
 namespace RE
@@ -10,9 +12,13 @@ namespace RE
 	class BaseFormComponent;
 	class BGSCraftingUseSound;
 	class BGSPreviewTransform;
+	class BGSPropertySheet;
 	class BGSSoundTagComponent;
+	class TESDescription;
 	class TESFullName;
 	class TESTexture;
+	class TESIcon;
+	class TESReactionForm;
 	class TESValueForm;
 
 	namespace BGSMod
@@ -78,8 +84,29 @@ namespace RE
 	};
 	static_assert(sizeof(BGSPreviewTransform) == 0x10);
 
-	class BGSSoundTagComponent :
+	namespace BGSTypedFormValuePair
+	{
+		union SharedVal
+		{
+			std::uint32_t i;
+			float f;
+		};
+		static_assert(sizeof(SharedVal) == 0x4);
+	}
+
+	class BGSPropertySheet :
 		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSPropertySheet };
+
+		// members
+		BSTArray<BSTTuple<TESForm*, BGSTypedFormValuePair::SharedVal>>* properties;	 // 08
+	};
+	static_assert(sizeof(BGSPropertySheet) == 0x10);
+
+	class BGSSoundTagComponent :
+		public BaseFormComponent  // 0
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_BGSSoundTagComponent };
@@ -93,6 +120,27 @@ namespace RE
 		virtual void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
 	};
 	static_assert(sizeof(BGSSoundTagComponent) == 0x8);
+
+	struct BGSLocalizedStringDL
+	{
+	public:
+		// members
+		std::uint32_t id;  // 0
+	};
+	static_assert(sizeof(BGSLocalizedStringDL) == 0x4);
+
+	class TESDescription :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESDescription };
+
+		// members
+		std::uint32_t fileOffset;			   // 08
+		std::uint32_t chunkOffset;			   // 0C
+		BGSLocalizedStringDL descriptionText;  // 10
+	};
+	static_assert(sizeof(TESDescription) == 0x18);
 
 	class TESFullName :
 		public BaseFormComponent  // 00
@@ -131,6 +179,36 @@ namespace RE
 		BSFixedString textureName;	// 08
 	};
 	static_assert(sizeof(TESTexture) == 0x10);
+
+	class TESIcon :
+		public TESTexture  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESIcon };
+	};
+	static_assert(sizeof(TESIcon) == 0x10);
+
+	struct GROUP_REACTION
+	{
+	public:
+		// members
+		TESForm* form;				 // 00
+		std::int32_t reaction;		 // 08
+		std::int32_t fightReaction;	 // 0C
+	};
+	static_assert(sizeof(GROUP_REACTION) == 0x10);
+
+	class TESReactionForm :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESReactionForm };
+
+		// members
+		BSSimpleList<GROUP_REACTION*> reactionList;	 // 08
+		std::int8_t groupFormType;					 // 18
+	};
+	static_assert(sizeof(TESReactionForm) == 0x20);
 
 	class TESValueForm :
 		public BaseFormComponent  // 00

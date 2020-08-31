@@ -2,7 +2,9 @@
 
 #include "F4SE/Impl/PCH.h"
 
+#include "RE/Bethesda/AI.h"
 #include "RE/Bethesda/Atomic.h"
+#include "RE/Bethesda/BGSTextureSet.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSInputEventReceiver.h"
 #include "RE/Bethesda/BSInputEventUser.h"
@@ -35,6 +37,7 @@
 #include "RE/Bethesda/SWFToCodeFunctionHandler.h"
 #include "RE/Bethesda/Script.h"
 #include "RE/Bethesda/Settings.h"
+#include "RE/Bethesda/TESFaction.h"
 #include "RE/Bethesda/TESForms.h"
 #include "RE/Bethesda/UI.h"
 #include "RE/Bethesda/UIMessage.h"
