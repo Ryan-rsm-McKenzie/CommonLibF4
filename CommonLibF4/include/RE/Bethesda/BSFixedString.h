@@ -216,4 +216,38 @@ namespace RE
 	extern template struct BSCRC32<BSFixedStringCS>;
 	extern template struct BSCRC32<BSFixedStringW>;
 	extern template struct BSCRC32<BSFixedStringWCS>;
+
+	class BGSLocalizedString
+	{
+	public:
+		using size_type = typename BSFixedStringCS::size_type;
+		using value_type = typename BSFixedStringCS::value_type;
+		using pointer = typename BSFixedStringCS::pointer;
+		using const_pointer = typename BSFixedStringCS::const_pointer;
+		using reference = typename BSFixedStringCS::reference;
+		using const_reference = typename BSFixedStringCS::const_reference;
+
+		[[nodiscard]] inline const_pointer data() const noexcept { return _data.data(); }
+		[[nodiscard]] inline const_pointer c_str() const noexcept { return _data.c_str(); }
+
+		[[nodiscard]] inline bool empty() const noexcept { return _data.empty(); }
+
+		[[nodiscard]] inline size_type size() const noexcept { return _data.size(); }
+		[[nodiscard]] inline size_type length() const noexcept { return _data.length(); }
+
+	private:
+		// members
+		BSFixedStringCS _data;	// 0
+	};
+	static_assert(sizeof(BGSLocalizedString) == 0x8);
+
+	template <>
+	struct BSCRC32<BGSLocalizedString>
+	{
+	public:
+		[[nodiscard]] inline std::uint32_t operator()(const BGSLocalizedString& a_key) const noexcept
+		{
+			return BSCRC32<typename BGSLocalizedString::const_pointer>()(a_key.data());
+		}
+	};
 }

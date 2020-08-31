@@ -562,8 +562,8 @@ namespace RE
 
 		private:
 			// members
-			entry_type _data[N]{};			// 00 (20)
-			entry_type* _entries{ _data };	// ?? (??)
+			entry_type _data[N]{};			// 00
+			entry_type* _entries{ _data };	// ??
 		};
 	};
 

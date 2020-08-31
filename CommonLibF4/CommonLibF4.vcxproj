@@ -261,6 +261,7 @@
     <ClCompile Include="include\RE\Bethesda\BSScaleformManager.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSSpring.cpp" />
     <ClCompile Include="include\RE\Bethesda\CRC.cpp" />
+    <ClCompile Include="include\RE\Bethesda\FormComponents.cpp" />
     <ClCompile Include="include\RE\Bethesda\InputEvent.cpp" />
     <ClCompile Include="include\RE\Bethesda\Settings.cpp" />
     <ClCompile Include="include\RE\NetImmerse\NiRect.cpp" />
@@ -296,6 +297,7 @@
     <ClInclude Include="include\RE\Bethesda\BSTTuple.h" />
     <ClInclude Include="include\RE\Bethesda\CRC.h" />
     <ClInclude Include="include\RE\Bethesda\Events.h" />
+    <ClInclude Include="include\RE\Bethesda\FormComponents.h" />
     <ClInclude Include="include\RE\Bethesda\IMenu.h" />
     <ClInclude Include="include\RE\Bethesda\IMovementInterface.h" />
     <ClInclude Include="include\RE\Bethesda\InputEvent.h" />
@@ -303,6 +305,7 @@
     <ClInclude Include="include\RE\Bethesda\PlayerControls.h" />
     <ClInclude Include="include\RE\Bethesda\Settings.h" />
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h" />
+    <ClInclude Include="include\RE\Bethesda\TESForms.h" />
     <ClInclude Include="include\RE\Bethesda\UI.h" />
     <ClInclude Include="include\RE\Bethesda\UIMessage.h" />
     <ClInclude Include="include\RE\Bethesda\UIMessageQueue.h" />

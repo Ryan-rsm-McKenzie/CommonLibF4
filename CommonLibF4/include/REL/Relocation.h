@@ -590,6 +590,10 @@ namespace REL
 			_impl{ a_id.address() }
 		{}
 
+		explicit Relocation(ID a_id, std::ptrdiff_t a_offset) :
+			_impl{ a_id.address() + a_offset }
+		{}
+
 		constexpr Relocation& operator=(std::uintptr_t a_address) noexcept
 		{
 			_impl = a_address;

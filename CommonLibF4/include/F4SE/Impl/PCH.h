@@ -4,6 +4,8 @@
 
 #pragma warning(disable : 4061)	 // enumerator 'identifier' in switch of enum 'enumeration' is not explicitly handled by a case label
 #pragma warning(disable : 4200)	 // nonstandard extension used : zero-sized array in struct/union
+#pragma warning(disable : 4263)	 // 'function' : member function does not override any base class virtual member function
+#pragma warning(disable : 4264)	 // 'virtual_function' : no override available for virtual member function from base 'class'; function is hidden
 #pragma warning(disable : 4266)	 // 'function' : no override available for virtual member function from base 'type'; function is hidden
 #pragma warning(disable : 4324)	 // 'struct_name' : structure was padded due to __declspec(align())
 #pragma warning(disable : 4371)	 // 'classname': layout of class may have changed from a previous version of the compiler due to better packing of member 'member'

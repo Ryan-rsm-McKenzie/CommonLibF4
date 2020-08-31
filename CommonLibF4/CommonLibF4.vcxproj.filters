@@ -126,6 +126,9 @@
     <ClInclude Include="include\RE\Bethesda\Events.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\FormComponents.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\IMenu.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -145,6 +148,9 @@
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\TESForms.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\UI.h">
@@ -318,6 +324,9 @@
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
     <ClCompile Include="include\RE\Bethesda\CRC.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\FormComponents.cpp">
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
     <ClCompile Include="include\RE\Bethesda\InputEvent.cpp">

@@ -761,4 +761,15 @@ namespace RE
 		std::uint32_t _size{ 0 };  // 00
 		Data _data;				   // 08
 	};
+
+	class BSDataBufferHeapAllocator;
+
+	template <std::uint32_t N, class Allocator = BSDataBufferHeapAllocator>
+	class BSTDataBuffer
+	{
+	public:
+		// members
+		char* buffer;		 // 00
+		std::uint32_t size;	 // 08
+	};
 }

@@ -130,4 +130,117 @@ namespace RE
 		};
 		static_assert(sizeof(BaseClassDescriptor) == 0x18);
 	}
+
+	inline void* RTDynamicCast(void* a_inptr, std::int32_t a_vfDelta, void* a_srcType, void* a_targetType, std::int32_t a_isReference)
+	{
+		using func_t = decltype(&RTDynamicCast);
+		REL::Relocation<func_t> func{ REL::ID(1579156) };
+		return func(a_inptr, a_vfDelta, a_srcType, a_targetType, a_isReference);
+	}
+
+	namespace detail
+	{
+		template <class T>
+		using remove_cvpr_t =
+			std::remove_cv_t<
+				std::remove_pointer_t<
+					std::remove_reference_t<T>>>;
+
+		template <class T>
+		struct target_is_valid :
+			std::disjunction<
+				std::is_polymorphic<
+					remove_cvpr_t<T>>,
+				std::is_same<
+					void*,
+					std::remove_cv_t<T>>>
+		{};
+
+		template <class, class>
+		struct types_are_compat :
+			std::false_type
+		{};
+
+		template <class To, class From>
+		struct types_are_compat<To, From*> :
+			std::is_pointer<To>
+		{};
+
+		template <class To, class From>
+		struct types_are_compat<To, const From*> :
+			std::conjunction<
+				std::is_pointer<To>,
+				std::is_const<
+					std::remove_pointer_t<To>>>
+		{};
+
+		template <class To, class From>
+		struct types_are_compat<To, volatile From*> :
+			std::conjunction<
+				std::is_pointer<To>,
+				std::is_volatile<
+					std::remove_pointer_t<To>>>
+		{};
+
+		template <class To, class From>
+		struct types_are_compat<To, const volatile From*> :
+			std::conjunction<
+				std::is_pointer<To>,
+				std::is_const<
+					std::remove_pointer_t<To>>,
+				std::is_volatile<
+					std::remove_pointer_t<To>>>
+		{};
+
+		template <class, class = void>
+		struct implements_rtti :
+			std::false_type
+		{};
+
+		template <class T>
+		struct implements_rtti<
+			T,
+			std::void_t<
+				decltype(
+					remove_cvpr_t<T>::RTTI)>> :
+			std::true_type
+		{};
+
+		template <class To, class From>
+		struct cast_is_valid :
+			std::conjunction<
+				types_are_compat<
+					To,
+					From>,
+				target_is_valid<
+					To>,
+				implements_rtti<To>,
+				implements_rtti<From>>
+		{};
+
+		template <class To, class From>
+		inline constexpr bool cast_is_valid_v = cast_is_valid<To, From>::value;
+	}
+
+	template <
+		class To,
+		class From,
+		std::enable_if_t<
+			detail::cast_is_valid_v<
+				To,
+				From*>,
+			int> = 0>
+	inline To fallout_cast(From* a_from)
+	{
+		REL::Relocation<void*> from{ detail::remove_cvpr_t<From>::RTTI };
+		REL::Relocation<void*> to{ detail::remove_cvpr_t<To>::RTTI };
+		return static_cast<To>(
+			RE::RTDynamicCast(
+				const_cast<void*>(
+					static_cast<const volatile void*>(a_from)),
+				0,
+				from.get(),
+				to.get(),
+				false));
+	}
 }
