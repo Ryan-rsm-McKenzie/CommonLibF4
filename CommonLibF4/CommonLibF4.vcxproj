@@ -281,8 +281,11 @@
     <ClInclude Include="include\RE\Bethesda\BSFixedString.h" />
     <ClInclude Include="include\RE\Bethesda\BSInputEventReceiver.h" />
     <ClInclude Include="include\RE\Bethesda\BSInputEventUser.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTList.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTSmartPointer.h" />
     <ClInclude Include="include\RE\Bethesda\BSLock.h" />
     <ClInclude Include="include\RE\Bethesda\BSPointerHandle.h" />
+    <ClInclude Include="include\RE\Bethesda\BSResource.h" />
     <ClInclude Include="include\RE\Bethesda\BSScaleformManager.h" />
     <ClInclude Include="include\RE\Bethesda\BSSpring.h" />
     <ClInclude Include="include\RE\Bethesda\BSStringPool.h" />
@@ -290,6 +293,7 @@
     <ClInclude Include="include\RE\Bethesda\BSSystemFileStreamer.h" />
     <ClInclude Include="include\RE\Bethesda\BSTArray.h" />
     <ClInclude Include="include\RE\Bethesda\BSTEvent.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTextureSet.h" />
     <ClInclude Include="include\RE\Bethesda\BSTHashMap.h" />
     <ClInclude Include="include\RE\Bethesda\BSTimer.h" />
     <ClInclude Include="include\RE\Bethesda\BSTOptional.h" />
@@ -303,6 +307,7 @@
     <ClInclude Include="include\RE\Bethesda\InputEvent.h" />
     <ClInclude Include="include\RE\Bethesda\MemoryManager.h" />
     <ClInclude Include="include\RE\Bethesda\PlayerControls.h" />
+    <ClInclude Include="include\RE\Bethesda\Script.h" />
     <ClInclude Include="include\RE\Bethesda\Settings.h" />
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h" />
     <ClInclude Include="include\RE\Bethesda\TESForms.h" />
@@ -312,8 +317,16 @@
     <ClInclude Include="include\RE\Bethesda\UserEvents.h" />
     <ClInclude Include="include\RE\Fallout.h" />
     <ClInclude Include="include\RE\msvc\memory.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiAlphaProperty.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiColor.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiFlags.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiObject.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiObjectNET.h" />
     <ClInclude Include="include\RE\NetImmerse\NiPoint2.h" />
     <ClInclude Include="include\RE\NetImmerse\NiPoint3.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiProperty.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiRefObject.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiShadeProperty.h" />
     <ClInclude Include="include\RE\NetImmerse\NiSmartPointer.h" />
     <ClInclude Include="include\RE\NetImmerse\NiRect.h" />
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h" />

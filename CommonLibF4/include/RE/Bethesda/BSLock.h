@@ -2,6 +2,16 @@
 
 namespace RE
 {
+	class BSNonReentrantSpinLock
+	{
+	public:
+		constexpr BSNonReentrantSpinLock() noexcept {}	// intentional
+
+		// members
+		std::uint32_t lock{ 0 };  // 0
+	};
+	static_assert(sizeof(BSNonReentrantSpinLock) == 0x4);
+
 	class BSSpinLock
 	{
 	public:

@@ -84,6 +84,9 @@
     <ClInclude Include="include\RE\Bethesda\BSPointerHandle.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSResource.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSScaleformManager.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -105,16 +108,25 @@
     <ClInclude Include="include\RE\Bethesda\BSTEvent.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTextureSet.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTHashMap.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTimer.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTList.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTOptional.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTSingleton.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTSmartPointer.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTTuple.h">
@@ -144,6 +156,9 @@
     <ClInclude Include="include\RE\Bethesda\PlayerControls.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Script.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\Settings.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -171,16 +186,40 @@
     <ClInclude Include="include\RE\msvc\memory.h">
       <Filter>include\RE\msvc</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiAlphaProperty.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiColor.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiFlags.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiObject.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiObjectNET.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiPoint2.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiPoint3.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiProperty.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiRect.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiRefObject.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiShadeProperty.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiSmartPointer.h">

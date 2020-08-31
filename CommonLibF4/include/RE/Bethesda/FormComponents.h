@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/BSStringT.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/MemoryManager.h"
 
@@ -11,6 +12,7 @@ namespace RE
 	class BGSPreviewTransform;
 	class BGSSoundTagComponent;
 	class TESFullName;
+	class TESTexture;
 	class TESValueForm;
 
 	namespace BGSMod
@@ -64,12 +66,12 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_BGSPreviewTransform };
 
 		// override (BaseFormComponent)
-		virtual std::uint32_t GetFormComponentType() const override { return 'NRTP'; }	   // 01
-		virtual void InitializeDataComponent() override { transform = nullptr; }		   // 02
-		virtual void ClearDataComponent() override { return; }							   // 03
-		virtual void InitComponent() override;											   // 04
-		virtual void CopyComponent(BaseFormComponent*) override { return; }				   // 06
-		virtual void CopyComponent(BaseFormComponent* a_copy, TESForm* a_owner) override;  // 05
+		virtual std::uint32_t GetFormComponentType() const override { return 'NRTP'; }	// 01
+		virtual void InitializeDataComponent() override { transform = nullptr; }		// 02
+		virtual void ClearDataComponent() override { return; }							// 03
+		virtual void InitComponent() override;											// 04
+		virtual void CopyComponent(BaseFormComponent*) override { return; }				// 06
+		virtual void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
 
 		// members
 		BGSTransform* transform;  // 08
@@ -83,12 +85,12 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_BGSSoundTagComponent };
 
 		// override (BaseFormComponent)
-		virtual std::uint32_t GetFormComponentType() const override { return 'CTAC'; }	   // 01
-		virtual void InitializeDataComponent() override { return; }						   // 02
-		virtual void ClearDataComponent() override;										   // 03
-		virtual void InitComponent() override;											   // 04
-		virtual void CopyComponent(BaseFormComponent*) override { return; }				   // 06
-		virtual void CopyComponent(BaseFormComponent* a_copy, TESForm* a_owner) override;  // 05
+		virtual std::uint32_t GetFormComponentType() const override { return 'CTAC'; }	// 01
+		virtual void InitializeDataComponent() override { return; }						// 02
+		virtual void ClearDataComponent() override;										// 03
+		virtual void InitComponent() override;											// 04
+		virtual void CopyComponent(BaseFormComponent*) override { return; }				// 06
+		virtual void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
 	};
 	static_assert(sizeof(BGSSoundTagComponent) == 0x8);
 
@@ -108,6 +110,27 @@ namespace RE
 		BGSLocalizedString fullName;  // 08
 	};
 	static_assert(sizeof(TESFullName) == 0x10);
+
+	class TESTexture :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESTexture };
+
+		// override (BaseFormComponent)
+		virtual void InitializeDataComponent() override;		  // 02
+		virtual void ClearDataComponent() override { return; }	  // 03
+		virtual void CopyComponent(BaseFormComponent*) override;  // 06
+
+		// add
+		virtual std::uint32_t GetMaxAllowedSize() { return 0; }						// 07
+		virtual const char* GetAsNormalFile(BSStringT<char>& a_outFilename) const;	// 08
+		virtual const char* GetDefaultPath() const { return "Textures\\"; }			// 09
+
+		// members
+		BSFixedString textureName;	// 08
+	};
+	static_assert(sizeof(TESTexture) == 0x10);
 
 	class TESValueForm :
 		public BaseFormComponent  // 00
@@ -160,12 +183,12 @@ namespace RE
 				static constexpr auto RTTI{ RTTI_BGSMod__Template__Items };
 
 				// override (BaseFormComponent)
-				virtual std::uint32_t GetFormComponentType() const override { return 'TJBO'; }	   // 01
-				virtual void InitializeDataComponent() override { return; }						   // 02
-				virtual void ClearDataComponent() override;										   // 03
-				virtual void InitComponent() override;											   // 04
-				virtual void CopyComponent(BaseFormComponent*) override { return; }				   // 06
-				virtual void CopyComponent(BaseFormComponent* a_copy, TESForm* a_owner) override;  // 05
+				virtual std::uint32_t GetFormComponentType() const override { return 'TJBO'; }	// 01
+				virtual void InitializeDataComponent() override { return; }						// 02
+				virtual void ClearDataComponent() override;										// 03
+				virtual void InitComponent() override;											// 04
+				virtual void CopyComponent(BaseFormComponent*) override { return; }				// 06
+				virtual void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
 
 				// members
 				BSTArray<Item*> items;	// 08
