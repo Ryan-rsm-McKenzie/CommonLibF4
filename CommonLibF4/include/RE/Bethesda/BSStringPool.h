@@ -15,14 +15,14 @@ namespace RE
 				kRefCountMask = 0x3FFF
 			};
 
-			static inline void release(Entry*& a_entry)
+			static void release(Entry*& a_entry)
 			{
 				using func_t = decltype(&Entry::release);
 				REL::Relocation<func_t> func{ REL::ID(1204430) };
 				return func(a_entry);
 			}
 
-			inline void acquire()
+			void acquire()
 			{
 				stl::atomic_ref flags{ _flags };
 				std::uint16_t expected{ 0 };
@@ -40,13 +40,13 @@ namespace RE
 			[[nodiscard]] const T* data() const noexcept;
 
 			template <>
-			[[nodiscard]] inline const char* data<char>() const noexcept
+			[[nodiscard]] const char* data<char>() const noexcept
 			{
 				return u8();
 			}
 
 			template <>
-			[[nodiscard]] inline const wchar_t* data<wchar_t>() const noexcept
+			[[nodiscard]] const wchar_t* data<wchar_t>() const noexcept
 			{
 				return u16();
 			}
@@ -64,7 +64,7 @@ namespace RE
 			[[nodiscard]] constexpr bool shallow() const noexcept { return _flags & kShallow; }
 			[[nodiscard]] constexpr std::uint32_t size() const noexcept { return length(); }
 
-			[[nodiscard]] inline const char* u8() const noexcept
+			[[nodiscard]] const char* u8() const noexcept
 			{
 				const auto entry = leaf();
 				if (entry) {
@@ -75,7 +75,7 @@ namespace RE
 				}
 			}
 
-			[[nodiscard]] inline const wchar_t* u16() const noexcept
+			[[nodiscard]] const wchar_t* u16() const noexcept
 			{
 				const auto entry = leaf();
 				if (entry) {
@@ -113,7 +113,7 @@ namespace RE
 		};
 		static_assert(sizeof(AlignedLock) == 0x10);
 
-		inline static BucketTable& GetSingleton()
+		static BucketTable& GetSingleton()
 		{
 			using func_t = decltype(&BucketTable::GetSingleton);
 			REL::Relocation<func_t> func{ REL::ID(1390486) };

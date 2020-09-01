@@ -31,7 +31,7 @@ namespace RE
 		constexpr BSTArrayBase(const BSTArrayBase&) noexcept = default;
 		constexpr BSTArrayBase(BSTArrayBase&&) noexcept = default;
 
-		inline ~BSTArrayBase() noexcept { _size = 0; }
+		~BSTArrayBase() noexcept { _size = 0; }
 
 		constexpr BSTArrayBase& operator=(const BSTArrayBase&) noexcept = default;
 		constexpr BSTArrayBase& operator=(BSTArrayBase&&) noexcept = default;
@@ -55,7 +55,7 @@ namespace RE
 
 		constexpr BSTArrayHeapAllocator() noexcept = default;
 
-		inline BSTArrayHeapAllocator(const BSTArrayHeapAllocator& a_rhs)
+		BSTArrayHeapAllocator(const BSTArrayHeapAllocator& a_rhs)
 		{
 			if (a_rhs.data()) {
 				_capacity = a_rhs.capacity();
@@ -72,14 +72,14 @@ namespace RE
 			a_rhs._capacity = 0;
 		}
 
-		inline ~BSTArrayHeapAllocator()
+		~BSTArrayHeapAllocator()
 		{
 			deallocate(data());
 			_data = nullptr;
 			_capacity = 0;
 		}
 
-		inline BSTArrayHeapAllocator& operator=(const BSTArrayHeapAllocator& a_rhs)
+		BSTArrayHeapAllocator& operator=(const BSTArrayHeapAllocator& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				deallocate(data());
@@ -95,7 +95,7 @@ namespace RE
 			return *this;
 		}
 
-		inline BSTArrayHeapAllocator& operator=(BSTArrayHeapAllocator&& a_rhs)
+		BSTArrayHeapAllocator& operator=(BSTArrayHeapAllocator&& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				deallocate(data());
@@ -116,7 +116,7 @@ namespace RE
 		[[nodiscard]] constexpr size_type capacity() const noexcept { return _capacity; }
 
 	protected:
-		inline void* allocate(std::size_t a_size)
+		void* allocate(std::size_t a_size)
 		{
 			const auto mem = malloc(a_size);
 			if (!mem) {
@@ -127,7 +127,7 @@ namespace RE
 			}
 		}
 
-		inline void deallocate(void* a_ptr) { free(a_ptr); }
+		void deallocate(void* a_ptr) { free(a_ptr); }
 
 		constexpr void set_allocator_traits(void* a_data, std::uint32_t a_capacity, std::size_t) noexcept
 		{
@@ -153,23 +153,23 @@ namespace RE
 			_local(1)
 		{}
 
-		inline BSTSmallArrayHeapAllocator(const BSTSmallArrayHeapAllocator& a_rhs) :
+		BSTSmallArrayHeapAllocator(const BSTSmallArrayHeapAllocator& a_rhs) :
 			_capacity(0),
 			_local(1)
 		{
 			copy(a_rhs);
 		}
 
-		inline BSTSmallArrayHeapAllocator(BSTSmallArrayHeapAllocator&& a_rhs) :
+		BSTSmallArrayHeapAllocator(BSTSmallArrayHeapAllocator&& a_rhs) :
 			_capacity(0),
 			_local(1)
 		{
 			copy(std::move(a_rhs));
 		}
 
-		inline ~BSTSmallArrayHeapAllocator() { release(); }
+		~BSTSmallArrayHeapAllocator() { release(); }
 
-		inline BSTSmallArrayHeapAllocator& operator=(const BSTSmallArrayHeapAllocator& a_rhs)
+		BSTSmallArrayHeapAllocator& operator=(const BSTSmallArrayHeapAllocator& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				copy(a_rhs);
@@ -177,7 +177,7 @@ namespace RE
 			return *this;
 		}
 
-		inline BSTSmallArrayHeapAllocator& operator=(BSTSmallArrayHeapAllocator&& a_rhs)
+		BSTSmallArrayHeapAllocator& operator=(BSTSmallArrayHeapAllocator&& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				copy(std::move(a_rhs));
@@ -231,7 +231,7 @@ namespace RE
 			char local[N]{ 0 };
 		};
 
-		inline void copy(const BSTSmallArrayHeapAllocator& a_rhs)
+		void copy(const BSTSmallArrayHeapAllocator& a_rhs)
 		{
 			release();
 
@@ -250,7 +250,7 @@ namespace RE
 			std::memcpy(data(), a_rhs.data(), capacity());
 		}
 
-		inline void copy(BSTSmallArrayHeapAllocator&& a_rhs)
+		void copy(BSTSmallArrayHeapAllocator&& a_rhs)
 		{
 			release();
 
@@ -265,7 +265,7 @@ namespace RE
 
 		[[nodiscard]] constexpr bool local() const noexcept { return _local != 0; }
 
-		inline void release()
+		void release()
 		{
 			if (!local()) {
 				free(_data.heap);
@@ -289,7 +289,7 @@ namespace RE
 
 		constexpr BSScrapArrayAllocator() noexcept = default;
 
-		inline BSScrapArrayAllocator(const BSScrapArrayAllocator& a_rhs) :
+		BSScrapArrayAllocator(const BSScrapArrayAllocator& a_rhs) :
 			_capacity(a_rhs._capacity)
 		{
 			if (capacity() > 0) {
@@ -308,7 +308,7 @@ namespace RE
 			a_rhs._capacity = 0;
 		}
 
-		inline ~BSScrapArrayAllocator()
+		~BSScrapArrayAllocator()
 		{
 			if (_data) {
 				deallocate(_data);
@@ -319,7 +319,7 @@ namespace RE
 			_capacity = 0;
 		}
 
-		inline BSScrapArrayAllocator& operator=(const BSScrapArrayAllocator& a_rhs)
+		BSScrapArrayAllocator& operator=(const BSScrapArrayAllocator& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				if (_data) {
@@ -336,7 +336,7 @@ namespace RE
 			return *this;
 		}
 
-		inline BSScrapArrayAllocator& operator=(BSScrapArrayAllocator&& a_rhs)
+		BSScrapArrayAllocator& operator=(BSScrapArrayAllocator&& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				if (_data) {
@@ -362,7 +362,7 @@ namespace RE
 		[[nodiscard]] constexpr size_type capacity() const noexcept { return _capacity; }
 
 	protected:
-		inline void* allocate(std::size_t a_size)
+		void* allocate(std::size_t a_size)
 		{
 			if (!_allocator) {
 				auto& heap = MemoryManager::GetSingleton();
@@ -382,7 +382,7 @@ namespace RE
 			return mem;
 		}
 
-		inline void deallocate(void* a_ptr)
+		void deallocate(void* a_ptr)
 		{
 			if (_allocator) {
 				_allocator->Deallocate(a_ptr);
@@ -423,7 +423,7 @@ namespace RE
 
 		BSTArray() = default;
 
-		inline BSTArray(const BSTArray& a_rhs)
+		BSTArray(const BSTArray& a_rhs)
 		{
 			const auto newCapacity = a_rhs.capacity();
 			if (newCapacity == 0) {
@@ -440,7 +440,7 @@ namespace RE
 
 		BSTArray(BSTArray&&) = default;
 
-		explicit inline BSTArray(size_type a_count)
+		explicit BSTArray(size_type a_count)
 		{
 			if (a_count == 0) {
 				return;
@@ -455,9 +455,9 @@ namespace RE
 			set_size(newSize);
 		}
 
-		inline ~BSTArray() { release(); }
+		~BSTArray() { release(); }
 
-		inline BSTArray& operator=(const BSTArray& a_rhs)
+		BSTArray& operator=(const BSTArray& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				clear();
@@ -529,7 +529,7 @@ namespace RE
 
 		[[nodiscard]] constexpr size_type size() const noexcept { return BSTArrayBase::size(); }
 
-		inline void reserve(size_type a_newCap)
+		void reserve(size_type a_newCap)
 		{
 			if (a_newCap > capacity()) {
 				change_capacity(a_newCap);
@@ -538,7 +538,7 @@ namespace RE
 
 		[[nodiscard]] constexpr size_type capacity() const noexcept { return allocator_type::capacity(); }
 
-		inline void shrink_to_fit()
+		void shrink_to_fit()
 		{
 			const auto newCapacity = size();
 			if (newCapacity != capacity()) {
@@ -546,14 +546,14 @@ namespace RE
 			}
 		}
 
-		inline void clear()
+		void clear()
 		{
 			if (!empty()) {
 				change_size(0);
 			}
 		}
 
-		inline iterator erase(const_iterator a_pos)
+		iterator erase(const_iterator a_pos)
 		{
 			auto pos = const_cast<iterator>(a_pos);
 			std::optional<iterator> result;
@@ -569,11 +569,11 @@ namespace RE
 			return result ? *result + 1 : begin();
 		}
 
-		inline void push_back(const value_type& a_value) { emplace_back(a_value); }
-		inline void push_back(value_type&& a_value) { emplace_back(std::move(a_value)); }
+		void push_back(const value_type& a_value) { emplace_back(a_value); }
+		void push_back(value_type&& a_value) { emplace_back(std::move(a_value)); }
 
 		template <class... Args>
-		inline reference emplace_back(Args&&... a_args)
+		reference emplace_back(Args&&... a_args)
 		{
 			if (size() == capacity()) {
 				grow_capacity();
@@ -585,21 +585,21 @@ namespace RE
 			return elem;
 		}
 
-		inline void pop_back()
+		void pop_back()
 		{
 			assert(!empty());
 			stl::destroy_at(std::addressof(back()));
 			set_size(size() - 1);
 		}
 
-		inline void resize(size_type a_count)
+		void resize(size_type a_count)
 		{
 			if (a_count != size()) {
 				change_size(a_count);
 			}
 		}
 
-		inline void resize(size_type a_count, const value_type& a_value)
+		void resize(size_type a_count, const value_type& a_value)
 		{
 			if (a_count != size()) {
 				change_size(a_count, a_value);
@@ -610,12 +610,12 @@ namespace RE
 		static constexpr size_type DF_CAP = 4;		 // beth default
 		static constexpr float GROWTH_FACTOR = 2.0;	 // not part of native type
 
-		[[nodiscard]] inline pointer allocate(size_type a_num)
+		[[nodiscard]] pointer allocate(size_type a_num)
 		{
 			return static_cast<pointer>(allocator_type::allocate(a_num * sizeof(value_type)));
 		}
 
-		inline void deallocate(void* a_ptr) { allocator_type::deallocate(a_ptr); }
+		void deallocate(void* a_ptr) { allocator_type::deallocate(a_ptr); }
 
 		constexpr void set_allocator_traits(void* a_data, size_type a_capacity) noexcept
 		{
@@ -624,7 +624,7 @@ namespace RE
 
 		constexpr void set_size(size_type a_size) noexcept { BSTArrayBase::set_size(a_size); }
 
-		inline void change_capacity(size_type a_newCapacity)
+		void change_capacity(size_type a_newCapacity)
 		{
 			const auto newData = a_newCapacity > 0 ? allocate(a_newCapacity) : nullptr;
 			const auto oldData = data();
@@ -640,7 +640,7 @@ namespace RE
 		}
 
 		template <class... Args>
-		inline void change_size(size_type a_newSize, Args&&... a_args)
+		void change_size(size_type a_newSize, Args&&... a_args)
 		{
 			if (a_newSize > capacity()) {
 				grow_capacity(a_newSize);
@@ -660,16 +660,16 @@ namespace RE
 			set_size(a_newSize);
 		}
 
-		inline void grow_capacity() { grow_capacity(capacity()); }
+		void grow_capacity() { grow_capacity(capacity()); }
 
-		inline void grow_capacity(size_type a_hint)
+		void grow_capacity(size_type a_hint)
 		{
 			auto cap = a_hint;
 			cap = cap > 0 ? static_cast<size_type>(std::ceil(static_cast<float>(cap) * GROWTH_FACTOR)) : DF_CAP;
 			change_capacity(cap);
 		}
 
-		inline void release()
+		void release()
 		{
 			clear();
 			change_capacity(0);
@@ -747,35 +747,35 @@ namespace RE
 		using iterator = pointer;
 		using const_iterator = const_pointer;
 
-		[[nodiscard]] inline reference operator[](size_type a_pos) noexcept
+		[[nodiscard]] reference operator[](size_type a_pos) noexcept
 		{
 			assert(a_pos < _size);
 			return data()[a_pos];
 		}
 
-		[[nodiscard]] inline const_reference operator[](size_type a_pos) const noexcept
+		[[nodiscard]] const_reference operator[](size_type a_pos) const noexcept
 		{
 			assert(a_pos < _size);
 			return data()[a_pos];
 		}
 
-		[[nodiscard]] inline pointer data() noexcept
+		[[nodiscard]] pointer data() noexcept
 		{
 			return size() > 1 ? _data.heap : std::addressof(_data.local);
 		}
 
-		[[nodiscard]] inline const_pointer data() const noexcept
+		[[nodiscard]] const_pointer data() const noexcept
 		{
 			return size() > 1 ? _data.heap : std::addressof(_data.local);
 		}
 
-		[[nodiscard]] inline iterator begin() noexcept { return data(); }
-		[[nodiscard]] inline const_iterator begin() const noexcept { return data(); }
-		[[nodiscard]] inline const_iterator cbegin() const noexcept { return begin(); }
+		[[nodiscard]] iterator begin() noexcept { return data(); }
+		[[nodiscard]] const_iterator begin() const noexcept { return data(); }
+		[[nodiscard]] const_iterator cbegin() const noexcept { return begin(); }
 
-		[[nodiscard]] inline iterator end() noexcept { return data() + size(); }
-		[[nodiscard]] inline const_iterator end() const noexcept { return data() + size(); }
-		[[nodiscard]] inline const_iterator cend() const noexcept { return end(); }
+		[[nodiscard]] iterator end() noexcept { return data() + size(); }
+		[[nodiscard]] const_iterator end() const noexcept { return data() + size(); }
+		[[nodiscard]] const_iterator cend() const noexcept { return end(); }
 
 		[[nodiscard]] constexpr bool empty() const noexcept { return size() != 0; }
 

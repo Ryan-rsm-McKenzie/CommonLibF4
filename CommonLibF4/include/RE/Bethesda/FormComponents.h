@@ -23,18 +23,22 @@ namespace RE
 	class BGSCraftingUseSound;
 	class BGSDestructibleObjectForm;
 	class BGSEquipType;
+	class BGSFeaturedItemMessage;
 	class BGSForcedLocRefType;
 	class BGSInstanceNamingRulesForm;
 	class BGSKeywordForm;
 	class BGSMenuDisplayObject;
 	class BGSMessageIcon;
 	class BGSNativeTerminalForm;
+	class BGSOverridePackCollection;
+	class BGSPerkRankArray;
 	class BGSPickupPutdownSounds;
 	class BGSPreloadable;
 	class BGSPreviewTransform;
 	class BGSPropertySheet;
 	class BGSSkinForm;
 	class BGSSoundTagComponent;
+	class TESContainer;
 	class TESDescription;
 	class TESEnchantableForm;
 	class TESFullName;
@@ -43,8 +47,12 @@ namespace RE
 	class BGSModelMaterialSwap;
 	class BGSTextureModel;
 	class TESModelRDT;
+	class TESActorBaseData;
+	class TESAIForm;
 	class TESBipedModelForm;
+	class TESLeveledList;
 	class TESModelTri;
+	class TESProduceForm;
 	class TESRaceForm;
 	class TESReactionForm;
 	class TESSpellList;
@@ -60,31 +68,44 @@ namespace RE
 		}
 	}
 
+	enum class ACTOR_VALUE_MODIFIER;
+	enum class ENUM_FORM_ID;
 	enum class IO_TASK_PRIORITY;
 
+	class ActorValueInfo;
+	class ActorValueOwner;
 	class BGSDebris;
 	class BGSEquipSlot;
 	class BGSExplosion;
+	class BGSImpactDataSet;
 	class BGSInstanceNamingRules;
 	class BGSKeyword;
-	class BGSImpactDataSet;
+	class BGSListForm;
 	class BGSLocationRefType;
 	class BGSMaterialSwap;
 	class BGSMaterialType;
+	class BGSMessage;
+	class BGSPerk;
 	class BGSSoundDescriptorForm;
 	class BGSTerminal;
 	class BGSTransform;
+	class BGSVoiceType;
 	class EnchantmentItem;
 	class NavMesh;
 	class NiAVObject;
 	class QueuedFile;
 	class SpellItem;
 	class TBO_InstanceData;
+	class TESActorBase;
 	class TESBoundObject;
+	class TESFaction;
 	class TESForm;
+	class TESGlobal;
+	class TESLevItem;
 	class TESLevSpell;
 	class TESObjectARMO;
 	class TESObjectREFR;
+	class TESPackage;
 	class TESRace;
 	class TESShout;
 
@@ -107,6 +128,27 @@ namespace RE
 		};
 		static_assert(sizeof(SharedVal) == 0x4);
 	}
+
+	class ActorValueOwner
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_ActorValueOwner };
+
+		virtual ~ActorValueOwner() = default;  // 00
+
+		// add
+		virtual float GetActorValue([[maybe_unused]] const ActorValueInfo& a_info) const { return 0.0F; }																		 // 01
+		virtual float GetPermanentActorValue([[maybe_unused]] const ActorValueInfo& a_info) const { return 0.0F; }																 // 02
+		virtual float GetBaseActorValue([[maybe_unused]] const ActorValueInfo& a_info) const { return 0.0F; }																	 // 03
+		virtual void SetBaseActorValue([[maybe_unused]] const ActorValueInfo& a_info, [[maybe_unused]] float a_value) { return; }												 // 04
+		virtual void ModBaseActorValue([[maybe_unused]] const ActorValueInfo& a_info, [[maybe_unused]] float a_delta) { return; }												 // 05
+		virtual void ModActorValue([[maybe_unused]] ACTOR_VALUE_MODIFIER a_modifier, [[maybe_unused]] const ActorValueInfo& a_info, [[maybe_unused]] float a_delta) { return; }	 // 06
+		virtual float GetModifier([[maybe_unused]] ACTOR_VALUE_MODIFIER a_modifier, [[maybe_unused]] const ActorValueInfo& a_info) const { return 0.0F; }						 // 07
+		virtual void RestoreActorValue([[maybe_unused]] const ActorValueInfo& a_info, [[maybe_unused]] float a_amount) { return; }												 // 08
+		virtual void SetActorValue(const ActorValueInfo& a_info, float a_value) { SetBaseActorValue(a_info, a_value); }															 // 09
+		virtual bool GetIsPlayerOwner() const { return false; }																													 // 0A
+	};
+	static_assert(sizeof(ActorValueOwner) == 0x8);
 
 	class BGSNavmeshableObject
 	{
@@ -132,6 +174,20 @@ namespace RE
 		virtual void HandleCloseFinish(TESObjectREFR*, TESObjectREFR*) { return; }		 // 04
 	};
 	static_assert(sizeof(BGSOpenCloseForm) == 0x8);
+
+	class TESMagicCasterForm
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESMagicCasterForm };
+	};
+	static_assert(std::is_empty_v<TESMagicCasterForm>);
+
+	class TESMagicTargetForm
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESMagicTargetForm };
+	};
+	static_assert(std::is_empty_v<TESMagicTargetForm>);
 
 	class TBO_InstanceData :
 		public BSIntrusiveRefCounted  // 08
@@ -162,13 +218,6 @@ namespace RE
 		virtual void PostApplyMods(const TESBoundObject*) { return; }								// 12
 	};
 	static_assert(sizeof(TBO_InstanceData) == 0x10);
-
-	class TESMagicTargetForm
-	{
-	public:
-		static constexpr auto RTTI{ RTTI_TESMagicTargetForm };
-	};
-	static_assert(std::is_empty_v<TESMagicTargetForm>);
 
 	class BaseFormComponent
 	{
@@ -400,6 +449,17 @@ namespace RE
 	};
 	static_assert(sizeof(BGSEquipType) == 0x10);
 
+	class BGSFeaturedItemMessage :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSFeaturedItemMessage };
+
+		// members
+		BGSMessage* featuredItemMessage;  // 08
+	};
+	static_assert(sizeof(BGSFeaturedItemMessage) == 0x10);
+
 	class BGSForcedLocRefType :
 		public BaseFormComponent  // 00
 	{
@@ -489,6 +549,43 @@ namespace RE
 	};
 	static_assert(sizeof(BGSNativeTerminalForm) == 0x10);
 
+	class BGSOverridePackCollection :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSOverridePackCollection };
+
+		// members
+		BGSListForm* spectatorOverRidePackList;		 // 08
+		BGSListForm* observeCorpseOverRidePackList;	 // 10
+		BGSListForm* guardWarnOverRidePackList;		 // 18
+		BGSListForm* enterCombatOverRidePackList;	 // 20
+		BGSListForm* followerCommandPackList;		 // 28
+		BGSListForm* elevatorOverRidePackList;		 // 30
+	};
+	static_assert(sizeof(BGSOverridePackCollection) == 0x38);
+
+	struct PerkRankData
+	{
+	public:
+		// members
+		BGSPerk* perk;			  // 00
+		std::int8_t currentRank;  // 08
+	};
+	static_assert(sizeof(PerkRankData) == 0x10);
+
+	class BGSPerkRankArray :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSPerkRankArray };
+
+		// members
+		PerkRankData* perks;	  // 08
+		std::uint32_t perkCount;  // 10
+	};
+	static_assert(sizeof(BGSPerkRankArray) == 0x18);
+
 	class BGSPickupPutdownSounds :
 		public BaseFormComponent  // 00
 	{
@@ -569,6 +666,43 @@ namespace RE
 	};
 	static_assert(sizeof(BGSSoundTagComponent) == 0x8);
 
+	class ContainerItemExtra
+	{
+	public:
+		// members
+		TESForm* ownerForm;	 // 00
+		union
+		{
+			TESGlobal* ownerGlobal;
+			std::int32_t ownerRank;
+			void* u;
+		};				   // 08
+		float healthMult;  // 10
+	};
+	static_assert(sizeof(ContainerItemExtra) == 0x18);
+
+	class ContainerObject
+	{
+	public:
+		// members
+		std::int32_t count;				// 00
+		TESBoundObject* obj;			// 08
+		ContainerItemExtra* itemExtra;	// 10
+	};
+	static_assert(sizeof(ContainerObject) == 0x18);
+
+	class TESContainer :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESContainer };
+
+		// members
+		ContainerObject** containerObjects;	 // 08
+		std::uint32_t numContainerObjects;	 // 10
+	};
+	static_assert(sizeof(TESContainer) == 0x18);
+
 	struct BGSLocalizedStringDL
 	{
 	public:
@@ -582,6 +716,16 @@ namespace RE
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_TESDescription };
+
+		// override (BaseFormComponent)
+		void InitializeDataComponent() override	 // 02
+		{
+			fileOffset = 0;
+			chunkOffset = 0;
+		}
+
+		void ClearDataComponent() override { return; }	  // 03
+		void CopyComponent(BaseFormComponent*) override;  // 06
 
 		// members
 		std::uint32_t fileOffset;			   // 08
@@ -629,9 +773,9 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_TESModel };
 
 		// override (BaseFormComponent)
-		virtual void InitializeDataComponent() override;		  // 02
-		virtual void ClearDataComponent() override;				  // 03
-		virtual void CopyComponent(BaseFormComponent*) override;  // 06
+		void InitializeDataComponent() override;		  // 02
+		void ClearDataComponent() override;				  // 03
+		void CopyComponent(BaseFormComponent*) override;  // 06
 
 		// add
 		virtual const char* GetModel() { return model.c_str(); }					// 07
@@ -687,6 +831,90 @@ namespace RE
 	};
 	static_assert(sizeof(TESModelRDT) == 0x30);
 
+	struct ACTOR_BASE_DATA
+	{
+	public:
+		// members
+		std::uint32_t actorBaseFlags;	 // 00
+		std::int16_t xpValueOffset;		 // 04
+		std::uint16_t level;			 // 06
+		std::uint16_t calcLevelMin;		 // 08
+		std::uint16_t calcLevelMax;		 // 0A
+		std::uint16_t baseDisposition;	 // 0C
+		std::uint16_t templateUseFlags;	 // 0E
+		std::int16_t bleedoutOverride;	 // 10
+	};
+	static_assert(sizeof(ACTOR_BASE_DATA) == 0x14);
+
+	struct FACTION_RANK
+	{
+	public:
+		// members
+		TESFaction* faction;  // 00
+		std::int8_t rank;	  // 08
+	};
+	static_assert(sizeof(FACTION_RANK) == 0x10);
+
+	class TESActorBaseData :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESActorBaseData };
+
+		// add
+		virtual void CopyFromTemplateForms([[maybe_unused]] TESActorBase** a_forceTemplates) { return; }  // 07
+		virtual bool GetIsGhost() const;																  // 08
+		virtual bool GetInvulnerable() const;															  // 09
+
+		// members
+		ACTOR_BASE_DATA actorData;		  // 08
+		std::int32_t changeFlags;		  // 1C
+		TESLevItem* deathItem;			  // 20
+		BGSVoiceType* voiceType;		  // 28
+		TESForm* baseTemplateForm;		  // 30
+		TESForm** templateForms;		  // 38
+		TESGlobal* legendChance;		  // 40
+		TESForm* legendTemplate;		  // 48
+		BSTArray<FACTION_RANK> factions;  // 50
+	};
+	static_assert(sizeof(TESActorBaseData) == 0x68);
+
+	struct AIDATA_GAME
+	{
+	public:
+		// members
+		std::uint32_t aggression : 2;	   // 00:00
+		std::uint32_t confidence : 3;	   // 00:02
+		std::uint32_t energy : 8;		   // 00:05
+		std::uint32_t morality : 2;		   // 00:13
+		std::uint32_t unused : 3;		   // 00:15
+		std::uint32_t assistance : 2;	   // 00:18
+		std::uint32_t useAggroRadius : 1;  // 00:20
+		std::uint16_t aggroRadius[3];	   // 04
+		std::uint32_t noSlowApproach : 1;  // 0A:00
+	};
+	static_assert(sizeof(AIDATA_GAME) == 0x10);
+
+	class PackageList
+	{
+	public:
+		// members
+		BSSimpleList<TESPackage*> listPackages;
+	};
+	static_assert(sizeof(PackageList) == 0x10);
+
+	class TESAIForm :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESAIForm };
+
+		// members
+		AIDATA_GAME aiData;		 // 08
+		PackageList aiPackList;	 // 18
+	};
+	static_assert(sizeof(TESAIForm) == 0x28);
+
 	class TESBipedModelForm :
 		public BaseFormComponent  // 000
 	{
@@ -701,6 +929,44 @@ namespace RE
 	};
 	static_assert(sizeof(TESBipedModelForm) == 0x108);
 
+	struct LEVELED_OBJECT
+	{
+	public:
+		// members
+		TESForm* form;					// 00
+		ContainerItemExtra* itemExtra;	// 08
+		std::uint16_t count;			// 10
+		std::uint16_t level;			// 12
+		std::int8_t chanceNone;			// 14
+	};
+	static_assert(sizeof(LEVELED_OBJECT) == 0x18);
+
+	class TESLeveledList :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESLeveledList };
+
+		// add
+		virtual std::int8_t GetChanceNone();								   // 07
+		virtual bool GetMultCalc();											   // 08
+		virtual std::int32_t GetMaxLevelDifference() { return 0; }			   // 09
+		virtual const char* GetOverrideName() { return nullptr; }			   // 0A
+		virtual bool GetCanContainFormsOfType(ENUM_FORM_ID a_type) const = 0;  // 0B
+
+		// members
+		TESGlobal* chanceGlobal;														 // 08
+		BSTArray<BSTTuple<TESForm*, BGSTypedFormValuePair::SharedVal>>* keywordChances;	 // 10
+		LEVELED_OBJECT* leveledLists;													 // 18
+		LEVELED_OBJECT** scriptAddedLists;												 // 20
+		std::int8_t scriptListCount;													 // 28
+		std::int8_t baseListCount;														 // 29
+		std::int8_t chanceNone;															 // 2A
+		std::int8_t llFlags;															 // 2B
+		std::int8_t maxUseAllCount;														 // 2C
+	};
+	static_assert(sizeof(TESLeveledList) == 0x30);
+
 	class TESModelTri :
 		public TESModel	 // 00
 	{
@@ -708,6 +974,19 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_TESModelTri };
 	};
 	static_assert(sizeof(TESModelTri) == 0x30);
+
+	class TESProduceForm :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESProduceForm };
+
+		// members
+		BGSSoundDescriptorForm* harvestSound;  // 08
+		TESBoundObject* produceItem;		   // 10
+		std::int8_t produceChance[4];		   // 18
+	};
+	static_assert(sizeof(TESProduceForm) == 0x20);
 
 	class TESRaceForm :
 		public BaseFormComponent  // 00
@@ -835,12 +1114,12 @@ namespace RE
 				static constexpr auto RTTI{ RTTI_BGSMod__Template__Items };
 
 				// override (BaseFormComponent)
-				virtual std::uint32_t GetFormComponentType() const override { return 'TJBO'; }	// 01
-				virtual void InitializeDataComponent() override { return; }						// 02
-				virtual void ClearDataComponent() override;										// 03
-				virtual void InitComponent() override;											// 04
-				virtual void CopyComponent(BaseFormComponent*) override { return; }				// 06
-				virtual void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
+				std::uint32_t GetFormComponentType() const override { return 'TJBO'; }	// 01
+				void InitializeDataComponent() override { return; }						// 02
+				void ClearDataComponent() override;										// 03
+				void InitComponent() override;											// 04
+				void CopyComponent(BaseFormComponent*) override { return; }				// 06
+				void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
 
 				// members
 				BSTArray<Item*> items;	// 08

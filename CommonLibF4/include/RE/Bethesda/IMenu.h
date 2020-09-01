@@ -166,27 +166,27 @@ namespace RE
 
 		[[nodiscard]] constexpr bool AdvancesUnderPauseMenu() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kAdvancesUnderPauseMenu); }
 
-		inline void DoAdvanceMovie(float a_timeDelta)
+		void DoAdvanceMovie(float a_timeDelta)
 		{
 			++advanceWithoutRenderCount;
 			uiMovie->Advance(a_timeDelta);
 		}
 
-		inline void OnSetSafeRect()
+		void OnSetSafeRect()
 		{
 			using func_t = decltype(&IMenu::RefreshPlatform);
 			REL::Relocation<func_t> func{ REL::ID(964859) };
 			return func(this);
 		}
 
-		inline UI_MESSAGE_RESULTS ProcessScaleformEvent(Scaleform::GFx::Movie* a_movie, const IUIMessageData* a_data)
+		UI_MESSAGE_RESULTS ProcessScaleformEvent(Scaleform::GFx::Movie* a_movie, const IUIMessageData* a_data)
 		{
 			using func_t = decltype(&IMenu::ProcessScaleformEvent);
 			REL::Relocation<func_t> func{ REL::ID(150211) };
 			return func(this, a_movie, a_data);
 		}
 
-		inline void RefreshPlatform()
+		void RefreshPlatform()
 		{
 			using func_t = decltype(&IMenu::RefreshPlatform);
 			REL::Relocation<func_t> func{ REL::ID(1071829) };
@@ -195,7 +195,7 @@ namespace RE
 
 		[[nodiscard]] constexpr bool RendersUnderPauseMenu() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kRendersUnderPauseMenu); }
 
-		inline void SetMenuCodeObject(Scaleform::GFx::Movie& a_movie, stl::zstring a_menuObjPath)
+		void SetMenuCodeObject(Scaleform::GFx::Movie& a_movie, stl::zstring a_menuObjPath)
 		{
 			a_movie.GetVariable(std::addressof(menuObj), a_menuObjPath.data());
 			RegisterCodeObject(a_movie, menuObj);

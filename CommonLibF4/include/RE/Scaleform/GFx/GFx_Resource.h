@@ -16,7 +16,7 @@ namespace RE
 			class ResourceId
 			{
 			public:
-				inline ~ResourceId() noexcept {}  // intentional
+				~ResourceId() noexcept {}  // intentional
 
 				std::uint32_t id;  // 00
 			};
@@ -116,13 +116,13 @@ namespace RE
 				virtual std::uint32_t GetResourceTypeCode() const;	// 02
 				virtual ResourceReport* GetResourceReport();		// 03
 
-				inline void AddRef()
+				void AddRef()
 				{
 					stl::atomic_ref myRefCount{ refCount.value };
 					++myRefCount;
 				}
 
-				inline void Release()
+				void Release()
 				{
 					stl::atomic_ref myRefCount{ refCount.value };
 					if (--myRefCount == 0) {

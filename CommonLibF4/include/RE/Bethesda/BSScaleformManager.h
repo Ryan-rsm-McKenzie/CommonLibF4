@@ -56,13 +56,13 @@ namespace RE
 
 		using ScaleModeType = Scaleform::GFx::Movie::ScaleModeType;
 
-		[[nodiscard]] static inline BSScaleformManager* GetSingleton()
+		[[nodiscard]] static BSScaleformManager* GetSingleton()
 		{
 			REL::Relocation<BSScaleformManager**> singleton{ REL::ID(106578) };
 			return *singleton;
 		}
 
-		inline bool LoadMovie(
+		bool LoadMovie(
 			IMenu& a_menu,
 			Scaleform::Ptr<Scaleform::GFx::Movie>& a_movie,
 			const char* a_menuName,
@@ -90,14 +90,14 @@ namespace RE
 		BSStringT<char> validNameChars;								  // 30
 
 	private:
-		[[nodiscard]] inline bool GetMovieFilename(char const* a_menuName, BSStaticStringT<260>& a_filePath)
+		[[nodiscard]] bool GetMovieFilename(char const* a_menuName, BSStaticStringT<260>& a_filePath)
 		{
 			using func_t = decltype(&BSScaleformManager::GetMovieFilename);
 			REL::Relocation<func_t> func{ REL::ID(1191277) };
 			return func(this, a_menuName, a_filePath);
 		}
 
-		inline void InitMovieViewport(Scaleform::GFx::Movie& a_movie, const float a_dynamicWidthRatio, const float a_dynamicHeightRatio)
+		void InitMovieViewport(Scaleform::GFx::Movie& a_movie, const float a_dynamicWidthRatio, const float a_dynamicHeightRatio)
 		{
 			using func_t = decltype(&BSScaleformManager::InitMovieViewport);
 			REL::Relocation<func_t> func{ REL::ID(206895) };

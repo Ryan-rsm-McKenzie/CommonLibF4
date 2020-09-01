@@ -18,7 +18,7 @@ namespace RE
 		// add
 		virtual void MapCodeObjectFunction() { return; }  // 02
 
-		inline void RegisterCodeObject(Scaleform::GFx::Movie& a_movie, Scaleform::GFx::Value& a_menuObj)
+		void RegisterCodeObject(Scaleform::GFx::Movie& a_movie, Scaleform::GFx::Value& a_menuObj)
 		{
 			using func_t = decltype(&SWFToCodeFunctionHandler::RegisterCodeObject);
 			REL::Relocation<func_t> func{ REL::ID(67637) };

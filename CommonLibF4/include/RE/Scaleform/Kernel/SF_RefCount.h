@@ -31,13 +31,13 @@ namespace RE
 
 			virtual ~RefCountImpl() = default;	// 00
 
-			inline void AddRef()
+			void AddRef()
 			{
 				stl::atomic_ref myRefCount{ refCount };
 				++refCount;
 			}
 
-			inline void Release()
+			void Release()
 			{
 				stl::atomic_ref myRefCount{ refCount };
 				if (--myRefCount == 0) {
@@ -74,14 +74,10 @@ namespace RE
 			using element_type = T;
 
 			// 1
-			inline constexpr Ptr() noexcept :
-				_ptr(nullptr)
-			{}
+			constexpr Ptr() noexcept = default;
 
 			// 2
-			inline constexpr Ptr(std::nullptr_t) noexcept :
-				_ptr(nullptr)
-			{}
+			constexpr Ptr(std::nullptr_t) noexcept {}
 
 			// 3
 			template <
@@ -91,14 +87,14 @@ namespace RE
 						Y*,
 						element_type*>,
 					int> = 0>
-			inline explicit Ptr(Y* a_rhs) :
+			explicit Ptr(Y* a_rhs) :
 				_ptr(a_rhs)
 			{
 				TryAttach();
 			}
 
 			// 9a
-			inline Ptr(const Ptr& a_rhs) :
+			Ptr(const Ptr& a_rhs) :
 				_ptr(a_rhs._ptr)
 			{
 				TryAttach();
@@ -112,15 +108,15 @@ namespace RE
 						Y*,
 						element_type*>,
 					int> = 0>
-			inline Ptr(const Ptr<Y>& a_rhs) :
+			Ptr(const Ptr<Y>& a_rhs) :
 				_ptr(a_rhs._ptr)
 			{
 				TryAttach();
 			}
 
 			// 10a
-			inline Ptr(Ptr&& a_rhs) noexcept :
-				_ptr(std::move(a_rhs._ptr))
+			Ptr(Ptr&& a_rhs) noexcept :
+				_ptr(a_rhs._ptr)
 			{
 				a_rhs._ptr = nullptr;
 			}
@@ -133,16 +129,16 @@ namespace RE
 						Y*,
 						element_type*>,
 					int> = 0>
-			inline Ptr(Ptr<Y>&& a_rhs) noexcept :
-				_ptr(std::move(a_rhs._ptr))
+			Ptr(Ptr<Y>&& a_rhs) noexcept :
+				_ptr(a_rhs._ptr)
 			{
 				a_rhs._ptr = nullptr;
 			}
 
-			inline ~Ptr() { TryDetach(); }
+			~Ptr() { TryDetach(); }
 
 			// 1a
-			inline Ptr& operator=(const Ptr& a_rhs)
+			Ptr& operator=(const Ptr& a_rhs)
 			{
 				if (this != std::addressof(a_rhs)) {
 					TryDetach();
@@ -160,7 +156,7 @@ namespace RE
 						Y*,
 						element_type*>,
 					int> = 0>
-			inline Ptr& operator=(const Ptr<Y>& a_rhs)
+			Ptr& operator=(const Ptr<Y>& a_rhs)
 			{
 				TryDetach();
 				_ptr = a_rhs._ptr;
@@ -169,11 +165,11 @@ namespace RE
 			}
 
 			// 2a
-			inline Ptr& operator=(Ptr&& a_rhs)
+			Ptr& operator=(Ptr&& a_rhs)
 			{
 				if (this != std::addressof(a_rhs)) {
 					TryDetach();
-					_ptr = std::move(a_rhs._ptr);
+					_ptr = a_rhs._ptr;
 					a_rhs._ptr = nullptr;
 				}
 				return *this;
@@ -187,18 +183,15 @@ namespace RE
 						Y*,
 						element_type*>,
 					int> = 0>
-			inline Ptr& operator=(Ptr<Y>&& a_rhs)
+			Ptr& operator=(Ptr<Y>&& a_rhs)
 			{
 				TryDetach();
-				_ptr = std::move(a_rhs._ptr);
+				_ptr = a_rhs._ptr;
 				a_rhs._ptr = nullptr;
 				return *this;
 			}
 
-			inline void reset()
-			{
-				TryDetach();
-			}
+			void reset() { TryDetach(); }
 
 			template <
 				class Y,
@@ -207,7 +200,7 @@ namespace RE
 						Y*,
 						element_type*>,
 					int> = 0>
-			inline void reset(Y* a_ptr)
+			void reset(Y* a_ptr)
 			{
 				if (_ptr != a_ptr) {
 					TryDetach();
@@ -242,14 +235,14 @@ namespace RE
 			template <class>
 			friend class Ptr;
 
-			inline void TryAttach()
+			void TryAttach()
 			{
 				if (_ptr) {
 					_ptr->AddRef();
 				}
 			}
 
-			inline void TryDetach()
+			void TryDetach()
 			{
 				if (_ptr) {
 					_ptr->Release();
@@ -258,12 +251,12 @@ namespace RE
 			}
 
 			// members
-			element_type* _ptr;	 // 0
+			element_type* _ptr{ nullptr };	// 0
 		};
 		//static_assert(sizeof(Ptr<void*>) == 0x8);
 
 		template <class T, class... Args>
-		[[nodiscard]] inline Ptr<T> make_shared(Args&&... a_args)
+		[[nodiscard]] Ptr<T> make_shared(Args&&... a_args)
 		{
 			auto ptr = Ptr<T>{ new T(std::forward<Args>(a_args)...) };
 			if (ptr) {

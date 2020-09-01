@@ -7,7 +7,7 @@
 class VTable
 {
 public:
-	inline VTable(std::string_view a_name, std::uint32_t a_offset = 0)
+	VTable(std::string_view a_name, std::uint32_t a_offset = 0)
 	{
 		const auto typeDesc = type_descriptor(a_name);
 		const auto col = complete_object_locator(typeDesc, a_offset);
@@ -16,10 +16,10 @@ public:
 	}
 
 	[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-	[[nodiscard]] inline std::uintptr_t offset() const noexcept { return address() - REL::Module::get().base(); }
+	[[nodiscard]] std::uintptr_t offset() const noexcept { return address() - REL::Module::get().base(); }
 
 private:
-	[[nodiscard]] inline const RE::RTTI::TypeDescriptor* type_descriptor(std::string_view a_name) const
+	[[nodiscard]] const RE::RTTI::TypeDescriptor* type_descriptor(std::string_view a_name) const
 	{
 		const auto segment = REL::Module::get().segment(REL::Segment::data);
 		const stl::span haystack{ segment.pointer<const char>(), segment.size() };
@@ -36,7 +36,7 @@ private:
 			offsetof(RE::RTTI::TypeDescriptor, name));
 	}
 
-	[[nodiscard]] inline const RE::RTTI::CompleteObjectLocator* complete_object_locator(const RE::RTTI::TypeDescriptor* a_typeDesc, std::uint32_t a_offset) const
+	[[nodiscard]] const RE::RTTI::CompleteObjectLocator* complete_object_locator(const RE::RTTI::TypeDescriptor* a_typeDesc, std::uint32_t a_offset) const
 	{
 		assert(a_typeDesc != nullptr);
 
@@ -70,7 +70,7 @@ private:
 		throw std::runtime_error("failed to find complete object locator"s);
 	}
 
-	[[nodiscard]] inline const void* virtual_table(const RE::RTTI::CompleteObjectLocator* a_col) const
+	[[nodiscard]] const void* virtual_table(const RE::RTTI::CompleteObjectLocator* a_col) const
 	{
 		assert(a_col != nullptr);
 

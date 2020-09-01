@@ -37,17 +37,17 @@ namespace F4SE
 		Trampoline() = default;
 		Trampoline(const Trampoline&) = delete;
 
-		inline Trampoline(Trampoline&& a_rhs) { move_from(std::move(a_rhs)); }
+		Trampoline(Trampoline&& a_rhs) { move_from(std::move(a_rhs)); }
 
-		explicit inline Trampoline(std::string_view a_name) :
+		explicit Trampoline(std::string_view a_name) :
 			_name(a_name)
 		{}
 
-		inline ~Trampoline() { release(); }
+		~Trampoline() { release(); }
 
 		Trampoline& operator=(const Trampoline&) = delete;
 
-		inline Trampoline& operator=(Trampoline&& a_rhs)
+		Trampoline& operator=(Trampoline&& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				move_from(std::move(a_rhs));
@@ -55,9 +55,9 @@ namespace F4SE
 			return *this;
 		}
 
-		inline void create(std::size_t a_size) { return create(a_size, nullptr); }
+		void create(std::size_t a_size) { return create(a_size, nullptr); }
 
-		inline void create(std::size_t a_size, void* a_module)
+		void create(std::size_t a_size, void* a_module)
 		{
 			if (a_size == 0) {
 				stl::report_and_fail("cannot create a trampoline with a zero size"sv);
@@ -79,9 +79,9 @@ namespace F4SE
 				});
 		}
 
-		inline void set_trampoline(void* a_trampoline, std::size_t a_size) { set_trampoline(a_trampoline, a_size, {}); }
+		void set_trampoline(void* a_trampoline, std::size_t a_size) { set_trampoline(a_trampoline, a_size, {}); }
 
-		inline void set_trampoline(void* a_trampoline, std::size_t a_size, deleter_type a_deleter)
+		void set_trampoline(void* a_trampoline, std::size_t a_size, deleter_type a_deleter)
 		{
 			auto trampoline = static_cast<std::byte*>(a_trampoline);
 			if (trampoline) {
@@ -99,7 +99,7 @@ namespace F4SE
 			log_stats();
 		}
 
-		[[nodiscard]] inline void* allocate(std::size_t a_size)
+		[[nodiscard]] void* allocate(std::size_t a_size)
 		{
 			auto result = do_allocate(a_size);
 			log_stats();
@@ -107,7 +107,7 @@ namespace F4SE
 		}
 
 #if defined(XBYAK32) || defined(XBYAK64)
-		[[nodiscard]] inline void* allocate(Xbyak::CodeGenerator& a_code)
+		[[nodiscard]] void* allocate(Xbyak::CodeGenerator& a_code)
 		{
 			auto result = do_allocate(a_code.getSize());
 			log_stats();
@@ -117,7 +117,7 @@ namespace F4SE
 #endif
 
 		template <class T>
-		[[nodiscard]] inline T* allocate()
+		[[nodiscard]] T* allocate()
 		{
 			return static_cast<T*>(allocate(sizeof(T)));
 		}
@@ -128,7 +128,7 @@ namespace F4SE
 		[[nodiscard]] constexpr std::size_t free_size() const noexcept { return _capacity - _size; }
 
 		template <std::size_t N>
-		inline std::uintptr_t write_branch(std::uintptr_t a_src, std::uintptr_t a_dst)
+		std::uintptr_t write_branch(std::uintptr_t a_src, std::uintptr_t a_dst)
 		{
 			std::uint8_t data = 0;
 			if constexpr (N == 5) {
@@ -147,13 +147,13 @@ namespace F4SE
 		}
 
 		template <std::size_t N, class F>
-		inline std::uintptr_t write_branch(std::uintptr_t a_src, F a_dst)
+		std::uintptr_t write_branch(std::uintptr_t a_src, F a_dst)
 		{
 			return write_branch<N>(a_src, unrestricted_cast<std::uintptr_t>(a_dst));
 		}
 
 		template <std::size_t N>
-		inline std::uintptr_t write_call(std::uintptr_t a_src, std::uintptr_t a_dst)
+		std::uintptr_t write_call(std::uintptr_t a_src, std::uintptr_t a_dst)
 		{
 			std::uint8_t data = 0;
 			if constexpr (N == 5) {
@@ -172,7 +172,7 @@ namespace F4SE
 		}
 
 		template <std::size_t N, class F>
-		inline std::uintptr_t write_call(std::uintptr_t a_src, F a_dst)
+		std::uintptr_t write_call(std::uintptr_t a_src, F a_dst)
 		{
 			return write_call<N>(a_src, unrestricted_cast<std::uintptr_t>(a_dst));
 		}
@@ -180,7 +180,7 @@ namespace F4SE
 	private:
 		[[nodiscard]] void* do_create(std::size_t a_size, std::uintptr_t a_address);
 
-		[[nodiscard]] inline void* do_allocate(std::size_t a_size)
+		[[nodiscard]] void* do_allocate(std::size_t a_size)
 		{
 			if (a_size > free_size()) {
 				stl::report_and_fail("Failed to handle allocation request"sv);
@@ -192,7 +192,7 @@ namespace F4SE
 			return mem;
 		}
 
-		inline void write_5branch(std::uintptr_t a_src, std::uintptr_t a_dst, std::uint8_t a_opcode)
+		void write_5branch(std::uintptr_t a_src, std::uintptr_t a_dst, std::uint8_t a_opcode)
 		{
 #pragma pack(push, 1)
 			struct SrcAssembly
@@ -248,7 +248,7 @@ namespace F4SE
 			mem->addr = static_cast<std::uint64_t>(a_dst);
 		}
 
-		inline void write_6branch(std::uintptr_t a_src, std::uintptr_t a_dst, std::uint8_t a_modrm)
+		void write_6branch(std::uintptr_t a_src, std::uintptr_t a_dst, std::uint8_t a_modrm)
 		{
 #pragma pack(push, 1)
 			struct Assembly
@@ -289,7 +289,7 @@ namespace F4SE
 		}
 
 		template <std::size_t N>
-		[[nodiscard]] inline std::uintptr_t write_branch(std::uintptr_t a_src, std::uintptr_t a_dst, std::uint8_t a_data)
+		[[nodiscard]] std::uintptr_t write_branch(std::uintptr_t a_src, std::uintptr_t a_dst, std::uint8_t a_data)
 		{
 			const auto disp = reinterpret_cast<std::int32_t*>(a_src + N - 4);
 			const auto nextOp = a_src + N;
@@ -306,7 +306,7 @@ namespace F4SE
 			return func;
 		}
 
-		inline void move_from(Trampoline&& a_rhs)
+		void move_from(Trampoline&& a_rhs)
 		{
 			_5branches = std::move(a_rhs._5branches);
 			_6branches = std::move(a_rhs._6branches);
@@ -326,7 +326,7 @@ namespace F4SE
 
 		void log_stats() const;
 
-		inline bool in_range(std::ptrdiff_t a_disp) const
+		bool in_range(std::ptrdiff_t a_disp) const
 		{
 			constexpr auto min = std::numeric_limits<std::int32_t>::min();
 			constexpr auto max = std::numeric_limits<std::int32_t>::max();
@@ -334,7 +334,7 @@ namespace F4SE
 			return min <= a_disp && a_disp <= max;
 		}
 
-		inline void release()
+		void release()
 		{
 			if (_data && _deleter) {
 				_deleter(_data, _capacity);

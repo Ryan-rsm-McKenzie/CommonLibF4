@@ -133,7 +133,7 @@ namespace RE
 				virtual void VisitResources(ResourceVisitor* a_visitor, VisitResourceMask a_visitMask = VisitResourceMask::kAllImages) = 0;												   // 1A
 				virtual Resource* GetResource(const char* a_exportName) const = 0;																										   // 1B
 
-				[[nodiscard]] inline Movie* CreateInstance(
+				[[nodiscard]] Movie* CreateInstance(
 					bool a_initFirstFrame = false,
 					std::size_t a_memoryArena = 0,
 					ActionControl* a_actionControl = nullptr,
@@ -311,35 +311,35 @@ namespace RE
 
 					virtual ~ObjectInterface() = default;  // 00
 
-					inline bool HasMember(void* a_data, const char* a_name, bool a_isdobj) const
+					bool HasMember(void* a_data, const char* a_name, bool a_isdobj) const
 					{
 						using func_t = decltype(&ObjectInterface::HasMember);
 						REL::Relocation<func_t> func{ REL::ID(788691) };
 						return func(this, a_data, a_name, a_isdobj);
 					}
 
-					inline bool GetMember(void* a_data, const char* a_name, Value* a_val, bool a_isdobj) const
+					bool GetMember(void* a_data, const char* a_name, Value* a_val, bool a_isdobj) const
 					{
 						using func_t = decltype(&ObjectInterface::GetMember);
 						REL::Relocation<func_t> func{ REL::ID(1517430) };
 						return func(this, a_data, a_name, a_val, a_isdobj);
 					}
 
-					inline bool SetMember(void* a_data, const char* a_name, const Value& a_value, bool a_isdobj)
+					bool SetMember(void* a_data, const char* a_name, const Value& a_value, bool a_isdobj)
 					{
 						using func_t = decltype(&ObjectInterface::SetMember);
 						REL::Relocation<func_t> func{ REL::ID(1360149) };
 						return func(this, a_data, a_name, a_value, a_isdobj);
 					}
 
-					inline void ObjectAddRef(Value* a_val, void* a_obj)
+					void ObjectAddRef(Value* a_val, void* a_obj)
 					{
 						using func_t = decltype(&ObjectInterface::ObjectRelease);
 						REL::Relocation<func_t> func{ REL::ID(244786) };
 						return func(this, a_val, a_obj);
 					}
 
-					inline void ObjectRelease(Value* a_val, void* a_obj)
+					void ObjectRelease(Value* a_val, void* a_obj)
 					{
 						using func_t = decltype(&ObjectInterface::ObjectRelease);
 						REL::Relocation<func_t> func{ REL::ID(856221) };
@@ -353,7 +353,7 @@ namespace RE
 
 				constexpr Value() noexcept = default;
 
-				inline Value(const Value& a_rhs) :
+				Value(const Value& a_rhs) :
 					_type(a_rhs._type),
 					_value(a_rhs._value),
 					_dataAux(a_rhs._dataAux)
@@ -408,7 +408,7 @@ namespace RE
 					_value(a_rhs)
 				{}
 
-				inline ~Value()
+				~Value()
 				{
 					if (IsManagedValue()) {
 						ReleaseManagedValue();
@@ -417,7 +417,7 @@ namespace RE
 					_type = ValueType::kUndefined;
 				}
 
-				inline Value& operator=(const Value& a_rhs)
+				Value& operator=(const Value& a_rhs)
 				{
 					if (this != std::addressof(a_rhs)) {
 						if (IsManagedValue()) {
@@ -435,7 +435,7 @@ namespace RE
 					return *this;
 				}
 
-				inline Value& operator=(Value&& a_rhs)
+				Value& operator=(Value&& a_rhs)
 				{
 					if (this != std::addressof(a_rhs)) {
 						if (IsManagedValue()) {
@@ -557,26 +557,26 @@ namespace RE
 					return _value.number;
 				}
 
-				inline bool HasMember(stl::zstring a_name) const
+				bool HasMember(stl::zstring a_name) const
 				{
 					assert(IsObject());
 					return _objectInterface->HasMember(_value.data, a_name.data(), IsDisplayObject());
 				}
 
-				inline bool GetMember(stl::zstring a_name, Value* a_val) const
+				bool GetMember(stl::zstring a_name, Value* a_val) const
 				{
 					assert(IsObject());
 					return _objectInterface->GetMember(_value.data, a_name.data(), a_val, IsDisplayObject());
 				}
 
-				inline bool SetMember(stl::zstring a_name, const Value& a_val)
+				bool SetMember(stl::zstring a_name, const Value& a_val)
 				{
 					assert(IsObject());
 					return _objectInterface->SetMember(_value.data, a_name.data(), a_val, IsDisplayObject());
 				}
 
 			private:
-				inline void AcquireManagedValue(const Value& a_rhs)
+				void AcquireManagedValue(const Value& a_rhs)
 				{
 					assert(a_rhs._value.data && a_rhs._objectInterface);
 					_objectInterface = a_rhs._objectInterface;
@@ -590,7 +590,7 @@ namespace RE
 					return managed;
 				}
 
-				inline void ReleaseManagedValue()
+				void ReleaseManagedValue()
 				{
 					assert(_value.data && _objectInterface);
 					_objectInterface->ObjectRelease(this, _value.data);
@@ -782,7 +782,7 @@ namespace RE
 
 				bool GetVariable(Value* a_val, const char* a_pathToVar) const;
 
-				inline void Release()
+				void Release()
 				{
 					using func_t = decltype(&Movie::Release);
 					REL::Relocation<func_t> func{ REL::ID(404814) };

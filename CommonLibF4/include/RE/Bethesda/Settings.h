@@ -34,7 +34,7 @@ namespace RE
 			kNone
 		};
 
-		inline virtual ~Setting()  // 00
+		virtual ~Setting()	// 00
 		{
 			if (GetKey()[0] == 'S') {
 				free(const_cast<char*>(_key));
@@ -43,7 +43,7 @@ namespace RE
 		}
 
 		// add
-		[[nodiscard]] inline virtual bool IsPrefSetting() { return false; }	 // 01
+		[[nodiscard]] virtual bool IsPrefSetting() { return false; }  // 01
 
 		F4_HEAP_REDEFINE_NEW(Setting);
 

@@ -230,7 +230,7 @@ namespace RE
 				To,
 				From*>,
 			int> = 0>
-	inline To fallout_cast(From* a_from)
+	To fallout_cast(From* a_from)
 	{
 		REL::Relocation<void*> from{ detail::remove_cvpr_t<From>::RTTI };
 		REL::Relocation<void*> to{ detail::remove_cvpr_t<To>::RTTI };

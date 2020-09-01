@@ -165,7 +165,7 @@ namespace RE
 				// add
 				virtual bool CheckTagLoader(std::int32_t a_tagType) const;	// 04
 
-				[[nodiscard]] inline MovieDef* CreateMovie(const char* a_filename, LoadConstants a_loadConstants = LoadConstants::kAll, std::size_t a_memoryArena = 0)
+				[[nodiscard]] MovieDef* CreateMovie(const char* a_filename, LoadConstants a_loadConstants = LoadConstants::kAll, std::size_t a_memoryArena = 0)
 				{
 					using func_t = decltype(&Loader::CreateMovie);
 					REL::Relocation<func_t> func{ REL::ID(912291) };

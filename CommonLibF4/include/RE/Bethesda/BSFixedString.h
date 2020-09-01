@@ -20,19 +20,19 @@ namespace RE
 
 			constexpr BSFixedString() noexcept = default;
 
-			inline BSFixedString(const BSFixedString& a_rhs) :
+			BSFixedString(const BSFixedString& a_rhs) :
 				_data(a_rhs._data)
 			{
 				try_acquire();
 			}
 
-			inline BSFixedString(BSFixedString&& a_rhs) :
+			BSFixedString(BSFixedString&& a_rhs) :
 				_data(a_rhs._data)
 			{
 				a_rhs._data = nullptr;
 			}
 
-			inline BSFixedString(const_pointer a_string)
+			BSFixedString(const_pointer a_string)
 			{
 				if (a_string) {
 					GetEntry<value_type>(_data, a_string, CS);
@@ -47,7 +47,7 @@ namespace RE
 						std::negation<
 							std::is_convertible<const T&, const_pointer>>>,
 					int> = 0>
-			inline BSFixedString(const T& a_string)
+			BSFixedString(const T& a_string)
 			{
 				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
 				if (!view.empty()) {
@@ -55,9 +55,9 @@ namespace RE
 				}
 			}
 
-			inline ~BSFixedString() { try_release(); }
+			~BSFixedString() { try_release(); }
 
-			inline BSFixedString& operator=(const BSFixedString& a_rhs)
+			BSFixedString& operator=(const BSFixedString& a_rhs)
 			{
 				if (this != std::addressof(a_rhs)) {
 					try_release();
@@ -67,7 +67,7 @@ namespace RE
 				return *this;
 			}
 
-			inline BSFixedString& operator=(BSFixedString&& a_rhs)
+			BSFixedString& operator=(BSFixedString&& a_rhs)
 			{
 				if (this != std::addressof(a_rhs)) {
 					_data = a_rhs._data;
@@ -76,7 +76,7 @@ namespace RE
 				return *this;
 			}
 
-			inline BSFixedString& operator=(const_pointer a_string)
+			BSFixedString& operator=(const_pointer a_string)
 			{
 				try_release();
 				if (a_string) {
@@ -93,7 +93,7 @@ namespace RE
 						std::negation<
 							std::is_convertible<const T&, const_pointer>>>,
 					int> = 0>
-			inline BSFixedString& operator=(const T& a_string)
+			BSFixedString& operator=(const T& a_string)
 			{
 				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
 				try_release();
@@ -103,16 +103,16 @@ namespace RE
 				return *this;
 			}
 
-			[[nodiscard]] inline const_reference front() const noexcept { return data()[0]; }
-			[[nodiscard]] inline const_reference back() const noexcept { return data()[size() - 1]; }
+			[[nodiscard]] const_reference front() const noexcept { return data()[0]; }
+			[[nodiscard]] const_reference back() const noexcept { return data()[size() - 1]; }
 
-			[[nodiscard]] inline const_pointer data() const noexcept
+			[[nodiscard]] const_pointer data() const noexcept
 			{
 				const auto cstr = _data ? _data->data<value_type>() : nullptr;
 				return cstr ? cstr : EMPTY;
 			}
 
-			[[nodiscard]] inline const_pointer c_str() const noexcept { return data(); }
+			[[nodiscard]] const_pointer c_str() const noexcept { return data(); }
 
 			[[nodiscard]] constexpr operator std::basic_string_view<value_type>() const { return { c_str(), length() }; }
 
@@ -121,7 +121,7 @@ namespace RE
 			[[nodiscard]] constexpr size_type size() const noexcept { return _data ? _data->size() : 0; }
 			[[nodiscard]] constexpr size_type length() const noexcept { return _data ? _data->length() : 0; }
 
-			[[nodiscard]] inline friend bool operator==(const BSFixedString& a_lhs, const BSFixedString& a_rhs) noexcept
+			[[nodiscard]] friend bool operator==(const BSFixedString& a_lhs, const BSFixedString& a_rhs) noexcept
 			{
 				const auto leaf = [](const BSFixedString& a_elem) { return a_elem._data ? a_elem._data->leaf() : nullptr; };
 				const auto lLeaf = leaf(a_lhs);
@@ -135,9 +135,9 @@ namespace RE
 				}
 			}
 
-			[[nodiscard]] inline friend bool operator!=(const BSFixedString& a_lhs, const BSFixedString& a_rhs) noexcept { return !(a_lhs == a_rhs); }
+			[[nodiscard]] friend bool operator!=(const BSFixedString& a_lhs, const BSFixedString& a_rhs) noexcept { return !(a_lhs == a_rhs); }
 
-			[[nodiscard]] inline friend bool operator==(const BSFixedString& a_lhs, std::basic_string_view<value_type> a_rhs)
+			[[nodiscard]] friend bool operator==(const BSFixedString& a_lhs, std::basic_string_view<value_type> a_rhs)
 			{
 				if (a_lhs.empty() && a_rhs.empty()) {
 					return true;
@@ -148,14 +148,14 @@ namespace RE
 				}
 			}
 
-			[[nodiscard]] inline friend bool operator!=(const BSFixedString& a_lhs, std::basic_string_view<value_type> a_rhs) { return !(a_lhs == a_rhs); }
-			[[nodiscard]] inline friend bool operator==(std::basic_string_view<value_type> a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
-			[[nodiscard]] inline friend bool operator!=(std::basic_string_view<value_type> a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
+			[[nodiscard]] friend bool operator!=(const BSFixedString& a_lhs, std::basic_string_view<value_type> a_rhs) { return !(a_lhs == a_rhs); }
+			[[nodiscard]] friend bool operator==(std::basic_string_view<value_type> a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
+			[[nodiscard]] friend bool operator!=(std::basic_string_view<value_type> a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
 
-			[[nodiscard]] inline friend bool operator==(const BSFixedString& a_lhs, const_pointer a_rhs) { return a_lhs == std::basic_string_view<value_type>(a_rhs ? a_rhs : EMPTY); }
-			[[nodiscard]] inline friend bool operator!=(const BSFixedString& a_lhs, const_pointer a_rhs) { return !(a_lhs == a_rhs); }
-			[[nodiscard]] inline friend bool operator==(const_pointer a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
-			[[nodiscard]] inline friend bool operator!=(const_pointer a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
+			[[nodiscard]] friend bool operator==(const BSFixedString& a_lhs, const_pointer a_rhs) { return a_lhs == std::basic_string_view<value_type>(a_rhs ? a_rhs : EMPTY); }
+			[[nodiscard]] friend bool operator!=(const BSFixedString& a_lhs, const_pointer a_rhs) { return !(a_lhs == a_rhs); }
+			[[nodiscard]] friend bool operator==(const_pointer a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
+			[[nodiscard]] friend bool operator!=(const_pointer a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
 
 		private:
 			[[nodiscard]] static int strncmp(const char* a_lhs, const char* a_rhs, std::size_t a_length)
@@ -176,14 +176,14 @@ namespace RE
 				}
 			}
 
-			inline void try_acquire()
+			void try_acquire()
 			{
 				if (_data) {
 					_data->acquire();
 				}
 			}
 
-			inline void try_release() { BSStringPool::Entry::release(_data); }
+			void try_release() { BSStringPool::Entry::release(_data); }
 
 			static constexpr const value_type EMPTY[]{ 0 };
 
@@ -206,7 +206,7 @@ namespace RE
 	struct BSCRC32<detail::BSFixedString<CharT, CS>>
 	{
 	public:
-		[[nodiscard]] inline std::uint32_t operator()(const detail::BSFixedString<CharT, CS>& a_key) const noexcept
+		[[nodiscard]] std::uint32_t operator()(const detail::BSFixedString<CharT, CS>& a_key) const noexcept
 		{
 			return BSCRC32<typename detail::BSFixedString<CharT, CS>::const_pointer>()(a_key.data());
 		}
@@ -227,13 +227,13 @@ namespace RE
 		using reference = typename BSFixedStringCS::reference;
 		using const_reference = typename BSFixedStringCS::const_reference;
 
-		[[nodiscard]] inline const_pointer data() const noexcept { return _data.data(); }
-		[[nodiscard]] inline const_pointer c_str() const noexcept { return _data.c_str(); }
+		[[nodiscard]] const_pointer data() const noexcept { return _data.data(); }
+		[[nodiscard]] const_pointer c_str() const noexcept { return _data.c_str(); }
 
-		[[nodiscard]] inline bool empty() const noexcept { return _data.empty(); }
+		[[nodiscard]] bool empty() const noexcept { return _data.empty(); }
 
-		[[nodiscard]] inline size_type size() const noexcept { return _data.size(); }
-		[[nodiscard]] inline size_type length() const noexcept { return _data.length(); }
+		[[nodiscard]] size_type size() const noexcept { return _data.size(); }
+		[[nodiscard]] size_type length() const noexcept { return _data.length(); }
 
 	private:
 		// members
@@ -245,7 +245,7 @@ namespace RE
 	struct BSCRC32<BGSLocalizedString>
 	{
 	public:
-		[[nodiscard]] inline std::uint32_t operator()(const BGSLocalizedString& a_key) const noexcept
+		[[nodiscard]] std::uint32_t operator()(const BGSLocalizedString& a_key) const noexcept
 		{
 			return BSCRC32<typename BGSLocalizedString::const_pointer>()(a_key.data());
 		}

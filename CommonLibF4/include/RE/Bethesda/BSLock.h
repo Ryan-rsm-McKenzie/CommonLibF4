@@ -15,21 +15,21 @@ namespace RE
 	class BSSpinLock
 	{
 	public:
-		inline void lock(const char* a_id = nullptr)
+		void lock(const char* a_id = nullptr)
 		{
 			using func_t = decltype(&BSSpinLock::lock);
 			REL::Relocation<func_t> func{ REL::ID(1425657) };
 			return func(this, a_id);
 		}
 
-		inline void try_lock()
+		void try_lock()
 		{
 			using func_t = decltype(&BSSpinLock::try_lock);
 			REL::Relocation<func_t> func{ REL::ID(267930) };
 			return func(this);
 		}
 
-		inline void unlock()
+		void unlock()
 		{
 			stl::atomic_ref lockCount{ _lockCount };
 			std::uint32_t expected{ 1 };
@@ -52,8 +52,8 @@ namespace RE
 	struct BSAutoLockDefaultPolicy
 	{
 	public:
-		static inline void lock(Mutex& a_mutex) { a_mutex.lock(); }
-		static inline void unlock(Mutex& a_mutex) { a_mutex.unlock(); }
+		static void lock(Mutex& a_mutex) { a_mutex.lock(); }
+		static void unlock(Mutex& a_mutex) { a_mutex.unlock(); }
 	};
 
 	extern template struct BSAutoLockDefaultPolicy<BSSpinLock>;
@@ -65,13 +65,13 @@ namespace RE
 		using mutex_type = Mutex;
 		using policy_type = Policy<mutex_type>;
 
-		inline BSAutoLock(Mutex& a_mutex) :
+		BSAutoLock(Mutex& a_mutex) :
 			_lock(std::addressof(a_mutex))
 		{
 			policy_type::lock(*_lock);
 		}
 
-		inline BSAutoLock(Mutex* a_mutex) :
+		BSAutoLock(Mutex* a_mutex) :
 			_lock(a_mutex)
 		{
 			if (_lock) {
@@ -79,7 +79,7 @@ namespace RE
 			}
 		}
 
-		inline ~BSAutoLock()
+		~BSAutoLock()
 		{
 			if (_lock) {
 				policy_type::unlock(*_lock);

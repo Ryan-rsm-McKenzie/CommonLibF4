@@ -71,7 +71,7 @@ namespace RE
 				std::is_pointer<Key>>>
 	{
 	public:
-		[[nodiscard]] inline std::uint32_t operator()(Key a_data) const noexcept
+		[[nodiscard]] std::uint32_t operator()(Key a_data) const noexcept
 		{
 			return detail::GenerateCRC32({ reinterpret_cast<const std::uint8_t*>(std::addressof(a_data)), sizeof(Key) });
 		}
@@ -81,9 +81,19 @@ namespace RE
 	struct BSCRC32<std::nullptr_t>
 	{
 	public:
-		[[nodiscard]] inline std::uint32_t operator()(std::nullptr_t) const noexcept
+		[[nodiscard]] std::uint32_t operator()(std::nullptr_t) const noexcept
 		{
 			return BSCRC32<std::uintptr_t>()(0);
+		}
+	};
+
+	template <class CharT>
+	struct BSCRC32<std::basic_string_view<CharT>>
+	{
+	public:
+		[[nodiscard]] std::uint32_t operator()(std::basic_string_view<CharT> a_data) const noexcept
+		{
+			return detail::GenerateCRC32({ a_data.data(), a_data.length() });
 		}
 	};
 

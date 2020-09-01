@@ -12,7 +12,7 @@ namespace RE
 		// add
 		virtual void DeleteThis() { delete this; }	// 01
 
-		inline std::uint32_t DecRefCount()
+		std::uint32_t DecRefCount()
 		{
 			stl::atomic_ref myRefCount{ refCount };
 			const auto newRefCount = --myRefCount;
@@ -22,7 +22,7 @@ namespace RE
 			return newRefCount;
 		}
 
-		inline std::uint32_t IncRefCount()
+		std::uint32_t IncRefCount()
 		{
 			stl::atomic_ref myRefCount{ refCount };
 			return ++myRefCount;

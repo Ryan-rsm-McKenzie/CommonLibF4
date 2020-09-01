@@ -18,7 +18,7 @@ namespace RE
 					std::is_default_constructible<U1>,
 					std::is_default_constructible<U2>>,
 				int> = 0>
-		inline BSTTuple() :
+		BSTTuple() :
 			first{},
 			second{}
 		{}
@@ -32,7 +32,7 @@ namespace RE
 					std::is_copy_constructible<U1>,
 					std::is_copy_constructible<U2>>,
 				int> = 0>
-		inline explicit(
+		explicit(
 			std::disjunction_v<
 				std::negation<
 					std::is_convertible<const first_type&, first_type>>,
@@ -52,7 +52,7 @@ namespace RE
 					std::is_constructible<first_type, U1&&>,
 					std::is_constructible<second_type, U2&&>>,
 				int> = 0>
-		inline explicit(
+		explicit(
 			std::disjunction_v<
 				std::negation<
 					std::is_convertible<U1&&, first_type>>,
@@ -72,7 +72,7 @@ namespace RE
 					std::is_constructible<first_type, const U1&>,
 					std::is_constructible<second_type, const U2&>>,
 				int> = 0>
-		inline explicit(
+		explicit(
 			std::disjunction_v<
 				std::negation<
 					std::is_convertible<const U1&, first_type>>,
@@ -92,7 +92,7 @@ namespace RE
 					std::is_constructible<first_type, U1&&>,
 					std::is_constructible<second_type, U2&&>>,
 				int> = 0>
-		inline explicit(
+		explicit(
 			std::disjunction_v<
 				std::negation<
 					std::is_convertible<U1&&, first_type>>,
@@ -107,7 +107,7 @@ namespace RE
 		template <
 			class... Args1,
 			class... Args2>
-		inline BSTTuple(std::piecewise_construct_t, std::tuple<Args1...> a_firstArgs, std::tuple<Args2...> a_secondArgs) :
+		BSTTuple(std::piecewise_construct_t, std::tuple<Args1...> a_firstArgs, std::tuple<Args2...> a_secondArgs) :
 			BSTTuple(a_firstArgs, a_secondArgs, std::index_sequence_for<Args1...>(), std::index_sequence_for<Args2...>())
 		{}
 
@@ -117,7 +117,7 @@ namespace RE
 			class... Args2,
 			std::size_t... I1,
 			std::size_t... I2>
-		inline BSTTuple(std::piecewise_construct_t, std::tuple<Args1...> a_firstArgs, std::tuple<Args2...> a_secondArgs, std::index_sequence<I1...>, std::index_sequence<I2...>) :
+		BSTTuple(std::piecewise_construct_t, std::tuple<Args1...> a_firstArgs, std::tuple<Args2...> a_secondArgs, std::index_sequence<I1...>, std::index_sequence<I2...>) :
 			first(std::get<I1>(std::move(a_firstArgs))...),
 			second(std::get<I2>(std::move(a_secondArgs))...)
 		{}
@@ -137,7 +137,7 @@ namespace RE
 					std::is_copy_assignable<U1>,
 					std::is_copy_assignable<U2>>,
 				int> = 0>
-		inline BSTTuple& operator=(const BSTTuple& a_rhs)
+		BSTTuple& operator=(const BSTTuple& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				first = a_rhs.first;
@@ -155,7 +155,7 @@ namespace RE
 					std::is_assignable<first_type&, const U1&>,
 					std::is_assignable<second_type&, const U2&>>,
 				int> = 0>
-		inline BSTTuple& operator=(const BSTTuple<U1, U2>& a_rhs)
+		BSTTuple& operator=(const BSTTuple<U1, U2>& a_rhs)
 		{
 			first = a_rhs.first;
 			second = a_rhs.second;
@@ -171,7 +171,7 @@ namespace RE
 					std::is_move_assignable<U1>,
 					std::is_move_assignable<U2>>,
 				int> = 0>
-		inline BSTTuple& operator=(BSTTuple&& a_rhs)
+		BSTTuple& operator=(BSTTuple&& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
 				first = std::move(a_rhs.first);
@@ -189,14 +189,14 @@ namespace RE
 					std::is_assignable<first_type&, U1&&>,
 					std::is_assignable<second_type&, U2&&>>,
 				int> = 0>
-		inline BSTTuple& operator=(BSTTuple<U1, U2>&& a_rhs)
+		BSTTuple& operator=(BSTTuple<U1, U2>&& a_rhs)
 		{
 			first = std::move(a_rhs.first);
 			second = std::move(a_rhs.second);
 			return *this;
 		}
 
-		inline void swap(BSTTuple& a_rhs)
+		void swap(BSTTuple& a_rhs)
 		{
 			using std::swap;
 			swap(first, a_rhs.first);
@@ -211,7 +211,7 @@ namespace RE
 	template <
 		class T1,
 		class T2>
-	[[nodiscard]] inline BSTTuple<
+	[[nodiscard]] BSTTuple<
 		std::decay_t<T1>,
 		std::decay_t<T2>>
 		make_pair(T1&& a_first, T2&& a_second)
@@ -226,7 +226,7 @@ namespace RE
 	template <
 		class T1,
 		class T2>
-	[[nodiscard]] inline BSTTuple<
+	[[nodiscard]] BSTTuple<
 		std::decay_t<T1>,
 		std::decay_t<T2>>
 		make_tuple(T1&& a_first, T2&& a_second)
@@ -239,7 +239,7 @@ namespace RE
 	}
 
 	template <class T1, class T2>
-	inline void swap(BSTTuple<T1, T2>& a_lhs, BSTTuple<T1, T2>& a_rhs)
+	void swap(BSTTuple<T1, T2>& a_lhs, BSTTuple<T1, T2>& a_rhs)
 	{
 		a_lhs.swap(a_rhs);
 	}

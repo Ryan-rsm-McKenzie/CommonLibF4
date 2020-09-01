@@ -114,14 +114,14 @@ namespace RE
 		void* AllocateAlignImpl(std::size_t a_size, std::uint32_t a_alignment) override { return Allocate(a_size, a_alignment); }			// 04
 		void DeallocateAlignImpl(void*& a_block) override { Deallocate(a_block), a_block = nullptr; }										// 05
 
-		inline void* Allocate(std::size_t a_size, std::size_t a_alignment)
+		void* Allocate(std::size_t a_size, std::size_t a_alignment)
 		{
 			using func_t = decltype(&ScrapHeap::Allocate);
 			REL::Relocation<func_t> func{ REL::ID(1085394) };
 			return func(this, a_size, a_alignment);
 		}
 
-		inline void Deallocate(void* a_mem)
+		void Deallocate(void* a_mem)
 		{
 			using func_t = decltype(&ScrapHeap::Deallocate);
 			REL::Relocation<func_t> func{ REL::ID(923307) };
@@ -159,35 +159,35 @@ namespace RE
 		};
 		static_assert(sizeof(ThreadScrapHeap) == 0xA0);
 
-		[[nodiscard]] static inline MemoryManager& GetSingleton()
+		[[nodiscard]] static MemoryManager& GetSingleton()
 		{
 			using func_t = decltype(&MemoryManager::GetSingleton);
 			const REL::Relocation<func_t> func{ REL::ID(343176) };
 			return func();
 		}
 
-		[[nodiscard]] inline void* Allocate(std::size_t a_size, std::uint32_t a_alignment, bool a_alignmentRequired)
+		[[nodiscard]] void* Allocate(std::size_t a_size, std::uint32_t a_alignment, bool a_alignmentRequired)
 		{
 			using func_t = decltype(&MemoryManager::Allocate);
 			const REL::Relocation<func_t> func{ REL::ID(652767) };
 			return func(this, a_size, a_alignment, a_alignmentRequired);
 		}
 
-		inline void Deallocate(void* a_mem, bool a_alignmentRequired)
+		void Deallocate(void* a_mem, bool a_alignmentRequired)
 		{
 			using func_t = decltype(&MemoryManager::Deallocate);
 			const REL::Relocation<func_t> func{ REL::ID(1582181) };
 			return func(this, a_mem, a_alignmentRequired);
 		}
 
-		[[nodiscard]] inline ScrapHeap* GetThreadScrapHeap()
+		[[nodiscard]] ScrapHeap* GetThreadScrapHeap()
 		{
 			using func_t = decltype(&MemoryManager::GetThreadScrapHeap);
 			const REL::Relocation<func_t> func{ REL::ID(1495205) };
 			return func(this);
 		}
 
-		[[nodiscard]] inline void* Reallocate(void* a_oldMem, std::size_t a_newSize, std::uint32_t a_alignment, bool a_alignmentRequired)
+		[[nodiscard]] void* Reallocate(void* a_oldMem, std::size_t a_newSize, std::uint32_t a_alignment, bool a_alignmentRequired)
 		{
 			using func_t = decltype(&MemoryManager::Reallocate);
 			const REL::Relocation<func_t> func{ REL::ID(1502917) };
@@ -228,7 +228,7 @@ namespace RE
 	}
 
 	template <class T>
-	[[nodiscard]] inline T* malloc()
+	[[nodiscard]] T* malloc()
 	{
 		return static_cast<T*>(malloc(sizeof(T)));
 	}
@@ -240,7 +240,7 @@ namespace RE
 	}
 
 	template <class T>
-	[[nodiscard]] inline T* aligned_alloc()
+	[[nodiscard]] T* aligned_alloc()
 	{
 		return static_cast<T*>(alignof(T), sizeof(T));
 	}
@@ -251,7 +251,7 @@ namespace RE
 	}
 
 	template <class T>
-	[[nodiscard]] inline T* calloc(std::size_t a_num)
+	[[nodiscard]] T* calloc(std::size_t a_num)
 	{
 		return static_cast<T*>(calloc(a_num, sizeof(T)));
 	}
@@ -276,7 +276,7 @@ namespace RE
 }
 
 #define F4_HEAP_REDEFINE_NEW(a_type)                                                                                    \
-	[[nodiscard]] inline void* operator new(std::size_t a_count)                                                        \
+	[[nodiscard]] void* operator new(std::size_t a_count)                                                               \
 	{                                                                                                                   \
 		const auto mem = RE::malloc(a_count);                                                                           \
 		if (mem) {                                                                                                      \
@@ -286,7 +286,7 @@ namespace RE
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \
-	[[nodiscard]] inline void* operator new[](std::size_t a_count)                                                      \
+	[[nodiscard]] void* operator new[](std::size_t a_count)                                                             \
 	{                                                                                                                   \
 		const auto mem = RE::malloc(a_count);                                                                           \
 		if (mem) {                                                                                                      \
@@ -296,7 +296,7 @@ namespace RE
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \
-	[[nodiscard]] inline void* operator new(std::size_t a_count, std::align_val_t)                                      \
+	[[nodiscard]] void* operator new(std::size_t a_count, std::align_val_t)                                             \
 	{                                                                                                                   \
 		const auto mem = RE::aligned_alloc(alignof(a_type), a_count);                                                   \
 		if (mem) {                                                                                                      \
@@ -306,7 +306,7 @@ namespace RE
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \
-	[[nodiscard]] inline void* operator new[](std::size_t a_count, std::align_val_t)                                    \
+	[[nodiscard]] void* operator new[](std::size_t a_count, std::align_val_t)                                           \
 	{                                                                                                                   \
 		const auto mem = RE::aligned_alloc(alignof(a_type), a_count);                                                   \
 		if (mem) {                                                                                                      \
@@ -321,11 +321,11 @@ namespace RE
 	[[nodiscard]] constexpr void* operator new(std::size_t, std::align_val_t, void* a_ptr) noexcept { return a_ptr; }   \
 	[[nodiscard]] constexpr void* operator new[](std::size_t, std::align_val_t, void* a_ptr) noexcept { return a_ptr; } \
                                                                                                                         \
-	inline void operator delete(void* a_ptr) { RE::free(a_ptr); }                                                       \
-	inline void operator delete[](void* a_ptr) { RE::free(a_ptr); }                                                     \
-	inline void operator delete(void* a_ptr, std::align_val_t) { RE::aligned_free(a_ptr); }                             \
-	inline void operator delete[](void* a_ptr, std::align_val_t) { RE::aligned_free(a_ptr); }                           \
-	inline void operator delete(void* a_ptr, std::size_t) { RE::free(a_ptr); }                                          \
-	inline void operator delete[](void* a_ptr, std::size_t) { RE::free(a_ptr); }                                        \
-	inline void operator delete(void* a_ptr, std::size_t, std::align_val_t) { RE::aligned_free(a_ptr); }                \
-	inline void operator delete[](void* a_ptr, std::size_t, std::align_val_t) { RE::aligned_free(a_ptr); }
+	void operator delete(void* a_ptr) { RE::free(a_ptr); }                                                              \
+	void operator delete[](void* a_ptr) { RE::free(a_ptr); }                                                            \
+	void operator delete(void* a_ptr, std::align_val_t) { RE::aligned_free(a_ptr); }                                    \
+	void operator delete[](void* a_ptr, std::align_val_t) { RE::aligned_free(a_ptr); }                                  \
+	void operator delete(void* a_ptr, std::size_t) { RE::free(a_ptr); }                                                 \
+	void operator delete[](void* a_ptr, std::size_t) { RE::free(a_ptr); }                                               \
+	void operator delete(void* a_ptr, std::size_t, std::align_val_t) { RE::aligned_free(a_ptr); }                       \
+	void operator delete[](void* a_ptr, std::size_t, std::align_val_t) { RE::aligned_free(a_ptr); }

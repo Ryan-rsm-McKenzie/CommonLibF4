@@ -136,7 +136,7 @@ namespace F4SE
 					detail::can_construct_at<T, Args...>,
 					std::is_constructible<T, Args...>>,	 // more strict
 				int> = 0>
-		inline T* construct_at(T* a_ptr, Args&&... a_args)
+		T* construct_at(T* a_ptr, Args&&... a_args)
 		{
 			return ::new (
 				const_cast<void*>(
@@ -145,7 +145,7 @@ namespace F4SE
 		}
 
 		template <class T>
-		inline void destroy_at(T* a_ptr)
+		void destroy_at(T* a_ptr)
 		{
 			if constexpr (std::is_array_v<T>) {
 				for (auto& elem : *a_ptr) {
@@ -626,7 +626,7 @@ namespace F4SE
 		}
 
 		template <class To, class From>
-		[[nodiscard]] inline To unrestricted_cast(From a_from)
+		[[nodiscard]] To unrestricted_cast(From a_from)
 		{
 			if constexpr (std::is_same_v<
 							  std::remove_cv_t<From>,
@@ -665,7 +665,7 @@ namespace F4SE
 		}
 
 		template <class T, class U>
-		[[nodiscard]] inline auto adjust_pointer(U* a_ptr, std::ptrdiff_t a_adjust) noexcept
+		[[nodiscard]] auto adjust_pointer(U* a_ptr, std::ptrdiff_t a_adjust) noexcept
 		{
 			auto addr = a_ptr ? reinterpret_cast<std::uintptr_t>(a_ptr) + a_adjust : 0;
 			if constexpr (std::is_const_v<U> && std::is_volatile_v<U>) {

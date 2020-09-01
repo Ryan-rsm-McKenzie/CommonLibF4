@@ -9,13 +9,13 @@ namespace RE
 
 		constexpr BSIntrusiveRefCounted() noexcept {}  // intentional
 
-		inline std::uint32_t DecRef()
+		std::uint32_t DecRef()
 		{
 			stl::atomic_ref myRefCount{ refCount };
 			return --myRefCount;
 		}
 
-		inline std::uint32_t IncRef()
+		std::uint32_t IncRef()
 		{
 			stl::atomic_ref myRefCount{ refCount };
 			return ++myRefCount;

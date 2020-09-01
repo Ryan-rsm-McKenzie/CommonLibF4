@@ -16,25 +16,25 @@ namespace RE
 			_value(a_rhs)
 		{}
 
-		inline T operator++()
+		T operator++()
 		{
 			stl::atomic_ref value{ _value };
 			return ++value;
 		}
 
-		[[nodiscard]] inline T operator++(int)
+		[[nodiscard]] T operator++(int)
 		{
 			stl::atomic_ref value{ _value };
 			return value++;
 		}
 
-		inline T operator--()
+		T operator--()
 		{
 			stl::atomic_ref value{ _value };
 			return --value;
 		}
 
-		[[nodiscard]] inline T operator--(int)
+		[[nodiscard]] T operator--(int)
 		{
 			stl::atomic_ref value{ _value };
 			return value--;

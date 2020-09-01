@@ -149,7 +149,7 @@ namespace REL
 			class F,
 			class First,
 			class... Rest>
-		inline decltype(auto) invoke_member_function_non_pod(F&& a_func, First&& a_first, Rest&&... a_rest) noexcept(
+		decltype(auto) invoke_member_function_non_pod(F&& a_func, First&& a_first, Rest&&... a_rest) noexcept(
 			std::is_nothrow_invocable_v<F, First, Rest...>)
 		{
 			using result_t = std::invoke_result_t<F, First, Rest...>;
@@ -168,7 +168,7 @@ namespace REL
 		std::enable_if_t<
 			std::is_invocable_v<F, Args...>,
 			int> = 0>
-	inline std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args) noexcept(
+	std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args) noexcept(
 		std::is_nothrow_invocable<F, Args...>)
 	{
 		if constexpr (std::is_member_function_pointer_v<std::decay_t<F>>) {
@@ -207,13 +207,13 @@ namespace REL
 	}
 
 	template <class T>
-	inline void safe_write(std::uintptr_t a_dst, const T& a_data)
+	void safe_write(std::uintptr_t a_dst, const T& a_data)
 	{
 		safe_write(a_dst, std::addressof(a_data), sizeof(T));
 	}
 
 	template <class T>
-	inline void safe_write(std::uintptr_t a_dst, stl::span<T> a_data)
+	void safe_write(std::uintptr_t a_dst, stl::span<T> a_data)
 	{
 		safe_write(a_dst, a_data.data(), a_data.size_bytes());
 	}
@@ -248,7 +248,7 @@ namespace REL
 			return 0;
 		}
 
-		[[nodiscard]] inline std::string string() const
+		[[nodiscard]] std::string string() const
 		{
 			std::string result;
 			for (std::size_t i = 0; i < _impl.size(); ++i) {
@@ -259,7 +259,7 @@ namespace REL
 			return result;
 		}
 
-		[[nodiscard]] inline std::wstring wstring() const
+		[[nodiscard]] std::wstring wstring() const
 		{
 			std::wstring result;
 			for (std::size_t i = 0; i < _impl.size(); ++i) {
@@ -308,10 +308,10 @@ namespace REL
 		[[nodiscard]] constexpr std::size_t offset() const noexcept { return address() - _proxyBase; }
 		[[nodiscard]] constexpr std::size_t size() const noexcept { return _size; }
 
-		[[nodiscard]] inline void* pointer() const noexcept { return reinterpret_cast<void*>(address()); }
+		[[nodiscard]] void* pointer() const noexcept { return reinterpret_cast<void*>(address()); }
 
 		template <class T>
-		[[nodiscard]] inline T* pointer() const noexcept
+		[[nodiscard]] T* pointer() const noexcept
 		{
 			return static_cast<T*>(pointer());
 		}
@@ -325,7 +325,7 @@ namespace REL
 	class Module
 	{
 	public:
-		[[nodiscard]] static inline Module& get()
+		[[nodiscard]] static Module& get()
 		{
 			static Module singleton;
 			return singleton;
@@ -336,16 +336,16 @@ namespace REL
 
 		[[nodiscard]] constexpr Segment segment(Segment::Name a_segment) const noexcept { return _segments[a_segment]; }
 
-		[[nodiscard]] inline void* pointer() const noexcept { return reinterpret_cast<void*>(base()); }
+		[[nodiscard]] void* pointer() const noexcept { return reinterpret_cast<void*>(base()); }
 
 		template <class T>
-		[[nodiscard]] inline T* pointer() const noexcept
+		[[nodiscard]] T* pointer() const noexcept
 		{
 			return static_cast<T*>(pointer());
 		}
 
 	private:
-		inline Module() { load(); }
+		Module() { load(); }
 
 		Module(const Module&) = delete;
 		Module(Module&&) = delete;
@@ -355,7 +355,7 @@ namespace REL
 		Module& operator=(const Module&) = delete;
 		Module& operator=(Module&&) = delete;
 
-		inline void load()
+		void load()
 		{
 			auto handle = WinAPI::GetModuleHandle(FILENAME.data());
 			if (handle == nullptr) {
@@ -369,7 +369,7 @@ namespace REL
 
 		void load_segments();
 
-		inline void load_version()
+		void load_version()
 		{
 			std::uint32_t dummy;
 			std::vector<char> buf(WinAPI::GetFileVersionInfoSize(FILENAME.data(), std::addressof(dummy)));
@@ -425,7 +425,7 @@ namespace REL
 		class Offset2ID
 		{
 		public:
-			inline Offset2ID()
+			Offset2ID()
 			{
 				const auto id2offset = IDDatabase::get().get_id2offset();
 				_offset2id.reserve(id2offset.size());
@@ -438,7 +438,7 @@ namespace REL
 					});
 			}
 
-			[[nodiscard]] inline std::uint64_t operator()(std::size_t a_offset) const
+			[[nodiscard]] std::uint64_t operator()(std::size_t a_offset) const
 			{
 				if (_offset2id.empty()) {
 					stl::report_and_fail("data is empty"sv);
@@ -463,13 +463,13 @@ namespace REL
 			std::vector<mapping_t> _offset2id;
 		};
 
-		[[nodiscard]] static inline IDDatabase& get()
+		[[nodiscard]] static IDDatabase& get()
 		{
 			static IDDatabase singleton;
 			return singleton;
 		}
 
-		[[nodiscard]] inline std::size_t id2offset(std::uint64_t a_id) const
+		[[nodiscard]] std::size_t id2offset(std::uint64_t a_id) const
 		{
 			if (_id2offset.empty()) {
 				stl::report_and_fail("data is empty"sv);
@@ -496,7 +496,7 @@ namespace REL
 		[[nodiscard]] stl::span<const mapping_t> get_id2offset() const noexcept { return _id2offset; }
 
 	private:
-		inline IDDatabase() { load(); }
+		IDDatabase() { load(); }
 
 		IDDatabase(const IDDatabase&) = delete;
 		IDDatabase(IDDatabase&&) = delete;
@@ -506,7 +506,7 @@ namespace REL
 		IDDatabase& operator=(const IDDatabase&) = delete;
 		IDDatabase& operator=(IDDatabase&&) = delete;
 
-		inline void load()
+		void load()
 		{
 			const auto version = Module::get().version();
 			auto path = "Data/F4SE/Plugins/version-"s;
@@ -539,11 +539,11 @@ namespace REL
 			return *this;
 		}
 
-		[[nodiscard]] inline std::uintptr_t address() const { return base() + offset(); }
+		[[nodiscard]] std::uintptr_t address() const { return base() + offset(); }
 		[[nodiscard]] constexpr std::size_t offset() const noexcept { return _offset; }
 
 	private:
-		[[nodiscard]] static inline std::uintptr_t base() { return Module::get().base(); }
+		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
 
 		std::size_t _offset{ 0 };
 	};
@@ -563,11 +563,11 @@ namespace REL
 			return *this;
 		}
 
-		[[nodiscard]] inline std::uintptr_t address() const { return base() + offset(); }
-		[[nodiscard]] inline std::size_t offset() const { return IDDatabase::get().id2offset(_id); }
+		[[nodiscard]] std::uintptr_t address() const { return base() + offset(); }
+		[[nodiscard]] std::size_t offset() const { return IDDatabase::get().id2offset(_id); }
 
 	private:
-		[[nodiscard]] static inline std::uintptr_t base() { return Module::get().base(); }
+		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
 
 		std::uint64_t _id{ 0 };
 	};

@@ -31,7 +31,7 @@ namespace RE
 	public:
 		using event_type = Event;
 
-		inline void Notify(const event_type& a_event)
+		void Notify(const event_type& a_event)
 		{
 			const BSAutoLock locker(_lock);
 
@@ -65,7 +65,7 @@ namespace RE
 			}
 		}
 
-		inline void RegisterSink(BSTEventSink<event_type>* a_sink)
+		void RegisterSink(BSTEventSink<event_type>* a_sink)
 		{
 			if (!a_sink) {
 				return;
@@ -89,7 +89,7 @@ namespace RE
 			}
 		}
 
-		inline void UnregisterSink(BSTEventSink<event_type>* a_sink)
+		void UnregisterSink(BSTEventSink<event_type>* a_sink)
 		{
 			if (!a_sink) {
 				return;

@@ -55,7 +55,7 @@ namespace RE
 			return *singleton;
 		}
 
-		inline void RegisterMenu(const char* a_menu, Create_t* a_create, StaticUpdate_t* a_staticUpdate = nullptr)
+		void RegisterMenu(const char* a_menu, Create_t* a_create, StaticUpdate_t* a_staticUpdate = nullptr)
 		{
 			using func_t = decltype(&UI::RegisterMenu);
 			REL::Relocation<func_t> func{ REL::ID(1519575) };

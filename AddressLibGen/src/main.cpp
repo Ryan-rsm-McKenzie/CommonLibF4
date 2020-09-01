@@ -47,7 +47,7 @@ public:
 		return 0;
 	}
 
-	[[nodiscard]] inline std::string string() const
+	[[nodiscard]] std::string string() const
 	{
 		std::string result;
 		for (std::size_t i = 0; i < _impl.size(); ++i) {
@@ -58,7 +58,7 @@ public:
 		return result;
 	}
 
-	[[nodiscard]] inline std::wstring wstring() const
+	[[nodiscard]] std::wstring wstring() const
 	{
 		std::wstring result;
 		for (std::size_t i = 0; i < _impl.size(); ++i) {
@@ -85,7 +85,7 @@ class Mapping
 public:
 	[[nodiscard]] constexpr bool assigned() const noexcept { return static_cast<bool>(_id); }
 
-	inline void assign(std::uint64_t a_id) noexcept
+	void assign(std::uint64_t a_id) noexcept
 	{
 		_id = a_id;
 		for (auto& link : _links) {
@@ -101,7 +101,7 @@ public:
 		return *_id;
 	}
 
-	inline void link(Mapping* a_mapping) { _links.insert(a_mapping); }
+	void link(Mapping* a_mapping) { _links.insert(a_mapping); }
 
 private:
 	std::set<Mapping*> _links;

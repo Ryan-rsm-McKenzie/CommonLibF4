@@ -96,7 +96,7 @@ namespace F4SE
 	class QueryInterface
 	{
 	protected:
-		[[nodiscard]] inline decltype(auto) GetProxy() const noexcept
+		[[nodiscard]] decltype(auto) GetProxy() const noexcept
 		{
 			return reinterpret_cast<const detail::F4SEInterface&>(*this);
 		}
@@ -113,12 +113,12 @@ namespace F4SE
 		}
 
 	public:
-		[[nodiscard]] inline REL::Version EditorVersion() const noexcept { return MakeVersion(GetProxy().editorVersion); }
-		[[nodiscard]] inline REL::Version F4SEVersion() const noexcept { return MakeVersion(GetProxy().f4seVersion); }
-		[[nodiscard]] inline PluginHandle GetPluginHandle() const { return GetProxy().GetPluginHandle(); }
-		[[nodiscard]] inline std::uint32_t GetReleaseIndex() const { return GetProxy().GetReleaseIndex(); }
-		[[nodiscard]] inline bool IsEditor() const noexcept { return GetProxy().isEditor != 0; }
-		[[nodiscard]] inline REL::Version RuntimeVersion() const noexcept { return MakeVersion(GetProxy().runtimeVersion); }
+		[[nodiscard]] REL::Version EditorVersion() const noexcept { return MakeVersion(GetProxy().editorVersion); }
+		[[nodiscard]] REL::Version F4SEVersion() const noexcept { return MakeVersion(GetProxy().f4seVersion); }
+		[[nodiscard]] PluginHandle GetPluginHandle() const { return GetProxy().GetPluginHandle(); }
+		[[nodiscard]] std::uint32_t GetReleaseIndex() const { return GetProxy().GetReleaseIndex(); }
+		[[nodiscard]] bool IsEditor() const noexcept { return GetProxy().isEditor != 0; }
+		[[nodiscard]] REL::Version RuntimeVersion() const noexcept { return MakeVersion(GetProxy().runtimeVersion); }
 	};
 
 	class LoadInterface :
@@ -136,13 +136,13 @@ namespace F4SE
 			kObject
 		};
 
-		[[nodiscard]] inline void* QueryInterface(std::uint32_t a_id) const { return GetProxy().QueryInterface(a_id); }
+		[[nodiscard]] void* QueryInterface(std::uint32_t a_id) const { return GetProxy().QueryInterface(a_id); }
 	};
 
 	class MessagingInterface
 	{
 	private:
-		[[nodiscard]] inline decltype(auto) GetProxy() const noexcept
+		[[nodiscard]] decltype(auto) GetProxy() const noexcept
 		{
 			return reinterpret_cast<const detail::F4SEMessagingInterface&>(*this);
 		}
@@ -178,7 +178,7 @@ namespace F4SE
 
 		using EventCallback = void F4SEAPI(Message* a_msg);
 
-		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
+		[[nodiscard]] std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 
 		bool RegisterListener(EventCallback* a_handler) const { return RegisterListener(a_handler, "F4SE"sv); }
 		bool RegisterListener(EventCallback* a_handler, stl::zstring a_sender) const;
@@ -193,7 +193,7 @@ namespace F4SE
 	class ScaleformInterface
 	{
 	private:
-		[[nodiscard]] inline decltype(auto) GetProxy() const noexcept
+		[[nodiscard]] decltype(auto) GetProxy() const noexcept
 		{
 			return reinterpret_cast<const detail::F4SEScaleformInterface&>(*this);
 		}
@@ -206,7 +206,7 @@ namespace F4SE
 
 		using RegisterCallback = bool F4SEAPI(RE::GFx::Movie* a_view, RE::GFx::Value* a_value);
 
-		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
+		[[nodiscard]] std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 
 		bool Register(stl::zstring a_name, RegisterCallback* a_callback) const;
 	};
@@ -214,7 +214,7 @@ namespace F4SE
 	class SerializationInterface
 	{
 	private:
-		[[nodiscard]] inline decltype(auto) GetProxy() const noexcept
+		[[nodiscard]] decltype(auto) GetProxy() const noexcept
 		{
 			return reinterpret_cast<const detail::F4SESerializationInterface&>(*this);
 		}
@@ -228,7 +228,7 @@ namespace F4SE
 		using EventCallback = void F4SEAPI(const SerializationInterface* a_intfc);
 		using FormDeleteCallback = void F4SEAPI(std::uint64_t a_handle);
 
-		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().version; }
+		[[nodiscard]] std::uint32_t Version() const noexcept { return GetProxy().version; }
 
 		void SetUniqueID(std::uint32_t a_uid);
 		void SetRevertCallback(EventCallback* a_callback) const;
@@ -243,7 +243,7 @@ namespace F4SE
 
 		std::uint32_t ReadRecordData(void* a_buf, std::uint32_t a_length) const;
 
-		[[nodiscard]] inline std::optional<std::uint64_t> ResolveHandle(std::uint64_t a_handle) const
+		[[nodiscard]] std::optional<std::uint64_t> ResolveHandle(std::uint64_t a_handle) const
 		{
 			std::uint64_t result{ 0 };
 			if (GetProxy().ResolveHandle(a_handle, std::addressof(result))) {
@@ -253,7 +253,7 @@ namespace F4SE
 			}
 		}
 
-		[[nodiscard]] inline std::optional<std::uint32_t> ResolveFormID(std::uint32_t a_formID) const
+		[[nodiscard]] std::optional<std::uint32_t> ResolveFormID(std::uint32_t a_formID) const
 		{
 			std::uint32_t result{ 0 };
 			if (GetProxy().ResolveFormID(a_formID, std::addressof(result))) {
@@ -267,7 +267,7 @@ namespace F4SE
 	class PapyrusInterface
 	{
 	private:
-		[[nodiscard]] inline decltype(auto) GetProxy() const noexcept
+		[[nodiscard]] decltype(auto) GetProxy() const noexcept
 		{
 			return reinterpret_cast<const detail::F4SEPapyrusInterface&>(*this);
 		}
@@ -281,11 +281,11 @@ namespace F4SE
 		using RegisterFunctions = bool F4SEAPI(RE::BSScript::IVirtualMachine* a_vm);
 		using RegistrantFunctor = void F4SEAPI(std::uint64_t a_handle, const char* a_scriptName, const char* a_callbackName, void* a_data);
 
-		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
+		[[nodiscard]] std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 
 		bool Register(RegisterFunctions* a_callback) const;
 
-		inline void GetExternalEventRegistrations(stl::zstring a_eventName, void* a_data, RegistrantFunctor* a_functor) const
+		void GetExternalEventRegistrations(stl::zstring a_eventName, void* a_data, RegistrantFunctor* a_functor) const
 		{
 			GetProxy().GetExternalEventRegistrations(a_eventName.data(), a_data, a_functor);
 		}
@@ -301,7 +301,7 @@ namespace F4SE
 	class TaskInterface
 	{
 	private:
-		[[nodiscard]] inline decltype(auto) GetProxy() const noexcept
+		[[nodiscard]] decltype(auto) GetProxy() const noexcept
 		{
 			return reinterpret_cast<const detail::F4SETaskInterface&>(*this);
 		}
@@ -310,11 +310,11 @@ namespace F4SE
 			public ITaskDelegate
 		{
 		public:
-			inline TaskDelegate(std::function<void()> a_task) noexcept :
+			TaskDelegate(std::function<void()> a_task) noexcept :
 				_impl(std::move(a_task))
 			{}
 
-			inline void Run() override { _impl(); }
+			void Run() override { _impl(); }
 
 		private:
 			std::function<void()> _impl;
@@ -326,18 +326,18 @@ namespace F4SE
 			kVersion = 2
 		};
 
-		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
+		[[nodiscard]] std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 
-		inline void AddTask(ITaskDelegate* a_task) const { GetProxy().AddTask(a_task); }
-		inline void AddTask(std::function<void()> a_task) const { AddTask(new TaskDelegate(std::move(a_task))); }
-		inline void AddUITask(ITaskDelegate* a_task) const { GetProxy().AddUITask(a_task); }
-		inline void AddUITask(std::function<void()> a_task) const { AddUITask(new TaskDelegate(std::move(a_task))); }
+		void AddTask(ITaskDelegate* a_task) const { GetProxy().AddTask(a_task); }
+		void AddTask(std::function<void()> a_task) const { AddTask(new TaskDelegate(std::move(a_task))); }
+		void AddUITask(ITaskDelegate* a_task) const { GetProxy().AddUITask(a_task); }
+		void AddUITask(std::function<void()> a_task) const { AddUITask(new TaskDelegate(std::move(a_task))); }
 	};
 
 	class ObjectInterface
 	{
 	private:
-		[[nodiscard]] inline decltype(auto) GetProxy() const noexcept
+		[[nodiscard]] decltype(auto) GetProxy() const noexcept
 		{
 			return reinterpret_cast<const detail::F4SEObjectInterface&>(*this);
 		}
@@ -348,7 +348,7 @@ namespace F4SE
 			kVersion = 1
 		};
 
-		[[nodiscard]] inline std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
+		[[nodiscard]] std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
 		[[nodiscard]] DelayFunctorManager& GetDelayFunctorManager() const { return GetProxy().GetDelayFunctorManager(); }
 		[[nodiscard]] ObjectRegistry& GetObjectRegistry() const { return GetProxy().GetObjectRegistry(); }
 		[[nodiscard]] PersistentObjectStorage& GetPersistentObjectStorage() const { return GetProxy().GetPersistentObjectStorage(); }

@@ -256,13 +256,13 @@ namespace RE
 		using CompileFunction_t = bool(const std::uint16_t a_paramCount, const SCRIPT_PARAMETER* a_parameters, SCRIPT_LINE* a_scriptLine, ScriptCompileData* a_compileData);
 		using ExecuteFunction_t = bool(const SCRIPT_PARAMETER* a_parameters, const char* a_compiledParams, TESObjectREFR* a_refObject, TESObjectREFR* a_container, Script* a_script, ScriptLocals* a_scriptLocals, float& a_returnValue, std::uint32_t& a_offset);
 
-		[[nodiscard]] static inline stl::span<SCRIPT_FUNCTION, 522> GetConsoleFunctions()
+		[[nodiscard]] static stl::span<SCRIPT_FUNCTION, 522> GetConsoleFunctions()
 		{
 			REL::Relocation<SCRIPT_FUNCTION(*)[522]> functions{ REL::ID(901511) };
 			return { *functions };
 		}
 
-		[[nodiscard]] static inline stl::span<SCRIPT_FUNCTION, 819> GetScriptFunctions()
+		[[nodiscard]] static stl::span<SCRIPT_FUNCTION, 819> GetScriptFunctions()
 		{
 			REL::Relocation<SCRIPT_FUNCTION(*)[819]> functions{ REL::ID(75173) };
 			return { *functions };
