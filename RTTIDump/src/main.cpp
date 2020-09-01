@@ -1,3 +1,9 @@
+[[nodiscard]] auto& get_iddb()
+{
+	static REL::IDDatabase::Offset2ID iddb;
+	return iddb;
+}
+
 class VTable
 {
 public:
@@ -91,7 +97,7 @@ private:
 {
 	static const std::array expressions{
 		std::make_pair(
-			boost::regex{ R"regex((`anonymous namespace'|class|enum|struct|[ &'*\-`]){1})regex"s, boost::regex::ECMAScript | boost::regex::optimize },
+			boost::regex{ R"regex((`anonymous namespace'|[ &'*\-`]){1})regex"s, boost::regex::ECMAScript | boost::regex::optimize },
 			std::function{ [](std::string& a_name, const boost::ssub_match& a_match) {
 				a_name.erase(a_match.first, a_match.second);
 			} }),
@@ -118,12 +124,26 @@ private:
 {
 	assert(a_typeDesc != nullptr);
 
-	char buf[0x1000];
+	std::array<char, 0x1000> buf;
 	const auto len =
-		WinAPI::UnDecorateSymbolName(a_typeDesc->name + 1, buf, sizeof(buf), (WinAPI::UNDNAME_NO_ARGUMENTS));
+		WinAPI::UnDecorateSymbolName(
+			a_typeDesc->name + 1,
+			buf.data(),
+			static_cast<std::uint32_t>(buf.size()),
+			(WinAPI::UNDNAME_NO_MS_KEYWORDS) |
+				(WinAPI::UNDNAME_NO_FUNCTION_RETURNS) |
+				(WinAPI::UNDNAME_NO_ALLOCATION_MODEL) |
+				(WinAPI::UNDNAME_NO_ALLOCATION_LANGUAGE) |
+				(WinAPI::UNDNAME_NO_THISTYPE) |
+				(WinAPI::UNDNAME_NO_ACCESS_SPECIFIERS) |
+				(WinAPI::UNDNAME_NO_THROW_SIGNATURES) |
+				(WinAPI::UNDNAME_NO_RETURN_UDT_MODEL) |
+				(WinAPI::UNDNAME_NAME_ONLY) |
+				(WinAPI::UNDNAME_NO_ARGUMENTS) |
+				static_cast<std::uint32_t>(0x8000));  // Disable enum/class/struct/union prefix
 
 	if (len != 0) {
-		return { buf, len };
+		return { buf.data(), len };
 	} else {
 		throw std::runtime_error("failed to decode name"s);
 	}
@@ -148,17 +168,15 @@ inline void dump_rtti()
 	const auto data = module.segment(REL::Segment::data);
 	const auto beg = data.pointer<const std::uintptr_t>();
 	const auto end = reinterpret_cast<const std::uintptr_t*>(data.address() + data.size());
+	const auto& iddb = get_iddb();
 	for (auto iter = beg; iter < end; ++iter) {
 		if (*iter == typeInfo.address()) {
 			const auto typeDescriptor = reinterpret_cast<const RE::RTTI::TypeDescriptor*>(iter);
 			try {
-				const auto& iddb = REL::IDDatabase::get();
-				auto id = iddb.offset2id(reinterpret_cast<std::uintptr_t>(iter) - baseAddr);
+				const auto id = iddb(reinterpret_cast<std::uintptr_t>(iter) - baseAddr);
 				auto name = decode_name(typeDescriptor);
-				if (starts_with(name, "class "sv) || starts_with(name, "struct "sv)) {
-					results.emplace_back(sanitize_name(std::move(name)), id);
-				}
-			} catch ([[maybe_unused]] std::exception& e) {
+				results.emplace_back(sanitize_name(std::move(name)), id);
+			} catch (const std::exception&) {
 				logger::error(decode_name(typeDescriptor));
 				continue;
 			}
@@ -234,12 +252,13 @@ inline void dump_nirtti()
 	} while (found);
 
 	std::vector<std::pair<std::string, std::uint64_t>> toPrint;
+	const auto& iddb = get_iddb();
 	for (const auto& result : results) {
 		const auto rtti = reinterpret_cast<const RE::NiRTTI*>(result);
 		std::string name("NiRTTI_"sv);
 		name += rtti->GetName();
 		try {
-			const auto id = REL::IDDatabase::get().offset2id(result - base);
+			const auto id = iddb(result - base);
 			toPrint.emplace_back(sanitize_name(std::move(name)), id);
 		} catch (const std::exception&) {
 			spdlog::error(rtti->GetName());

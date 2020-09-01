@@ -180,6 +180,13 @@ namespace RE
 			return func(this, a_mem, a_alignmentRequired);
 		}
 
+		[[nodiscard]] inline ScrapHeap* GetThreadScrapHeap()
+		{
+			using func_t = decltype(&MemoryManager::GetThreadScrapHeap);
+			const REL::Relocation<func_t> func{ REL::ID(1495205) };
+			return func(this);
+		}
+
 		[[nodiscard]] inline void* Reallocate(void* a_oldMem, std::size_t a_newSize, std::uint32_t a_alignment, bool a_alignmentRequired)
 		{
 			using func_t = decltype(&MemoryManager::Reallocate);

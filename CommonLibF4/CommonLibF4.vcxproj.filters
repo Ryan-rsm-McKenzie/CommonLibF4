@@ -171,10 +171,16 @@
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\TESCondition.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\TESFaction.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\TESForms.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\TESRace.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\UI.h">

@@ -258,14 +258,14 @@ namespace RE
 
 		[[nodiscard]] static inline stl::span<SCRIPT_FUNCTION, 522> GetConsoleFunctions()
 		{
-			REL::Relocation<SCRIPT_FUNCTION[]> functions{ REL::ID(901511) };
-			return functions.get();
+			REL::Relocation<SCRIPT_FUNCTION(*)[522]> functions{ REL::ID(901511) };
+			return { *functions };
 		}
 
 		[[nodiscard]] static inline stl::span<SCRIPT_FUNCTION, 819> GetScriptFunctions()
 		{
-			REL::Relocation<SCRIPT_FUNCTION[]> functions{ REL::ID(75173) };
-			return functions.get();
+			REL::Relocation<SCRIPT_FUNCTION(*)[819]> functions{ REL::ID(75173) };
+			return { *functions };
 		}
 
 		// members

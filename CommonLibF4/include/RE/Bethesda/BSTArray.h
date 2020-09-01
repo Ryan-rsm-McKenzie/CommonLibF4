@@ -282,7 +282,6 @@ namespace RE
 		Data _data;					   // 08
 	};
 
-#if 0
 	class BSScrapArrayAllocator
 	{
 	public:
@@ -309,7 +308,16 @@ namespace RE
 			a_rhs._capacity = 0;
 		}
 
-		~BSScrapArrayAllocator();
+		inline ~BSScrapArrayAllocator()
+		{
+			if (_data) {
+				deallocate(_data);
+			}
+
+			_allocator = nullptr;
+			_data = 0;
+			_capacity = 0;
+		}
 
 		inline BSScrapArrayAllocator& operator=(const BSScrapArrayAllocator& a_rhs)
 		{
@@ -354,8 +362,34 @@ namespace RE
 		[[nodiscard]] constexpr size_type capacity() const noexcept { return _capacity; }
 
 	protected:
-		void* allocate(std::size_t a_size);
-		void deallocate(void* a_ptr);
+		inline void* allocate(std::size_t a_size)
+		{
+			if (!_allocator) {
+				auto& heap = MemoryManager::GetSingleton();
+				_allocator = heap.GetThreadScrapHeap();
+			}
+
+			if (_allocator == nullptr) {
+				stl::report_and_fail("failed to get thread allocator"sv);
+			}
+
+			const auto mem = _allocator->Allocate(a_size, alignof(void*));
+			if (mem == nullptr) {
+				stl::report_and_fail("failed to handle allocation request"sv);
+			}
+
+			std::memset(mem, 0, a_size);
+			return mem;
+		}
+
+		inline void deallocate(void* a_ptr)
+		{
+			if (_allocator) {
+				_allocator->Deallocate(a_ptr);
+			} else {
+				stl::report_and_fail("failed to deallocate block"sv);
+			}
+		}
 
 		constexpr void set_allocator_traits(void* a_data, std::uint32_t a_capacity, std::size_t) noexcept
 		{
@@ -370,7 +404,6 @@ namespace RE
 		size_type _capacity{ 0 };		   // 10
 	};
 	static_assert(sizeof(BSScrapArrayAllocator) == 0x18);
-#endif
 
 	template <class T, class Allocator = BSTArrayHeapAllocator>
 	class BSTArray :
@@ -646,10 +679,8 @@ namespace RE
 	template <class T, std::uint32_t N = 1>
 	using BSTSmallArray = BSTArray<T, BSTSmallArrayHeapAllocator<sizeof(T) * N>>;
 
-#if 0
 	template <class T>
 	using BSScrapArray = BSTArray<T, BSScrapArrayAllocator>;
-#endif
 
 	template <class T>
 	class BSStaticArray

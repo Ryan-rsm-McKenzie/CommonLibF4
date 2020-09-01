@@ -5,8 +5,10 @@
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/BSTList.h"
+#include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTextureSet.h"
 #include "RE/Bethesda/FormComponents.h"
+#include "RE/Bethesda/TESCondition.h"
 #include "RE/NetImmerse/NiPoint3.h"
 #include "RE/NetImmerse/NiSmartPointer.h"
 
@@ -15,6 +17,7 @@ namespace RE
 	class TESForm;
 	class TESObject;
 	class TESBoundObject;
+	class TESBoundAnimObject;
 	class MagicItem;
 	class BGSKeyword;
 	class BGSLocationRefType;
@@ -171,7 +174,7 @@ namespace RE
 
 	enum class ENUM_FORM_ID
 	{
-		kNONE,	// 00 NONE TESForm / TESObject / TESBoundObject / MagicItem
+		kNONE,	// 00 NONE TESForm / TESObject / TESBoundObject / TESBoundAnimObject / MagicItem
 		kTES4,	// 01 TES4
 		kGRUP,	// 02 GRUP
 		kGMST,	// 03 GMST
@@ -336,11 +339,27 @@ namespace RE
 
 	enum class CHUNK_ID;
 	enum class COMMAND_REFUSAL_TYPE;
+	enum class SOUND_LEVEL;
+	enum class STAGGER_MAGNITUDE;
+
+	namespace EffectArchetypes
+	{
+		enum class ArchetypeID;
+	}
+
+	namespace MagicSystem
+	{
+		enum class CastingType;
+		enum class Delivery;
+		enum class SoundID;
+		enum class SpellType;
+	}
 
 	class BGSLoadFormBuffer;
 	class BGSPreviewTransform;
 	class BGSSaveFormBuffer;
 	class NiAVObject;
+	class QueuedFile;
 	class TBO_InstanceData;
 	class TESFile;
 
@@ -580,6 +599,105 @@ namespace RE
 	};
 	static_assert(sizeof(TESBoundObject) == 0x68);
 
+	class TESBoundAnimObject :
+		public TESBoundObject  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESBoundAnimObject };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
+	};
+	static_assert(sizeof(TESBoundAnimObject) == 0x68);
+
+	struct EffectItemData
+	{
+	public:
+		// members
+		float magnitude;		// 0
+		std::int32_t area;		// 4
+		std::int32_t duration;	// 8
+	};
+	static_assert(sizeof(EffectItemData) == 0xC);
+
+	class EffectItem
+	{
+	public:
+		// members
+		EffectItemData data;		   // 00
+		EffectSetting* effectSetting;  // 10
+		float rawCost;				   // 18
+		TESCondition conditions;	   // 20
+	};
+	static_assert(sizeof(EffectItem) == 0x28);
+
+	class MagicItem :
+		public TESBoundObject,	// 00
+		public TESFullName,		// 68
+		public BGSKeywordForm	// 70
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_MagicItem };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
+
+		struct SkillUsageData
+		{
+		public:
+			// members
+			EffectItem* effect;		// 00
+			ActorValueInfo* skill;	// 08
+			float magnitude;		// 10
+			bool custom;			// 14
+		};
+		static_assert(sizeof(SkillUsageData) == 0x18);
+
+		class Data
+		{
+		public:
+			// members
+			std::int32_t costOverride;	// 0
+			std::uint32_t flags;		// 4
+		};
+		static_assert(sizeof(Data) == 0x8);
+
+		// add
+		virtual MagicSystem::SpellType GetSpellType() const = 0;															// 67
+		virtual void SetCastingType([[maybe_unused]] MagicSystem::CastingType a_castingType) { return; }					// 68
+		virtual MagicSystem::CastingType GetCastingType() const = 0;														// 69
+		virtual void SetDelivery([[maybe_unused]] MagicSystem::Delivery a_delivery) { return; }								// 6A
+		virtual MagicSystem::Delivery GetDelivery() const = 0;																// 6B
+		virtual bool IsValidDelivery(MagicSystem::Delivery) { return true; }												// 6C
+		virtual float GetFixedCastDuration() const { return 0.0F; }															// 6D
+		virtual float GetRange() const { return 0.0F; }																		// 6E
+		virtual bool IgnoreResistance() const { return false; }																// 6F
+		virtual bool IgnoreLOS() const { return false; }																	// 70
+		virtual bool IsFood() const { return false; }																		// 71
+		virtual bool GetNoAbsorb() const { return false; }																	// 72
+		virtual bool GetNoDualCastModifications() const { return false; }													// 73
+		virtual bool GetSkillUsageData([[maybe_unused]] SkillUsageData& a_data) const { return false; }						// 74
+		virtual bool IsPoison() const;																						// 75
+		virtual bool IsMedicine() const { return false; }																	// 76
+		virtual void AdjustCost(float&, Actor*) const { return; }															// 77
+		virtual float GetChargeTime() const { return 0.0F; }																// 78
+		virtual std::uint32_t GetMaxEffectCount() const { return 0; }														// 79
+		virtual ActorValueInfo* GetAssociatedSkill() const { return nullptr; }												// 7A
+		virtual bool IsTwoHanded() const { return false; }																	// 7B
+		virtual CHUNK_ID GetChunkID() = 0;																					// 7C
+		virtual void CopyMagicItemData(MagicItem* a_copy) = 0;																// 7D
+		virtual void LoadMagicItemChunk([[maybe_unused]] TESFile* a_file, [[maybe_unused]] CHUNK_ID a_chunkID) { return; }	// 7E
+		virtual void LoadChunkDataPostProcess([[maybe_unused]] TESFile* a_file) { return; }									// 7F
+		virtual Data* GetData() = 0;																						// 81
+		virtual const Data* GetData() const = 0;																			// 80
+		virtual std::size_t GetDataSize() const = 0;																		// 82
+		virtual void InitFromChunk(TESFile* a_file) = 0;																	// 83
+
+		// members
+		BSTArray<EffectItem*> listOfEffects;										 // 98
+		std::int32_t hostileCount;													 // B0
+		EffectSetting* avEffectSetting;												 // B8
+		std::uint32_t preloadCount;													 // C0
+		BSTSmartPointer<QueuedFile, BSTSmartPointerGamebryoRefCount> preloadedItem;	 // C8
+	};
+	static_assert(sizeof(MagicItem) == 0xD0);
+
 	class BGSComponent :
 		public TESBoundObject,		// 00
 		public TESFullName,			// 68
@@ -664,4 +782,373 @@ namespace RE
 		CLASS_DATA data;  // 68
 	};
 	static_assert(sizeof(TESClass) == 0x70);
+
+	class BGSHeadPart :
+		public TESForm,				 // 000
+		public TESFullName,			 // 020
+		public BGSModelMaterialSwap	 // 030
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSHeadPart };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kHDPT };
+
+		enum class HeadPartType
+		{
+			kMisc,
+			kFace,
+			kEyes,
+			kHair,
+			kFacialHair,
+			kScar,
+			kEyebrows,
+			kMeatcaps,
+			kTeeth,
+			kHeadRear
+		};
+
+		// members
+		std::int8_t flags;									// 070
+		stl::enumeration<HeadPartType, std::int32_t> type;	// 074
+		BSTArray<BGSHeadPart*> extraParts;					// 078
+		BGSTextureSet* textureSet;							// 090
+		TESModel ChargenModel;								// 098
+		TESModelTri morphs[3];								// 0C8
+		BGSColorForm* colorForm;							// 158
+		BGSListForm* validRaces;							// 160
+		TESCondition chargenConditions;						// 168
+		BSFixedString formEditorID;							// 170
+	};
+	static_assert(sizeof(BGSHeadPart) == 0x178);
+
+	class TESEyes :
+		public TESForm,		 // 00
+		public TESFullName,	 // 20
+		public TESTexture	 // 30
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESEyes };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kEYES };
+
+		// members
+		std::int8_t flags;	// 40
+	};
+	static_assert(sizeof(TESEyes) == 0x48);
+
+	namespace TESSoundDefs
+	{
+		struct RepeaterData
+		{
+		public:
+			// members
+			float minDelay;	 // 0
+			float maxDelay;	 // 4
+			bool stackable;	 // 8
+		};
+		static_assert(sizeof(RepeaterData) == 0xC);
+	}
+
+	class TESSound :
+		public TESBoundAnimObject  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESSound };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSOUN };
+
+		// members
+		BGSSoundDescriptorForm* descriptor;		// 68
+		TESSoundDefs::RepeaterData repeatData;	// 70
+	};
+	static_assert(sizeof(TESEyes) == 0x48);
+
+	class BGSAcousticSpace :
+		public TESBoundObject  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSAcousticSpace };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kASPC };
+
+		// members
+		BGSSoundDescriptorForm* loopingSound;  // 68
+		TESRegion* soundRegion;				   // 70
+		BGSReverbParameters* reverbType;	   // 78
+		std::uint16_t weatherAttenMillibels;   // 80
+		bool isInterior;					   // 82
+	};
+	static_assert(sizeof(BGSAcousticSpace) == 0x88);
+
+	class EffectSetting :
+		public TESForm,				  // 000
+		public TESFullName,			  // 020
+		public BGSMenuDisplayObject,  // 030
+		public BGSKeywordForm		  // 040
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_EffectSetting };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMGEF };
+
+		using FilterValidationFunction_t = bool(EffectSetting*, void*);
+
+		struct EffectSettingData
+		{
+		public:
+			// members
+			std::uint32_t flags;													  // 000
+			float baseCost;															  // 004
+			TESForm* associatedForm;												  // 008
+			ActorValueInfo* associatedSkill;										  // 010
+			ActorValueInfo* resistVariable;											  // 018
+			std::int16_t numCounterEffects;											  // 020
+			TESObjectLIGH* light;													  // 028
+			float taperWeight;														  // 030
+			TESEffectShader* effectShader;											  // 038
+			TESEffectShader* enchantEffect;											  // 040
+			std::int32_t minimumSkill;												  // 048
+			std::int32_t spellmakingArea;											  // 04C
+			float spellmakingChargeTime;											  // 050
+			float taperCurve;														  // 054
+			float taperDuration;													  // 058
+			float secondaryAVWeight;												  // 05C
+			stl::enumeration<EffectArchetypes::ArchetypeID, std::int32_t> archetype;  // 060
+			ActorValueInfo* primaryAV;												  // 068
+			BGSProjectile* projectileBase;											  // 070
+			BGSExplosion* explosion;												  // 078
+			stl::enumeration<MagicSystem::CastingType, std::int32_t> castingType;	  // 080
+			stl::enumeration<MagicSystem::Delivery, std::int32_t> delivery;			  // 084
+			ActorValueInfo* secondaryAV;											  // 088
+			BGSArtObject* castingArt;												  // 090
+			BGSArtObject* hitEffectArt;												  // 098
+			BGSImpactDataSet* impactDataSet;										  // 0A0
+			float skillUsageMult;													  // 0A8
+			BGSDualCastData* dualCastData;											  // 0B0
+			float dualCastScale;													  // 0B8
+			BGSArtObject* enchantEffectArt;											  // 0C0
+			BGSReferenceEffect* hitVisuals;											  // 0C8
+			BGSReferenceEffect* enchantVisuals;										  // 0D0
+			SpellItem* equipAbility;												  // 0D8
+			TESImageSpaceModifier* imageSpaceMod;									  // 0E0
+			BGSPerk* perk;															  // 0E8
+			stl::enumeration<SOUND_LEVEL, std::int32_t> castingSoundLevel;			  // 0F0
+			float aiScore;															  // 0F4
+			float aiDelayTime;														  // 0F8
+		};
+		static_assert(sizeof(EffectSettingData) == 0x100);
+
+		struct SoundPair
+		{
+		public:
+			// members
+			stl::enumeration<MagicSystem::SoundID, std::int32_t> id;  // 00
+			BGSSoundDescriptorForm* sound;							  // 08
+		};
+		static_assert(sizeof(SoundPair) == 0x10);
+
+		// members
+		FilterValidationFunction_t* filterValidationFunction;  // 060
+		void* filterValidationItem;							   // 068
+		EffectSettingData data;								   // 070
+		BSSimpleList<EffectSetting*> counterEffects;		   // 170
+		BSTArray<EffectSetting::SoundPair> effectSounds;	   // 180
+		BGSLocalizedString magicItemDescription;			   // 198
+		std::int32_t effectLoadedCount;						   // 1A0
+		std::int32_t associatedItemLoadedCount;				   // 1A4
+		TESCondition conditions;							   // 1A8
+	};
+	static_assert(sizeof(EffectSetting) == 0x1B0);
+
+	struct TEXTURE_HAVOK_DATA
+	{
+	public:
+		// members
+		std::int8_t friction;	  // 0
+		std::int8_t restitution;  // 1
+	};
+	static_assert(sizeof(TEXTURE_HAVOK_DATA) == 0x2);
+
+	class TESLandTexture :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESLandTexture };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLTEX };
+
+		// members
+		BGSTextureSet* textureSet;				   // 20
+		TEXTURE_HAVOK_DATA havokData;			   // 28
+		BGSMaterialType* materialType;			   // 30
+		std::int8_t specularExponent;			   // 38
+		std::int32_t shaderTextureIndex;		   // 3C
+		BSSimpleList<TESGrass*> textureGrassList;  // 40
+	};
+	static_assert(sizeof(TESLandTexture) == 0x50);
+
+	class EnchantmentItem :
+		public MagicItem  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_EnchantmentItem };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kENCH };
+
+		class Data :
+			public MagicItem::Data	// 00
+		{
+		public:
+			// members
+			stl::enumeration<MagicSystem::CastingType, std::int32_t> castingType;  // 08
+			std::int32_t chargeOverride;										   // 0C
+			stl::enumeration<MagicSystem::Delivery, std::int32_t> delivery;		   // 10
+			stl::enumeration<MagicSystem::SpellType, std::int32_t> spellType;	   // 14
+			float chargeTime;													   // 18
+			EnchantmentItem* baseEnchantment;									   // 20
+			BGSListForm* wornRestrictions;										   // 28
+		};
+		static_assert(sizeof(Data) == 0x30);
+
+		// members
+		Data data;	// 0D0
+	};
+	static_assert(sizeof(EnchantmentItem) == 0x100);
+
+	class SpellItem :
+		public MagicItem,			  // 000
+		public BGSEquipType,		  // 0D0
+		public BGSMenuDisplayObject,  // 0E0
+		public TESDescription		  // 0F0
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_EnchantmentItem };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSPEL };
+
+		class Data :
+			public MagicItem::Data	// 00
+		{
+		public:
+			// members
+			stl::enumeration<MagicSystem::SpellType, std::int32_t> spellType;	   // 08
+			float chargeTime;													   // 0C
+			stl::enumeration<MagicSystem::CastingType, std::int32_t> castingType;  // 10
+			stl::enumeration<MagicSystem::Delivery, std::int32_t> delivery;		   // 14
+			float castDuration;													   // 18
+			float range;														   // 1C
+			BGSPerk* castingPerk;												   // 20
+		};
+		static_assert(sizeof(Data) == 0x28);
+
+		// members
+		Data data;	// 108
+	};
+	static_assert(sizeof(SpellItem) == 0x130);
+
+	class ScrollItem :
+		public SpellItem,				   // 000
+		public BGSModelMaterialSwap,	   // 130
+		public BGSDestructibleObjectForm,  // 170
+		public BGSPickupPutdownSounds,	   // 180
+		public TESWeightForm,			   // 198
+		public TESValueForm				   // 1A8
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_ScrollItem };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCRL };
+	};
+	static_assert(sizeof(ScrollItem) == 0x1B8);
+
+	class TESObjectACTI :
+		public TESBoundAnimObject,		   // 000
+		public TESFullName,				   // 068
+		public BGSModelMaterialSwap,	   // 078
+		public TESMagicTargetForm,		   // 120
+		public BGSDestructibleObjectForm,  // 0B8
+		public BGSOpenCloseForm,		   // 0C8
+		public BGSKeywordForm,			   // 0D0
+		public BGSPropertySheet,		   // 0F0
+		public BGSForcedLocRefType,		   // 100
+		public BGSNativeTerminalForm,	   // 110
+		public BGSNavmeshableObject		   // 120
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESObjectACTI };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kACTI };
+
+		// members
+		BGSSoundDescriptorForm* soundLoop;		// 128
+		BGSSoundDescriptorForm* soundActivate;	// 130
+		TESWaterForm* waterForm;				// 138
+		std::uint16_t flags;					// 140
+	};
+	static_assert(sizeof(TESObjectACTI) == 0x148);
+
+	class BGSTalkingActivator :
+		public TESObjectACTI  // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSTalkingActivator };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kTACT };
+
+		// add
+		virtual bool GetReflectedByAutoWater() { return false; }  // 67
+
+		// members
+		TESObjectREFR* tempRef;	  // 148
+		BGSVoiceType* voiceType;  // 150
+	};
+	static_assert(sizeof(BGSTalkingActivator) == 0x158);
+
+	class TESObjectARMO :
+		public TESBoundObject,			   // 000
+		public TESFullName,				   // 068
+		public TESRaceForm,				   // 078
+		public TESEnchantableForm,		   // 088
+		public BGSDestructibleObjectForm,  // 0A0
+		public BGSPickupPutdownSounds,	   // 0B0
+		public TESBipedModelForm,		   // 0C8
+		public BGSEquipType,			   // 1D0
+		public BGSBipedObjectForm,		   // 1E0
+		public BGSBlockBashData,		   // 1F0
+		public BGSKeywordForm,			   // 208
+		public TESDescription,			   // 228
+		public BGSInstanceNamingRulesForm  // 240
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESObjectARMO };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kARMO };
+
+		struct InstanceData :
+			public TBO_InstanceData	 // 00
+		{
+		public:
+			static constexpr auto RTTI{ RTTI_TESObjectARMO__InstanceData };
+
+			// members
+			BSTArray<EnchantmentItem*>* enchantments;									  // 10
+			BSTArray<BGSMaterialSwap*>* materialSwaps;									  // 18
+			BGSBlockBashData* blockBashData;											  // 20
+			BGSKeywordForm* keywords;													  // 28
+			BSTArray<BSTTuple<TESForm*, BGSTypedFormValuePair::SharedVal>>* damageTypes;  // 30
+			BSTArray<BSTTuple<TESForm*, BGSTypedFormValuePair::SharedVal>>* actorValues;  // 38
+			float weight;																  // 40
+			float colorRemappingIndex;													  // 44
+			std::uint32_t value;														  // 48
+			std::uint32_t health;														  // 4C
+			stl::enumeration<STAGGER_MAGNITUDE, std::int32_t> staggerRating;			  // 50
+			std::uint16_t rating;														  // 54
+			std::uint16_t index;														  // 56
+		};
+		static_assert(sizeof(InstanceData) == 0x58);
+
+		class ArmorAddon
+		{
+		public:
+			// members
+			std::uint16_t index;		// 00
+			TESObjectARMA* armorAddon;	// 08
+		};
+		static_assert(sizeof(ArmorAddon) == 0x10);
+
+		// members
+		InstanceData data;					 // 250
+		BSTArray<ArmorAddon> modelArray;	 // 2A8
+		TESObjectARMO* armorTemplate;		 // 2C0
+		BGSAttachParentArray attachParents;	 // 2C8
+	};
+	static_assert(sizeof(TESObjectARMO) == 0x2E0);
 }

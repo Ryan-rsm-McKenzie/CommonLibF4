@@ -312,8 +312,10 @@
     <ClInclude Include="include\RE\Bethesda\Script.h" />
     <ClInclude Include="include\RE\Bethesda\Settings.h" />
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h" />
+    <ClInclude Include="include\RE\Bethesda\TESCondition.h" />
     <ClInclude Include="include\RE\Bethesda\TESFaction.h" />
     <ClInclude Include="include\RE\Bethesda\TESForms.h" />
+    <ClInclude Include="include\RE\Bethesda\TESRace.h" />
     <ClInclude Include="include\RE\Bethesda\UI.h" />
     <ClInclude Include="include\RE\Bethesda\UIMessage.h" />
     <ClInclude Include="include\RE\Bethesda\UIMessageQueue.h" />

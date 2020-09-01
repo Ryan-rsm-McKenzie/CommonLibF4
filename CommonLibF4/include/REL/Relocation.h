@@ -414,7 +414,55 @@ namespace REL
 
 	class IDDatabase
 	{
+	private:
+		struct mapping_t
+		{
+			std::uint64_t id;
+			std::uint64_t offset;
+		};
+
 	public:
+		class Offset2ID
+		{
+		public:
+			inline Offset2ID()
+			{
+				const auto id2offset = IDDatabase::get().get_id2offset();
+				_offset2id.reserve(id2offset.size());
+				_offset2id.insert(_offset2id.begin(), id2offset.begin(), id2offset.end());
+				std::sort(
+					_offset2id.begin(),
+					_offset2id.end(),
+					[](auto&& a_lhs, auto&& a_rhs) {
+						return a_lhs.offset < a_rhs.offset;
+					});
+			}
+
+			[[nodiscard]] inline std::uint64_t operator()(std::size_t a_offset) const
+			{
+				if (_offset2id.empty()) {
+					stl::report_and_fail("data is empty"sv);
+				}
+
+				const mapping_t elem{ 0, a_offset };
+				const auto it = std::lower_bound(
+					_offset2id.begin(),
+					_offset2id.end(),
+					elem,
+					[](auto&& a_lhs, auto&& a_rhs) {
+						return a_lhs.offset < a_rhs.offset;
+					});
+				if (it == _offset2id.end()) {
+					stl::report_and_fail("offset not found"sv);
+				}
+
+				return it->id;
+			}
+
+		private:
+			std::vector<mapping_t> _offset2id;
+		};
+
 		[[nodiscard]] static inline IDDatabase& get()
 		{
 			static IDDatabase singleton;
@@ -442,36 +490,12 @@ namespace REL
 			return static_cast<std::size_t>(it->offset);
 		}
 
-#if !defined(NDEBUG)
-		[[nodiscard]] inline std::uint64_t offset2id(std::size_t a_offset) const
-		{
-			if (_offset2id.empty()) {
-				stl::report_and_fail("data is empty"sv);
-			}
+	protected:
+		friend class Offset2ID;
 
-			const mapping_t elem{ 0, a_offset };
-			const auto it = std::lower_bound(
-				_offset2id.begin(),
-				_offset2id.end(),
-				elem,
-				[](auto&& a_lhs, auto&& a_rhs) {
-					return a_lhs.offset < a_rhs.offset;
-				});
-			if (it == _offset2id.end()) {
-				stl::report_and_fail("offset not found"sv);
-			}
-
-			return it->id;
-		}
-#endif
+		[[nodiscard]] stl::span<const mapping_t> get_id2offset() const noexcept { return _id2offset; }
 
 	private:
-		struct mapping_t
-		{
-			std::uint64_t id;
-			std::uint64_t offset;
-		};
-
 		inline IDDatabase() { load(); }
 
 		IDDatabase(const IDDatabase&) = delete;
@@ -494,25 +518,10 @@ namespace REL
 				reinterpret_cast<const mapping_t*>(_mmap.data() + sizeof(std::uint64_t)),
 				*reinterpret_cast<const std::uint64_t*>(_mmap.data())
 			};
-
-#if !defined(NDEBUG)
-			_offset2id.clear();
-			_offset2id.reserve(_id2offset.size());
-			_offset2id.insert(_offset2id.begin(), _id2offset.begin(), _id2offset.end());
-			std::sort(
-				_offset2id.begin(),
-				_offset2id.end(),
-				[](auto&& a_lhs, auto&& a_rhs) {
-					return a_lhs.offset < a_rhs.offset;
-				});
-#endif
 		}
 
 		boost::iostreams::mapped_file_source _mmap;
 		stl::span<const mapping_t> _id2offset;
-#if !defined(NDEBUG)
-		std::vector<mapping_t> _offset2id;
-#endif
 	};
 
 	class Offset

@@ -47,7 +47,7 @@ namespace RE
 		BGSOutfit* jailOutfit;							 // 28
 		FACTION_CRIME_DATA_VALUES crimevalues;			 // 30
 	};
-	static_assert(sizeof(FACTION_DATA) == 0x48);
+	static_assert(sizeof(FACTION_CRIME_DATA) == 0x48);
 
 	struct FACTION_VENDOR_DATA_VALUES
 	{
