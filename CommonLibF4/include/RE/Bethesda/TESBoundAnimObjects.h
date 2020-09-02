@@ -6,6 +6,7 @@
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/FormComponents.h"
 #include "RE/Bethesda/TESBoundObjects.h"
+#include "RE/Bethesda/TESCondition.h"
 #include "RE/NetImmerse/NiColor.h"
 #include "RE/NetImmerse/NiPoint3.h"
 
@@ -381,4 +382,50 @@ namespace RE
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLVLN };
 	};
 	static_assert(sizeof(TESLevCharacter) == 0xD8);
+
+	class BGSTerminal :
+		public TESFurniture	 // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSTerminal };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kTERM };
+
+		class BodyTextItem
+		{
+		public:
+			// members
+			BGSLocalizedString itemText;  // 00
+			TESCondition conditions;	  // 08
+		};
+		static_assert(sizeof(BodyTextItem) == 0x10);
+
+		class MenuItem
+		{
+		public:
+			union USelectionResult
+			{
+				BGSTerminal* subMenu;
+				BGSLocalizedString* displayText;
+				TESTexture* displayImage;
+				BGSNote* holotape;
+			};
+			static_assert(sizeof(USelectionResult) == 0x8);
+
+			// members
+			BGSLocalizedString itemText;	   // 00
+			BGSLocalizedString responseText;   // 08
+			USelectionResult selectionResult;  // 10
+			TESCondition conditions;		   // 18
+			std::uint16_t id;				   // 20
+			std::int8_t flags;				   // 22
+		};
+		static_assert(sizeof(MenuItem) == 0x28);
+
+		// members
+		BSTArray<BodyTextItem> bodyTextItems;	// 1A0
+		BSTArray<MenuItem> menuItems;			// 1B8
+		BGSLocalizedString headerTextOverride;	// 1D0
+		BGSLocalizedString welcomeText;			// 1D8
+	};
+	static_assert(sizeof(BGSTerminal) == 0x1E0);
 }

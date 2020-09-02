@@ -264,6 +264,7 @@
     <ClCompile Include="include\RE\Bethesda\FormComponents.cpp" />
     <ClCompile Include="include\RE\Bethesda\InputEvent.cpp" />
     <ClCompile Include="include\RE\Bethesda\Settings.cpp" />
+    <ClCompile Include="include\RE\Fallout.cpp" />
     <ClCompile Include="include\RE\NetImmerse\NiRect.cpp" />
     <ClCompile Include="include\RE\Scaleform\GFx\GFx_Player.cpp" />
   </ItemGroup>
@@ -279,6 +280,9 @@
     <ClInclude Include="include\REL\Relocation.h" />
     <ClInclude Include="include\RE\Bethesda\AI.h" />
     <ClInclude Include="include\RE\Bethesda\Atomic.h" />
+    <ClInclude Include="include\RE\Bethesda\BGSCharacterMorph.h" />
+    <ClInclude Include="include\RE\Bethesda\BGSCharacterTint.h" />
+    <ClInclude Include="include\RE\Bethesda\BGSHeadPart.h" />
     <ClInclude Include="include\RE\Bethesda\BGSTextureSet.h" />
     <ClInclude Include="include\RE\Bethesda\MagicItems.h" />
     <ClInclude Include="include\RE\Bethesda\TESBoundAnimObjects.h" />
@@ -318,6 +322,7 @@
     <ClInclude Include="include\RE\Bethesda\TESCondition.h" />
     <ClInclude Include="include\RE\Bethesda\TESFaction.h" />
     <ClInclude Include="include\RE\Bethesda\TESForms.h" />
+    <ClInclude Include="include\RE\Bethesda\TESObjectREFRs.h" />
     <ClInclude Include="include\RE\Bethesda\TESRace.h" />
     <ClInclude Include="include\RE\Bethesda\UI.h" />
     <ClInclude Include="include\RE\Bethesda\UIMessage.h" />

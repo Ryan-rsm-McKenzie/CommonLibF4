@@ -25,6 +25,7 @@ namespace RE
 	class BGSEquipType;
 	class BGSFeaturedItemMessage;
 	class BGSForcedLocRefType;
+	class BGSIdleCollection;
 	class BGSInstanceNamingRulesForm;
 	class BGSKeywordForm;
 	class BGSMenuDisplayObject;
@@ -50,12 +51,14 @@ namespace RE
 	class TESActorBaseData;
 	class TESAIForm;
 	class TESBipedModelForm;
+	class TESImageSpaceModifiableForm;
 	class TESLeveledList;
 	class TESModelTri;
 	class TESProduceForm;
 	class TESRaceForm;
 	class TESReactionForm;
 	class TESSpellList;
+	class TESTexture1024;
 	class TESValueForm;
 	class TESWeightForm;
 
@@ -101,6 +104,8 @@ namespace RE
 	class TESFaction;
 	class TESForm;
 	class TESGlobal;
+	class TESIdleForm;
+	class TESImageSpaceModifier;
 	class TESLevItem;
 	class TESLevSpell;
 	class TESObjectARMO;
@@ -245,9 +250,9 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_TESTexture };
 
 		// override (BaseFormComponent)
-		virtual void InitializeDataComponent() override;		  // 02
-		virtual void ClearDataComponent() override { return; }	  // 03
-		virtual void CopyComponent(BaseFormComponent*) override;  // 06
+		void InitializeDataComponent() override;		  // 02
+		void ClearDataComponent() override { return; }	  // 03
+		void CopyComponent(BaseFormComponent*) override;  // 06
 
 		// add
 		virtual std::uint32_t GetMaxAllowedSize() { return 0; }						// 07
@@ -292,11 +297,11 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_BGSAttachParentArray };
 
 		// override (BaseFormComponent)
-		virtual std::uint32_t GetFormComponentType() const override { return 'APPA'; }	// 01
-		virtual void InitializeDataComponent() override { return; }						// 02
-		virtual void ClearDataComponent() override;										// 03
-		virtual void CopyComponent(BaseFormComponent*) override { return; }				// 06
-		virtual void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
+		std::uint32_t GetFormComponentType() const override { return 'APPA'; }	// 01
+		void InitializeDataComponent() override { return; }						// 02
+		void ClearDataComponent() override;										// 03
+		void CopyComponent(BaseFormComponent*) override { return; }				// 06
+		void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
 	};
 	static_assert(sizeof(BGSAttachParentArray) == 0x18);
 
@@ -471,6 +476,20 @@ namespace RE
 	};
 	static_assert(sizeof(BGSForcedLocRefType) == 0x10);
 
+	class BGSIdleCollection :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSIdleCollection };
+
+		// members
+		std::int8_t idleFlags;	  // 08
+		std::int8_t idleCount;	  // 09
+		TESIdleForm** idleArray;  // 10
+		float timerCheckForIdle;  // 18
+	};
+	static_assert(sizeof(BGSIdleCollection) == 0x20);
+
 	class BGSInstanceNamingRulesForm :
 		public BaseFormComponent  // 00
 	{
@@ -529,9 +548,9 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_BGSMessageIcon };
 
 		// override (BaseFormComponent)
-		virtual void InitializeDataComponent() override;		  // 02
-		virtual void ClearDataComponent() override;				  // 03
-		virtual void CopyComponent(BaseFormComponent*) override;  // 06
+		void InitializeDataComponent() override;		  // 02
+		void ClearDataComponent() override;				  // 03
+		void CopyComponent(BaseFormComponent*) override;  // 06
 
 		// members
 		TESIcon icon;  // 08
@@ -616,12 +635,12 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_BGSPreviewTransform };
 
 		// override (BaseFormComponent)
-		virtual std::uint32_t GetFormComponentType() const override { return 'NRTP'; }	// 01
-		virtual void InitializeDataComponent() override { transform = nullptr; }		// 02
-		virtual void ClearDataComponent() override { return; }							// 03
-		virtual void InitComponent() override;											// 04
-		virtual void CopyComponent(BaseFormComponent*) override { return; }				// 06
-		virtual void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
+		std::uint32_t GetFormComponentType() const override { return 'NRTP'; }	// 01
+		void InitializeDataComponent() override { transform = nullptr; }		// 02
+		void ClearDataComponent() override { return; }							// 03
+		void InitComponent() override;											// 04
+		void CopyComponent(BaseFormComponent*) override { return; }				// 06
+		void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
 
 		// members
 		BGSTransform* transform;  // 08
@@ -657,12 +676,12 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_BGSSoundTagComponent };
 
 		// override (BaseFormComponent)
-		virtual std::uint32_t GetFormComponentType() const override { return 'CTAC'; }	// 01
-		virtual void InitializeDataComponent() override { return; }						// 02
-		virtual void ClearDataComponent() override;										// 03
-		virtual void InitComponent() override;											// 04
-		virtual void CopyComponent(BaseFormComponent*) override { return; }				// 06
-		virtual void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
+		std::uint32_t GetFormComponentType() const override { return 'CTAC'; }	// 01
+		void InitializeDataComponent() override { return; }						// 02
+		void ClearDataComponent() override;										// 03
+		void InitComponent() override;											// 04
+		void CopyComponent(BaseFormComponent*) override { return; }				// 06
+		void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
 	};
 	static_assert(sizeof(BGSSoundTagComponent) == 0x8);
 
@@ -929,6 +948,17 @@ namespace RE
 	};
 	static_assert(sizeof(TESBipedModelForm) == 0x108);
 
+	class TESImageSpaceModifiableForm :
+		public BaseFormComponent  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESImageSpaceModifiableForm };
+
+		// members
+		TESImageSpaceModifier* formImageSpaceModifying;	 // 08
+	};
+	static_assert(sizeof(TESImageSpaceModifiableForm) == 0x10);
+
 	struct LEVELED_OBJECT
 	{
 	public:
@@ -1051,6 +1081,17 @@ namespace RE
 		SpellData* spellData;  // 08
 	};
 	static_assert(sizeof(TESSpellList) == 0x10);
+
+	class TESTexture1024 :
+		public TESTexture  // 10
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESTexture1024 };
+
+		// override (TESTexture)
+		std::uint32_t GetMaxAllowedSize() override { return 1024; }	 // 07
+	};
+	static_assert(sizeof(TESTexture1024) == 0x10);
 
 	class TESValueForm :
 		public BaseFormComponent  // 00

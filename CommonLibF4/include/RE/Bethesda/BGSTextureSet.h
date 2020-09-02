@@ -2,7 +2,9 @@
 
 #include "RE/Bethesda/BSResource.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
+#include "RE/Bethesda/BSTextureSet.h"
 #include "RE/Bethesda/FormComponents.h"
+#include "RE/Bethesda/TESBoundObjects.h"
 #include "RE/Bethesda/TESForms.h"
 #include "RE/NetImmerse/NiAlphaProperty.h"
 #include "RE/NetImmerse/NiColor.h"

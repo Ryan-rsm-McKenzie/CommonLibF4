@@ -4,6 +4,9 @@
 
 #include "RE/Bethesda/AI.h"
 #include "RE/Bethesda/Atomic.h"
+#include "RE/Bethesda/BGSCharacterMorph.h"
+#include "RE/Bethesda/BGSCharacterTint.h"
+#include "RE/Bethesda/BGSHeadPart.h"
 #include "RE/Bethesda/BGSTextureSet.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSInputEventReceiver.h"
@@ -43,6 +46,7 @@
 #include "RE/Bethesda/TESCondition.h"
 #include "RE/Bethesda/TESFaction.h"
 #include "RE/Bethesda/TESForms.h"
+#include "RE/Bethesda/TESObjectREFRs.h"
 #include "RE/Bethesda/TESRace.h"
 #include "RE/Bethesda/UI.h"
 #include "RE/Bethesda/UIMessage.h"

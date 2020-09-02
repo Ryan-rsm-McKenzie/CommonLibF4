@@ -72,6 +72,15 @@
     <ClInclude Include="include\RE\Bethesda\Atomic.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BGSCharacterMorph.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BGSCharacterTint.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BGSHeadPart.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BGSTextureSet.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -187,6 +196,9 @@
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\TESForms.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\TESObjectREFRs.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\TESRace.h">
@@ -397,6 +409,9 @@
     </ClCompile>
     <ClCompile Include="include\RE\Bethesda\Settings.cpp">
       <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Fallout.cpp">
+      <Filter>include\RE</Filter>
     </ClCompile>
     <ClCompile Include="include\RE\NetImmerse\NiRect.cpp">
       <Filter>include\RE\NetImmerse</Filter>

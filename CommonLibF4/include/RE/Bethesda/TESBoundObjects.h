@@ -10,10 +10,13 @@
 #include "RE/Bethesda/FormComponents.h"
 #include "RE/Bethesda/TESCondition.h"
 #include "RE/Bethesda/TESForms.h"
+#include "RE/NetImmerse/NiColor.h"
 #include "RE/NetImmerse/NiSmartPointer.h"
 
 namespace RE
 {
+	enum class CHUNK_ID;
+	enum class SOUND_LEVEL;
 	enum class WEAPON_RUMBLE_PATTERN;
 	enum class WEAPONHITBEHAVIOR;
 
@@ -96,22 +99,6 @@ namespace RE
 		BGSSoundTagComponent soundTagComponent;	 // 60
 	};
 	static_assert(sizeof(TESBoundObject) == 0x68);
-
-	class BGSComponent :
-		public TESBoundObject,		// 00
-		public TESFullName,			// 68
-		public TESValueForm,		// 78
-		public BGSCraftingUseSound	// 88
-	{
-	public:
-		static constexpr auto RTTI{ RTTI_BGSComponent };
-		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCMPO };
-
-		// members
-		TESObjectMISC* scrapItem;	// 98
-		TESGlobal* modScrapScalar;	// 90
-	};
-	static_assert(sizeof(BGSComponent) == 0xA8);
 
 	class BGSComponent :
 		public TESBoundObject,		// 00
@@ -266,7 +253,8 @@ namespace RE
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMISC };
 
 		// add
-		virtual void SaveImpl() { return; }	 // 67
+		virtual void SaveImpl() { return; }					   // 67
+		virtual void LoadImpl(TESFile*, CHUNK_ID) { return; }  // 68
 
 		// members
 		BSTArray<BSTTuple<TESForm*, BGSTypedFormValuePair::SharedVal>>* componentData;	// 158
@@ -596,4 +584,197 @@ namespace RE
 		TESModel shellCasing;		   // 180
 	};
 	static_assert(sizeof(TESAmmo) == 0x1B0);
+
+	class TESKey :
+		public TESObjectMISC  // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESKey };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kKEYM };
+	};
+	static_assert(sizeof(TESKey) == 0x168);
+
+	class BGSIdleMarker :
+		public TESBoundObject,	  // 00
+		public BGSKeywordForm,	  // 68
+		public TESModel,		  // 88
+		public BGSIdleCollection  // B8
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSIdleMarker };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIDLM };
+
+		// members
+		BGSKeyword* animArchType;  // D8
+		BGSKeyword* flavorAnim;	   // E0
+	};
+	static_assert(sizeof(BGSIdleMarker) == 0xE8);
+
+	class BGSNote :
+		public TESBoundObject,		   // 000
+		public TESWeightForm,		   // 068
+		public TESValueForm,		   // 078
+		public TESModel,			   // 088
+		public TESFullName,			   // 0B8
+		public TESIcon,				   // 0C8
+		public BGSPickupPutdownSounds  // 0D8
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSNote };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNOTE };
+
+		// members
+		BSFixedString programFile;	// 0F0
+		union
+		{
+			BGSSoundDescriptorForm* noteSound;
+			std::size_t noteFormID;
+		};				   // 0F8
+		std::int8_t type;  // 100
+		bool hasBeenRead;  // 101
+	};
+	static_assert(sizeof(BGSNote) == 0x108);
+
+	struct BGSProjectileData
+	{
+	public:
+		// members
+		std::uint32_t flags;					  // 00
+		float gravity;							  // 04
+		float speed;							  // 08
+		float range;							  // 0C
+		TESObjectLIGH* light;					  // 10
+		TESObjectLIGH* muzzleFlashLight;		  // 18
+		float explosionProximity;				  // 20
+		float explosionTimer;					  // 24
+		BGSExplosion* explosionType;			  // 28
+		BGSSoundDescriptorForm* activeSoundLoop;  // 30
+		float muzzleFlashDuration;				  // 38
+		float fadeOutTime;						  // 3C
+		float force;							  // 40
+		BGSSoundDescriptorForm* countdownSound;	  // 48
+		BGSSoundDescriptorForm* deactivateSound;  // 50
+		TESObjectWEAP* defaultWeaponSource;		  // 58
+		float coneSpread;						  // 60
+		float collisionRadius;					  // 64
+		float lifetime;							  // 68
+		float relaunchInterval;					  // 6C
+		BGSTextureSet* decalData;				  // 70
+		BGSCollisionLayer* collisionLayer;		  // 78
+		BGSProjectile* vatsProjectile;			  // 80
+		std::int8_t tracerFrequency;			  // 88
+	};
+	static_assert(sizeof(BGSProjectileData) == 0x90);
+
+	class BGSProjectile :
+		public TESBoundObject,			  // 000
+		public TESFullName,				  // 068
+		public TESModel,				  // 078
+		public BGSPreloadable,			  // 0A8
+		public BGSDestructibleObjectForm  // 0B0
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSProjectile };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPROJ };
+
+		// members
+		BGSProjectileData data;									 // 0C0
+		TESModel muzzleFlashModel;								 // 150
+		stl::enumeration<SOUND_LEVEL, std::int32_t> soundLevel;	 // 180
+	};
+	static_assert(sizeof(BGSProjectile) == 0x188);
+
+	struct BGSHazardData
+	{
+	public:
+		// members
+		std::uint32_t limit;			  // 00
+		float radius;					  // 04
+		float lifetime;					  // 08
+		float imageSpaceRadius;			  // 0C
+		float targetInterval;			  // 10
+		std::uint32_t flags;			  // 14
+		MagicItem* spell;				  // 18
+		TESObjectLIGH* light;			  // 20
+		BGSImpactDataSet* impactDataSet;  // 28
+		BGSSoundDescriptorForm* sound;	  // 30
+		float fullEffectRadius;			  // 38
+		float taperWeight;				  // 3C
+		float taperCurve;				  // 40
+	};
+	static_assert(sizeof(BGSHazardData) == 0x48);
+
+	class BGSHazard :
+		public TESBoundObject,				// 000
+		public TESFullName,					// 068
+		public TESModel,					// 078
+		public BGSPreloadable,				// 0A8
+		public TESImageSpaceModifiableForm	// 0B0
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSHazard };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kHAZD };
+
+		// members
+		BGSHazardData data;	 // 0C0
+	};
+	static_assert(sizeof(BGSHazard) == 0x108);
+
+	class BGSBendableSpline :
+		public TESBoundObject  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSBendableSpline };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kBNDS };
+
+		struct SplineData_Untilv130
+		{
+		public:
+			// members
+			float numTiles;			  // 00
+			std::uint16_t numSlices;  // 04
+			std::uint16_t flags;	  // 06
+			NiColor color;			  // 08
+		};
+		static_assert(sizeof(SplineData_Untilv130) == 0x14);
+
+		struct SplineData :
+			public SplineData_Untilv130	 // 00
+		{
+		public:
+			// members
+			float windSensibility;	// 14
+			float flexibility;		// 18
+		};
+		static_assert(sizeof(SplineData) == 0x1C);
+
+		// members
+		SplineData data;			// 68
+		BGSTextureSet* textureSet;	// 88
+	};
+	static_assert(sizeof(BGSBendableSpline) == 0x90);
+
+	class TESSoulGem :
+		public TESObjectMISC  // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESSoulGem };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSLGM };
+
+		// members
+		TESSoulGem* linkedSoulGem;	// 168
+		std::int8_t currentSoul;	// 170
+		std::int8_t soulCapacity;	// 171
+	};
+	static_assert(sizeof(TESSoulGem) == 0x178);
+
+	class TESLevItem :
+		public TESBoundObject,	// 00
+		public TESLeveledList	// 68
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESLevItem };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLVLI };
+	};
+	static_assert(sizeof(TESLevItem) == 0x98);
 }

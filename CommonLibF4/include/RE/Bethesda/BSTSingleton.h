@@ -3,6 +3,13 @@
 namespace RE
 {
 	template <class T>
+	class BSTSingletonExplicit
+	{
+	public:
+		using value_type = T;
+	};
+
+	template <class T>
 	struct BSTSingletonSDMOpStaticBuffer
 	{
 	public:

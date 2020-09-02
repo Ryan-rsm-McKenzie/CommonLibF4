@@ -63,24 +63,13 @@ namespace RE
 
 		BSStringT(const BSStringT& a_rhs) { copy_from(a_rhs); }
 
-		template <
-			class A = allocator_type,
-			std::enable_if_t<
-				A::propagate_on_container_move_assignment::value,
-				int> = 0>
 		BSStringT(BSStringT&& a_rhs)
 		{
-			move_from(std::move(a_rhs));
-		}
-
-		template <
-			class A = allocator_type,
-			std::enable_if_t<
-				!A::propagate_on_container_move_assignment::value,
-				int> = 0>
-		BSStringT(BSStringT&& a_rhs)
-		{
-			copy_from(a_rhs);
+			if constexpr (allocator_type::propagate_on_container_move_assignment::value) {
+				move_from(std::move(a_rhs));
+			} else {
+				copy_from(a_rhs);
+			}
 		}
 
 		~BSStringT() { release(); }
@@ -93,28 +82,14 @@ namespace RE
 			return *this;
 		}
 
-		template <
-			class A = allocator_type,
-			std::enable_if_t<
-				A::propagate_on_container_move_assignment::value,
-				int> = 0>
 		BSStringT& operator=(BSStringT&& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
-				move_from(std::move(a_rhs));
-			}
-			return *this;
-		}
-
-		template <
-			class A = allocator_type,
-			std::enable_if_t<
-				!A::propagate_on_container_move_assignment::value,
-				int> = 0>
-		BSStringT& operator=(BSStringT&& a_rhs)
-		{
-			if (this != std::addressof(a_rhs)) {
-				copy_from(a_rhs);
+				if constexpr (allocator_type::propagate_on_container_move_assignment::value) {
+					move_from(std::move(a_rhs));
+				} else {
+					copy_from(a_rhs);
+				}
 			}
 			return *this;
 		}
@@ -172,9 +147,5 @@ namespace RE
 	};
 
 	template <std::uint16_t N>
-	class BSStaticStringT :
-		public BSStringT<char, N, FixedLengthMemoryManagementPol>  // 00
-	{
-	public:
-	};
+	using BSStaticStringT = BSStringT<char, N, FixedLengthMemoryManagementPol>;
 }
