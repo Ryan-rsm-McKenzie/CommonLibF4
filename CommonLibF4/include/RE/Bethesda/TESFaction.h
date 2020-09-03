@@ -1,6 +1,6 @@
 #pragma once
 
-#include "RE/Bethesda/AI.h"
+#include "RE/Bethesda/AITimeStamp.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/FormComponents.h"

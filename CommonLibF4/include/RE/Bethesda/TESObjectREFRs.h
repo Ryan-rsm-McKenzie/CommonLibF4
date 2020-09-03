@@ -1,11 +1,15 @@
 #pragma once
 
+#include "RE/Bethesda/BGSBodyPartDefs.h"
 #include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/BSSoundHandle.h"
 #include "RE/Bethesda/BSStringT.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTEvent.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/TESForms.h"
+#include "RE/Havok/hknpBodyId.h"
+#include "RE/Havok/hknpClosestUniqueBodyIdHitCollector.h"
 #include "RE/NetImmerse/NiPoint3.h"
 #include "RE/NetImmerse/NiRefObject.h"
 
@@ -36,8 +40,10 @@ namespace RE
 	class MagicCaster;
 	class MagicTarget;
 	class NiAVObject;
+	class NiLight;
 	class NiNode;
 	class NiTransform;
+	class NonActorMagicCaster;
 	class TargetEntry;
 	class TBO_InstanceData;
 	class TrapData;
@@ -173,25 +179,6 @@ namespace RE
 	{
 	public:
 	};
-
-	template <class Integral, Integral N, class Discriminant>
-	struct hkHandle
-	{
-	public:
-		~hkHandle() noexcept {}	 // intentional
-
-		// members
-		Integral value;	 // 0
-	};
-
-	struct hknpBodyIdBaseDiscriminant;
-
-	struct hknpBodyId :
-		public hkHandle<std::uint32_t, 0x7FFF'FFFF, hknpBodyIdBaseDiscriminant>
-	{
-	public:
-	};
-	static_assert(sizeof(hknpBodyId) == 0x4);
 
 	struct OBJ_REFR
 	{
@@ -357,4 +344,66 @@ namespace RE
 		bool predestroyed;						   // 10B
 	};
 	static_assert(sizeof(TESObjectREFR) == 0x110);
+
+	class Explosion :
+		public TESObjectREFR  // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_Explosion };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kREFR };
+
+		struct ExplodedLimb
+		{
+		public:
+			// members
+			stl::enumeration<BGSBodyPartDefs::LIMB_ENUM, std::int32_t> limb;  // 00
+			ActorValueInfo* limbCondition;									  // 08
+			float distance;													  // 10
+		};
+		static_assert(sizeof(ExplodedLimb) == 0x18);
+
+		class ExplosionTarget
+		{
+		public:
+			// members
+			ObjectRefHandle ref;			   // 00
+			std::uint32_t flags;			   // 04
+			float hitFromExplosionSqrLen;	   // 08
+			BSTArray<ExplodedLimb> limbArray;  // 10
+		};
+		static_assert(sizeof(ExplosionTarget) == 0x28);
+
+		// add
+		virtual void Initialize();			 // C6
+		virtual void Update(float a_delta);	 // C7
+		virtual void FindTargets();			 // C8
+
+		// members
+		hknpClosestUniqueBodyIdHitCollector collector;	 // 110
+		void* explosionDBHandle;						 // 520 - TODO
+		float age;										 // 528
+		float obj3Dlifetime;							 // 52C
+		float audioLifetime;							 // 530
+		float buildTime;								 // 534
+		float innerRadius;								 // 538
+		float outerRadius;								 // 53C
+		float imageSpaceRadius;							 // 540
+		float damageMult;								 // 544
+		BSSimpleList<ExplosionTarget*> targetList;		 // 548
+		BSTSmallArray<BSSoundHandle, 4> soundHandles;	 // 558
+		NiPointer<NiLight> light;						 // 588
+		ObjectRefHandle owner;							 // 590
+		ObjectRefHandle explodedRef;					 // 594
+		ObjectRefHandle createdRef;						 // 598
+		BSTSmartPointer<ActorCause> actorCause;			 // 5A0
+		NonActorMagicCaster* caster;					 // 5A8
+		BGSObjectInstanceT<TESObjectWEAP> weaponSource;	 // 5B0
+		std::int32_t frameCount;						 // 5C0
+		NiPoint3A closestPoint;							 // 5D0
+		NiPoint3A closestPointNormal;					 // 5E0
+		float calculatedDamage;							 // 5F0
+		float scale;									 // 5F4
+		std::uint32_t flags;							 // 5F8
+	};
+	static_assert(sizeof(Explosion) == 0x600);
 }

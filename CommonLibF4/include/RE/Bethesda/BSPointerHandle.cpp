@@ -1,5 +1,8 @@
 #include "RE/Bethesda/BSPointerHandle.h"
 
+#include "RE/Bethesda/Actor.h"
+#include "RE/Bethesda/TESObjectREFRs.h"
+
 namespace RE
 {
 	template class BSUntypedPointerHandle<>;

@@ -249,8 +249,8 @@ namespace RE
 		kNAVI,	// 3E NAVI X NavMeshInfoMap
 		kCELL,	// 3F CELL X TESObjectCELL
 		kREFR,	// 40 REFR X TESObjectREFR
-				//         _ Explosion
-		kACHR,	// 41 ACHR _ Actor
+				//         X Explosion
+		kACHR,	// 41 ACHR X Actor
 				//         _ PlayerCharacter
 		kPMIS,	// 42 PMIS _ MissileProjectile
 		kPARW,	// 43 PARW _ ArrowProjectile

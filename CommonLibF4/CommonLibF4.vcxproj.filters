@@ -19,6 +19,9 @@
     <Filter Include="include\RE\Bethesda">
       <UniqueIdentifier>{32c9d02d-a5dd-4eaf-a6f0-72a2dd5446a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\RE\Havok">
+      <UniqueIdentifier>{14e33ed0-d6b4-48e1-a080-17178e26bbc9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="include\RE\msvc">
       <UniqueIdentifier>{489dbcb2-a771-4423-b687-ca3999b77dce}</UniqueIdentifier>
     </Filter>
@@ -66,10 +69,16 @@
     <ClInclude Include="include\F4SE\Version.h">
       <Filter>include\F4SE</Filter>
     </ClInclude>
-    <ClInclude Include="include\RE\Bethesda\AI.h">
+    <ClInclude Include="include\RE\Bethesda\Actor.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\AITimeStamp.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\Atomic.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BGSBodyPartDefs.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BGSCharacterMorph.h">
@@ -103,6 +112,9 @@
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSScaleformManager.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSSoundHandle.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSSpring.h">
@@ -218,6 +230,48 @@
     </ClInclude>
     <ClInclude Include="include\RE\Fallout.h">
       <Filter>include\RE</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hkArray.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hkBaseObject.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hkBaseTypes.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hkHandle.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hknpAllHitsCollector.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hknpBodyId.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hknpClosestUniqueBodyIdHitCollector.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hknpCollisionQueryCollector.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hknpCollisionResult.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hknpMaterialId.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hknpUniqueBodyIdHitCollector.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hkRefPtr.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hkSimdFloat.h">
+      <Filter>include\RE\Havok</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Havok\hkVector4.h">
+      <Filter>include\RE\Havok</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\msvc\memory.h">
       <Filter>include\RE\msvc</Filter>

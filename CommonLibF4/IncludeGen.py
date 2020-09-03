@@ -9,6 +9,7 @@ def make_header(a_directory, a_filename, a_exclude):
 	out = open(a_directory + "/" + a_filename, "w", encoding="utf-8")
 	out.write("#pragma once\n")
 	out.write("\n")
+	out.write("#pragma warning(push)\n")
 	out.write('#include "F4SE/Impl/PCH.h"\n')
 	out.write("\n")
 
@@ -35,6 +36,8 @@ def make_header(a_directory, a_filename, a_exclude):
 		out.write('#include "')
 		out.write(file)
 		out.write('"\n')
+	
+	out.write("#pragma warning(pop)\n")
 
 def main():
 	cur = os.path.dirname(os.path.realpath(__file__)) + "/include"

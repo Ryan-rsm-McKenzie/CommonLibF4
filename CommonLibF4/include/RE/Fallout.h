@@ -1,9 +1,12 @@
 #pragma once
 
+#pragma warning(push)
 #include "F4SE/Impl/PCH.h"
 
-#include "RE/Bethesda/AI.h"
+#include "RE/Bethesda/AITimeStamp.h"
+#include "RE/Bethesda/Actor.h"
 #include "RE/Bethesda/Atomic.h"
+#include "RE/Bethesda/BGSBodyPartDefs.h"
 #include "RE/Bethesda/BGSCharacterMorph.h"
 #include "RE/Bethesda/BGSCharacterTint.h"
 #include "RE/Bethesda/BGSHeadPart.h"
@@ -15,6 +18,7 @@
 #include "RE/Bethesda/BSPointerHandle.h"
 #include "RE/Bethesda/BSResource.h"
 #include "RE/Bethesda/BSScaleformManager.h"
+#include "RE/Bethesda/BSSoundHandle.h"
 #include "RE/Bethesda/BSSpring.h"
 #include "RE/Bethesda/BSStringPool.h"
 #include "RE/Bethesda/BSStringT.h"
@@ -52,6 +56,20 @@
 #include "RE/Bethesda/UIMessage.h"
 #include "RE/Bethesda/UIMessageQueue.h"
 #include "RE/Bethesda/UserEvents.h"
+#include "RE/Havok/hkArray.h"
+#include "RE/Havok/hkBaseObject.h"
+#include "RE/Havok/hkBaseTypes.h"
+#include "RE/Havok/hkHandle.h"
+#include "RE/Havok/hkRefPtr.h"
+#include "RE/Havok/hkSimdFloat.h"
+#include "RE/Havok/hkVector4.h"
+#include "RE/Havok/hknpAllHitsCollector.h"
+#include "RE/Havok/hknpBodyId.h"
+#include "RE/Havok/hknpClosestUniqueBodyIdHitCollector.h"
+#include "RE/Havok/hknpCollisionQueryCollector.h"
+#include "RE/Havok/hknpCollisionResult.h"
+#include "RE/Havok/hknpMaterialId.h"
+#include "RE/Havok/hknpUniqueBodyIdHitCollector.h"
 #include "RE/NetImmerse/NiAlphaProperty.h"
 #include "RE/NetImmerse/NiColor.h"
 #include "RE/NetImmerse/NiFlags.h"
@@ -96,3 +114,4 @@
 #include "RE/Scaleform/Render/Render_Types2D.h"
 #include "RE/Scaleform/Render/Render_Viewport.h"
 #include "RE/msvc/memory.h"
+#pragma warning(pop)
