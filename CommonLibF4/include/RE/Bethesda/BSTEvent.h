@@ -2,6 +2,7 @@
 
 #include "RE/Bethesda/BSLock.h"
 #include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/BSTOptional.h"
 
 namespace RE
 {
@@ -123,4 +124,61 @@ namespace RE
 		std::int8_t _notifying{ 0 };							  // 50
 	};
 	//static_assert(sizeof(BSTEventSource<void*>) == 0x58);
+
+	template <class T>
+	class BSTValueEvent
+	{
+	public:
+		using value_type = T;
+
+		// members
+		BSTOptional<T> optionalValue;  // 00
+	};
+
+	template <class T>
+	class BSTValueEventSink :
+		public BSTEventSink<T>	// 00
+	{
+	public:
+		struct BSTEventValueData
+		{
+		public:
+			// members
+			BSTOptional<typename T::value_type> optionalValue;	// 00
+			bool eventReceived;									// ??
+		};
+
+		// members
+		BSTEventValueData eventDataStruct;	// 08
+		BSSpinLock dataLock;				// ??
+	};
+
+	template <class T>
+	class BSTValueRequestEvent
+	{
+	public:
+		// members
+		BSTValueEventSink<T>& valueEventSink;  // 00
+	};
+
+	template <class T>
+	class BSTValueEventSource :
+		public BSTEventSink<BSTValueRequestEvent<T>>  // 00
+	{
+	public:
+		using event_type = BSTValueRequestEvent<T>;
+
+		// override (BSTEventSink<BSTValueRequestEvent<T>>)
+		BSEventNotifyControl ProcessEvent(const event_type& a_event, BSTEventSource<event_type>*) override	// 01
+		{
+			BSAutoLock l{ dataLock };
+			T event;
+			event.optionalValue = optionalValue;
+			a_event.valueEventSink.ProcessEvent(event, nullptr);
+		}
+
+		// members
+		BSTOptional<typename T::value_type> optionalValue;	// ??
+		BSSpinLock dataLock;								// ??
+	};
 }

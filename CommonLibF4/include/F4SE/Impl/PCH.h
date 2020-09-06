@@ -9,6 +9,8 @@
 #pragma warning(disable : 4266)	 // 'function' : no override available for virtual member function from base 'type'; function is hidden
 #pragma warning(disable : 4324)	 // 'struct_name' : structure was padded due to __declspec(align())
 #pragma warning(disable : 4371)	 // 'classname': layout of class may have changed from a previous version of the compiler due to better packing of member 'member'
+#pragma warning(disable : 4582)	 // 'type': constructor is not implicitly called
+#pragma warning(disable : 4583)	 // 'type': destructor is not implicitly called
 #pragma warning(disable : 4623)	 // 'derived class' : default constructor was implicitly defined as deleted because a base class default constructor is inaccessible or deleted
 #pragma warning(disable : 4625)	 // 'derived class' : copy constructor was implicitly defined as deleted because a base class copy constructor is inaccessible or deleted
 #pragma warning(disable : 4626)	 // 'derived class' : assignment operator was implicitly defined as deleted because a base class assignment operator is inaccessible or deleted
@@ -31,6 +33,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <ctime>
 #include <filesystem>
 #include <functional>
 #include <limits>
@@ -44,6 +47,8 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+
+static_assert(sizeof(std::time_t) == sizeof(std::size_t), "wrap std::time_t instead");
 
 #include <boost/atomic.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
@@ -707,4 +712,5 @@ namespace REL
 #include "RE/NiRTTI_IDs.h"
 #include "RE/RTTI_IDs.h"
 
+#include "RE/msvc/functional.h"
 #include "RE/msvc/memory.h"

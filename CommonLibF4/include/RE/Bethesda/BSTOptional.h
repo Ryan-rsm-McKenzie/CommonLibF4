@@ -301,6 +301,32 @@ namespace RE
 			return std::move(_value);
 		}
 
+		// 1)
+		template <
+			class U,
+			std::enable_if_t<
+				std::conjunction_v<
+					std::is_copy_constructible<value_type>,
+					std::is_convertible<U&&, value_type>>,
+				int> = 0>
+		constexpr value_type value_or(U&& a_default) const&
+		{
+			return has_value() ? value() : static_cast<T>(std::forward<U>(a_default));
+		}
+
+		// 2)
+		template <
+			class U,
+			std::enable_if_t<
+				std::conjunction_v<
+					std::is_move_constructible<value_type>,
+					std::is_convertible<U&&, value_type>>,
+				int> = 0>
+		constexpr value_type value_or(U&& a_default) &&
+		{
+			return has_value() ? std::move(*this).value() : static_cast<T>(std::forward<U>(a_default));
+		}
+
 		void reset() noexcept(
 			std::is_nothrow_destructible_v<value_type>)
 		{

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RE/Bethesda/BGSBodyPartDefs.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSLock.h"
 #include "RE/Bethesda/BSStringT.h"
@@ -12,6 +13,7 @@
 #include "RE/Bethesda/Settings.h"
 #include "RE/Bethesda/TESCondition.h"
 #include "RE/NetImmerse/NiColor.h"
+#include "RE/NetImmerse/NiPoint2.h"
 #include "RE/NetImmerse/NiPoint3.h"
 #include "RE/NetImmerse/NiSmartPointer.h"
 
@@ -185,6 +187,7 @@ namespace RE
 				//         X MagicItem
 				//         X TESBoundAnimObject
 				//         X TESActorBase
+				//         X BGSStoryManagerTreeForm
 		kTES4,	// 01 TES4
 		kGRUP,	// 02 GRUP
 		kGMST,	// 03 GMST
@@ -250,42 +253,47 @@ namespace RE
 		kCELL,	// 3F CELL X TESObjectCELL
 		kREFR,	// 40 REFR X TESObjectREFR
 				//         X Explosion
+				//         X Projectile
 		kACHR,	// 41 ACHR X Actor
-				//         _ PlayerCharacter
-		kPMIS,	// 42 PMIS _ MissileProjectile
-		kPARW,	// 43 PARW _ ArrowProjectile
-		kPGRE,	// 44 PGRE _ GrenadeProjectile
-		kPBEA,	// 45 PBEA _ BeamProjectile
-		kPFLA,	// 46 PFLA _ FlameProjectile
-		kPCON,	// 47 PCON _ ConeProjectile
-		kPBAR,	// 48 PBAR _ BarrierProjectile
-		kPHZD,	// 49 PHZD _ Hazard
-		kWRLD,	// 4A WRLD _ TESWorldSpace
-		kLAND,	// 4B LAND _ TESObjectLAND
-		kNAVM,	// 4C NAVM _ NavMesh
+				//         X PlayerCharacter
+		kPMIS,	// 42 PMIS X MissileProjectile
+		kPARW,	// 43 PARW X ArrowProjectile
+		kPGRE,	// 44 PGRE X GrenadeProjectile
+		kPBEA,	// 45 PBEA X BeamProjectile
+		kPFLA,	// 46 PFLA X FlameProjectile
+		kPCON,	// 47 PCON X ConeProjectile
+		kPBAR,	// 48 PBAR X BarrierProjectile
+		kPHZD,	// 49 PHZD X Hazard
+		kWRLD,	// 4A WRLD X TESWorldSpace
+		kLAND,	// 4B LAND X TESObjectLAND
+		kNAVM,	// 4C NAVM X NavMesh
 		kTLOD,	// 4D TLOD
-		kDIAL,	// 4E DIAL _ TESTopic
-		kINFO,	// 4F INFO _ TESTopicInfo
-		kQUST,	// 50 QUST _ TESQuest
-		kIDLE,	// 51 IDLE _ TESIdleForm
-		kPACK,	// 52 PACK _ TESPackage
-				//         _ DialoguePackage
-		kCSTY,	// 53 CSTY _ TESCombatStyle
-		kLSCR,	// 54 LSCR _ TESLoadScreen
-		kLVSP,	// 55 LVSP _ TESLevSpell
-		kANIO,	// 56 ANIO _ TESObjectANIO
-		kWATR,	// 57 WATR _ TESWaterForm
-		kEFSH,	// 58 EFSH _ TESEffectShader
+		kDIAL,	// 4E DIAL X TESTopic
+		kINFO,	// 4F INFO X TESTopicInfo
+		kQUST,	// 50 QUST X TESQuest
+		kIDLE,	// 51 IDLE X TESIdleForm
+		kPACK,	// 52 PACK X TESPackage
+				//         X AlarmPackage
+				//         X DialoguePackage
+				//         X FleePackage
+				//         X SpectatorPackage
+				//         X TrespassPackage
+		kCSTY,	// 53 CSTY X TESCombatStyle
+		kLSCR,	// 54 LSCR X TESLoadScreen
+		kLVSP,	// 55 LVSP X TESLevSpell
+		kANIO,	// 56 ANIO X TESObjectANIO
+		kWATR,	// 57 WATR X TESWaterForm
+		kEFSH,	// 58 EFSH X TESEffectShader
 		kTOFT,	// 59 TOFT
-		kEXPL,	// 5A EXPL _ BGSExplosion
-		kDEBR,	// 5B DEBR _ BGSDebris
-		kIMGS,	// 5C IMGS _ TESImageSpace
-		kIMAD,	// 5D IMAD _ TESImageSpaceModifier
-		kFLST,	// 5E FLST _ BGSListForm
-		kPERK,	// 5F PERK _ BGSPerk
-		kBPTD,	// 60 BPTD _ BGSBodyPartData
-		kADDN,	// 61 ADDN _ BGSAddonNode
-		kAVIF,	// 62 AVIF _ ActorValueInfo
+		kEXPL,	// 5A EXPL X BGSExplosion
+		kDEBR,	// 5B DEBR X BGSDebris
+		kIMGS,	// 5C IMGS X TESImageSpace
+		kIMAD,	// 5D IMAD X TESImageSpaceModifier
+		kFLST,	// 5E FLST X BGSListForm
+		kPERK,	// 5F PERK X BGSPerk
+		kBPTD,	// 60 BPTD X BGSBodyPartData
+		kADDN,	// 61 ADDN X BGSAddonNode
+		kAVIF,	// 62 AVIF X ActorValueInfo
 		kCAMS,	// 63 CAMS _ BGSCameraShot
 		kCPTH,	// 64 CPTH _ BGSCameraPath
 		kVTYP,	// 65 VTYP _ BGSVoiceType
@@ -350,8 +358,12 @@ namespace RE
 		kTotal
 	};
 
+	enum class _D3DBLEND;
+	enum class _D3DBLENDOP;
+	enum class _D3DCMPFUNC;
 	enum class CHUNK_ID;
 	enum class COMMAND_REFUSAL_TYPE;
+	enum class DIALOGUE_SUBTYPE;
 	enum class SOUND_LEVEL;
 	enum class STAGGER_MAGNITUDE;
 
@@ -368,16 +380,27 @@ namespace RE
 		enum class SpellType;
 	}
 
+	class BGSBodyPart;
 	class BGSLoadFormBuffer;
+	class BGSPerkEntry;
 	class BGSPreviewTransform;
 	class BGSSaveFormBuffer;
+	class BSGeometry;
 	class ExtraDataList;
 	class NavMeshArray;
+	class NiColorInterpolator;
+	class NiFloatInterpolator;
+	class NiFormArray;
+	class NiTexture;
+	class QueuedFile;
 	class TBO_InstanceData;
 	class TESFile;
+	class TESPackageData;
 	class TESRegionDataList;
 	class TESRegionPointList;
+	class TESResponse;
 
+	struct BGSDebrisData;
 	struct FORM;
 	struct FORM_GROUP;
 	struct EXTERIOR_DATA;
@@ -907,62 +930,6 @@ namespace RE
 	};
 	static_assert(sizeof(TESRegion) == 0x58);
 
-	class BSNavmeshInfo;
-	class NavMeshInfo;
-
-	class BSNavmeshInfoMap :
-		public BSTSingletonExplicit<BSNavmeshInfoMap>  // 0
-	{
-	public:
-		struct IVisitor;
-
-		virtual ~BSNavmeshInfoMap();  // 00
-
-		// add
-		virtual BSNavmeshInfo* GetNavMeshInfoFixID(std::uint32_t a_navMeshID) = 0;												  // 01
-		virtual BSNavmeshInfo* GetNavmeshInfo(std::uint32_t a_navMeshID) = 0;													  // 02
-		virtual void GetAllNavMeshInfo(BSTArray<BSNavmeshInfo*>* a_returnArray) = 0;											  // 03
-		virtual void BuildListOfConnectedInfos(const BSNavmeshInfo* a_navMeshInfo, BSTArray<BSNavmeshInfo*>* a_returnArray) = 0;  // 04
-		virtual void ForEach(IVisitor& a_visitor) = 0;																			  // 05
-	};
-	static_assert(sizeof(BSNavmeshInfoMap) == 0x8);
-
-	class BSPrecomputedNavmeshInfoPathMap :
-		public BSTSingletonExplicit<BSPrecomputedNavmeshInfoPathMap>  // 00
-	{
-	public:
-		// members
-		BSTArray<BSTArray<const BSNavmeshInfo*>*> allPaths;				 // 00
-		BSTHashMap<const BSNavmeshInfo*, std::uint32_t> infoToIndexMap;	 // 18
-	};
-	static_assert(sizeof(BSPrecomputedNavmeshInfoPathMap) == 0x48);
-
-	class PrecomputedNavmeshInfoPathMap :
-		public BSPrecomputedNavmeshInfoPathMap	// 00
-	{
-	public:
-	};
-	static_assert(sizeof(PrecomputedNavmeshInfoPathMap) == 0x48);
-
-	class NavMeshInfoMap :
-		public TESForm,						  // 000
-		public BSNavmeshInfoMap,			  // 020
-		public PrecomputedNavmeshInfoPathMap  // 030
-	{
-	public:
-		static constexpr auto RTTI{ RTTI_NavMeshInfoMap };
-		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNAVI };
-
-		// members
-		bool updateAll;														  // 078
-		BSTArray<BSNavmeshInfo*> staleNavmeshInfos;							  // 080
-		BSTHashMap<std::uint32_t, NavMeshInfo*> infoMap;					  // 098
-		BSTHashMap<std::size_t, BSTArray<BSNavmeshInfo*>*> ckNavMeshInfoMap;  // 0C8
-		BSReadWriteLock mapLock;											  // 0F8
-		bool init;															  // 100
-	};
-	static_assert(sizeof(NavMeshInfoMap) == 0x108);
-
 	class TESObjectCELL :
 		public TESForm,		// 00
 		public TESFullName	// 20
@@ -1006,4 +973,380 @@ namespace RE
 		std::uint16_t preCombineDate;			// F0
 	};
 	static_assert(sizeof(TESObjectCELL) == 0xF0);
+
+	struct OBJ_LAND
+	{
+	public:
+		// members
+		std::uint32_t flags;  // 0
+	};
+	static_assert(sizeof(OBJ_LAND) == 0x4);
+
+	class TESObjectLAND :
+		public TESForm,		 // 00
+		public TESChildCell	 // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESObjectLAND };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLAND };
+
+		struct LoadedLandData;
+
+		// members
+		OBJ_LAND data;						   // 28
+		TESObjectCELL* parentCell;			   // 30
+		NiPointer<QueuedFile> queuedTextures;  // 38
+		LoadedLandData* loadedData;			   // 40
+	};
+	static_assert(sizeof(TESObjectLAND) == 0x48);
+
+	struct DIALOGUE_DATA
+	{
+	public:
+		// members
+		std::int8_t flags;		// 0
+		std::int8_t type;		// 1
+		std::uint16_t subtype;	// 2
+	};
+	static_assert(sizeof(DIALOGUE_DATA) == 0x4);
+
+	class TESTopic :
+		public TESForm,		// 00
+		public TESFullName	// 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESTopic };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDIAL };
+
+		struct InfoTree;
+
+		// members
+		DIALOGUE_DATA data;						// 30
+		std::uint32_t priorityAndJournalIndex;	// 34
+		BGSDialogueBranch* ownerBranch;			// 38
+		TESQuest* ownerQuest;					// 40
+		BGSKeyword* subtypeKeyword;				// 48
+		TESTopicInfo** topicInfos;				// 50
+		InfoTree* infoTree;						// 58
+		std::uint32_t numTopicInfos;			// 60
+		std::uint32_t topicInfoAllocSize;		// 64
+		std::uint32_t firstFileOffset;			// 68
+		BSFixedString formEditorID;				// 70
+	};
+	static_assert(sizeof(TESTopic) == 0x78);
+
+	struct TOPIC_INFO_DATA
+	{
+	public:
+		// members
+		std::uint16_t flags;		   // 0
+		std::uint16_t timeUntilReset;  // 2
+	};
+	static_assert(sizeof(TOPIC_INFO_DATA) == 0x4);
+
+	class ResponseListWrapper
+	{
+	public:
+		// members
+		TESResponse* head;	// 0
+	};
+	static_assert(sizeof(ResponseListWrapper) == 0x8);
+
+	class TESTopicInfo :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESTopicInfo };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kINFO };
+
+		// members
+		TESTopic* parentTopic;			// 20
+		TESGlobal* resetGlobal;			// 28
+		TESTopicInfo* dataInfo;			// 30
+		TESCondition objConditions;		// 38
+		std::uint16_t infoIndex;		// 40
+		std::int8_t subtitlePriority;	// 42
+		bool saidOnce;					// 43
+		TOPIC_INFO_DATA data;			// 44
+		ResponseListWrapper responses;	// 48
+	};
+	static_assert(sizeof(TESTopicInfo) == 0x50);
+
+	struct IDLE_DATA
+	{
+	public:
+		// members
+		std::int8_t loopMin;		// 0
+		std::int8_t loopMax;		// 1
+		std::int8_t flags;			// 2
+		std::uint16_t replayDelay;	// 4
+	};
+	static_assert(sizeof(IDLE_DATA) == 0x6);
+
+	class TESIdleForm :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESIdleForm };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIDLE };
+
+		// members
+		TESCondition conditions;		  // 20
+		IDLE_DATA data;					  // 28
+		NiFormArray* childIdles;		  // 30
+		TESIdleForm* parentIdle;		  // 38
+		TESIdleForm* prevIdle;			  // 40
+		BSFixedString behaviorGraphName;  // 48
+		BSFixedString animEventName;	  // 50
+		BSFixedString animFileName;		  // 58
+		BSStringT<char> formEditorID;	  // 60
+	};
+	static_assert(sizeof(TESIdleForm) == 0x70);
+
+	class TESLoadScreen :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESLoadScreen };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLSCR };
+
+		struct LoadNIFData;
+
+		// members
+		TESCondition conditions;		 // 20
+		LoadNIFData* loadNIFData;		 // 28
+		BGSLocalizedString loadingText;	 // 30
+	};
+	static_assert(sizeof(TESLoadScreen) == 0x38);
+
+	class TESObjectANIO :
+		public TESForm,				 // 00
+		public BGSModelMaterialSwap	 // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESObjectANIO };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kANIO };
+
+		// members
+		BSFixedString formEditorID;		// 60
+		BSFixedString unloadEventName;	// 68
+	};
+	static_assert(sizeof(TESObjectANIO) == 0x70);
+
+	struct EffectShaderData
+	{
+	public:
+		// members
+		stl::enumeration<_D3DBLEND, std::int32_t> textureBlendModeSource;	// 00
+		stl::enumeration<_D3DBLENDOP, std::int32_t> textureBlendOperation;	// 04
+		stl::enumeration<_D3DCMPFUNC, std::int32_t> textureZTestFunction;	// 08
+		std::uint32_t fillColor1;											// 0C
+		float fillAlphaFadeInTime;											// 10
+		float fillAlphaFullTime;											// 14
+		float fillAlphaFadeOutTime;											// 18
+		float fillAlphaPersistentPercent;									// 1C
+		float fillAlphaPulseAmplitude;										// 20
+		float fillAlphaPulseFrequency;										// 24
+		float fillTextureUAnimSpeed;										// 28
+		float fillTextureVAnimSpeed;										// 2C
+		float edgeExponentValue;											// 30
+		std::uint32_t edgeColor;											// 34
+		float edgeAlphaFadeInTime;											// 38
+		float edgeAlphaFullTime;											// 3C
+		float edgeAlphaFadeOutTime;											// 40
+		float edgeAlphaPersistentPercent;									// 44
+		float edgeAlphaPulseAmplitude;										// 48
+		float edgeAlphaPulseFrequency;										// 4C
+		float fillAlphaFullPercent;											// 50
+		float edgeAlphaFullPercent;											// 54
+		stl::enumeration<_D3DBLEND, std::int32_t> textureBlendModeDest;		// 58
+		float alphaTestStartTime;											// 5C
+		float alphaTestEndTime;												// 60
+		float alphaTestStartValue;											// 64
+		float alphaTestEndValue;											// 68
+		BGSSoundDescriptorForm* ambientSound;								// 70
+		std::uint32_t fillColor2;											// 78
+		std::uint32_t fillColor3;											// 7C
+		float fillColorScaleA[3];											// 80
+		float fillColorTimeA[3];											// 8C
+		std::uint32_t flags;												// 98
+		float fillTextureUScale;											// 9C
+		float fillTextureVScale;											// A0
+		std::int8_t boneDepth;												// A4
+	};
+	static_assert(sizeof(EffectShaderData) == 0xA8);
+
+	class TESEffectShader :
+		public TESForm,	 // 000
+		public TESModel	 // 020
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESEffectShader };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kEFSH };
+
+		// members
+		EffectShaderData data;					  // 050
+		TESTexture textureShaderTexture;		  // 0F8
+		TESTexture blockOutTexture;				  // 108
+		TESTexture paletteTexture;				  // 118
+		NiPointer<BSGeometry> shareableGeometry;  // 128
+	};
+	static_assert(sizeof(TESEffectShader) == 0x130);
+
+	class BGSDebris :
+		public TESForm,		   // 00
+		public BGSPreloadable  // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSDebris };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDEBR };
+
+		// members
+		BSSimpleList<BGSDebrisData*> dataList;	// 28
+	};
+	static_assert(sizeof(BGSDebris) == 0x38);
+
+	struct ImageSpaceBaseData
+	{
+	public:
+		// members
+		float hdrData[9];		 // 00
+		float cinematicData[3];	 // 24
+		float tintData[4];		 // 30
+		float dofData[6];		 // 40
+	};
+	static_assert(sizeof(ImageSpaceBaseData) == 0x58);
+
+	class TESImageSpace :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESImageSpace };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIMGS };
+
+		// members
+		ImageSpaceBaseData data;			// 20
+		TESTexture lutTexture;				// 78
+		NiPointer<NiTexture> niLutTexture;	// 88
+	};
+	static_assert(sizeof(TESImageSpace) == 0x90);
+
+	class TESImageSpaceModifier :
+		public TESForm	// 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESImageSpaceModifier };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIMAD };
+
+		struct ImageSpaceModifierData
+		{
+		public:
+			// members
+			bool animatable;									// 00
+			float fduration;									// 04
+			std::uint32_t keySize[21][2];						// 08
+			std::uint32_t tintColorKeySize;						// B0
+			std::uint32_t blurKeySize;							// B4
+			std::uint32_t doubleKeySize;						// B8
+			std::uint32_t radialBlurStrengthKeySize;			// BC
+			std::uint32_t radialBlurRampupKeySize;				// C0
+			std::uint32_t radialBlurStartKeySize;				// C4
+			bool useTargetForRadialBlur;						// C8
+			NiPoint2 radialBlurCenter;							// CC
+			std::uint32_t depthOfFieldStrengthKeySize;			// D4
+			std::uint32_t depthOfFieldDistanceKeySize;			// D8
+			std::uint32_t depthOfFieldRangeKeySize;				// DC
+			bool useTargetForDepthOfField;						// E0
+			std::int8_t depthOfFieldMode;						// E1
+			std::uint32_t radialBlurRampDownKeySize;			// E4
+			std::uint32_t radialBlurDownStartKeySize;			// E8
+			std::uint32_t fadeColorKeySize;						// EC
+			std::uint32_t motionBlurStrengthKeySize;			// F0
+			std::uint32_t depthOfFieldVignetteRadiusKeySize;	// F4
+			std::uint32_t depthOfFieldVignetteStrengthKeySize;	// F8
+		};
+		static_assert(sizeof(ImageSpaceModifierData) == 0xFC);
+
+		// members
+		ImageSpaceModifierData data;											  // 020
+		NiPointer<NiFloatInterpolator> interpolator[21][2];						  // 120
+		NiPointer<NiFloatInterpolator> blurInterpolator;						  // 270
+		NiPointer<NiFloatInterpolator> doubleInterpolator;						  // 278
+		NiPointer<NiColorInterpolator> tintColorInterpolator;					  // 280
+		NiPointer<NiColorInterpolator> fadeColorInterpolator;					  // 288
+		NiPointer<NiFloatInterpolator> radialBlurStrengthInterpolator;			  // 290
+		NiPointer<NiFloatInterpolator> radialBlurRampupInterpolator;			  // 298
+		NiPointer<NiFloatInterpolator> radialBlurStartInterpolator;				  // 2A0
+		NiPointer<NiFloatInterpolator> radialBlurRampDownInterpolator;			  // 2A8
+		NiPointer<NiFloatInterpolator> radialBlurDownStartInterpolator;			  // 2B0
+		NiPointer<NiFloatInterpolator> depthOfFieldStrengthInterpolator;		  // 2B8
+		NiPointer<NiFloatInterpolator> depthOfFieldDistanceInterpolator;		  // 2C0
+		NiPointer<NiFloatInterpolator> depthOfFieldRangeInterpolator;			  // 2C8
+		NiPointer<NiFloatInterpolator> depthOfFieldVignetteRadiusInterpolator;	  // 2D0
+		NiPointer<NiFloatInterpolator> depthOfFieldVignetteStrengthInterpolator;  // 2D8
+		NiPointer<NiFloatInterpolator> motionBlurStrengthInterpolator;			  // 2E0
+		BSStringT<char> formEditorID;											  // 2E8
+	};
+	static_assert(sizeof(TESImageSpaceModifier) == 0x2F8);
+
+	class BGSListForm :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSListForm };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFLST };
+
+		// members
+		BSTArray<TESForm*> arrayOfForms;				// 20
+		BSTArray<std::uint32_t>* scriptAddedTempForms;	// 38
+		std::uint32_t scriptAddedFormCount;				// 40
+	};
+	static_assert(sizeof(BGSListForm) == 0x48);
+
+	struct PerkData
+	{
+	public:
+		// members
+		bool trait;			   // 0
+		std::int8_t level;	   // 1
+		std::int8_t numRanks;  // 2
+		bool playable;		   // 3
+		bool hidden;		   // 4
+	};
+	static_assert(sizeof(PerkData) == 0x5);
+
+	class BGSPerk :
+		public TESForm,			// 00
+		public TESFullName,		// 20
+		public TESDescription,	// 30
+		public TESIcon			// 48
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSPerk };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPERK };
+
+		// members
+		PerkData data;						  // 58
+		TESCondition perkConditions;		  // 60
+		BSTArray<BGSPerkEntry*> perkEntries;  // 68
+		BGSPerk* nextPerk;					  // 80
+		BGSSoundDescriptorForm* sound;		  // 88
+		BSFixedStringCS swfFile;			  // 90
+	};
+	static_assert(sizeof(BGSPerk) == 0x98);
+
+	class BGSBodyPartData :
+		public TESForm,		   // 000
+		public TESModel,	   // 020
+		public BGSPreloadable  // 050
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSBodyPartData };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kBPTD };
+
+		// members
+		BGSBodyPart* partArray[26];								  // 058
+		BGSBodyPartDefs::HitReactionData defaultHitReactionData;  // 128
+	};
+	static_assert(sizeof(BGSBodyPartData) == 0x150);
 }

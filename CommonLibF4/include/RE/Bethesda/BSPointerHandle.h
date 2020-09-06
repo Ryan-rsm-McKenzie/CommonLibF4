@@ -164,14 +164,12 @@ namespace RE
 
 		using Handle::reset;
 
-#if 0
 		[[nodiscard]] NiPointer<T> get() const
 		{
 			NiPointer<T> ptr;
 			get_smartptr(ptr);
 			return ptr;
 		}
-#endif
 
 		[[nodiscard]] constexpr native_handle_type native_handle() noexcept
 		{

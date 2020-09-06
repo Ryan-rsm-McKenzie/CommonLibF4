@@ -3,7 +3,7 @@
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSPointerHandle.h"
 #include "RE/Bethesda/BSTArray.h"
-#include "RE/Bethesda/BSTOptional.h"
+#include "RE/Bethesda/BSTEvent.h"
 #include "RE/Bethesda/UserEvents.h"
 #include "RE/NetImmerse/NiSmartPointer.h"
 
@@ -22,14 +22,6 @@ namespace RE
 		kCrafting,
 		kStealing,
 		kStealingPowerArmor
-	};
-
-	template <class T>
-	struct BSTValueEvent
-	{
-	public:
-		// members
-		BSTOptional<T> optionalValue;  // 00
 	};
 
 	struct InventoryItemDisplayData

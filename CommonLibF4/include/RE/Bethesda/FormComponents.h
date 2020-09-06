@@ -109,6 +109,7 @@ namespace RE
 	class TESLevItem;
 	class TESLevSpell;
 	class TESObjectARMO;
+	class TESObjectCELL;
 	class TESObjectREFR;
 	class TESPackage;
 	class TESRace;
@@ -179,6 +180,18 @@ namespace RE
 		virtual void HandleCloseFinish(TESObjectREFR*, TESObjectREFR*) { return; }		 // 04
 	};
 	static_assert(sizeof(BGSOpenCloseForm) == 0x8);
+
+	struct TESChildCell
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESChildCell };
+
+		virtual ~TESChildCell() = default;	// 00
+
+		// add
+		virtual TESObjectCELL* GetSaveParentCell() const = 0;  // 01
+	};
+	static_assert(sizeof(TESChildCell) == 0x8);
 
 	class TESMagicCasterForm
 	{

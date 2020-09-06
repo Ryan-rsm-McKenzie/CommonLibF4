@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/BSLock.h"
 #include "RE/Bethesda/BSStringT.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTHashMap.h"
@@ -11,12 +12,14 @@
 #include "RE/Bethesda/TESCondition.h"
 #include "RE/Bethesda/TESForms.h"
 #include "RE/NetImmerse/NiColor.h"
+#include "RE/NetImmerse/NiPoint3.h"
 #include "RE/NetImmerse/NiSmartPointer.h"
 
 namespace RE
 {
 	enum class CHUNK_ID;
 	enum class SOUND_LEVEL;
+	enum class STAGGER_MAGNITUDE;
 	enum class WEAPON_RUMBLE_PATTERN;
 	enum class WEAPONHITBEHAVIOR;
 
@@ -777,4 +780,83 @@ namespace RE
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLVLI };
 	};
 	static_assert(sizeof(TESLevItem) == 0x98);
+
+	class TESLevSpell :
+		public TESBoundObject,	// 00
+		public TESLeveledList	// 68
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESLevSpell };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLVSP };
+	};
+	static_assert(sizeof(TESLevSpell) == 0x98);
+
+	struct BGSExplosionData
+	{
+	public:
+		// members
+		TESObjectLIGH* light;												 // 00
+		BGSSoundDescriptorForm* sound1;										 // 08
+		BGSSoundDescriptorForm* sound2;										 // 10
+		BGSImpactDataSet* impactDataSet;									 // 18
+		TESBoundObject* impactPlacedObject;									 // 20
+		BGSProjectile* spawnProjectile;										 // 28
+		NiPoint3 projectileVector;											 // 30
+		float projectileSpread;												 // 3C
+		std::uint32_t projectileCount;										 // 40
+		float force;														 // 44
+		float damage;														 // 48
+		float innerRadius;													 // 4C
+		float outerRadius;													 // 50
+		float imageSpaceRadius;												 // 54
+		float verticalOffsetMult;											 // 58
+		std::uint32_t flags;												 // 5C
+		stl::enumeration<SOUND_LEVEL, std::int32_t> soundLevel;				 // 60
+		float placedObjectFadeDelay;										 // 64
+		stl::enumeration<STAGGER_MAGNITUDE, std::int32_t> staggerMagnitude;	 // 68
+	};
+	static_assert(sizeof(BGSExplosionData) == 0x70);
+
+	class BGSExplosion :
+		public TESBoundObject,				// 000
+		public TESFullName,					// 068
+		public TESModel,					// 078
+		public TESEnchantableForm,			// 0A8
+		public BGSPreloadable,				// 0C0
+		public TESImageSpaceModifiableForm	// 0C8
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSExplosion };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kEXPL };
+
+		// members
+		BGSExplosionData data;	// 0D8
+	};
+	static_assert(sizeof(BGSExplosion) == 0x148);
+
+	struct ADDON_DATA
+	{
+	public:
+		// members
+		std::uint16_t masterParticleCap;  // 0
+		std::int8_t flags;				  // 2
+	};
+	static_assert(sizeof(ADDON_DATA) == 0x4);
+
+	class BGSAddonNode :
+		public TESBoundObject,		 // 00
+		public BGSModelMaterialSwap	 // 68
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSAddonNode };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kADDN };
+
+		// members
+		std::uint32_t index;						// A8
+		BGSSoundDescriptorForm* sound;				// B0
+		TESObjectLIGH* light;						// B8
+		ADDON_DATA data;							// C0
+		BSNonReentrantSpinLock masterParticleLock;	// C4
+	};
+	static_assert(sizeof(BGSAddonNode) == 0xC8);
 }

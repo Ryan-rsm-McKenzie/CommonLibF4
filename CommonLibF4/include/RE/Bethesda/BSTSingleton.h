@@ -3,6 +3,13 @@
 namespace RE
 {
 	template <class T>
+	class BSTSingletonImplicit
+	{
+	public:
+		using value_type = T;
+	};
+
+	template <class T>
 	class BSTSingletonExplicit
 	{
 	public:

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "RE/Bethesda/BGSBodyPartDefs.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSSoundHandle.h"
 #include "RE/Bethesda/BSStringT.h"
@@ -23,6 +22,11 @@ namespace RE
 	namespace MagicSystem
 	{
 		enum class CastingSource;
+	}
+
+	namespace BGSBodyPartDefs
+	{
+		enum class LIMB_ENUM;
 	}
 
 	class ActorCause;
@@ -73,9 +77,11 @@ namespace RE
 		std::uint32_t DecRefCount()
 		{
 			stl::atomic_ref myRefCount{ refCount };
-			if ((--myRefCount & 0x3FF) == 0) {
+			const auto newRefCount = --myRefCount & 0x3FF;
+			if (newRefCount == 0) {
 				DeleteThis();
 			}
+			return newRefCount;
 		}
 
 		void IncRefCount()
@@ -406,4 +412,26 @@ namespace RE
 		std::uint32_t flags;							 // 5F8
 	};
 	static_assert(sizeof(Explosion) == 0x600);
+
+	class Hazard :
+		public TESObjectREFR  // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_Hazard };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPHZD };
+
+		// members
+		void* hazardDBHandle;	   // 110 - TODO
+		ActorHandle ownerActor;	   // 118
+		float age;				   // 11C
+		float lifetime;			   // 120
+		float targetTimer;		   // 124
+		float radius;			   // 128
+		float magnitude;		   // 12C
+		BGSHazard* hazard;		   // 130
+		NiPointer<NiLight> light;  // 138
+		BSSoundHandle sound;	   // 140
+		std::uint32_t flags;	   // 148
+	};
+	static_assert(sizeof(Hazard) == 0x150);
 }

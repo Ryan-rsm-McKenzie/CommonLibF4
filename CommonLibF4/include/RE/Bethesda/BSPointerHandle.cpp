@@ -1,6 +1,7 @@
 #include "RE/Bethesda/BSPointerHandle.h"
 
 #include "RE/Bethesda/Actor.h"
+#include "RE/Bethesda/Projectiles.h"
 #include "RE/Bethesda/TESObjectREFRs.h"
 
 namespace RE
