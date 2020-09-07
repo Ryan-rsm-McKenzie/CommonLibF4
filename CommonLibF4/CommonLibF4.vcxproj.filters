@@ -177,6 +177,9 @@
     <ClInclude Include="include\RE\Bethesda\CELLJobs.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Console.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\CRC.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -184,6 +187,9 @@
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\FormComponents.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\FormUtil.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\IMenu.h">

@@ -38,6 +38,17 @@ namespace RE
 		using value_type = T;
 	};
 
+#ifdef __EDG__
+
+	template <class T, template <class> class Buffer = BSTSingletonSDMOpStaticBuffer>
+	struct BSTSingletonSDM
+	{
+	public:
+		std::uint8_t padding;
+	};
+
+#else
+
 	template <class T, template <class> class Buffer = BSTSingletonSDMOpStaticBuffer>
 	struct BSTSingletonSDM :
 		public BSTSingletonSDMBase<BSTSDMTraits<T, Buffer<T>>>
@@ -45,4 +56,6 @@ namespace RE
 	public:
 		using value_type = T;
 	};
+
+#endif
 }

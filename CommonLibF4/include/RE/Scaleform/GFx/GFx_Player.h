@@ -311,6 +311,20 @@ namespace RE
 
 					virtual ~ObjectInterface() = default;  // 00
 
+					void ObjectAddRef(Value* a_val, void* a_obj)
+					{
+						using func_t = decltype(&ObjectInterface::ObjectRelease);
+						REL::Relocation<func_t> func{ REL::ID(244786) };
+						return func(this, a_val, a_obj);
+					}
+
+					void ObjectRelease(Value* a_val, void* a_obj)
+					{
+						using func_t = decltype(&ObjectInterface::ObjectRelease);
+						REL::Relocation<func_t> func{ REL::ID(856221) };
+						return func(this, a_val, a_obj);
+					}
+
 					bool HasMember(void* a_data, const char* a_name, bool a_isdobj) const
 					{
 						using func_t = decltype(&ObjectInterface::HasMember);
@@ -332,18 +346,11 @@ namespace RE
 						return func(this, a_data, a_name, a_value, a_isdobj);
 					}
 
-					void ObjectAddRef(Value* a_val, void* a_obj)
+					bool Invoke(void* a_data, Value* a_result, const char* a_name, const Value* a_args, std::size_t a_numArgs, bool a_isdobj)
 					{
-						using func_t = decltype(&ObjectInterface::ObjectRelease);
-						REL::Relocation<func_t> func{ REL::ID(244786) };
-						return func(this, a_val, a_obj);
-					}
-
-					void ObjectRelease(Value* a_val, void* a_obj)
-					{
-						using func_t = decltype(&ObjectInterface::ObjectRelease);
-						REL::Relocation<func_t> func{ REL::ID(856221) };
-						return func(this, a_val, a_obj);
+						using func_t = decltype(&ObjectInterface::Invoke);
+						REL::Relocation<func_t> func{ REL::ID(655847) };
+						return func(this, a_data, a_result, a_name, a_args, a_numArgs, a_isdobj);
 					}
 
 					// members
@@ -573,6 +580,17 @@ namespace RE
 				{
 					assert(IsObject());
 					return _objectInterface->SetMember(_value.data, a_name.data(), a_val, IsDisplayObject());
+				}
+
+				bool Invoke(const char* a_name, Value* a_result, const Value* a_args, std::size_t a_numArgs)
+				{
+					assert(IsObject());
+					return _objectInterface->Invoke(_value.data, a_result, a_name, a_args, a_numArgs, IsDisplayObject());
+				}
+
+				bool Invoke(const char* a_name, Value* a_result = nullptr)
+				{
+					return Invoke(a_name, a_result, nullptr, 0);
 				}
 
 			private:

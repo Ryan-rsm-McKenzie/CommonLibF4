@@ -49,10 +49,23 @@ namespace RE
 		// add
 		virtual ~UI() = default;  // 01
 
+		[[nodiscard]] static BSReadWriteLock& GetMenuMapRWLock()
+		{
+			REL::Relocation<BSReadWriteLock*> menuMapRWLock{ REL::ID(578487) };
+			return *menuMapRWLock;
+		}
+
 		[[nodiscard]] static UI* GetSingleton()
 		{
 			REL::Relocation<UI**> singleton{ REL::ID(548587) };
 			return *singleton;
+		}
+
+		[[nodiscard]] Scaleform::Ptr<IMenu> GetMenu(const BSFixedString& a_name) const
+		{
+			BSAutoReadLock l{ GetMenuMapRWLock() };
+			const auto it = menuMap.find(a_name);
+			return it != menuMap.end() ? it->second.menu : nullptr;
 		}
 
 		void RegisterMenu(const char* a_menu, Create_t* a_create, StaticUpdate_t* a_staticUpdate = nullptr)

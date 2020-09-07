@@ -55,6 +55,18 @@
 		</Expand>
 	</Type>
 
+	<Type Name="RE::BSSimpleList&lt;*&gt;">
+		<DisplayString Condition="*(uintptr_t*)(&amp;_listHead.item) == 0 &amp;&amp; _listHead.next == nullptr">empty</DisplayString>
+		<DisplayString Condition="*(uintptr_t*)(&amp;_listHead.item) != 0 || _listHead.next != nullptr">non-empty</DisplayString>
+		<Expand>
+			<LinkedListItems>
+				<HeadPointer>&amp;_listHead</HeadPointer>
+				<NextPointer>next</NextPointer>
+				<ValueNode>item</ValueNode>
+			</LinkedListItems>
+		</Expand>
+	</Type>
+
 	<Type Name="RE::BSTScatterTable&lt;*&gt;">
 		<DisplayString>{{ size={_capacity - _freeCount} }}</DisplayString>
 		<Expand>
@@ -89,19 +101,32 @@
 		</Expand>
 	</Type>
 
-	<Type Name="RE::detail::BSFixedString&lt;*&gt;">
-		<DisplayString Condition="_data != nullptr">{_data,na}</DisplayString>
-		<DisplayString Condition="_data == nullptr">&quot;&quot;</DisplayString>
-		<StringView Condition="_data != nullptr">_data,na</StringView>
-		<StringView Condition="_data == nullptr">&quot;&quot;</StringView>
+	<Type Name="RE::BSStringPool::Entry">
+		<Intrinsic Name="shallow" Expression="_flags &amp; kShallow"/>
+		<DisplayString Condition="shallow()">{*this->_right}</DisplayString>
+		<DisplayString Condition="!shallow()">{*this,view(leaf)}</DisplayString>
 		<Expand>
-			<Item Name="[size]" Condition="_data != nullptr">((RE::BSStringPool::Entry*)_data - 1)-&gt;_length &amp; 0xFFFFFF</Item>
-			<Item Name="[size]" Condition="_data == nullptr">0</Item>
-			<ArrayItems>
-				<Size Condition="_data != nullptr">((RE::BSStringPool::Entry*)_data - 1)-&gt;_length &amp; 0xFFFFFF</Size>
-				<Size Condition="_data == nullptr">0</Size>
-				<ValuePointer>_data</ValuePointer>
-			</ArrayItems>
+			<Item Name="[size]">_length</Item>
+			<Item Name="[crc]">_crc,H</Item>
+			<Item Name="[wide]" Condition="(_flags &amp; kWide) == 0">false</Item>
+			<Item Name="[wide]" Condition="(_flags &amp; kWide) != 0">true</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::BSStringPool::Entry" IncludeView="leaf">
+		<DisplayString Condition="(_flags &amp; kWide) != 0">{(wchar_t*)(this + 1)}</DisplayString>
+		<DisplayString Condition="(_flags &amp; kWide) == 0">{(char*)(this + 1)}</DisplayString>
+		<Expand>
+			<Item Name="[size]">_length</Item>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::detail::BSFixedString&lt;*&gt;">
+		<DisplayString Condition="_data != nullptr">{*_data,na}</DisplayString>
+		<DisplayString Condition="_data == nullptr">&quot;&quot;</DisplayString>
+		<Expand>
+			<Item Name="[data]" Condition="_data != nullptr">_data</Item>
+			<Item Name="[data]" Condition="_data == nullptr">empty</Item>
 		</Expand>
 	</Type>
 

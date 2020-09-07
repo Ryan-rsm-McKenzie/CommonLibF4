@@ -157,6 +157,12 @@ namespace RE
 			[[nodiscard]] friend bool operator==(const_pointer a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
 			[[nodiscard]] friend bool operator!=(const_pointer a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
 
+		protected:
+			template <class>
+			friend struct RE::BSCRC32;
+
+			[[nodiscard]] const void* hash_accessor() const noexcept { return _data; }
+
 		private:
 			[[nodiscard]] static int strncmp(const char* a_lhs, const char* a_rhs, std::size_t a_length)
 			{
@@ -208,7 +214,7 @@ namespace RE
 	public:
 		[[nodiscard]] std::uint32_t operator()(const detail::BSFixedString<CharT, CS>& a_key) const noexcept
 		{
-			return BSCRC32<typename detail::BSFixedString<CharT, CS>::const_pointer>()(a_key.data());
+			return BSCRC32<const void*>()(a_key.hash_accessor());
 		}
 	};
 
@@ -235,6 +241,12 @@ namespace RE
 		[[nodiscard]] size_type size() const noexcept { return _data.size(); }
 		[[nodiscard]] size_type length() const noexcept { return _data.length(); }
 
+	protected:
+		template <class>
+		friend struct BSCRC32;
+
+		[[nodiscard]] const BSFixedStringCS& hash_accessor() const noexcept { return _data; }
+
 	private:
 		// members
 		BSFixedStringCS _data;	// 0
@@ -247,7 +259,7 @@ namespace RE
 	public:
 		[[nodiscard]] std::uint32_t operator()(const BGSLocalizedString& a_key) const noexcept
 		{
-			return BSCRC32<typename BGSLocalizedString::const_pointer>()(a_key.data());
+			return BSCRC32<BSFixedStringCS>()(a_key.hash_accessor());
 		}
 	};
 }

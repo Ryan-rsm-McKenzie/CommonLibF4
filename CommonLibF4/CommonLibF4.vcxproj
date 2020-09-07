@@ -294,6 +294,8 @@
     <ClInclude Include="include\RE\Bethesda\BSSoundHandle.h" />
     <ClInclude Include="include\RE\Bethesda\BSTSmallIndexScatterTable.h" />
     <ClInclude Include="include\RE\Bethesda\CELLJobs.h" />
+    <ClInclude Include="include\RE\Bethesda\Console.h" />
+    <ClInclude Include="include\RE\Bethesda\FormUtil.h" />
     <ClInclude Include="include\RE\Bethesda\MagicItems.h" />
     <ClInclude Include="include\RE\Bethesda\Movement.h" />
     <ClInclude Include="include\RE\Bethesda\NavMesh.h" />

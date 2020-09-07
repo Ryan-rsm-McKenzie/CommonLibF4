@@ -291,16 +291,25 @@ namespace RE
 		static constexpr auto RTTI{ RTTI_Script };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCPT };
 
+		template <class... Args>
+		static bool ParseParameters(const SCRIPT_PARAMETER* a_parameters, const char* a_compiledParams, std::uint32_t& a_offset, TESObjectREFR* a_refObject, TESObjectREFR* a_container, Script* a_script, ScriptLocals* a_scriptLocals, Args... a_args)
+		{
+			static_assert(std::conjunction_v<std::is_pointer<Args>...>, "arguments must all be pointers");
+			using func_t = bool(const SCRIPT_PARAMETER*, const char*, std::uint32_t&, TESObjectREFR*, TESObjectREFR*, Script*, ScriptLocals*, ...);
+			REL::Relocation<func_t> func{ REL::ID(1607) };
+			return func(a_parameters, a_compiledParams, a_offset, a_refObject, a_container, a_script, a_scriptLocals, a_args...);
+		}
+
 		// members
-		SCRIPT_HEADER header;									 // 20
-		char* text;												 // 38
-		char* data;												 // 40
-		float profilerTimer;									 // 48
-		float questScriptDelay;									 // 4C
-		float questScriptGetSecondsBuffer;						 // 50
-		TESQuest* parentQuest;									 // 58
-		BSSimpleList<SCRIPT_REFERENCED_OBJECT*> listRefObjects;	 // 60
-		BSSimpleList<ScriptVariable*> listVariables;			 // 70
+		SCRIPT_HEADER header;								 // 20
+		char* text;											 // 38
+		char* data;											 // 40
+		float profilerTimer;								 // 48
+		float questScriptDelay;								 // 4C
+		float questScriptGetSecondsBuffer;					 // 50
+		TESQuest* parentQuest;								 // 58
+		BSSimpleList<SCRIPT_REFERENCED_OBJECT*> refObjects;	 // 60
+		BSSimpleList<ScriptVariable*> variables;			 // 70
 	};
 	static_assert(sizeof(Script) == 0x80);
 }

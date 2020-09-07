@@ -532,6 +532,30 @@ namespace RE
 		virtual std::uint32_t GetFilledSlotsImpl() const { return static_cast<std::uint32_t>(-1); }																																	  // 48
 		virtual float GetDesirability([[maybe_unused]] TBO_InstanceData* a_instanceData, [[maybe_unused]] const TESForm* a_user) const { return 0.0F; }																				  // 49
 
+		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
+
+		template <
+			class T,
+			class = std::enable_if_t<
+				std::negation_v<
+					std::disjunction<
+						std::is_pointer<T>,
+						std::is_reference<T>,
+						std::is_const<T>,
+						std::is_volatile<T>>>>>
+		[[nodiscard]] T* As() noexcept;
+
+		template <
+			class T,
+			class = std::enable_if_t<
+				std::negation_v<
+					std::disjunction<
+						std::is_pointer<T>,
+						std::is_reference<T>,
+						std::is_const<T>,
+						std::is_volatile<T>>>>>
+		[[nodiscard]] const T* As() const noexcept;
+
 		// members
 		TESFileContainer sourceFiles;						   // 08
 		std::uint32_t formFlags;							   // 10
