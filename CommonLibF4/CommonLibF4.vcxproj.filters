@@ -246,6 +246,9 @@
     <ClInclude Include="include\RE\Bethesda\TESCondition.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\TESDataHandler.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\TESFaction.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -375,13 +378,28 @@
     <ClInclude Include="include\RE\NetImmerse\NiSmartPointer.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiTArray.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiTCollection.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiTDefaultAllocator.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiTList.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiTListBase.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiTMap.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiTMapBase.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiTPointerListBase.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiTransform.h">

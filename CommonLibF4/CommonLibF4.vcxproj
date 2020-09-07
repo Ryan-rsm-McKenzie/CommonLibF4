@@ -338,6 +338,7 @@
     <ClInclude Include="include\RE\Bethesda\SWFToCodeFunctionHandler.h" />
     <ClInclude Include="include\RE\Bethesda\TESCombatStyle.h" />
     <ClInclude Include="include\RE\Bethesda\TESCondition.h" />
+    <ClInclude Include="include\RE\Bethesda\TESDataHandler.h" />
     <ClInclude Include="include\RE\Bethesda\TESFaction.h" />
     <ClInclude Include="include\RE\Bethesda\TESForms.h" />
     <ClInclude Include="include\RE\Bethesda\TESObjectREFRs.h" />
@@ -381,9 +382,14 @@
     <ClInclude Include="include\RE\NetImmerse\NiSmartPointer.h" />
     <ClInclude Include="include\RE\NetImmerse\NiRect.h" />
     <ClInclude Include="include\RE\NetImmerse\NiRTTI.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiTArray.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiTCollection.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTDefaultAllocator.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiTList.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiTListBase.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTMap.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTMapBase.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiTPointerListBase.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTransform.h" />
     <ClInclude Include="include\RE\NiRTTI_IDs.h" />
     <ClInclude Include="include\RE\RTTI.h" />

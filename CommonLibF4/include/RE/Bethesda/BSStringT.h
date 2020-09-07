@@ -94,19 +94,19 @@ namespace RE
 			return *this;
 		}
 
-		[[nodiscard]] constexpr const_pointer data() const noexcept { return _data; }
-		[[nodiscard]] constexpr pointer data() noexcept { return _data; }
+		[[nodiscard]] const_pointer data() const noexcept { return _data; }
+		[[nodiscard]] pointer data() noexcept { return _data; }
 
-		[[nodiscard]] constexpr const_pointer c_str() const noexcept { return data(); }
+		[[nodiscard]] const_pointer c_str() const noexcept { return data(); }
 
-		[[nodiscard]] constexpr operator std::basic_string_view<value_type, traits_type>() const noexcept { return { data(), size() }; }
+		[[nodiscard]] operator std::basic_string_view<value_type, traits_type>() const noexcept { return { data(), size() }; }
 
-		[[nodiscard]] constexpr bool empty() const noexcept { return size() == 0; }
+		[[nodiscard]] bool empty() const noexcept { return size() == 0; }
 
-		[[nodiscard]] constexpr size_type size() const noexcept { return length(); }
-		[[nodiscard]] constexpr size_type length() const noexcept { return _size == N ? static_cast<size_type>(traits_type::length(c_str())) : _size; }
+		[[nodiscard]] size_type size() const noexcept { return length(); }
+		[[nodiscard]] size_type length() const noexcept { return _size == N ? static_cast<size_type>(traits_type::length(c_str())) : _size; }
 
-		[[nodiscard]] constexpr size_type capacity() const noexcept { return _capacity; }
+		[[nodiscard]] size_type capacity() const noexcept { return _capacity; }
 
 	private:
 		void release()

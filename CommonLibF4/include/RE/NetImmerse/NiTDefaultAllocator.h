@@ -7,4 +7,7 @@ namespace RE
 	{
 	public:
 	};
+
+	template <class T>
+	using NiTDefaultAllocator = DFALL<T>;
 }
