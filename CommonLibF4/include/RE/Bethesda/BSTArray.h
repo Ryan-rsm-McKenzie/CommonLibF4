@@ -803,4 +803,7 @@ namespace RE
 		char* buffer;		 // 00
 		std::uint32_t size;	 // 08
 	};
+
+	extern template class BSTDataBuffer<1>;
+	extern template class BSTDataBuffer<2>;
 }

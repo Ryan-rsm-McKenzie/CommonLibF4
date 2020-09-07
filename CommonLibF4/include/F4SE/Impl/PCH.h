@@ -48,7 +48,7 @@
 #include <utility>
 #include <vector>
 
-static_assert(sizeof(std::time_t) == sizeof(std::size_t), "wrap std::time_t instead");
+static_assert(std::is_integral_v<std::time_t> && sizeof(std::time_t) == sizeof(std::size_t), "wrap std::time_t instead");
 
 #include <boost/atomic.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>

@@ -17,6 +17,7 @@ namespace RE
 	class BGSBaseAlias;
 	class BGSQuestInstanceText;
 	class BGSQuestObjective;
+	class BGSRegisteredStoryEvent;
 	class BGSStoryEvent;
 	class BGSStoryManagerTreeForm;
 	class PeriodicUpdateTimer;
@@ -59,7 +60,7 @@ namespace RE
 		virtual std::uint32_t QChildCount() const { return 0; }														 // 4A
 		virtual BGSStoryManagerTreeForm* GetChild([[maybe_unused]] std::uint32_t a_index) const { return nullptr; }	 // 4B
 		virtual TESCondition* QConditions() = 0;																	 // 4C
-		virtual BGSStoryManagerTreeVisitor::VisitControl AcceptVisitor(BGSStoryManagerTreeVisitor* a_visitor) = 0;	 // 4D
+		virtual BGSStoryManagerTreeVisitor::VisitControl AcceptVisitor(BGSStoryManagerTreeVisitor& a_visitor) = 0;	 // 4D
 
 		// members
 		std::uint32_t lastVisitorID;  // 20
@@ -122,4 +123,63 @@ namespace RE
 		BSTArray<ObjectRefHandle> promotedRefsArray;												   // 2D8
 	};
 	static_assert(sizeof(TESQuest) == 0x2F0);
+
+	class BGSStoryManagerNodeBase :
+		public BGSStoryManagerTreeForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSStoryManagerNodeBase };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
+
+		// add
+		virtual std::uint32_t GetQuestsStarted() const = 0;	 // 4E
+
+		// members
+		BGSStoryManagerBranchNode* parent;	   // 28
+		BGSStoryManagerNodeBase* prevSibling;  // 30
+		std::uint32_t maxQuests;			   // 38
+		std::uint32_t flags;				   // 3C
+		TESCondition conditions;			   // 40
+	};
+	static_assert(sizeof(BGSStoryManagerNodeBase) == 0x48);
+
+	class BGSStoryManagerBranchNode :
+		public BGSStoryManagerNodeBase	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSStoryManagerBranchNode };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSMBN };
+
+		// members
+		BSTArray<BGSStoryManagerNodeBase*> children;  // 48
+	};
+	static_assert(sizeof(BGSStoryManagerBranchNode) == 0x60);
+
+	class BGSStoryManagerQuestNode :
+		public BGSStoryManagerNodeBase	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSStoryManagerQuestNode };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSMQN };
+
+		// members
+		BSTArray<TESQuest*> children;						   // 48
+		BSTHashMap<TESQuest*, std::uint32_t> perQuestFlags;	   // 60
+		BSTHashMap<TESQuest*, float> perQuestHoursUntilReset;  // 90
+		std::uint32_t numQuestsToStart;						   // C0
+		BSTArray<float> childrenLastRun;					   // C8
+	};
+	static_assert(sizeof(BGSStoryManagerQuestNode) == 0xE0);
+
+	class BGSStoryManagerEventNode :
+		public BGSStoryManagerBranchNode  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSStoryManagerEventNode };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSMEN };
+
+		// members
+		const BGSRegisteredStoryEvent* event;  // 60
+	};
+	static_assert(sizeof(BGSStoryManagerEventNode) == 0x68);
 }

@@ -260,6 +260,7 @@
     <ClCompile Include="include\RE\Bethesda\BSPointerHandle.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSScaleformManager.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSSpring.cpp" />
+    <ClCompile Include="include\RE\Bethesda\BSTArray.cpp" />
     <ClCompile Include="include\RE\Bethesda\CRC.cpp" />
     <ClCompile Include="include\RE\Bethesda\FormComponents.cpp" />
     <ClCompile Include="include\RE\Bethesda\InputEvent.cpp" />
@@ -285,13 +286,16 @@
     <ClInclude Include="include\RE\Bethesda\BGSBodyPartDefs.h" />
     <ClInclude Include="include\RE\Bethesda\BGSCharacterMorph.h" />
     <ClInclude Include="include\RE\Bethesda\BGSCharacterTint.h" />
+    <ClInclude Include="include\RE\Bethesda\BGSDefaultObjectManager.h" />
     <ClInclude Include="include\RE\Bethesda\BGSHeadPart.h" />
+    <ClInclude Include="include\RE\Bethesda\BGSMod.h" />
     <ClInclude Include="include\RE\Bethesda\BGSStoryManagerTreeForm.h" />
     <ClInclude Include="include\RE\Bethesda\BGSTextureSet.h" />
     <ClInclude Include="include\RE\Bethesda\BSSoundHandle.h" />
     <ClInclude Include="include\RE\Bethesda\BSTSmallIndexScatterTable.h" />
     <ClInclude Include="include\RE\Bethesda\CELLJobs.h" />
     <ClInclude Include="include\RE\Bethesda\MagicItems.h" />
+    <ClInclude Include="include\RE\Bethesda\Movement.h" />
     <ClInclude Include="include\RE\Bethesda\NavMesh.h" />
     <ClInclude Include="include\RE\Bethesda\NavMeshInfoMap.h" />
     <ClInclude Include="include\RE\Bethesda\PlayerCharacter.h" />

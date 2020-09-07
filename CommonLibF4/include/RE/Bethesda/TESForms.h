@@ -3,16 +3,20 @@
 #include "RE/Bethesda/BGSBodyPartDefs.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSLock.h"
+#include "RE/Bethesda/BSPointerHandle.h"
 #include "RE/Bethesda/BSStringT.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/BSTList.h"
 #include "RE/Bethesda/BSTSingleton.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
+#include "RE/Bethesda/BSTTuple.h"
 #include "RE/Bethesda/FormComponents.h"
+#include "RE/Bethesda/Movement.h"
 #include "RE/Bethesda/Settings.h"
 #include "RE/Bethesda/TESCondition.h"
 #include "RE/NetImmerse/NiColor.h"
+#include "RE/NetImmerse/NiFlags.h"
 #include "RE/NetImmerse/NiPoint2.h"
 #include "RE/NetImmerse/NiPoint3.h"
 #include "RE/NetImmerse/NiSmartPointer.h"
@@ -25,6 +29,8 @@ namespace RE
 	class MagicItem;
 	class TESBoundAnimObject;
 	class TESActorBase;
+	class BGSStoryManagerTreeForm;
+	class BGSStoryManagerNodeBase;
 	class BGSKeyword;
 	class BGSLocationRefType;
 	class BGSAction;
@@ -95,6 +101,7 @@ namespace RE
 	class BarrierProjectile;
 	class TESObjectREFR;
 	class Explosion;
+	class Projectile;
 	class TESWorldSpace;
 	class TESObjectLAND;
 	class NavMesh;
@@ -103,7 +110,11 @@ namespace RE
 	class TESQuest;
 	class TESIdleForm;
 	class TESPackage;
+	class AlarmPackage;
 	class DialoguePackage;
+	class FleePackage;
+	class SpectatorPackage;
+	class TrespassPackage;
 	class TESCombatStyle;
 	class TESLoadScreen;
 	class TESLevSpell;
@@ -188,6 +199,7 @@ namespace RE
 				//         X TESBoundAnimObject
 				//         X TESActorBase
 				//         X BGSStoryManagerTreeForm
+				//         X BGSStoryManagerNodeBase
 		kTES4,	// 01 TES4
 		kGRUP,	// 02 GRUP
 		kGMST,	// 03 GMST
@@ -294,65 +306,65 @@ namespace RE
 		kBPTD,	// 60 BPTD X BGSBodyPartData
 		kADDN,	// 61 ADDN X BGSAddonNode
 		kAVIF,	// 62 AVIF X ActorValueInfo
-		kCAMS,	// 63 CAMS _ BGSCameraShot
-		kCPTH,	// 64 CPTH _ BGSCameraPath
-		kVTYP,	// 65 VTYP _ BGSVoiceType
-		kMATT,	// 66 MATT _ BGSMaterialType
-		kIPCT,	// 67 IPCT _ BGSImpactData
-		kIPDS,	// 68 IPDS _ BGSImpactDataSet
-		kARMA,	// 69 ARMA _ TESObjectARMA
-		kECZN,	// 6A ECZN _ BGSEncounterZone
-		kLCTN,	// 6B LCTN _ BGSLocation
-		kMESG,	// 6C MESG _ BGSMessage
+		kCAMS,	// 63 CAMS X BGSCameraShot
+		kCPTH,	// 64 CPTH X BGSCameraPath
+		kVTYP,	// 65 VTYP X BGSVoiceType
+		kMATT,	// 66 MATT X BGSMaterialType
+		kIPCT,	// 67 IPCT X BGSImpactData
+		kIPDS,	// 68 IPDS X BGSImpactDataSet
+		kARMA,	// 69 ARMA X TESObjectARMA
+		kECZN,	// 6A ECZN X BGSEncounterZone
+		kLCTN,	// 6B LCTN X BGSLocation
+		kMESG,	// 6C MESG X BGSMessage
 		kRGDL,	// 6D RGDL
-		kDOBJ,	// 6E DOBJ _ BGSDefaultObjectManager
-		kDFOB,	// 6F DFOB _ BGSDefaultObject
-		kLGTM,	// 70 LGTM _ BGSLightingTemplate
-		kMUSC,	// 71 MUSC _ BGSMusicType
-		kFSTP,	// 72 FSTP _ BGSFootstep
-		kFSTS,	// 73 FSTS _ BGSFootstepSet
-		kSMBN,	// 74 SMBN _ BGSStoryManagerBranchNode
-		kSMQN,	// 75 SMQN _ BGSStoryManagerQuestNode
-		kSMEN,	// 76 SMEN _ BGSStoryManagerEventNode
-		kDLBR,	// 77 DLBR _ BGSDialogueBranch
-		kMUST,	// 78 MUST _ BGSMusicTrackFormWrapper
+		kDOBJ,	// 6E DOBJ X BGSDefaultObjectManager
+		kDFOB,	// 6F DFOB X BGSDefaultObject
+		kLGTM,	// 70 LGTM X BGSLightingTemplate
+		kMUSC,	// 71 MUSC X BGSMusicType
+		kFSTP,	// 72 FSTP X BGSFootstep
+		kFSTS,	// 73 FSTS X BGSFootstepSet
+		kSMBN,	// 74 SMBN X BGSStoryManagerBranchNode
+		kSMQN,	// 75 SMQN X BGSStoryManagerQuestNode
+		kSMEN,	// 76 SMEN X BGSStoryManagerEventNode
+		kDLBR,	// 77 DLBR X BGSDialogueBranch
+		kMUST,	// 78 MUST X BGSMusicTrackFormWrapper
 		kDLVW,	// 79 DLVW
-		kWOOP,	// 7A WOOP _ TESWordOfPower
-		kSHOU,	// 7B SHOU _ TESShout
-		kEQUP,	// 7C EQUP _ BGSEquipSlot
-		kRELA,	// 7D RELA _ BGSRelationship
-		kSCEN,	// 7E SCEN _ BGSScene
-		kASTP,	// 7F ASTP _ BGSAssociationType
-		kOTFT,	// 80 OTFT _ BGSOutfit
-		kARTO,	// 81 ARTO _ BGSArtObject
-		kMATO,	// 82 MATO _ BGSMaterialObject
-		kMOVT,	// 83 MOVT _ BGSMovementType
-		kSNDR,	// 84 SNDR _ BGSSoundDescriptorForm
-		kDUAL,	// 85 DUAL _ BGSDualCastData
-		kSNCT,	// 86 SNCT _ BGSSoundCategory
-		kSOPM,	// 87 SOPM _ BGSSoundOutput
-		kCOLL,	// 88 COLL _ BGSCollisionLayer
-		kCLFM,	// 89 CLFM _ BGSColorForm
-		kREVB,	// 8A REVB _ BGSReverbParameters
-		kPKIN,	// 8B PKIN _ BGSPackIn
+		kWOOP,	// 7A WOOP X TESWordOfPower
+		kSHOU,	// 7B SHOU X TESShout
+		kEQUP,	// 7C EQUP X BGSEquipSlot
+		kRELA,	// 7D RELA X BGSRelationship
+		kSCEN,	// 7E SCEN X BGSScene
+		kASTP,	// 7F ASTP X BGSAssociationType
+		kOTFT,	// 80 OTFT X BGSOutfit
+		kARTO,	// 81 ARTO X BGSArtObject
+		kMATO,	// 82 MATO X BGSMaterialObject
+		kMOVT,	// 83 MOVT X BGSMovementType
+		kSNDR,	// 84 SNDR X BGSSoundDescriptorForm
+		kDUAL,	// 85 DUAL X BGSDualCastData
+		kSNCT,	// 86 SNCT X BGSSoundCategory
+		kSOPM,	// 87 SOPM X BGSSoundOutput
+		kCOLL,	// 88 COLL X BGSCollisionLayer
+		kCLFM,	// 89 CLFM X BGSColorForm
+		kREVB,	// 8A REVB X BGSReverbParameters
+		kPKIN,	// 8B PKIN X BGSPackIn
 		kRFGP,	// 8C RFGP
-		kAMDL,	// 8D AMDL _ BGSAimModel
+		kAMDL,	// 8D AMDL X BGSAimModel
 		kLAYR,	// 8E LAYR
-		kCOBJ,	// 8F COBJ _ BGSConstructibleObject
-		kOMOD,	// 90 OMOD _ BGSMod::Attachment::Mod
-		kMSWP,	// 91 MSWP _ BGSMaterialSwap
-		kZOOM,	// 92 ZOOM _ BGSZoomData
-		kINNR,	// 93 INNR _ BGSInstanceNamingRules
-		kKSSM,	// 94 KSSM _ BGSSoundKeywordMapping
-		kAECH,	// 95 AECH _ BGSAudioEffectChain
+		kCOBJ,	// 8F COBJ X BGSConstructibleObject
+		kOMOD,	// 90 OMOD X BGSMod::Attachment::Mod
+		kMSWP,	// 91 MSWP X BGSMaterialSwap
+		kZOOM,	// 92 ZOOM X BGSZoomData
+		kINNR,	// 93 INNR X BGSInstanceNamingRules
+		kKSSM,	// 94 KSSM X BGSSoundKeywordMapping
+		kAECH,	// 95 AECH X BGSAudioEffectChain
 		kSCCO,	// 96 SCCO
-		kAORU,	// 97 AORU _ BGSAttractionRule
-		kSCSN,	// 98 SCSN _ BGSSoundCategorySnapshot
-		kSTAG,	// 99 STAG _ BGSSoundTagSet
+		kAORU,	// 97 AORU X BGSAttractionRule
+		kSCSN,	// 98 SCSN X BGSSoundCategorySnapshot
+		kSTAG,	// 99 STAG X BGSSoundTagSet
 		kNOCM,	// 9A NOCM
-		kLENS,	// 9B LENS _ BGSLensFlare
+		kLENS,	// 9B LENS X BGSLensFlare
 		kLSPR,	// 9C LSPR
-		kGDRY,	// 9D GDRY _ BGSGodRays
+		kGDRY,	// 9D GDRY X BGSGodRays
 		kOVIS,	// 9E OVIS
 
 		kTotal
@@ -364,8 +376,17 @@ namespace RE
 	enum class CHUNK_ID;
 	enum class COMMAND_REFUSAL_TYPE;
 	enum class DIALOGUE_SUBTYPE;
+	enum class DIALOGUE_TYPE;
 	enum class SOUND_LEVEL;
 	enum class STAGGER_MAGNITUDE;
+
+	namespace BGSMod
+	{
+		namespace Template
+		{
+			class Items;
+		}
+	}
 
 	namespace EffectArchetypes
 	{
@@ -382,10 +403,16 @@ namespace RE
 
 	class BGSBodyPart;
 	class BGSLoadFormBuffer;
+	class BGSMusicTrack;
 	class BGSPerkEntry;
 	class BGSPreviewTransform;
 	class BGSSaveFormBuffer;
+	class BGSSceneAction;
+	class BGSScenePhase;
+	class BGSSoundDescriptor;
 	class BSGeometry;
+	class BSIAudioEffectParameters;
+	class BSLensFlareSpriteRenderData;
 	class ExtraDataList;
 	class NavMeshArray;
 	class NiColorInterpolator;
@@ -393,6 +420,7 @@ namespace RE
 	class NiFormArray;
 	class NiTexture;
 	class QueuedFile;
+	class QueuedPromoteLocationReferencesTask;
 	class TBO_InstanceData;
 	class TESFile;
 	class TESPackageData;
@@ -404,8 +432,8 @@ namespace RE
 	struct FORM;
 	struct FORM_GROUP;
 	struct EXTERIOR_DATA;
-	struct INTERIOR_DATA;
 	struct LOADED_CELL_DATA;
+	struct OverrideData;
 
 	namespace BGSWaterCollisionManager
 	{
@@ -757,15 +785,6 @@ namespace RE
 		BSSimpleList<TESGrass*> textureGrassList;  // 40
 	};
 	static_assert(sizeof(TESLandTexture) == 0x50);
-
-	class BGSDirectionalAmbientLightingColors
-	{
-	public:
-		// members
-		std::uint32_t colorValues[7];  // 00
-		float fresnelPower;			   // 1C
-	};
-	static_assert(sizeof(BGSDirectionalAmbientLightingColors) == 0x20);
 
 	class TESWeather :
 		public TESForm	// 000
@@ -1349,4 +1368,976 @@ namespace RE
 		BGSBodyPartDefs::HitReactionData defaultHitReactionData;  // 128
 	};
 	static_assert(sizeof(BGSBodyPartData) == 0x150);
+
+	class BGSCameraShot :
+		public TESForm,						// 00
+		public TESModel,					// 20
+		public TESImageSpaceModifiableForm	// 50
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSCameraShot };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCAMS };
+
+		enum class CAM_ACTION;
+		enum class CAM_OBJECT;
+
+		struct CAMERA_SHOT_DATA
+		{
+		public:
+			// members
+			stl::enumeration<CAM_ACTION, std::int32_t> cameraAction;  // 00
+			stl::enumeration<CAM_OBJECT, std::int32_t> location;	  // 04
+			stl::enumeration<CAM_OBJECT, std::int32_t> target;		  // 08
+			std::uint32_t flags;									  // 0C
+			float playerTimeMult;									  // 10
+			float targetTimeMult;									  // 14
+			float globalTimeMult;									  // 18
+			float maxTime;											  // 1C
+			float minTime;											  // 20
+			float targetPercentBetweenActors;						  // 24
+			float nearTargetDistance;								  // 28
+			float locationSpring;									  // 2C
+			float targetSpring;										  // 30
+			float rotationOffsetX;									  // 34
+			float rotationOffsetY;									  // 38
+			float rotationOffsetZ;									  // 3C
+		};
+		static_assert(sizeof(CAMERA_SHOT_DATA) == 0x40);
+
+		// members
+		CAMERA_SHOT_DATA data;	  // 60
+		TESCondition conditions;  // A0
+	};
+	static_assert(sizeof(BGSCameraShot) == 0xA8);
+
+	struct PATH_DATA
+	{
+	public:
+		// members
+		std::int8_t flags;	// 0
+	};
+	static_assert(sizeof(PATH_DATA) == 0x1);
+
+	class BGSCameraPath :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSCameraPath };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCPTH };
+
+		// members
+		TESCondition conditions;			 // 20
+		BSSimpleList<BGSCameraShot*> shots;	 // 28
+		PATH_DATA data;						 // 38
+		NiFormArray* childPaths;			 // 40
+		BGSCameraPath* parentPath;			 // 48
+		BGSCameraPath* prevPath;			 // 50
+	};
+	static_assert(sizeof(BGSCameraPath) == 0x58);
+
+	struct VOICE_TYPE_DATA
+	{
+	public:
+		// members
+		std::int8_t flags;
+	};
+	static_assert(sizeof(VOICE_TYPE_DATA) == 0x1);
+
+	class BGSVoiceType :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSVoiceType };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kVTYP };
+
+		// members
+		VOICE_TYPE_DATA data;		   // 20
+		BSStringT<char> formEditorID;  // 28
+	};
+	static_assert(sizeof(BGSVoiceType) == 0x38);
+
+	class BGSMaterialType :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSMaterialType };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMATT };
+
+		// members
+		TESModel breakableFXModel;			   // 20
+		BGSMaterialType* parentType;		   // 50
+		BGSImpactDataSet* havokImpactDataSet;  // 58
+		BSFixedString materialName;			   // 60
+		std::uint32_t materialID;			   // 68
+		NiColor materialColor;				   // 6C
+		float buoyancy;						   // 78
+		std::uint32_t flags;				   // 7C
+	};
+	static_assert(sizeof(BGSMaterialType) == 0x80);
+
+	struct DECAL_DATA_DATA
+	{
+	public:
+		// members
+		float decalMinWidth;		 // 00
+		float decalMaxWidth;		 // 04
+		float decalMinHeight;		 // 08
+		float decalMaxHeight;		 // 0C
+		float depth;				 // 10
+		float shininess;			 // 14
+		float parallaxScale;		 // 18
+		std::int8_t parallaxPasses;	 // 1C
+		std::int8_t flags;			 // 1D
+		std::uint32_t color;		 // 20
+	};
+	static_assert(sizeof(DECAL_DATA_DATA) == 0x24);
+
+	class DecalData
+	{
+	public:
+		// members
+		DECAL_DATA_DATA data;  // 00
+	};
+	static_assert(sizeof(DecalData) == 0x24);
+
+	class BGSImpactData :
+		public TESForm,	 // 00
+		public TESModel	 // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSImpactData };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIPCT };
+
+		enum class ORIENTATION;
+
+		struct IMPACT_DATA_DATA
+		{
+		public:
+			// members
+			float effectDuration;									 // 00
+			stl::enumeration<ORIENTATION, std::int32_t> orient;		 // 04
+			float angleThreshold;									 // 08
+			float placementRadius;									 // 0C
+			stl::enumeration<SOUND_LEVEL, std::int32_t> soundLevel;	 // 10
+			std::int8_t flags;										 // 14
+			std::int8_t resultOverride;								 // 15
+		};
+		static_assert(sizeof(IMPACT_DATA_DATA) == 0x18);
+
+		// members
+		IMPACT_DATA_DATA data;			  // 50
+		BGSTextureSet* decalTextureSet;	  // 68
+		BGSTextureSet* decalTextureSet2;  // 70
+		BGSSoundDescriptorForm* sound1;	  // 78
+		BGSSoundDescriptorForm* sound2;	  // 80
+		BGSExplosion* explosion;		  // 88
+		BGSHazard* hazard;				  // 90
+		DecalData decalData;			  // 98
+		float maxFootstepParticleDist;	  // BC
+	};
+	static_assert(sizeof(BGSImpactData) == 0xC0);
+
+	class BGSImpactDataSet :
+		public TESForm,		   // 00
+		public BGSPreloadable  // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSImpactDataSet };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIPDS };
+
+		// members
+		BSTHashMap<const BGSMaterialType*, BGSImpactData*> impactMap;  // 28
+	};
+	static_assert(sizeof(BGSImpactDataSet) == 0x58);
+
+	struct ENCOUNTER_ZONE_GAME_DATA
+	{
+	public:
+		// members
+		std::uint32_t detachTime;  // 00
+		std::uint32_t attachTime;  // 04
+		std::uint32_t resetTime;   // 08
+		std::uint16_t zoneLevel;   // 0C
+	};
+	static_assert(sizeof(ENCOUNTER_ZONE_GAME_DATA) == 0x10);
+
+	struct ENCOUNTER_ZONE_DATA
+	{
+	public:
+		// members
+		TESForm* zoneOwner;		// 00
+		BGSLocation* location;	// 08
+		std::int8_t ownerRank;	// 10
+		std::int8_t minLevel;	// 11
+		std::int8_t flags;		// 12
+		std::int8_t maxLevel;	// 13
+	};
+	static_assert(sizeof(ENCOUNTER_ZONE_DATA) == 0x18);
+
+	class BGSEncounterZone :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSEncounterZone };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kECZN };
+
+		// members
+		ENCOUNTER_ZONE_DATA data;			// 20
+		ENCOUNTER_ZONE_GAME_DATA gameData;	// 38
+	};
+	static_assert(sizeof(BGSEncounterZone) == 0x48);
+
+	struct UnloadedRefData
+	{
+	public:
+		// members
+		std::uint32_t refID;		  // 0
+		std::uint32_t parentSpaceID;  // 4
+		std::uint32_t cellKey;		  // 8
+	};
+	static_assert(sizeof(UnloadedRefData) == 0xC);
+
+	struct SpecialRefData
+	{
+	public:
+		// members
+		BGSLocationRefType* type;  // 00
+		UnloadedRefData refData;   // 08
+	};
+	static_assert(sizeof(SpecialRefData) == 0x18);
+
+	struct UniqueNPCData
+	{
+	public:
+		// members
+		TESNPC* npc;			 // 00
+		std::uint32_t refID;	 // 08
+		BGSLocation* editorLoc;	 // 10
+	};
+	static_assert(sizeof(UniqueNPCData) == 0x18);
+
+	class BGSLocation :
+		public TESForm,		   // 000
+		public TESFullName,	   // 020
+		public BGSKeywordForm  // 030
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSLocation };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLCTN };
+
+		struct KEYWORD_DATA
+		{
+		public:
+			// members
+			BGSKeyword* keyword;  // 00
+			float data;			  // 08
+		};
+		static_assert(sizeof(KEYWORD_DATA) == 0x10);
+
+		// members
+		BGSLocation* parentLoc;													// 050
+		TESFaction* unreportedCrimeFaction;										// 058
+		BGSMusicType* musicType;												// 060
+		BGSEncounterZone* zone;													// 068
+		ObjectRefHandle worldLocMarker;											// 070
+		float worldLocRadius;													// 074
+		float actorFadeMult;													// 078
+		ObjectRefHandle horseLocMarker;											// 07C
+		BSTArray<SpecialRefData> specialRefs;									// 080
+		BSTArray<UniqueNPCData> uniqueNPCs;										// 098
+		OverrideData* overrideData;												// 0B0
+		BSTArray<std::uint32_t> newUnloadedRefs;								// 0B8
+		BSTArray<BSTTuple<BGSLocationRefType*, std::uint32_t>> newSpecialRefs;	// 0D0
+		NiPointer<QueuedPromoteLocationReferencesTask> promoteRefsTask;			// 0E8
+		BSTArray<ObjectRefHandle> promotedRefsArray;							// 0F0
+		volatile std::int32_t loadedCount;										// 108
+		std::uint32_t fileOffset;												// 10C
+		BSTArray<KEYWORD_DATA> keywordData;										// 110
+		BSSpinLock locLoadedLock;												// 128
+		std::uint32_t lastChecked;												// 130
+		bool cleared;															// 134
+		bool everCleared;														// 135
+		BSReadWriteLock locker;													// 138
+	};
+	static_assert(sizeof(BGSLocation) == 0x140);
+
+	struct MESSAGEBOX_BUTTON
+	{
+	public:
+		// members
+		BGSLocalizedString text;  // 00
+		TESCondition conditions;  // 08
+	};
+	static_assert(sizeof(MESSAGEBOX_BUTTON) == 0x10);
+
+	class BGSMessage :
+		public TESForm,		   // 00
+		public TESFullName,	   // 20
+		public TESDescription  // 30
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSMessage };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMESG };
+
+		// members
+		BGSMenuIcon* icon;							  // 48
+		TESQuest* ownerQuest;						  // 50
+		BSSimpleList<MESSAGEBOX_BUTTON*> buttonList;  // 58
+		BSFixedStringCS swfFile;					  // 68
+		BGSLocalizedString shortName;				  // 70
+		std::uint32_t flags;						  // 78
+		std::uint32_t displayTime;					  // 7C
+	};
+	static_assert(sizeof(BGSMessage) == 0x80);
+
+	class BGSLightingTemplate :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSLightingTemplate };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLGTM };
+
+		// members
+		INTERIOR_DATA data;													   // 20
+		BGSGodRays* godRays;												   // B0
+		BGSDirectionalAmbientLightingColors directionalAmbientLightingColors;  // B8
+	};
+	static_assert(sizeof(BGSLightingTemplate) == 0xD8);
+
+	class BGSMusicType :
+		public TESForm,		 // 00
+		public BSIMusicType	 // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSMusicType };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMUSC };
+
+		// members
+		BSFixedString formEditorID;	 // 70
+	};
+	static_assert(sizeof(BGSMusicType) == 0x78);
+
+	class BGSFootstep :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSFootstep };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFSTP };
+
+		// members
+		BSFixedString tagString;	  // 20
+		BGSImpactDataSet* impactSet;  // 28
+	};
+	static_assert(sizeof(BGSFootstep) == 0x30);
+
+	class BGSFootstepSet :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSFootstepSet };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFSTS };
+
+		// members
+		BSTArray<BGSFootstep*> entries[5];	// 20
+	};
+	static_assert(sizeof(BGSFootstepSet) == 0x98);
+
+	class BGSDialogueBranch :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSDialogueBranch };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDLBR };
+
+		// members
+		std::uint32_t flags;								 // 20
+		TESQuest* quest;									 // 28
+		TESTopic* startingTopic;							 // 30
+		stl::enumeration<DIALOGUE_TYPE, std::int32_t> type;	 // 38
+	};
+	static_assert(sizeof(BGSDialogueBranch) == 0x40);
+
+	class BGSMusicTrackFormWrapper :
+		public TESForm,		  // 00
+		public BSIMusicTrack  // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSMusicTrackFormWrapper };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMUST };
+
+		// members
+		BGSMusicTrack* trackImpl;  // 30
+	};
+	static_assert(sizeof(BGSMusicTrackFormWrapper) == 0x38);
+
+	class TESWordOfPower :
+		public TESForm,		// 00
+		public TESFullName	// 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESWordOfPower };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kWOOP };
+
+		// members
+		BGSLocalizedString translation;	 // 30
+	};
+	static_assert(sizeof(TESWordOfPower) == 0x38);
+
+	class TESShout :
+		public TESForm,				  // 00
+		public TESFullName,			  // 20
+		public BGSMenuDisplayObject,  // 30
+		public BGSEquipType,		  // 40
+		public TESDescription		  // 50
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESShout };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSHOU };
+
+		struct Variation
+		{
+		public:
+			// members
+			TESWordOfPower* word;  // 00
+			SpellItem* spell;	   // 08
+			float recoveryTime;	   // 10
+		};
+		static_assert(sizeof(Variation) == 0x18);
+
+		// members
+		Variation variations[3];  // 68
+	};
+	static_assert(sizeof(TESShout) == 0xB0);
+
+	class BGSEquipSlot :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSEquipSlot };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kEQUP };
+
+		// members
+		BSTArray<BGSEquipSlot*> parentSlots;  // 20
+		std::uint32_t flags;				  // 38
+		ActorValueInfo* conditionActorValue;  // 40
+	};
+	static_assert(sizeof(BGSEquipSlot) == 0x48);
+
+	class BGSRelationship :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSRelationship };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kRELA };
+
+		// members
+		TESNPC* npc1;					// 20
+		TESNPC* npc2;					// 28
+		BGSAssociationType* assocType;	// 30
+		std::uint32_t packedData;		// 38
+	};
+	static_assert(sizeof(BGSRelationship) == 0x40);
+
+	class BGSScene :
+		public TESForm,			 // 00
+		public IKeywordFormBase	 // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSScene };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCEN };
+
+		// members
+		NiTFlags<std::uint32_t, BGSScene> niFlags;		// 28
+		BSTArray<BGSScenePhase*> phases;				// 30
+		BSTArray<std::uint32_t> actors;					// 48
+		BSTArray<std::uint32_t> actorFlags;				// 60
+		BSTArray<std::uint32_t> actorProgressionFlags;	// 78
+		BSTArray<BGSSceneAction*> actions;				// 90
+		TESQuest* parentQuest;							// A8
+		BGSScene* templateScene;						// B0
+		std::uint32_t flags;							// B8
+		TESCondition repeatConditions;					// C0
+		std::uint32_t speakerID;						// C8
+		std::uint32_t currentActivePhase;				// CC
+		std::uint32_t startPhase;						// D0
+		float randomSceneTimer;							// D4
+		float maxREFDistanceCenter;						// D8
+		ObjectRefHandle targetRef;						// DC
+		bool shouldNotRotateToTrack;					// E0
+	};
+	static_assert(sizeof(BGSScene) == 0xE8);
+
+	class BGSAssociationType :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSAssociationType };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kASTP };
+
+		// members
+		BSFixedStringCS associationLabel[2][2];	 // 20
+		std::uint32_t flags;					 // 40
+	};
+	static_assert(sizeof(BGSAssociationType) == 0x48);
+
+	class BGSOutfit :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSOutfit };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kOTFT };
+
+		// members
+		BSTArray<TESForm*> outfitItems;	 // 20
+	};
+	static_assert(sizeof(BGSOutfit) == 0x38);
+
+	class BGSMaterialObject :
+		public TESForm,			 // 00
+		public TESModel,		 // 20
+		public BSMaterialObject	 // 50
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSMaterialObject };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMATO };
+
+		struct FILE_DATA
+		{
+		public:
+			// members
+			std::int8_t* nuffer;	   // 00
+			std::uint32_t bufferSize;  // 08
+		};
+		static_assert(sizeof(FILE_DATA) == 0x10);
+
+		// members
+		BSTArray<FILE_DATA> fileData;  // A0
+	};
+	static_assert(sizeof(BGSMaterialObject) == 0xB8);
+
+	class BGSMovementType :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSMovementType };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMOVT };
+
+		// members
+		Movement::TypeData movementTypeData;  // 20
+	};
+	static_assert(sizeof(BGSMovementType) == 0xA0);
+
+	class BGSSoundDescriptorForm :
+		public TESForm,			   // 00
+		public BSISoundDescriptor  // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSSoundDescriptorForm };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSNDR };
+
+		// members
+		BGSSoundDescriptor* impl;  // 28
+	};
+	static_assert(sizeof(BGSSoundDescriptorForm) == 0x30);
+
+	class BGSSoundCategory :
+		public TESForm,			 // 00
+		public TESFullName,		 // 20
+		public BSISoundCategory	 // 30
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSSoundCategory };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSNCT };
+
+		// members
+		BGSSoundCategory* parentCategory;  // 38
+		BGSSoundCategory* sliderCategory;  // 40
+		float volumeMult;				   // 48
+		float snapshotMult;				   // 4C
+		float currCompressionMult;		   // 50
+		float fullyCompressedMult;		   // 54
+		float frequencyMult;			   // 58
+		float minFrequencyMult;			   // 5C
+		std::uint32_t appFlags;			   // 60
+		std::uint16_t attenuation[6];	   // 64
+		std::uint16_t stateFlags;		   // 70
+		std::uint16_t staticMult;		   // 72
+		std::uint16_t defaultMenuValue;	   // 74
+	};
+	static_assert(sizeof(BGSSoundCategory) == 0x78);
+
+	class BGSSoundOutput :
+		public TESForm,				// 00
+		public BSISoundOutputModel	// 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSSoundOutput };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSOPM };
+
+		enum class SPEAKER_OUTPUT_MODE;
+
+		struct DynamicAttenuationCharacteristics;
+		struct SpeakerArrays;
+
+		// members
+		DynamicAttenuationCharacteristics* attenuation;			   // 28
+		SpeakerArrays* speakerOutputArrays;						   // 30
+		BGSAudioEffectChain* effectChain;						   // 38
+		std::uint32_t flags;									   // 40
+		stl::enumeration<SPEAKER_OUTPUT_MODE, std::int32_t> mode;  // 44
+		std::uint16_t staticAttenuation;						   // 48
+	};
+	static_assert(sizeof(BGSSoundOutput) == 0x50);
+
+	class BGSCollisionLayer :
+		public TESForm,		   // 00
+		public TESDescription  // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSCollisionLayer };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCOLL };
+
+		// members
+		std::uint32_t collisionIdx;					// 38
+		std::uint32_t debugColor;					// 3C
+		std::uint32_t flags;						// 40
+		BSFixedString name;							// 48
+		BSTArray<BGSCollisionLayer*> collidesWith;	// 50
+	};
+	static_assert(sizeof(BGSCollisionLayer) == 0x68);
+
+	class BGSColorForm :
+		public TESForm,		// 00
+		public TESFullName	// 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSColorForm };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCLFM };
+
+		// members
+		union
+		{
+			std::uint32_t color;
+			float remappingIndex;
+		};						  // 30
+		TESCondition conditions;  // 38
+		std::uint32_t flags;	  // 40
+	};
+	static_assert(sizeof(BGSColorForm) == 0x48);
+
+	class BGSReverbParameters :
+		public TESForm,		  // 00
+		public BSIReverbType  // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSReverbParameters };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kREVB };
+
+		struct ReverbParams
+		{
+		public:
+			// members
+			std::uint16_t decayTime;	  // 0
+			std::uint16_t hfReference;	  // 2
+			std::int8_t roomFilter;		  // 4
+			std::int8_t roomHFFilter;	  // 5
+			std::int8_t reflections;	  // 6
+			std::int8_t reverb;			  // 7
+			std::int8_t decayHFRatio;	  // 8
+			std::int8_t reflectionDelay;  // 9
+			std::int8_t reverbDelay;	  // A
+			std::int8_t diffusionPct;	  // B
+			std::int8_t densityPct;		  // C
+		};
+		static_assert(sizeof(ReverbParams) == 0xE);
+
+		// members
+		ReverbParams data;			// 28
+		std::uint32_t reverbClass;	// 38
+	};
+	static_assert(sizeof(BGSReverbParameters) == 0x40);
+
+	class BGSPackIn :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSPackIn };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPKIN };
+	};
+	static_assert(sizeof(BGSPackIn) == 0x20);
+
+	class BGSAimModel :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSAimModel };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kAMDL };
+
+		struct Data
+		{
+		public:
+			// members
+			float aimModelMinConeDegrees;				  // 00
+			float aimModelMaxConeDegrees;				  // 04
+			float aimModelConeIncreasePerShot;			  // 08
+			float aimModelConeDecreasePerSec;			  // 0C
+			std::uint32_t aimModelConeDecreaseDelayMs;	  // 10
+			float aimModelConeSneakMultiplier;			  // 14
+			float aimModelRecoilDiminishSpringForce;	  // 18
+			float aimModelRecoilDiminishSightsMult;		  // 1C
+			float aimModelRecoilMaxDegPerShot;			  // 20
+			float aimModelRecoilMinDegPerShot;			  // 24
+			float aimModelRecoilHipMult;				  // 28
+			std::uint32_t aimModelRecoilShotsForRunaway;  // 2C
+			float aimModelRecoilArcDeg;					  // 30
+			float aimModelRecoilArcRotateDeg;			  // 34
+			float aimModelConeIronSightsMultiplier;		  // 38
+			float aimModelBaseStability;				  // 3C
+		};
+		static_assert(sizeof(Data) == 0x40);
+
+		// members
+		Data aimModelData;	// 20
+	};
+	static_assert(sizeof(BGSAimModel) == 0x60);
+
+	class BGSConstructibleObject :
+		public TESForm,					// 00
+		public BGSPickupPutdownSounds,	// 20
+		public TESDescription			// 38
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSConstructibleObject };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCOBJ };
+
+		struct ConstructibleObjectData
+		{
+		public:
+			// members
+			std::uint16_t numConstructed;	 // 0
+			std::uint16_t workshopPriority;	 // 2
+		};
+		static_assert(sizeof(ConstructibleObjectData) == 0x4);
+
+		// members
+		BSTArray<BSTTuple<TESForm*, BGSTypedFormValuePair::SharedVal>>* requiredItems;	// 50
+		TESCondition conditions;														// 58
+		TESForm* createdItem;															// 60
+		BGSKeyword* benchKeyword;														// 68
+		BGSConstructibleObject::ConstructibleObjectData data;							// 70
+		BGSTypedKeywordValueArray<9> filterKeywords;									// 78
+	};
+	static_assert(sizeof(BGSConstructibleObject) == 0x88);
+
+	class BGSMaterialSwap :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSMaterialSwap };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMSWP };
+
+		struct Entry
+		{
+		public:
+			// members
+			BSFixedString swapMaterial;	 // 00
+			float colorRemappingIndex;	 // 08
+		};
+		static_assert(sizeof(Entry) == 0x10);
+
+		// members
+		BSTHashMap<BSFixedString, Entry> swapMap;  // 20
+	};
+	static_assert(sizeof(BGSMaterialSwap) == 0x50);
+
+	class BGSZoomData :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSZoomData };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kZOOM };
+
+		struct Data
+		{
+		public:
+			// members
+			float fovMult;				// 00
+			std::uint32_t overlay;		// 04
+			std::uint32_t isModFormID;	// 08
+			NiPoint3 cameraOffset;		// 0C
+		};
+		static_assert(sizeof(Data) == 0x18);
+
+		// members
+		Data zoomData;				   // 20
+		TESImageSpaceModifier* isMod;  // 38
+	};
+	static_assert(sizeof(BGSZoomData) == 0x40);
+
+	class BGSInstanceNamingRules :
+		public TESForm	// 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSInstanceNamingRules };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kINNR };
+
+		class RuleData
+		{
+		public:
+			// members
+			BGSLocalizedString text;			   // 00
+			BGSKeywordForm keywords;			   // 08
+			float compareVal;					   // 28
+			std::int8_t propertyBridgeArrayIndex;  // 2C
+			std::int8_t operatorType;			   // 2D
+			std::uint16_t index;				   // 2E
+			bool revert;						   // 30
+		};
+		static_assert(sizeof(RuleData) == 0x38);
+
+		struct RuleSet :
+			public BSTArray<RuleData>  // 00
+		{
+		public:
+		};
+		static_assert(sizeof(RuleSet) == 0x18);
+
+		// members
+		stl::enumeration<ENUM_FORM_ID, std::int32_t> type;	   // 020
+		RuleSet ruleSets[10];								   // 028
+		BSTArray<const BGSInstanceNamingRules*> mergeSources;  // 118
+	};
+	static_assert(sizeof(BGSInstanceNamingRules) == 0x130);
+
+	class BGSSoundKeywordMapping :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSSoundKeywordMapping };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kKSSM };
+
+		// members
+		BSTSet<BGSKeyword*> keywordSet;									   // 20
+		BSTHashMap<std::uint32_t, BGSSoundDescriptorForm*> reverbDescMap;  // 50
+		BGSSoundDescriptorForm* descriptor;								   // 80
+		BGSSoundDescriptorForm* exteriorTail;							   // 88
+		BGSSoundDescriptorForm* vatsDescriptor;							   // 90
+		float vatsDescThreshold;										   // 98
+	};
+	static_assert(sizeof(BGSSoundKeywordMapping) == 0xA0);
+
+	class BGSAudioEffectChain :
+		public TESForm,				// 00
+		public BSIAudioEffectChain	// 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSAudioEffectChain };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kAECH };
+
+		// members
+		BSTArray<BSIAudioEffectParameters*> effects;  // 28
+	};
+	static_assert(sizeof(BGSAudioEffectChain) == 0x40);
+
+	class BGSAttractionRule :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSAttractionRule };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kAORU };
+
+		struct ATTRACTION_RULE_DATA
+		{
+		public:
+			// members
+			float radius;		// 00
+			float minDelay;		// 04
+			float maxDelay;		// 08
+			bool requiresLOS;	// 0C
+			bool combatTarget;	// 0D
+		};
+		static_assert(sizeof(ATTRACTION_RULE_DATA) == 0x10);
+
+		// members
+		ATTRACTION_RULE_DATA data;	 // 20
+		BSFixedString formEditorID;	 // 30
+	};
+	static_assert(sizeof(BGSAttractionRule) == 0x38);
+
+	class BGSSoundCategorySnapshot :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSSoundCategorySnapshot };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCSN };
+
+		// members
+		BSTHashMap<BGSSoundCategory*, float> categoryMult;	// 20
+		std::int8_t priority;								// 50
+	};
+	static_assert(sizeof(BGSSoundCategorySnapshot) == 0x58);
+
+	class BGSSoundTagSet :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSSoundTagSet };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSTAG };
+
+		// members
+		BSTHashMap<BSFixedString, BGSSoundDescriptorForm*> soundTags;  // 20
+	};
+	static_assert(sizeof(BGSSoundTagSet) == 0x50);
+
+	class BSLensFlareRenderData
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSLensFlareRenderData };
+
+		// members
+		float fadeDistRadiusScale;								   // 00
+		float colorInfluence;									   // 04
+		BSTArray<NiPointer<BSLensFlareSpriteRenderData>> sprites;  // 08
+		BSSpinLock lock;										   // 20
+		std::uint32_t refCount;									   // 28
+	};
+	static_assert(sizeof(BSLensFlareRenderData) == 0x30);
+
+	class BGSLensFlare :
+		public TESForm,				  // 00
+		public BSLensFlareRenderData  // 20
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSLensFlare };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLENS };
+	};
+	static_assert(sizeof(BGSLensFlare) == 0x50);
+
+	class BGSGodRays :
+		public TESForm	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSGodRays };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kGDRY };
+
+		struct GodRaysData
+		{
+		public:
+			// members
+			NiColor colorAir;	// 00
+			NiColor colorBack;	// 0C
+			NiColor colorFwd;	// 18
+			float intensity;	// 24
+			float scatterAir;	// 28
+			float scatterBack;	// 2C
+			float scatterFwd;	// 30
+			float phaseBack;	// 34
+			float phaseFwd;		// 38
+		};
+		static_assert(sizeof(GodRaysData) == 0x3C);
+
+		// members
+		GodRaysData data;  // 20
+	};
+	static_assert(sizeof(BGSGodRays) == 0x60);
 }

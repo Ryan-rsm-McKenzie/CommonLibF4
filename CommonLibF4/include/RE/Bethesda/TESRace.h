@@ -4,6 +4,7 @@
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/FormComponents.h"
+#include "RE/Bethesda/Movement.h"
 #include "RE/Bethesda/TESCondition.h"
 #include "RE/Bethesda/TESForms.h"
 #include "RE/NetImmerse/NiPoint3.h"
@@ -81,17 +82,6 @@ namespace RE
 		BSFixedString equipSlotNode;  // 08
 	};
 	static_assert(sizeof(EquipSlotData) == 0x10);
-
-	namespace Movement
-	{
-		struct MaxSpeeds
-		{
-		public:
-			// members
-			float speeds[7][4];
-		};
-		static_assert(sizeof(MaxSpeeds) == 0x70);
-	}
 
 	class TESRace :
 		public TESForm,				// 000

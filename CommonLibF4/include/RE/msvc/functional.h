@@ -4,6 +4,8 @@ namespace RE
 {
 	namespace msvc
 	{
+		class type_info;
+
 		template <class>
 		class function;
 
@@ -28,13 +30,13 @@ namespace RE
 			{
 			public:
 				// add
-				virtual proxy_t* copy(void*) = 0;			  // 00
-				virtual proxy_t* move(void*) = 0;			  // 01
-				virtual result_type do_call(Args&&...) = 0;	  // 02
-				virtual const void* target_type() const = 0;  // 03 - TODO: std::type_info
-				virtual void delete_this(bool) = 0;			  // 04
-				virtual ~proxy_t() = default;				  // 05
-				virtual const void* get() const = 0;		  // 06
+				virtual proxy_t* copy(void*) = 0;				   // 00
+				virtual proxy_t* move(void*) = 0;				   // 01
+				virtual result_type do_call(Args&&...) = 0;		   // 02
+				virtual const type_info& target_type() const = 0;  // 03
+				virtual void delete_this(bool) = 0;				   // 04
+				virtual ~proxy_t() = default;					   // 05
+				virtual const void* get() const = 0;			   // 06
 			};
 
 			[[nodiscard]] bool good() const noexcept { return _fn != nullptr; }

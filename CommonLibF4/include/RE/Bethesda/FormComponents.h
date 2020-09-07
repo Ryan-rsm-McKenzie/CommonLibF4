@@ -8,6 +8,7 @@
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTTuple.h"
 #include "RE/Bethesda/MemoryManager.h"
+#include "RE/NetImmerse/NiPoint3.h"
 #include "RE/NetImmerse/NiRefObject.h"
 #include "RE/NetImmerse/NiSmartPointer.h"
 
@@ -93,9 +94,11 @@ namespace RE
 	class BGSTerminal;
 	class BGSTransform;
 	class BGSVoiceType;
+	class BSIAudioEffectVisitorBase;
 	class EnchantmentItem;
 	class NavMesh;
 	class NiAVObject;
+	class NiProperty;
 	class QueuedFile;
 	class SpellItem;
 	class TBO_InstanceData;
@@ -114,6 +117,11 @@ namespace RE
 	class TESPackage;
 	class TESRace;
 	class TESShout;
+
+	namespace BSISoundCategoryUtils
+	{
+		enum class FadeType;
+	}
 
 	namespace BSResource
 	{
@@ -156,6 +164,15 @@ namespace RE
 	};
 	static_assert(sizeof(ActorValueOwner) == 0x8);
 
+	class BGSDirectionalAmbientLightingColors
+	{
+	public:
+		// members
+		std::uint32_t colorValues[7];  // 00
+		float fresnelPower;			   // 1C
+	};
+	static_assert(sizeof(BGSDirectionalAmbientLightingColors) == 0x20);
+
 	class BGSNavmeshableObject
 	{
 	public:
@@ -180,6 +197,235 @@ namespace RE
 		virtual void HandleCloseFinish(TESObjectREFR*, TESObjectREFR*) { return; }		 // 04
 	};
 	static_assert(sizeof(BGSOpenCloseForm) == 0x8);
+
+	class BSIAudioEffectChain
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSIAudioEffectChain };
+
+		virtual ~BSIAudioEffectChain() = default;  // 00
+
+		// add
+		virtual std::uint32_t QEffectCount() const = 0;										   // 01
+		virtual char const* GetDebugID() const = 0;											   // 02
+		virtual void ForEachEffectImpl(const BSIAudioEffectVisitorBase& a_visitor) const = 0;  // 03
+	};
+	static_assert(sizeof(BSIAudioEffectChain) == 0x8);
+
+	class BSIMusicTrack
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSIMusicTrack };
+
+		enum class MUSIC_STATUS;
+
+		virtual ~BSIMusicTrack() = default;	 // 00
+
+		// add
+		virtual void DoUpdate() = 0;																// 01
+		virtual void DoPlay() = 0;																	// 02
+		virtual void DoPause() = 0;																	// 03
+		virtual void DoFinish(bool a_immediate, float a_fadeTime) = 0;								// 04
+		virtual float GetDurationImpl() const = 0;													// 05
+		virtual std::uint32_t GetType() const = 0;													// 06
+		virtual bool TestCanPlay() const { return true; }											// 07
+		virtual MUSIC_STATUS GetMusicStatus() const { return *trackStatus; }						// 08
+		virtual void DoSetDuckingAttenuation([[maybe_unused]] std::uint16_t a_ducking) { return; }	// 09
+		virtual void DoClearDucking() { return; }													// 0A
+
+		// members
+		stl::enumeration<MUSIC_STATUS, std::int32_t> trackStatus;  // 08
+	};
+	static_assert(sizeof(BSIMusicTrack) == 0x10);
+
+	class BSIMusicType
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSIMusicType };
+
+		// add
+		virtual void DoUpdate() = 0;																  // 00
+		virtual void DoPlay() = 0;																	  // 01
+		virtual void DoPause() = 0;																	  // 02
+		virtual void DoFinish(bool a_immediate) = 0;												  // 03
+		virtual void DoApplyDuckingAttenuation([[maybe_unused]] std::uint16_t a_ducking) { return; }  // 04
+		virtual void DoClearDucking() { return; }													  // 05
+		virtual void DoPrepare() { return; }														  // 06
+
+		virtual ~BSIMusicType();  // 07
+
+		// members
+		std::uint32_t flags;													 // 08
+		std::int8_t priority;													 // 0C
+		std::int8_t padding;													 // 0D
+		std::uint16_t ducksOtherMusicBy;										 // 0E
+		float fadeTime;															 // 10
+		std::uint32_t currentTrackIndex;										 // 14
+		BSTArray<std::uint32_t> trackHistory;									 // 18
+		BSTArray<BSIMusicTrack*> tracks;										 // 30
+		stl::enumeration<BSIMusicTrack::MUSIC_STATUS, std::int32_t> typeStatus;	 // 48
+	};
+	static_assert(sizeof(BSIMusicType) == 0x50);
+
+	class BSIReverbType
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSIReverbType };
+
+		// add
+		virtual std::int32_t DoGetRoomLevel() const = 0;		// 00
+		virtual std::int32_t DoGetRoomHFLevel() const = 0;		// 01
+		virtual float DoGetDecayTime() const = 0;				// 02
+		virtual float DoGetDecayHFRatio() const = 0;			// 03
+		virtual std::int32_t DoGetReflectionLevel() const = 0;	// 04
+		virtual float DoGetReflectionDelay() const = 0;			// 05
+		virtual std::int32_t DoGetReverbLevel() const = 0;		// 06
+		virtual float DoGetReverbDelay() const = 0;				// 07
+		virtual float DoGetDiffusion() const = 0;				// 08
+		virtual float DoGetDensity() const = 0;					// 09
+		virtual float DoGetHFReference() const = 0;				// 0A
+	};
+	static_assert(sizeof(BSIReverbType) == 0x8);
+
+	class BSISoundCategory
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSISoundCategory };
+
+		virtual ~BSISoundCategory() = default;	// 00
+
+		// add
+		virtual bool Matches(BSISoundCategory* a_toCheck, bool a_exclusive) const = 0;								   // 01
+		virtual float GetCategoryVolume() const = 0;																   // 02
+		virtual void SetCategoryVolume(float a_newVolume) = 0;														   // 03
+		virtual float GetCategoryFrequency() const = 0;																   // 04
+		virtual void SetCategoryFrequency(float a_newFreq) = 0;														   // 05
+		virtual std::uint16_t GetCategoryAttenuation(BSISoundCategoryUtils::FadeType a_type) const = 0;				   // 06
+		virtual void SetCategoryAttenuation(BSISoundCategoryUtils::FadeType a_type, std::uint16_t a_attenuation) = 0;  // 07
+		virtual bool CategoryPaused() const = 0;																	   // 08
+		virtual void SetCategoryPaused(bool a_paused, bool a_exclusive) = 0;										   // 09
+		virtual bool CategoryMute() const = 0;																		   // 0A
+		virtual void SetCategoryMute(bool a_mute, bool a_exclusive) = 0;											   // 0B
+		virtual float GetMinFrequencyMult() const = 0;																   // 0C
+		virtual bool GetBlockSpeedChange() const = 0;																   // 0D
+		virtual bool GetSkipOPMOverrides() const = 0;																   // 0E
+		virtual const char* GetDebugID() const = 0;																	   // 0F
+	};
+	static_assert(sizeof(BSISoundCategory) == 0x8);
+
+	class BSISoundDescriptor
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSISoundDescriptor };
+
+		struct ExtraResolutionData;
+		struct Resolution;
+
+		virtual ~BSISoundDescriptor() = default;  // 00
+
+		// add
+		virtual bool DoResolve(Resolution& a_resolution, float a_distance, ExtraResolutionData* a_data) const = 0;	 // 01
+		virtual bool DoMultiResolve(BSScrapArray<Resolution>& a_resolution, ExtraResolutionData* a_data) const = 0;	 // 02
+		virtual bool DoAudibilityTest(float a_distance) const = 0;													 // 03
+		virtual bool DoGetMultiResolves() const = 0;																 // 04
+	};
+	static_assert(sizeof(BSISoundDescriptor) == 0x8);
+
+	class BSISoundOutputModel
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSISoundOutputModel };
+
+		struct BSIAttenuationCharacteristics;
+
+		virtual ~BSISoundOutputModel() = default;  // 00
+
+		// add
+		virtual bool DoGetUsesHRTF() const = 0;																				  // 01
+		virtual bool DoGetHasSpeakerBias() const = 0;																		  // 02
+		virtual bool DoGetSpeakerBias(std::uint32_t a_srcChannels, std::uint32_t a_channel, float (&a_levels)[8]) const = 0;  // 03
+		virtual bool DoGetAttenuatesWithDistance() const = 0;																  // 04
+		virtual bool DoGetUseDoppler() const = 0;																			  // 05
+		virtual bool DoGetUseSoSDelay() const = 0;																			  // 06
+		virtual bool DoGetAudibility(float a_distance) const = 0;															  // 07
+		virtual std::uint32_t DoGetSupportedInputChannels() const = 0;														  // 08
+		virtual const BSIAttenuationCharacteristics* DoGetAttenuation() const = 0;											  // 09
+		virtual float DoGetReverbSendLevel() const = 0;																		  // 0A
+		virtual bool DoGetSupportsMonitor(std::uint32_t a_monitorID) const = 0;												  // 0B
+		virtual std::uint16_t DoGetStaticAttenuation() const = 0;															  // 0C
+		virtual const BSIAudioEffectChain* DoGetEffectChain() const = 0;													  // 0D
+		virtual const char* DoGetDebugID() const = 0;																		  // 0E
+		virtual bool DoGetTryPlayThroughController() const = 0;																  // 0F
+	};
+	static_assert(sizeof(BSISoundOutputModel) == 0x8);
+
+	class BSMaterialObject
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BSMaterialObject };
+
+		struct DIRECTIONAL_DATA
+		{
+		public:
+			// members
+			float falloffScale;		  // 00
+			float falloffBias;		  // 04
+			float noiseUVScale;		  // 08
+			float materialUVScale;	  // 0C
+			NiPoint3 projectionDir;	  // 10
+			float normalDampener;	  // 1C
+			float red;				  // 20
+			float green;			  // 24
+			float blue;				  // 28
+			std::int32_t singlePass;  // 2C
+		};
+		static_assert(sizeof(DIRECTIONAL_DATA) == 0x30);
+
+		virtual ~BSMaterialObject();  // 00
+
+		// add
+		virtual void EnsureLoaded() { return; }	 // 01
+
+		// members
+		DIRECTIONAL_DATA directionalData;		   // 08
+		BSTArray<NiPointer<NiProperty>> property;  // 38
+	};
+	static_assert(sizeof(BSMaterialObject) == 0x50);
+
+	struct INTERIOR_DATA
+	{
+	public:
+		// members
+		std::uint32_t ambient;												   // 00
+		std::uint32_t directional;											   // 04
+		std::uint32_t fogColorNear;											   // 08
+		float fogNear;														   // 0C
+		float fogFar;														   // 10
+		std::uint32_t directionalXY;										   // 14
+		std::uint32_t directionalZ;											   // 18
+		float directionalFade;												   // 1C
+		float clipDist;														   // 20
+		float fogPower;														   // 24
+		BGSDirectionalAmbientLightingColors directionalAmbientLightingColors;  // 28
+		std::uint32_t fogColorFar;											   // 48
+		float fogClamp;														   // 4C
+		float lightFadeStart;												   // 50
+		float lightFadeEnd;													   // 54
+		std::uint32_t lightingTemplateInheritanceFlags;						   // 58
+		float fogHeightMid;													   // 5C
+		float fogHeightRange;												   // 60
+		std::uint32_t fogColorHighNear;										   // 64
+		std::uint32_t fogColorHighFar;										   // 68
+		float fogHighDensityScale;											   // 6C
+		float fogNearColorScale;											   // 70
+		float fogFarColorScale;												   // 74
+		float fogHighNearColorScale;										   // 78
+		float fogHighFarColorScale;											   // 7C
+		float fogFarHeightMid;												   // 80
+		float fogFarHeightRange;											   // 84
+		std::uint32_t interiorOffset;										   // 88
+	};
+	static_assert(sizeof(INTERIOR_DATA) == 0x8C);
 
 	struct TESChildCell
 	{
@@ -533,6 +779,16 @@ namespace RE
 	{
 	public:
 		static constexpr auto RTTI{ RTTI_BGSKeywordForm };
+
+		// override (BaseFormComponent)
+		void InitializeDataComponent() override { return; }	 // 02
+		void ClearDataComponent() override;					 // 03
+		void InitComponent() override { return; }			 // 04
+		void CopyComponent(BaseFormComponent*) override;	 // 06
+
+		// override (IKeywordFormBase)
+		bool HasKeyword(const BGSKeyword*, const TBO_InstanceData*) const override;							// 01
+		void CollectAllKeywords(BSScrapArray<const BGSKeyword*>&, const TBO_InstanceData*) const override;	// 02
 
 		// add
 		virtual BGSKeyword* GetDefaultKeyword() const { return nullptr; }  // 07
@@ -1127,58 +1383,4 @@ namespace RE
 		float weight;  // 08
 	};
 	static_assert(sizeof(TESWeightForm) == 0x10);
-
-	namespace BGSMod
-	{
-		struct Container :
-			public BSTDataBuffer<2, BSDataBufferHeapAllocator>	// 00
-		{
-		public:
-			static constexpr auto RTTI{ RTTI_BGSMod__Container };
-		};
-		static_assert(sizeof(Container) == 0x10);
-
-		namespace Template
-		{
-			class Item :
-				public TESFullName,		  // 00
-				public BGSMod::Container  // 10
-			{
-			public:
-				static constexpr auto RTTI{ RTTI_BGSMod__Template__Item };
-
-				// members
-				BGSMod::Template::Items* parentTemplate;  // 20
-				BGSKeyword** nameKeywordA;				  // 28
-				std::uint16_t parent;					  // 30
-				std::int8_t levelMin;					  // 32
-				std::int8_t levelMax;					  // 33
-				std::int8_t keywords;					  // 34
-				std::int8_t tierStartLevel;				  // 35
-				std::int8_t altLevelsPerTier;			  // 36
-				bool isDefault : 1;						  // 37:1
-				bool fullNameEditorOnly : 1;			  // 37:2
-			};
-			static_assert(sizeof(Item) == 0x38);
-
-			class Items :
-				public BaseFormComponent  // 00
-			{
-			public:
-				static constexpr auto RTTI{ RTTI_BGSMod__Template__Items };
-
-				// override (BaseFormComponent)
-				std::uint32_t GetFormComponentType() const override { return 'TJBO'; }	// 01
-				void InitializeDataComponent() override { return; }						// 02
-				void ClearDataComponent() override;										// 03
-				void InitComponent() override;											// 04
-				void CopyComponent(BaseFormComponent*) override { return; }				// 06
-				void CopyComponent(BaseFormComponent*, TESForm*) override;				// 05
-
-				// members
-				BSTArray<Item*> items;	// 08
-			};
-			static_assert(sizeof(Items) == 0x20);
-		}
-	}
 }

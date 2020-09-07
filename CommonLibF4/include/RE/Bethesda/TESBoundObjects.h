@@ -859,4 +859,88 @@ namespace RE
 		BSNonReentrantSpinLock masterParticleLock;	// C4
 	};
 	static_assert(sizeof(BGSAddonNode) == 0xC8);
+
+	struct OBJ_ARMA
+	{
+	public:
+		// members
+		std::int8_t priorities[2];	// 0
+		std::int8_t modelRange[2];	// 2
+		std::int8_t unused[2];		// 4
+		std::int8_t soundValue;		// 6
+		float weaponAdjust;			// 8
+	};
+	static_assert(sizeof(OBJ_ARMA) == 0xC);
+
+	class TESObjectARMA :
+		public TESObject,		   // 000
+		public TESRaceForm,		   // 020
+		public BGSBipedObjectForm  // 030
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_TESObjectARMA };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kARMA };
+
+		// members
+		OBJ_ARMA data;											 // 040
+		BGSModelMaterialSwap bipedModel[2];						 // 050
+		BGSModelMaterialSwap bipedModelFacebones[2];			 // 0D0
+		BGSModelMaterialSwap bipedModel1stPerson[2];			 // 150
+		BGSTextureSet* skinTextures[2];							 // 1D0
+		BGSListForm* skinTextureSwapLists[2];					 // 1E0
+		BSTArray<TESRace*> additionalRaces;						 // 1F0
+		BGSFootstepSet* footstepSet;							 // 208
+		BGSArtObject* artObject;								 // 210
+		BSTHashMap<BSFixedString, NiPoint3>* scaleModifiers[2];	 // 218
+	};
+	static_assert(sizeof(TESObjectARMA) == 0x228);
+
+	class BGSArtObject :
+		public TESBoundObject,		 // 00
+		public BGSKeywordForm,		 // 68
+		public BGSModelMaterialSwap	 // 88
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSArtObject };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kARTO };
+
+		enum class ArtType;
+
+		struct Data
+		{
+		public:
+			// members
+			stl::enumeration<ArtType, std::int32_t> artType;  // 0
+		};
+		static_assert(sizeof(Data) == 0x4);
+
+		// members
+		Data data;	// C8
+	};
+	static_assert(sizeof(BGSArtObject) == 0xD0);
+
+	struct BGSDualCastDataDEF
+	{
+	public:
+		// members
+		BGSProjectile* projectile;		  // 00
+		BGSExplosion* explosion;		  // 08
+		TESEffectShader* effectShader;	  // 10
+		BGSArtObject* hitEffectArt;		  // 18
+		BGSImpactDataSet* impactDataSet;  // 20
+		std::uint32_t flags;			  // 28
+	};
+	static_assert(sizeof(BGSDualCastDataDEF) == 0x30);
+
+	class BGSDualCastData :
+		public TESBoundObject  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI_BGSDualCastData };
+		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDUAL };
+
+		// members
+		BGSDualCastDataDEF data;  // 68
+	};
+	static_assert(sizeof(BGSDualCastData) == 0x98);
 }
