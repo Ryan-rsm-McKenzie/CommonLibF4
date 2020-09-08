@@ -28,6 +28,7 @@
 #include "RE/Bethesda/BSStringT.h"
 #include "RE/Bethesda/BSSystemFileStreamer.h"
 #include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/BSTBTree.h"
 #include "RE/Bethesda/BSTEvent.h"
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/BSTList.h"

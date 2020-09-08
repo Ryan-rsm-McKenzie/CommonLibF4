@@ -292,6 +292,7 @@
     <ClInclude Include="include\RE\Bethesda\BGSStoryManagerTreeForm.h" />
     <ClInclude Include="include\RE\Bethesda\BGSTextureSet.h" />
     <ClInclude Include="include\RE\Bethesda\BSSoundHandle.h" />
+    <ClInclude Include="include\RE\Bethesda\BSTBTree.h" />
     <ClInclude Include="include\RE\Bethesda\BSTSmallIndexScatterTable.h" />
     <ClInclude Include="include\RE\Bethesda\CELLJobs.h" />
     <ClInclude Include="include\RE\Bethesda\Console.h" />

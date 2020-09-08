@@ -36,12 +36,14 @@
 #include <ctime>
 #include <filesystem>
 #include <functional>
+#include <iterator>
 #include <limits>
 #include <map>
 #include <memory>
 #include <new>
 #include <optional>
 #include <sstream>
+#include <stack>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -52,6 +54,7 @@ static_assert(std::is_integral_v<std::time_t> && sizeof(std::time_t) == sizeof(s
 
 #include <boost/atomic.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/iterator/iterator_facade.hpp>
 #include <nonstd/span.hpp>
 #include <spdlog/spdlog.h>
 

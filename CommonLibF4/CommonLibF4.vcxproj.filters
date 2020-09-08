@@ -144,6 +144,9 @@
     <ClInclude Include="include\RE\Bethesda\BSTArray.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSTBTree.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSTEvent.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>

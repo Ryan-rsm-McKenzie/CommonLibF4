@@ -1,5 +1,8 @@
 #pragma once
 
+#include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/BSTBTree.h"
+#include "RE/Bethesda/BSTList.h"
 #include "RE/Bethesda/MemoryManager.h"
 
 namespace RE
@@ -13,6 +16,8 @@ namespace RE
 		std::int32_t i;
 		char* s;
 		std::uint32_t u;
+		std::uint32_t r;
+		std::uint32_t a;
 	};
 
 	class Setting
@@ -37,7 +42,7 @@ namespace RE
 
 		virtual ~Setting()	// 00
 		{
-			if (GetKey()[0] == 'S') {
+			if (_key && _key[0] == 'S') {
 				free(const_cast<char*>(_key));
 				_key = nullptr;
 			}
@@ -48,39 +53,94 @@ namespace RE
 
 		F4_HEAP_REDEFINE_NEW(Setting);
 
-		[[nodiscard]] constexpr bool GetBinary() const noexcept
+		[[nodiscard]] bool GetBinary() const noexcept
 		{
 			assert(GetType() == SETTING_TYPE::kBinary);
 			return _value.b;
 		}
 
-		[[nodiscard]] constexpr const char* GetKey() const noexcept { return _key ? _key : ""; }
-
-		[[nodiscard]] constexpr SETTING_TYPE GetType() const noexcept
+		[[nodiscard]] char GetChar() const noexcept
 		{
-			switch (GetKey()[0]) {
-			case 'b':
-				return SETTING_TYPE::kBinary;
-			case 'c':
-				return SETTING_TYPE::kChar;
-			case 'h':
-				return SETTING_TYPE::kUChar;
-			case 'i':
-				return SETTING_TYPE::kInt;
-			case 'u':
-				return SETTING_TYPE::kUInt;
-			case 'f':
-				return SETTING_TYPE::kFloat;
-			case 's':
-			case 'S':
-				return SETTING_TYPE::kString;
-			case 'r':
-				return SETTING_TYPE::kRGB;
-			case 'a':
-				return SETTING_TYPE::kRGBA;
-			default:
+			assert(GetType() == SETTING_TYPE::kChar);
+			return _value.c;
+		}
+
+		[[nodiscard]] float GetFloat() const noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kFloat);
+			return _value.f;
+		}
+
+		[[nodiscard]] std::int32_t GetInt() const noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kInt);
+			return _value.i;
+		}
+
+		[[nodiscard]] std::string_view GetKey() const noexcept { return _key ? _key : ""sv; }
+
+		[[nodiscard]] stl::span<const std::uint8_t, 3> GetRGB() const noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kRGB);
+			return stl::span<const std::uint8_t, 3>{
+				reinterpret_cast<const std::uint8_t(&)[3]>(*std::addressof(_value.r))
+			};
+		}
+
+		[[nodiscard]] stl::span<const std::uint8_t, 4> GetRGBA() const noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kRGBA);
+			return stl::span<const std::uint8_t, 4>{
+				reinterpret_cast<const std::uint8_t(&)[4]>(*std::addressof(_value.a))
+			};
+		}
+
+		[[nodiscard]] std::string_view GetString() const noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kString);
+			return _value.s ? _value.s : ""sv;
+		}
+
+		[[nodiscard]] SETTING_TYPE GetType() const noexcept
+		{
+			if (_key) {
+				switch (_key[0]) {
+				case 'b':
+					return SETTING_TYPE::kBinary;
+				case 'c':
+					return SETTING_TYPE::kChar;
+				case 'h':
+					return SETTING_TYPE::kUChar;
+				case 'i':
+					return SETTING_TYPE::kInt;
+				case 'u':
+					return SETTING_TYPE::kUInt;
+				case 'f':
+					return SETTING_TYPE::kFloat;
+				case 's':
+				case 'S':
+					return SETTING_TYPE::kString;
+				case 'r':
+					return SETTING_TYPE::kRGB;
+				case 'a':
+					return SETTING_TYPE::kRGBA;
+				default:
+					return SETTING_TYPE::kNone;
+				}
+			} else {
 				return SETTING_TYPE::kNone;
 			}
+		}
+
+		[[nodiscard]] std::uint8_t GetUChar() const noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kUChar);
+			return _value.h;
+		}
+		[[nodiscard]] std::uint32_t GetUInt() const noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kUInt);
+			return _value.u;
 		}
 
 	private:
@@ -92,7 +152,7 @@ namespace RE
 
 	template <class T>
 	class SettingT :
-		public Setting
+		public Setting	// 00
 	{
 	public:
 	};
@@ -108,4 +168,95 @@ namespace RE
 	extern template class SettingT<INISettingCollection>;
 	extern template class SettingT<LipSynchroSettingCollection>;
 	extern template class SettingT<RegSettingCollection>;
+
+	template <class T>
+	class SettingCollection
+	{
+	public:
+		virtual ~SettingCollection() = default;	 // 00
+
+		// add
+		virtual void Add(T* a_setting) = 0;									// 01
+		virtual void Remove(T* a_setting) = 0;								// 02
+		virtual bool WriteSetting(T& a_setting) = 0;						// 03
+		virtual bool ReadSetting(T& a_setting) = 0;							// 04
+		virtual bool Open([[maybe_unused]] bool a_write) { return false; }	// 05
+		virtual bool Close() { return true; }								// 06
+		virtual bool ReadSettingsFromProfile() { return false; }			// 07
+		virtual bool WriteSettings() { return handle != nullptr; }			// 08
+		virtual bool ReadSettings() { return handle != nullptr; }			// 09
+
+		// members
+		char settingFile[260];	// 008
+		void* handle;			// 110
+	};
+
+	extern template class SettingCollection<Setting>;
+
+	template <class T>
+	class SettingCollectionMap :
+		public SettingCollection<T>	 // 000
+	{
+	public:
+		// members
+		BSTBTree<BSFixedString, T*> settings;  // 118
+	};
+
+	extern template class SettingCollectionMap<Setting>;
+
+	template <class T>
+	class SettingCollectionList :
+		public SettingCollection<T>
+	{
+	public:
+		// members
+		BSSimpleList<T*> settings;	// 118
+	};
+
+	extern template class SettingCollectionList<Setting>;
+
+	class GameSettingCollection :
+		public SettingCollectionMap<Setting>  // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::GameSettingCollection };
+		static constexpr auto VTABLE{ VTABLE::GameSettingCollection };
+
+		[[nodiscard]] static GameSettingCollection* GetSingleton()
+		{
+			REL::Relocation<GameSettingCollection**> singleton{ REL::ID(8308) };
+			return *singleton;
+		}
+	};
+	static_assert(sizeof(GameSettingCollection) == 0x138);
+
+	class INISettingCollection :
+		public SettingCollectionList<Setting>  // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::INISettingCollection };
+		static constexpr auto VTABLE{ VTABLE::INISettingCollection };
+
+		[[nodiscard]] static INISettingCollection* GetSingleton()
+		{
+			REL::Relocation<INISettingCollection**> singleton{ REL::ID(791183) };
+			return *singleton;
+		}
+	};
+	static_assert(sizeof(INISettingCollection) == 0x128);
+
+	class INIPrefSettingCollection :
+		public INISettingCollection	 // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::INIPrefSettingCollection };
+		static constexpr auto VTABLE{ VTABLE::INIPrefSettingCollection };
+
+		[[nodiscard]] static INIPrefSettingCollection* GetSingleton()
+		{
+			REL::Relocation<INIPrefSettingCollection**> singleton{ REL::ID(767844) };
+			return *singleton;
+		}
+	};
+	static_assert(sizeof(INIPrefSettingCollection) == 0x128);
 }
