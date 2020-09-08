@@ -57,7 +57,8 @@ namespace RE
 		public BSInputEventUser	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_PlayerInputHandler };
+		static constexpr auto RTTI{ RTTI::PlayerInputHandler };
+		static constexpr auto VTABLE{ VTABLE::PlayerInputHandler };
 
 		constexpr PlayerInputHandler(PlayerControlsData& a_data) noexcept :
 			data(a_data)
@@ -78,7 +79,8 @@ namespace RE
 		public PlayerInputHandler  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_HeldStateHandler };
+		static constexpr auto RTTI{ RTTI::HeldStateHandler };
+		static constexpr auto VTABLE{ VTABLE::HeldStateHandler };
 
 		constexpr HeldStateHandler(PlayerControlsData& a_data) noexcept :
 			PlayerInputHandler(a_data)
@@ -111,7 +113,8 @@ namespace RE
 		BSTSingletonSDM<PlayerControls>			 // 040
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_PlayerControls };
+		static constexpr auto RTTI{ RTTI::PlayerControls };
+		static constexpr auto VTABLE{ VTABLE::PlayerControls };
 
 		static PlayerControls* GetSingleton()
 		{

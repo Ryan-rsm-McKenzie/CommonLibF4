@@ -163,7 +163,8 @@ namespace RE
 		public BSTextureSet		// 068
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSTextureSet };
+		static constexpr auto RTTI{ RTTI::BGSTextureSet };
+		static constexpr auto VTABLE{ VTABLE::BGSTextureSet };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kTXST };
 
 		// members

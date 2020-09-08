@@ -423,6 +423,7 @@
     <ClInclude Include="include\RE\Scaleform\Render\Render_TreeNode.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Render_Types2D.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Render_Viewport.h" />
+    <ClInclude Include="include\RE\VTABLE_IDs.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="CommonLibF4.natvis" />

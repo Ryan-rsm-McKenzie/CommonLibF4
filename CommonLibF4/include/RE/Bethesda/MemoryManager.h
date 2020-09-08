@@ -17,7 +17,8 @@ namespace RE
 	class IMemoryStoreBase
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IMemoryStoreBase };
+		static constexpr auto RTTI{ RTTI::IMemoryStoreBase };
+		static constexpr auto VTABLE{ VTABLE::IMemoryStoreBase };
 
 		virtual ~IMemoryStoreBase() = default;	// 00
 
@@ -32,7 +33,8 @@ namespace RE
 		public IMemoryStoreBase	 // 0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IMemoryStore };
+		static constexpr auto RTTI{ RTTI::IMemoryStore };
+		static constexpr auto VTABLE{ VTABLE::IMemoryStore };
 
 		virtual ~IMemoryStore() = default;	// 00
 
@@ -47,7 +49,8 @@ namespace RE
 		public IMemoryStore	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IMemoryHeap };
+		static constexpr auto RTTI{ RTTI::IMemoryHeap };
+		static constexpr auto VTABLE{ VTABLE::IMemoryHeap };
 
 		virtual ~IMemoryHeap() = default;
 
@@ -72,7 +75,8 @@ namespace RE
 		public IMemoryStore	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ScrapHeap };
+		static constexpr auto RTTI{ RTTI::ScrapHeap };
+		static constexpr auto VTABLE{ VTABLE::ScrapHeap };
 
 		struct Block
 		{

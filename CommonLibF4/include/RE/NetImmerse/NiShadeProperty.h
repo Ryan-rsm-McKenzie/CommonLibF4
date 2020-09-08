@@ -8,8 +8,9 @@ namespace RE
 		public NiProperty  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_NiShadeProperty };
-		static constexpr auto Ni_RTTI{ NiRTTI_NiShadeProperty };
+		static constexpr auto RTTI{ RTTI::NiShadeProperty };
+		static constexpr auto VTABLE{ VTABLE::NiShadeProperty };
+		static constexpr auto Ni_RTTI{ Ni_RTTI::NiShadeProperty };
 
 		// add
 		virtual bool SetupGeometry([[maybe_unused]] BSGeometry* a_geometry) { return true; }  // 2A

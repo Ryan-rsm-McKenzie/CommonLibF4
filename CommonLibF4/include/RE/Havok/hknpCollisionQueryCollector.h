@@ -11,7 +11,8 @@ namespace RE
 		public hkBaseObject	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_hknpCollisionQueryCollector };
+		static constexpr auto RTTI{ RTTI::hknpCollisionQueryCollector };
+		static constexpr auto VTABLE{ VTABLE::hknpCollisionQueryCollector };
 
 		// add
 		virtual void Reset() = 0;									// 01

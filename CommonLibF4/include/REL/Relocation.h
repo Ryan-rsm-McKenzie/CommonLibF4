@@ -362,6 +362,7 @@ namespace REL
 				stl::report_and_fail("failed to obtain module handle"sv);
 			}
 			_base = reinterpret_cast<std::uintptr_t>(handle);
+			_natvis = _base;
 
 			load_version();
 			load_segments();
@@ -406,6 +407,8 @@ namespace REL
 			".pdata"sv,
 			".tls"sv
 		};
+
+		static inline std::uintptr_t _natvis{ 0 };
 
 		std::array<Segment, Segment::total> _segments;
 		Version _version;
@@ -564,6 +567,7 @@ namespace REL
 		}
 
 		[[nodiscard]] std::uintptr_t address() const { return base() + offset(); }
+		[[nodiscard]] constexpr std::uint64_t id() const noexcept { return _id; }
 		[[nodiscard]] std::size_t offset() const { return IDDatabase::get().id2offset(_id); }
 
 	private:
@@ -657,12 +661,40 @@ namespace REL
 		}
 
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _impl; }
-		[[nodiscard]] std::size_t offset() const { offset() - base(); }
+		[[nodiscard]] std::size_t offset() const { return _impl - base(); }
 
 		[[nodiscard]] value_type get() const noexcept(std::is_nothrow_copy_constructible_v<value_type>)
 		{
 			assert(_impl != 0);
 			return unrestricted_cast<value_type>(_impl);
+		}
+
+		template <
+			class U = value_type,
+			std::enable_if_t<
+				std::is_same_v<
+					U,
+					std::uintptr_t>,
+				int> = 0>
+		std::uintptr_t write_vfunc(std::size_t a_idx, std::uintptr_t a_newFunc)
+		{
+			const auto addr = address() + (sizeof(void*) * a_idx);
+			const auto result = *reinterpret_cast<std::uintptr_t*>(addr);
+			safe_write(addr, a_newFunc);
+			return result;
+		}
+
+		template <
+			class F,
+			class U = value_type,
+			std::enable_if_t<
+				std::is_same_v<
+					U,
+					std::uintptr_t>,
+				int> = 0>
+		std::uintptr_t write_vfunc(std::size_t a_idx, F a_newFunc)
+		{
+			return write_vfunc(a_idx, unrestricted_cast<std::uintptr_t>(a_newFunc));
 		}
 
 	private:

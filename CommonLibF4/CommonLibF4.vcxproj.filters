@@ -501,6 +501,9 @@
     <ClInclude Include="include\RE\Scaleform\Render\Render_Viewport.h">
       <Filter>include\RE\Scaleform\Render</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\VTABLE_IDs.h">
+      <Filter>include\RE</Filter>
+    </ClInclude>
     <ClInclude Include="include\REL\Relocation.h">
       <Filter>include\REL</Filter>
     </ClInclude>

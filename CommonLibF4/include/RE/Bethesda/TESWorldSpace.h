@@ -66,7 +66,8 @@ namespace RE
 		public TESTexture	 // 030
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESWorldSpace };
+		static constexpr auto RTTI{ RTTI::TESWorldSpace };
+		static constexpr auto VTABLE{ VTABLE::TESWorldSpace };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kWRLD };
 
 		struct ShortPoint

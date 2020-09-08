@@ -181,7 +181,8 @@ namespace RE
 		public TESDescription  // 030
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ActorValueInfo };
+		static constexpr auto RTTI{ RTTI::ActorValueInfo };
+		static constexpr auto VTABLE{ VTABLE::ActorValueInfo };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kAVIF };
 
 		using ModifiedCallback_t = void(Actor* a_actor, const ActorValueInfo& a_info, float a_originalValue, float a_delta, Actor* a_actorSource);

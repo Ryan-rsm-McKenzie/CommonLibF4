@@ -288,7 +288,7 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_Script };
+		static constexpr auto RTTI{ RTTI::Script };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCPT };
 
 		template <class... Args>

@@ -82,7 +82,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESPackage };
+		static constexpr auto RTTI{ RTTI::TESPackage };
+		static constexpr auto VTABLE{ VTABLE::TESPackage };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPACK };
 
 		// add
@@ -114,7 +115,8 @@ namespace RE
 		public TESPackage  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_AlarmPackage };
+		static constexpr auto RTTI{ RTTI::AlarmPackage };
+		static constexpr auto VTABLE{ VTABLE::AlarmPackage };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPACK };
 
 		// members
@@ -127,7 +129,8 @@ namespace RE
 		public TESPackage  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_DialoguePackage };
+		static constexpr auto RTTI{ RTTI::DialoguePackage };
+		static constexpr auto VTABLE{ VTABLE::DialoguePackage };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPACK };
 
 		// members
@@ -147,7 +150,8 @@ namespace RE
 		public TESPackage  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_FleePackage };
+		static constexpr auto RTTI{ RTTI::FleePackage };
+		static constexpr auto VTABLE{ VTABLE::FleePackage };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPACK };
 
 		// members
@@ -187,7 +191,8 @@ namespace RE
 		public TESPackage  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_SpectatorPackage };
+		static constexpr auto RTTI{ RTTI::SpectatorPackage };
+		static constexpr auto VTABLE{ VTABLE::SpectatorPackage };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPACK };
 
 		// members
@@ -206,7 +211,8 @@ namespace RE
 		public TESPackage  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TrespassPackage };
+		static constexpr auto RTTI{ RTTI::TrespassPackage };
+		static constexpr auto VTABLE{ VTABLE::TrespassPackage };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPACK };
 
 		// members

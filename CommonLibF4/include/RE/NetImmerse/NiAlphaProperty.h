@@ -9,8 +9,9 @@ namespace RE
 		NiProperty	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_NiAlphaProperty };
-		static constexpr auto Ni_RTTI{ NiRTTI_NiAlphaProperty };
+		static constexpr auto RTTI{ RTTI::NiAlphaProperty };
+		static constexpr auto VTABLE{ VTABLE::NiAlphaProperty };
+		static constexpr auto Ni_RTTI{ Ni_RTTI::NiAlphaProperty };
 
 		enum class AlphaFunction
 		{

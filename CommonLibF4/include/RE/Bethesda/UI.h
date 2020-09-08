@@ -41,7 +41,8 @@ namespace RE
 		public BSTEventSource<TutorialEvent>				 // 120
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_UI };
+		static constexpr auto RTTI{ RTTI::UI };
+		static constexpr auto VTABLE{ VTABLE::UI };
 
 		using Create_t = typename UIMenuEntry::Create_t;
 		using StaticUpdate_t = typename UIMenuEntry::StaticUpdate_t;

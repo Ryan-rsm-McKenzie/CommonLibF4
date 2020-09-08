@@ -14,7 +14,8 @@ namespace RE
 		public BGSModelMaterialSwap	 // 030
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSHeadPart };
+		static constexpr auto RTTI{ RTTI::BGSHeadPart };
+		static constexpr auto VTABLE{ VTABLE::BGSHeadPart };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kHDPT };
 
 		enum class HeadPartType

@@ -11,7 +11,8 @@ namespace RE
 		public hknpAllHitsCollector	 // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_hknpUniqueBodyIdHitCollector };
+		static constexpr auto RTTI{ RTTI::hknpUniqueBodyIdHitCollector };
+		static constexpr auto VTABLE{ VTABLE::hknpUniqueBodyIdHitCollector };
 
 		// members
 		hkRefPtr<hknpBSWorld> latentWorld;	// 3F0

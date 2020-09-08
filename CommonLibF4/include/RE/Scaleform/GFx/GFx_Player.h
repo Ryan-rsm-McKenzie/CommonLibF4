@@ -627,7 +627,8 @@ namespace RE
 				public RefCountBase<FunctionHandler, 2>
 			{
 			public:
-				static constexpr auto RTTI{ RTTI_Scaleform__GFx__FunctionHandler };
+				static constexpr auto RTTI{ RTTI::Scaleform__GFx__FunctionHandler };
+				static constexpr auto VTABLE{ VTABLE::Scaleform__GFx__FunctionHandler };
 
 				struct Params
 				{

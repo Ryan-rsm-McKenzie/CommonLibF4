@@ -10,7 +10,8 @@ namespace RE
 		public hknpCollisionQueryCollector	// 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_hknpAllHitsCollector };
+		static constexpr auto RTTI{ RTTI::hknpAllHitsCollector };
+		static constexpr auto VTABLE{ VTABLE::hknpAllHitsCollector };
 
 		// override (hknpCollisionQueryCollector)
 		void Reset() override;								  // 01

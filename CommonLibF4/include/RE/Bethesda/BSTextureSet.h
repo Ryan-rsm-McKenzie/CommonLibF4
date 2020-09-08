@@ -17,8 +17,9 @@ namespace RE
 		public NiShadeProperty	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSShaderProperty };
-		static constexpr auto Ni_RTTI{ NiRTTI_BSShaderProperty };
+		static constexpr auto RTTI{ RTTI::BSShaderProperty };
+		static constexpr auto VTABLE{ VTABLE::BSShaderProperty };
+		static constexpr auto Ni_RTTI{ Ni_RTTI::BSShaderProperty };
 
 		enum class TextureTypeEnum;
 
@@ -76,8 +77,9 @@ namespace RE
 		public NiObject	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSTextureSet };
-		static constexpr auto Ni_RTTI{ NiRTTI_BSTextureSet };
+		static constexpr auto RTTI{ RTTI::BSTextureSet };
+		static constexpr auto VTABLE{ VTABLE::BSTextureSet };
+		static constexpr auto Ni_RTTI{ Ni_RTTI::BSTextureSet };
 
 		// add
 		virtual const BSFixedString* GetTextureFilenameFS(BSShaderProperty::TextureTypeEnum a_type) = 0;												  // 28

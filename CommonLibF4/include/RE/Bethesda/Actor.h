@@ -69,7 +69,8 @@ namespace RE
 	class MagicTarget
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_MagicTarget };
+		static constexpr auto RTTI{ RTTI::MagicTarget };
+		static constexpr auto VTABLE{ VTABLE::MagicTarget };
 
 		struct AddTargetData;
 		struct SpellDispelData;
@@ -101,7 +102,8 @@ namespace RE
 		public IMovementState  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ActorState };
+		static constexpr auto RTTI{ RTTI::ActorState };
+		static constexpr auto VTABLE{ VTABLE::ActorState };
 
 		// add
 		virtual bool SetWeaponMagicDrawn(bool a_drawn);				   // 21
@@ -140,7 +142,8 @@ namespace RE
 	class IPostAnimationChannelUpdateFunctor
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IPostAnimationChannelUpdateFunctor };
+		static constexpr auto RTTI{ RTTI::IPostAnimationChannelUpdateFunctor };
+		static constexpr auto VTABLE{ VTABLE::IPostAnimationChannelUpdateFunctor };
 
 		virtual ~IPostAnimationChannelUpdateFunctor() = default;  // 00
 
@@ -184,7 +187,8 @@ namespace RE
 		public BSTEventSource<ActorCPMEvent>							// 278
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_Actor };
+		static constexpr auto RTTI{ RTTI::Actor };
+		static constexpr auto VTABLE{ VTABLE::Actor };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kACHR };
 
 		// add

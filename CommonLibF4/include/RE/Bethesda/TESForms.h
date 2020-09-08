@@ -460,7 +460,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESForm };
+		static constexpr auto RTTI{ RTTI::TESForm };
+		static constexpr auto VTABLE{ VTABLE::TESForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
 
 		// add
@@ -532,7 +533,9 @@ namespace RE
 		virtual std::uint32_t GetFilledSlotsImpl() const { return static_cast<std::uint32_t>(-1); }																																	  // 48
 		virtual float GetDesirability([[maybe_unused]] TBO_InstanceData* a_instanceData, [[maybe_unused]] const TESForm* a_user) const { return 0.0F; }																				  // 49
 
+		[[nodiscard]] std::uint32_t GetFormID() const noexcept { return formID; }
 		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
+		[[nodiscard]] bool IsCreated() const noexcept { return (formID >> (8 * 3)) == 0xFF; }
 
 		template <
 			class T,
@@ -569,7 +572,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSKeyword };
+		static constexpr auto RTTI{ RTTI::BGSKeyword };
+		static constexpr auto VTABLE{ VTABLE::BGSKeyword };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kKYWD };
 
 		// members
@@ -581,7 +585,8 @@ namespace RE
 		public BGSKeyword  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSLocationRefType };
+		static constexpr auto RTTI{ RTTI::BGSLocationRefType };
+		static constexpr auto VTABLE{ VTABLE::BGSLocationRefType };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLCRT };
 	};
 	static_assert(sizeof(BGSLocationRefType) == 0x28);
@@ -590,7 +595,8 @@ namespace RE
 		public BGSKeyword  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAction };
+		static constexpr auto RTTI{ RTTI::BGSAction };
+		static constexpr auto VTABLE{ VTABLE::BGSAction };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kAACT };
 
 		// members
@@ -602,7 +608,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSTransform };
+		static constexpr auto RTTI{ RTTI::BGSTransform };
+		static constexpr auto VTABLE{ VTABLE::BGSTransform };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kTRNS };
 
 		struct TransformData
@@ -627,7 +634,8 @@ namespace RE
 		public TESIcon	 // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMenuIcon };
+		static constexpr auto RTTI{ RTTI::BGSMenuIcon };
+		static constexpr auto VTABLE{ VTABLE::BGSMenuIcon };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMICN };
 	};
 	static_assert(sizeof(BGSMenuIcon) == 0x30);
@@ -636,7 +644,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESGlobal };
+		static constexpr auto RTTI{ RTTI::TESGlobal };
+		static constexpr auto VTABLE{ VTABLE::TESGlobal };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kGLOB };
 
 		// members
@@ -649,7 +658,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSDamageType };
+		static constexpr auto RTTI{ RTTI::BGSDamageType };
+		static constexpr auto VTABLE{ VTABLE::BGSDamageType };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDMGT };
 
 		struct Data
@@ -683,7 +693,8 @@ namespace RE
 		public BGSPropertySheet	 // 58
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESClass };
+		static constexpr auto RTTI{ RTTI::TESClass };
+		static constexpr auto VTABLE{ VTABLE::TESClass };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCLAS };
 
 		// members
@@ -697,7 +708,8 @@ namespace RE
 		public TESTexture	 // 30
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESEyes };
+		static constexpr auto RTTI{ RTTI::TESEyes };
+		static constexpr auto VTABLE{ VTABLE::TESEyes };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kEYES };
 
 		// members
@@ -712,7 +724,8 @@ namespace RE
 		public BGSKeywordForm		  // 040
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_EffectSetting };
+		static constexpr auto RTTI{ RTTI::EffectSetting };
+		static constexpr auto VTABLE{ VTABLE::EffectSetting };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMGEF };
 
 		using FilterValidationFunction_t = bool(EffectSetting*, void*);
@@ -797,7 +810,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESLandTexture };
+		static constexpr auto RTTI{ RTTI::TESLandTexture };
+		static constexpr auto VTABLE{ VTABLE::TESLandTexture };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLTEX };
 
 		// members
@@ -814,7 +828,8 @@ namespace RE
 		public TESForm	// 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESWeather };
+		static constexpr auto RTTI{ RTTI::TESWeather };
+		static constexpr auto VTABLE{ VTABLE::TESWeather };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kWTHR };
 
 		enum class SpellContext
@@ -905,7 +920,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESClimate };
+		static constexpr auto RTTI{ RTTI::TESClimate };
+		static constexpr auto VTABLE{ VTABLE::TESClimate };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCLMT };
 
 		// members
@@ -920,7 +936,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSShaderParticleGeometryData };
+		static constexpr auto RTTI{ RTTI::BGSShaderParticleGeometryData };
+		static constexpr auto VTABLE{ VTABLE::BGSShaderParticleGeometryData };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSPGD };
 
 		// members
@@ -934,7 +951,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSReferenceEffect };
+		static constexpr auto RTTI{ RTTI::BGSReferenceEffect };
+		static constexpr auto VTABLE{ VTABLE::BGSReferenceEffect };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kRFCT };
 
 		struct Data
@@ -956,7 +974,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESRegion };
+		static constexpr auto RTTI{ RTTI::TESRegion };
+		static constexpr auto VTABLE{ VTABLE::TESRegion };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kREGN };
 
 		// add
@@ -978,7 +997,8 @@ namespace RE
 		public TESFullName	// 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESObjectCELL };
+		static constexpr auto RTTI{ RTTI::TESObjectCELL };
+		static constexpr auto VTABLE{ VTABLE::TESObjectCELL };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCELL };
 
 		// members
@@ -1030,7 +1050,8 @@ namespace RE
 		public TESChildCell	 // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESObjectLAND };
+		static constexpr auto RTTI{ RTTI::TESObjectLAND };
+		static constexpr auto VTABLE{ VTABLE::TESObjectLAND };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLAND };
 
 		struct LoadedLandData;
@@ -1058,7 +1079,8 @@ namespace RE
 		public TESFullName	// 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESTopic };
+		static constexpr auto RTTI{ RTTI::TESTopic };
+		static constexpr auto VTABLE{ VTABLE::TESTopic };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDIAL };
 
 		struct InfoTree;
@@ -1099,7 +1121,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESTopicInfo };
+		static constexpr auto RTTI{ RTTI::TESTopicInfo };
+		static constexpr auto VTABLE{ VTABLE::TESTopicInfo };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kINFO };
 
 		// members
@@ -1130,7 +1153,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESIdleForm };
+		static constexpr auto RTTI{ RTTI::TESIdleForm };
+		static constexpr auto VTABLE{ VTABLE::TESIdleForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIDLE };
 
 		// members
@@ -1150,7 +1174,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESLoadScreen };
+		static constexpr auto RTTI{ RTTI::TESLoadScreen };
+		static constexpr auto VTABLE{ VTABLE::TESLoadScreen };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLSCR };
 
 		struct LoadNIFData;
@@ -1167,7 +1192,8 @@ namespace RE
 		public BGSModelMaterialSwap	 // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESObjectANIO };
+		static constexpr auto RTTI{ RTTI::TESObjectANIO };
+		static constexpr auto VTABLE{ VTABLE::TESObjectANIO };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kANIO };
 
 		// members
@@ -1224,7 +1250,8 @@ namespace RE
 		public TESModel	 // 020
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESEffectShader };
+		static constexpr auto RTTI{ RTTI::TESEffectShader };
+		static constexpr auto VTABLE{ VTABLE::TESEffectShader };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kEFSH };
 
 		// members
@@ -1241,7 +1268,8 @@ namespace RE
 		public BGSPreloadable  // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSDebris };
+		static constexpr auto RTTI{ RTTI::BGSDebris };
+		static constexpr auto VTABLE{ VTABLE::BGSDebris };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDEBR };
 
 		// members
@@ -1264,7 +1292,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESImageSpace };
+		static constexpr auto RTTI{ RTTI::TESImageSpace };
+		static constexpr auto VTABLE{ VTABLE::TESImageSpace };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIMGS };
 
 		// members
@@ -1278,7 +1307,8 @@ namespace RE
 		public TESForm	// 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESImageSpaceModifier };
+		static constexpr auto RTTI{ RTTI::TESImageSpaceModifier };
+		static constexpr auto VTABLE{ VTABLE::TESImageSpaceModifier };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIMAD };
 
 		struct ImageSpaceModifierData
@@ -1336,7 +1366,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSListForm };
+		static constexpr auto RTTI{ RTTI::BGSListForm };
+		static constexpr auto VTABLE{ VTABLE::BGSListForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFLST };
 
 		// members
@@ -1365,7 +1396,8 @@ namespace RE
 		public TESIcon			// 48
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSPerk };
+		static constexpr auto RTTI{ RTTI::BGSPerk };
+		static constexpr auto VTABLE{ VTABLE::BGSPerk };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPERK };
 
 		// members
@@ -1384,7 +1416,8 @@ namespace RE
 		public BGSPreloadable  // 050
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSBodyPartData };
+		static constexpr auto RTTI{ RTTI::BGSBodyPartData };
+		static constexpr auto VTABLE{ VTABLE::BGSBodyPartData };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kBPTD };
 
 		// members
@@ -1399,7 +1432,8 @@ namespace RE
 		public TESImageSpaceModifiableForm	// 50
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSCameraShot };
+		static constexpr auto RTTI{ RTTI::BGSCameraShot };
+		static constexpr auto VTABLE{ VTABLE::BGSCameraShot };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCAMS };
 
 		enum class CAM_ACTION;
@@ -1446,7 +1480,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSCameraPath };
+		static constexpr auto RTTI{ RTTI::BGSCameraPath };
+		static constexpr auto VTABLE{ VTABLE::BGSCameraPath };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCPTH };
 
 		// members
@@ -1471,7 +1506,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSVoiceType };
+		static constexpr auto RTTI{ RTTI::BGSVoiceType };
+		static constexpr auto VTABLE{ VTABLE::BGSVoiceType };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kVTYP };
 
 		// members
@@ -1484,7 +1520,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMaterialType };
+		static constexpr auto RTTI{ RTTI::BGSMaterialType };
+		static constexpr auto VTABLE{ VTABLE::BGSMaterialType };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMATT };
 
 		// members
@@ -1529,7 +1566,8 @@ namespace RE
 		public TESModel	 // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSImpactData };
+		static constexpr auto RTTI{ RTTI::BGSImpactData };
+		static constexpr auto VTABLE{ VTABLE::BGSImpactData };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIPCT };
 
 		enum class ORIENTATION;
@@ -1566,7 +1604,8 @@ namespace RE
 		public BGSPreloadable  // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSImpactDataSet };
+		static constexpr auto RTTI{ RTTI::BGSImpactDataSet };
+		static constexpr auto VTABLE{ VTABLE::BGSImpactDataSet };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kIPDS };
 
 		// members
@@ -1602,7 +1641,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSEncounterZone };
+		static constexpr auto RTTI{ RTTI::BGSEncounterZone };
+		static constexpr auto VTABLE{ VTABLE::BGSEncounterZone };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kECZN };
 
 		// members
@@ -1646,7 +1686,8 @@ namespace RE
 		public BGSKeywordForm  // 030
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSLocation };
+		static constexpr auto RTTI{ RTTI::BGSLocation };
+		static constexpr auto VTABLE{ VTABLE::BGSLocation };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLCTN };
 
 		struct KEYWORD_DATA
@@ -1700,7 +1741,8 @@ namespace RE
 		public TESDescription  // 30
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMessage };
+		static constexpr auto RTTI{ RTTI::BGSMessage };
+		static constexpr auto VTABLE{ VTABLE::BGSMessage };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMESG };
 
 		// members
@@ -1718,7 +1760,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSLightingTemplate };
+		static constexpr auto RTTI{ RTTI::BGSLightingTemplate };
+		static constexpr auto VTABLE{ VTABLE::BGSLightingTemplate };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLGTM };
 
 		// members
@@ -1733,7 +1776,8 @@ namespace RE
 		public BSIMusicType	 // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMusicType };
+		static constexpr auto RTTI{ RTTI::BGSMusicType };
+		static constexpr auto VTABLE{ VTABLE::BGSMusicType };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMUSC };
 
 		// members
@@ -1745,7 +1789,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSFootstep };
+		static constexpr auto RTTI{ RTTI::BGSFootstep };
+		static constexpr auto VTABLE{ VTABLE::BGSFootstep };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFSTP };
 
 		// members
@@ -1758,7 +1803,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSFootstepSet };
+		static constexpr auto RTTI{ RTTI::BGSFootstepSet };
+		static constexpr auto VTABLE{ VTABLE::BGSFootstepSet };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFSTS };
 
 		// members
@@ -1770,7 +1816,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSDialogueBranch };
+		static constexpr auto RTTI{ RTTI::BGSDialogueBranch };
+		static constexpr auto VTABLE{ VTABLE::BGSDialogueBranch };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDLBR };
 
 		// members
@@ -1786,7 +1833,8 @@ namespace RE
 		public BSIMusicTrack  // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMusicTrackFormWrapper };
+		static constexpr auto RTTI{ RTTI::BGSMusicTrackFormWrapper };
+		static constexpr auto VTABLE{ VTABLE::BGSMusicTrackFormWrapper };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMUST };
 
 		// members
@@ -1799,7 +1847,8 @@ namespace RE
 		public TESFullName	// 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESWordOfPower };
+		static constexpr auto RTTI{ RTTI::TESWordOfPower };
+		static constexpr auto VTABLE{ VTABLE::TESWordOfPower };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kWOOP };
 
 		// members
@@ -1815,7 +1864,8 @@ namespace RE
 		public TESDescription		  // 50
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESShout };
+		static constexpr auto RTTI{ RTTI::TESShout };
+		static constexpr auto VTABLE{ VTABLE::TESShout };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSHOU };
 
 		struct Variation
@@ -1837,7 +1887,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSEquipSlot };
+		static constexpr auto RTTI{ RTTI::BGSEquipSlot };
+		static constexpr auto VTABLE{ VTABLE::BGSEquipSlot };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kEQUP };
 
 		// members
@@ -1851,7 +1902,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSRelationship };
+		static constexpr auto RTTI{ RTTI::BGSRelationship };
+		static constexpr auto VTABLE{ VTABLE::BGSRelationship };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kRELA };
 
 		// members
@@ -1867,7 +1919,8 @@ namespace RE
 		public IKeywordFormBase	 // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSScene };
+		static constexpr auto RTTI{ RTTI::BGSScene };
+		static constexpr auto VTABLE{ VTABLE::BGSScene };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCEN };
 
 		// members
@@ -1895,7 +1948,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAssociationType };
+		static constexpr auto RTTI{ RTTI::BGSAssociationType };
+		static constexpr auto VTABLE{ VTABLE::BGSAssociationType };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kASTP };
 
 		// members
@@ -1908,7 +1962,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSOutfit };
+		static constexpr auto RTTI{ RTTI::BGSOutfit };
+		static constexpr auto VTABLE{ VTABLE::BGSOutfit };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kOTFT };
 
 		// members
@@ -1922,7 +1977,8 @@ namespace RE
 		public BSMaterialObject	 // 50
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMaterialObject };
+		static constexpr auto RTTI{ RTTI::BGSMaterialObject };
+		static constexpr auto VTABLE{ VTABLE::BGSMaterialObject };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMATO };
 
 		struct FILE_DATA
@@ -1943,7 +1999,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMovementType };
+		static constexpr auto RTTI{ RTTI::BGSMovementType };
+		static constexpr auto VTABLE{ VTABLE::BGSMovementType };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMOVT };
 
 		// members
@@ -1956,7 +2013,8 @@ namespace RE
 		public BSISoundDescriptor  // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSSoundDescriptorForm };
+		static constexpr auto RTTI{ RTTI::BGSSoundDescriptorForm };
+		static constexpr auto VTABLE{ VTABLE::BGSSoundDescriptorForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSNDR };
 
 		// members
@@ -1970,7 +2028,8 @@ namespace RE
 		public BSISoundCategory	 // 30
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSSoundCategory };
+		static constexpr auto RTTI{ RTTI::BGSSoundCategory };
+		static constexpr auto VTABLE{ VTABLE::BGSSoundCategory };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSNCT };
 
 		// members
@@ -1995,7 +2054,8 @@ namespace RE
 		public BSISoundOutputModel	// 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSSoundOutput };
+		static constexpr auto RTTI{ RTTI::BGSSoundOutput };
+		static constexpr auto VTABLE{ VTABLE::BGSSoundOutput };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSOPM };
 
 		enum class SPEAKER_OUTPUT_MODE;
@@ -2018,7 +2078,8 @@ namespace RE
 		public TESDescription  // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSCollisionLayer };
+		static constexpr auto RTTI{ RTTI::BGSCollisionLayer };
+		static constexpr auto VTABLE{ VTABLE::BGSCollisionLayer };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCOLL };
 
 		// members
@@ -2035,7 +2096,8 @@ namespace RE
 		public TESFullName	// 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSColorForm };
+		static constexpr auto RTTI{ RTTI::BGSColorForm };
+		static constexpr auto VTABLE{ VTABLE::BGSColorForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCLFM };
 
 		// members
@@ -2054,7 +2116,8 @@ namespace RE
 		public BSIReverbType  // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSReverbParameters };
+		static constexpr auto RTTI{ RTTI::BGSReverbParameters };
+		static constexpr auto VTABLE{ VTABLE::BGSReverbParameters };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kREVB };
 
 		struct ReverbParams
@@ -2085,7 +2148,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSPackIn };
+		static constexpr auto RTTI{ RTTI::BGSPackIn };
+		static constexpr auto VTABLE{ VTABLE::BGSPackIn };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPKIN };
 	};
 	static_assert(sizeof(BGSPackIn) == 0x20);
@@ -2094,7 +2158,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAimModel };
+		static constexpr auto RTTI{ RTTI::BGSAimModel };
+		static constexpr auto VTABLE{ VTABLE::BGSAimModel };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kAMDL };
 
 		struct Data
@@ -2131,7 +2196,8 @@ namespace RE
 		public TESDescription			// 38
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSConstructibleObject };
+		static constexpr auto RTTI{ RTTI::BGSConstructibleObject };
+		static constexpr auto VTABLE{ VTABLE::BGSConstructibleObject };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCOBJ };
 
 		struct ConstructibleObjectData
@@ -2157,7 +2223,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMaterialSwap };
+		static constexpr auto RTTI{ RTTI::BGSMaterialSwap };
+		static constexpr auto VTABLE{ VTABLE::BGSMaterialSwap };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kMSWP };
 
 		struct Entry
@@ -2178,7 +2245,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSZoomData };
+		static constexpr auto RTTI{ RTTI::BGSZoomData };
+		static constexpr auto VTABLE{ VTABLE::BGSZoomData };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kZOOM };
 
 		struct Data
@@ -2202,7 +2270,8 @@ namespace RE
 		public TESForm	// 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSInstanceNamingRules };
+		static constexpr auto RTTI{ RTTI::BGSInstanceNamingRules };
+		static constexpr auto VTABLE{ VTABLE::BGSInstanceNamingRules };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kINNR };
 
 		class RuleData
@@ -2237,7 +2306,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSSoundKeywordMapping };
+		static constexpr auto RTTI{ RTTI::BGSSoundKeywordMapping };
+		static constexpr auto VTABLE{ VTABLE::BGSSoundKeywordMapping };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kKSSM };
 
 		// members
@@ -2255,7 +2325,8 @@ namespace RE
 		public BSIAudioEffectChain	// 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAudioEffectChain };
+		static constexpr auto RTTI{ RTTI::BGSAudioEffectChain };
+		static constexpr auto VTABLE{ VTABLE::BGSAudioEffectChain };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kAECH };
 
 		// members
@@ -2267,7 +2338,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAttractionRule };
+		static constexpr auto RTTI{ RTTI::BGSAttractionRule };
+		static constexpr auto VTABLE{ VTABLE::BGSAttractionRule };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kAORU };
 
 		struct ATTRACTION_RULE_DATA
@@ -2292,7 +2364,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSSoundCategorySnapshot };
+		static constexpr auto RTTI{ RTTI::BGSSoundCategorySnapshot };
+		static constexpr auto VTABLE{ VTABLE::BGSSoundCategorySnapshot };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCSN };
 
 		// members
@@ -2305,7 +2378,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSSoundTagSet };
+		static constexpr auto RTTI{ RTTI::BGSSoundTagSet };
+		static constexpr auto VTABLE{ VTABLE::BGSSoundTagSet };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSTAG };
 
 		// members
@@ -2316,7 +2390,7 @@ namespace RE
 	class BSLensFlareRenderData
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSLensFlareRenderData };
+		static constexpr auto RTTI{ RTTI::BSLensFlareRenderData };
 
 		// members
 		float fadeDistRadiusScale;								   // 00
@@ -2332,7 +2406,8 @@ namespace RE
 		public BSLensFlareRenderData  // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSLensFlare };
+		static constexpr auto RTTI{ RTTI::BGSLensFlare };
+		static constexpr auto VTABLE{ VTABLE::BGSLensFlare };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLENS };
 	};
 	static_assert(sizeof(BGSLensFlare) == 0x50);
@@ -2341,7 +2416,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSGodRays };
+		static constexpr auto RTTI{ RTTI::BGSGodRays };
+		static constexpr auto VTABLE{ VTABLE::BGSGodRays };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kGDRY };
 
 		struct GodRaysData

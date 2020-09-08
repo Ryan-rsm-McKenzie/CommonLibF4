@@ -58,7 +58,8 @@ namespace RE
 		public BSInputEventUser			  // 10
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IMenu };
+		static constexpr auto RTTI{ RTTI::IMenu };
+		static constexpr auto VTABLE{ VTABLE::IMenu };
 
 		using SWFToCodeFunctionHandler::operator new;
 		using SWFToCodeFunctionHandler::operator delete;

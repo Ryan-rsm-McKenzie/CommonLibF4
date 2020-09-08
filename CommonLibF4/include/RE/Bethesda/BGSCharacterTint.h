@@ -46,7 +46,8 @@ namespace RE
 			class Entry
 			{
 			public:
-				static constexpr auto RTTI{ RTTI_BGSCharacterTint__Template__Entry };
+				static constexpr auto RTTI{ RTTI::BGSCharacterTint__Template__Entry };
+				static constexpr auto VTABLE{ VTABLE::BGSCharacterTint__Template__Entry };
 
 				virtual ~Entry();  // 00
 

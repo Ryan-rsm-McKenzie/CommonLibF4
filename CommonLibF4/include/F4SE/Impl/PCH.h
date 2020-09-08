@@ -711,6 +711,7 @@ namespace REL
 
 #include "RE/NiRTTI_IDs.h"
 #include "RE/RTTI_IDs.h"
+#include "RE/VTABLE_IDs.h"
 
 #include "RE/msvc/functional.h"
 #include "RE/msvc/memory.h"

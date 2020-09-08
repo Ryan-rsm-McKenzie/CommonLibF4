@@ -5,7 +5,8 @@ namespace RE
 	class hkBaseObject
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_hkBaseObject };
+		static constexpr auto RTTI{ RTTI::hkBaseObject };
+		static constexpr auto VTABLE{ VTABLE::hkBaseObject };
 
 		virtual ~hkBaseObject() = default;	// 00
 

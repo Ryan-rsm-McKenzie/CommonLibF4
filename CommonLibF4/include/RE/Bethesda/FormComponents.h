@@ -146,7 +146,8 @@ namespace RE
 	class ActorValueOwner
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ActorValueOwner };
+		static constexpr auto RTTI{ RTTI::ActorValueOwner };
+		static constexpr auto VTABLE{ VTABLE::ActorValueOwner };
 
 		virtual ~ActorValueOwner() = default;  // 00
 
@@ -176,7 +177,7 @@ namespace RE
 	class BGSNavmeshableObject
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSNavmeshableObject };
+		static constexpr auto RTTI{ RTTI::BGSNavmeshableObject };
 
 		// members
 		BSTSmartPointer<NavMesh> embeddedNavmesh;  // 0
@@ -186,7 +187,8 @@ namespace RE
 	class BGSOpenCloseForm
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSOpenCloseForm };
+		static constexpr auto RTTI{ RTTI::BGSOpenCloseForm };
+		static constexpr auto VTABLE{ VTABLE::BGSOpenCloseForm };
 
 		virtual ~BGSOpenCloseForm() = default;	// 00
 
@@ -201,7 +203,8 @@ namespace RE
 	class BSIAudioEffectChain
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSIAudioEffectChain };
+		static constexpr auto RTTI{ RTTI::BSIAudioEffectChain };
+		static constexpr auto VTABLE{ VTABLE::BSIAudioEffectChain };
 
 		virtual ~BSIAudioEffectChain() = default;  // 00
 
@@ -215,7 +218,8 @@ namespace RE
 	class BSIMusicTrack
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSIMusicTrack };
+		static constexpr auto RTTI{ RTTI::BSIMusicTrack };
+		static constexpr auto VTABLE{ VTABLE::BSIMusicTrack };
 
 		enum class MUSIC_STATUS;
 
@@ -241,7 +245,8 @@ namespace RE
 	class BSIMusicType
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSIMusicType };
+		static constexpr auto RTTI{ RTTI::BSIMusicType };
+		static constexpr auto VTABLE{ VTABLE::BSIMusicType };
 
 		// add
 		virtual void DoUpdate() = 0;																  // 00
@@ -270,7 +275,8 @@ namespace RE
 	class BSIReverbType
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSIReverbType };
+		static constexpr auto RTTI{ RTTI::BSIReverbType };
+		static constexpr auto VTABLE{ VTABLE::BSIReverbType };
 
 		// add
 		virtual std::int32_t DoGetRoomLevel() const = 0;		// 00
@@ -290,7 +296,8 @@ namespace RE
 	class BSISoundCategory
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSISoundCategory };
+		static constexpr auto RTTI{ RTTI::BSISoundCategory };
+		static constexpr auto VTABLE{ VTABLE::BSISoundCategory };
 
 		virtual ~BSISoundCategory() = default;	// 00
 
@@ -316,7 +323,8 @@ namespace RE
 	class BSISoundDescriptor
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSISoundDescriptor };
+		static constexpr auto RTTI{ RTTI::BSISoundDescriptor };
+		static constexpr auto VTABLE{ VTABLE::BSISoundDescriptor };
 
 		struct ExtraResolutionData;
 		struct Resolution;
@@ -334,7 +342,8 @@ namespace RE
 	class BSISoundOutputModel
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSISoundOutputModel };
+		static constexpr auto RTTI{ RTTI::BSISoundOutputModel };
+		static constexpr auto VTABLE{ VTABLE::BSISoundOutputModel };
 
 		struct BSIAttenuationCharacteristics;
 
@@ -362,7 +371,8 @@ namespace RE
 	class BSMaterialObject
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSMaterialObject };
+		static constexpr auto RTTI{ RTTI::BSMaterialObject };
+		static constexpr auto VTABLE{ VTABLE::BSMaterialObject };
 
 		struct DIRECTIONAL_DATA
 		{
@@ -430,7 +440,8 @@ namespace RE
 	struct TESChildCell
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESChildCell };
+		static constexpr auto RTTI{ RTTI::TESChildCell };
+		static constexpr auto VTABLE{ VTABLE::TESChildCell };
 
 		virtual ~TESChildCell() = default;	// 00
 
@@ -442,14 +453,14 @@ namespace RE
 	class TESMagicCasterForm
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESMagicCasterForm };
+		static constexpr auto RTTI{ RTTI::TESMagicCasterForm };
 	};
 	static_assert(std::is_empty_v<TESMagicCasterForm>);
 
 	class TESMagicTargetForm
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESMagicTargetForm };
+		static constexpr auto RTTI{ RTTI::TESMagicTargetForm };
 	};
 	static_assert(std::is_empty_v<TESMagicTargetForm>);
 
@@ -457,7 +468,8 @@ namespace RE
 		public BSIntrusiveRefCounted  // 08
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TBO_InstanceData };
+		static constexpr auto RTTI{ RTTI::TBO_InstanceData };
+		static constexpr auto VTABLE{ VTABLE::TBO_InstanceData };
 
 		virtual ~TBO_InstanceData() = default;	// 00
 
@@ -486,7 +498,8 @@ namespace RE
 	class BaseFormComponent
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BaseFormComponent };
+		static constexpr auto RTTI{ RTTI::BaseFormComponent };
+		static constexpr auto VTABLE{ VTABLE::BaseFormComponent };
 
 		virtual ~BaseFormComponent() = default;	 // 00
 
@@ -506,7 +519,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESTexture };
+		static constexpr auto RTTI{ RTTI::TESTexture };
+		static constexpr auto VTABLE{ VTABLE::TESTexture };
 
 		// override (BaseFormComponent)
 		void InitializeDataComponent() override;		  // 02
@@ -527,7 +541,8 @@ namespace RE
 		public TESTexture  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESIcon };
+		static constexpr auto RTTI{ RTTI::TESIcon };
+		static constexpr auto VTABLE{ VTABLE::TESIcon };
 	};
 	static_assert(sizeof(TESIcon) == 0x10);
 
@@ -553,7 +568,8 @@ namespace RE
 		public BGSTypedKeywordValueArray<2>	 // 08
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAttachParentArray };
+		static constexpr auto RTTI{ RTTI::BGSAttachParentArray };
+		static constexpr auto VTABLE{ VTABLE::BGSAttachParentArray };
 
 		// override (BaseFormComponent)
 		std::uint32_t GetFormComponentType() const override { return 'APPA'; }	// 01
@@ -586,7 +602,8 @@ namespace RE
 		public NiRefObject	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAttackData };
+		static constexpr auto RTTI{ RTTI::BGSAttackData };
+		static constexpr auto VTABLE{ VTABLE::BGSAttackData };
 
 		// members
 		BSFixedString event;			  // 10
@@ -600,7 +617,8 @@ namespace RE
 		public NiRefObject	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAttackDataMap };
+		static constexpr auto RTTI{ RTTI::BGSAttackDataMap };
+		static constexpr auto VTABLE{ VTABLE::BGSAttackDataMap };
 
 		// members
 		BSTHashMap<BSFixedString, NiPointer<BGSAttackData>> attackDataMap;	// 10
@@ -612,7 +630,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSAttackDataForm };
+		static constexpr auto RTTI{ RTTI::BGSAttackDataForm };
+		static constexpr auto VTABLE{ VTABLE::BGSAttackDataForm };
 
 		// members
 		NiPointer<BGSAttackDataMap> attackDataMap;	// 08
@@ -631,7 +650,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSBipedObjectForm };
+		static constexpr auto RTTI{ RTTI::BGSBipedObjectForm };
+		static constexpr auto VTABLE{ VTABLE::BGSBipedObjectForm };
 
 		// members
 		BIPED_MODEL bipedModelData;	 // 08
@@ -642,7 +662,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSBlockBashData };
+		static constexpr auto RTTI{ RTTI::BGSBlockBashData };
+		static constexpr auto VTABLE{ VTABLE::BGSBlockBashData };
 
 		// members
 		BGSImpactDataSet* blockBashImpactDataSet;  // 08
@@ -654,7 +675,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSCraftingUseSound };
+		static constexpr auto RTTI{ RTTI::BGSCraftingUseSound };
+		static constexpr auto VTABLE{ VTABLE::BGSCraftingUseSound };
 
 		// members
 		BGSSoundDescriptorForm* craftingUseSound;  // 08
@@ -695,7 +717,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSDestructibleObjectForm };
+		static constexpr auto RTTI{ RTTI::BGSDestructibleObjectForm };
+		static constexpr auto VTABLE{ VTABLE::BGSDestructibleObjectForm };
 
 		// members
 		DestructibleObjectData* data;  // 08
@@ -706,7 +729,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSEquipType };
+		static constexpr auto RTTI{ RTTI::BGSEquipType };
+		static constexpr auto VTABLE{ VTABLE::BGSEquipType };
 
 		// members
 		BGSEquipSlot* equipSlot;  // 08
@@ -717,7 +741,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSFeaturedItemMessage };
+		static constexpr auto RTTI{ RTTI::BGSFeaturedItemMessage };
+		static constexpr auto VTABLE{ VTABLE::BGSFeaturedItemMessage };
 
 		// members
 		BGSMessage* featuredItemMessage;  // 08
@@ -728,7 +753,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSForcedLocRefType };
+		static constexpr auto RTTI{ RTTI::BGSForcedLocRefType };
+		static constexpr auto VTABLE{ VTABLE::BGSForcedLocRefType };
 
 		// members
 		BGSLocationRefType* forcedType;	 // 08
@@ -739,7 +765,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSIdleCollection };
+		static constexpr auto RTTI{ RTTI::BGSIdleCollection };
+		static constexpr auto VTABLE{ VTABLE::BGSIdleCollection };
 
 		// members
 		std::int8_t idleFlags;	  // 08
@@ -753,7 +780,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSInstanceNamingRulesForm };
+		static constexpr auto RTTI{ RTTI::BGSInstanceNamingRulesForm };
+		static constexpr auto VTABLE{ VTABLE::BGSInstanceNamingRulesForm };
 
 		// members
 		BGSInstanceNamingRules* instanceNamingRules;  // 08
@@ -763,7 +791,8 @@ namespace RE
 	class IKeywordFormBase
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IKeywordFormBase };
+		static constexpr auto RTTI{ RTTI::IKeywordFormBase };
+		static constexpr auto VTABLE{ VTABLE::IKeywordFormBase };
 
 		virtual ~IKeywordFormBase() = default;	// 00
 
@@ -778,7 +807,8 @@ namespace RE
 		public IKeywordFormBase	   // 08
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSKeywordForm };
+		static constexpr auto RTTI{ RTTI::BGSKeywordForm };
+		static constexpr auto VTABLE{ VTABLE::BGSKeywordForm };
 
 		// override (BaseFormComponent)
 		void InitializeDataComponent() override { return; }	 // 02
@@ -803,7 +833,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMenuDisplayObject };
+		static constexpr auto RTTI{ RTTI::BGSMenuDisplayObject };
+		static constexpr auto VTABLE{ VTABLE::BGSMenuDisplayObject };
 
 		// members
 		TESBoundObject* menuDispObject;	 // 08
@@ -814,7 +845,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSMessageIcon };
+		static constexpr auto RTTI{ RTTI::BGSMessageIcon };
+		static constexpr auto VTABLE{ VTABLE::BGSMessageIcon };
 
 		// override (BaseFormComponent)
 		void InitializeDataComponent() override;		  // 02
@@ -830,7 +862,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSNativeTerminalForm };
+		static constexpr auto RTTI{ RTTI::BGSNativeTerminalForm };
+		static constexpr auto VTABLE{ VTABLE::BGSNativeTerminalForm };
 
 		// members
 		BGSTerminal* terminal;	// 08
@@ -841,7 +874,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSOverridePackCollection };
+		static constexpr auto RTTI{ RTTI::BGSOverridePackCollection };
+		static constexpr auto VTABLE{ VTABLE::BGSOverridePackCollection };
 
 		// members
 		BGSListForm* spectatorOverRidePackList;		 // 08
@@ -866,7 +900,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSPerkRankArray };
+		static constexpr auto RTTI{ RTTI::BGSPerkRankArray };
+		static constexpr auto VTABLE{ VTABLE::BGSPerkRankArray };
 
 		// members
 		PerkRankData* perks;	  // 08
@@ -878,7 +913,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSPickupPutdownSounds };
+		static constexpr auto RTTI{ RTTI::BGSPickupPutdownSounds };
+		static constexpr auto VTABLE{ VTABLE::BGSPickupPutdownSounds };
 
 		// members
 		BGSSoundDescriptorForm* pickupSound;   // 08
@@ -890,7 +926,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSPreloadable };
+		static constexpr auto RTTI{ RTTI::BGSPreloadable };
+		static constexpr auto VTABLE{ VTABLE::BGSPreloadable };
 
 		// add
 		virtual void QueueModelsImpl(void* a_queued, IO_TASK_PRIORITY, QueuedFile*, const TBO_InstanceData*) = 0;  // 07 - todo
@@ -901,7 +938,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSPreviewTransform };
+		static constexpr auto RTTI{ RTTI::BGSPreviewTransform };
+		static constexpr auto VTABLE{ VTABLE::BGSPreviewTransform };
 
 		// override (BaseFormComponent)
 		std::uint32_t GetFormComponentType() const override { return 'NRTP'; }	// 01
@@ -920,7 +958,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSPropertySheet };
+		static constexpr auto RTTI{ RTTI::BGSPropertySheet };
+		static constexpr auto VTABLE{ VTABLE::BGSPropertySheet };
 
 		// members
 		BSTArray<BSTTuple<TESForm*, BGSTypedFormValuePair::SharedVal>>* properties;	 // 08
@@ -931,7 +970,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSSkinForm };
+		static constexpr auto RTTI{ RTTI::BGSSkinForm };
+		static constexpr auto VTABLE{ VTABLE::BGSSkinForm };
 
 		// members
 		TESObjectARMO* formSkin;  // 08
@@ -942,7 +982,8 @@ namespace RE
 		public BaseFormComponent  // 0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSSoundTagComponent };
+		static constexpr auto RTTI{ RTTI::BGSSoundTagComponent };
+		static constexpr auto VTABLE{ VTABLE::BGSSoundTagComponent };
 
 		// override (BaseFormComponent)
 		std::uint32_t GetFormComponentType() const override { return 'CTAC'; }	// 01
@@ -983,7 +1024,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESContainer };
+		static constexpr auto RTTI{ RTTI::TESContainer };
+		static constexpr auto VTABLE{ VTABLE::TESContainer };
 
 		// members
 		ContainerObject** containerObjects;	 // 08
@@ -1003,7 +1045,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESDescription };
+		static constexpr auto RTTI{ RTTI::TESDescription };
+		static constexpr auto VTABLE{ VTABLE::TESDescription };
 
 		// override (BaseFormComponent)
 		void InitializeDataComponent() override	 // 02
@@ -1026,7 +1069,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESEnchantableForm };
+		static constexpr auto RTTI{ RTTI::TESEnchantableForm };
+		static constexpr auto VTABLE{ VTABLE::TESEnchantableForm };
 
 		virtual MagicSystem::CastingType GetCastingType() const { return *castingType; }  // 07
 
@@ -1041,7 +1085,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESFullName };
+		static constexpr auto RTTI{ RTTI::TESFullName };
+		static constexpr auto VTABLE{ VTABLE::TESFullName };
 
 		// add
 		virtual std::uint32_t GetFullNameLength() const { return fullName.length(); }  // 07
@@ -1058,7 +1103,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESModel };
+		static constexpr auto RTTI{ RTTI::TESModel };
+		static constexpr auto VTABLE{ VTABLE::TESModel };
 
 		// override (BaseFormComponent)
 		void InitializeDataComponent() override;		  // 02
@@ -1087,7 +1133,8 @@ namespace RE
 		public TESModel	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSBehaviorGraphModel };
+		static constexpr auto RTTI{ RTTI::BGSBehaviorGraphModel };
+		static constexpr auto VTABLE{ VTABLE::BGSBehaviorGraphModel };
 	};
 	static_assert(sizeof(BGSBehaviorGraphModel) == 0x30);
 
@@ -1095,7 +1142,8 @@ namespace RE
 		public TESModel	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSModelMaterialSwap };
+		static constexpr auto RTTI{ RTTI::BGSModelMaterialSwap };
+		static constexpr auto VTABLE{ VTABLE::BGSModelMaterialSwap };
 
 		// members
 		BGSMaterialSwap* swapForm;	// 30
@@ -1107,7 +1155,8 @@ namespace RE
 		public TESModel	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSTextureModel };
+		static constexpr auto RTTI{ RTTI::BGSTextureModel };
+		static constexpr auto VTABLE{ VTABLE::BGSTextureModel };
 	};
 	static_assert(sizeof(BGSTextureModel) == 0x30);
 
@@ -1115,7 +1164,8 @@ namespace RE
 		public TESModel	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESModelRDT };
+		static constexpr auto RTTI{ RTTI::TESModelRDT };
+		static constexpr auto VTABLE{ VTABLE::TESModelRDT };
 	};
 	static_assert(sizeof(TESModelRDT) == 0x30);
 
@@ -1147,7 +1197,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESActorBaseData };
+		static constexpr auto RTTI{ RTTI::TESActorBaseData };
+		static constexpr auto VTABLE{ VTABLE::TESActorBaseData };
 
 		// add
 		virtual void CopyFromTemplateForms([[maybe_unused]] TESActorBase** a_forceTemplates) { return; }  // 07
@@ -1195,7 +1246,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESAIForm };
+		static constexpr auto RTTI{ RTTI::TESAIForm };
+		static constexpr auto VTABLE{ VTABLE::TESAIForm };
 
 		// members
 		AIDATA_GAME aiData;		 // 08
@@ -1207,7 +1259,8 @@ namespace RE
 		public BaseFormComponent  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESBipedModelForm };
+		static constexpr auto RTTI{ RTTI::TESBipedModelForm };
+		static constexpr auto VTABLE{ VTABLE::TESBipedModelForm };
 
 		// members
 		BGSModelMaterialSwap worldModel[2];	 // 008
@@ -1221,7 +1274,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESImageSpaceModifiableForm };
+		static constexpr auto RTTI{ RTTI::TESImageSpaceModifiableForm };
+		static constexpr auto VTABLE{ VTABLE::TESImageSpaceModifiableForm };
 
 		// members
 		TESImageSpaceModifier* formImageSpaceModifying;	 // 08
@@ -1244,7 +1298,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESLeveledList };
+		static constexpr auto RTTI{ RTTI::TESLeveledList };
+		static constexpr auto VTABLE{ VTABLE::TESLeveledList };
 
 		// add
 		virtual std::int8_t GetChanceNone();								   // 07
@@ -1270,7 +1325,8 @@ namespace RE
 		public TESModel	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESModelTri };
+		static constexpr auto RTTI{ RTTI::TESModelTri };
+		static constexpr auto VTABLE{ VTABLE::TESModelTri };
 	};
 	static_assert(sizeof(TESModelTri) == 0x30);
 
@@ -1278,7 +1334,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESProduceForm };
+		static constexpr auto RTTI{ RTTI::TESProduceForm };
+		static constexpr auto VTABLE{ VTABLE::TESProduceForm };
 
 		// members
 		BGSSoundDescriptorForm* harvestSound;  // 08
@@ -1291,7 +1348,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESRaceForm };
+		static constexpr auto RTTI{ RTTI::TESRaceForm };
+		static constexpr auto VTABLE{ VTABLE::TESRaceForm };
 
 		// add
 		virtual bool SwitchRace(TESRace* a_race)  // 07
@@ -1319,7 +1377,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESReactionForm };
+		static constexpr auto RTTI{ RTTI::TESReactionForm };
+		static constexpr auto VTABLE{ VTABLE::TESReactionForm };
 
 		// members
 		BSSimpleList<GROUP_REACTION*> reactionList;	 // 08
@@ -1331,7 +1390,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESSpellList };
+		static constexpr auto RTTI{ RTTI::TESSpellList };
+		static constexpr auto VTABLE{ VTABLE::TESSpellList };
 
 		struct SpellData
 		{
@@ -1355,7 +1415,8 @@ namespace RE
 		public TESTexture  // 10
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESTexture1024 };
+		static constexpr auto RTTI{ RTTI::TESTexture1024 };
+		static constexpr auto VTABLE{ VTABLE::TESTexture1024 };
 
 		// override (TESTexture)
 		std::uint32_t GetMaxAllowedSize() override { return 1024; }	 // 07
@@ -1366,7 +1427,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESValueForm };
+		static constexpr auto RTTI{ RTTI::TESValueForm };
+		static constexpr auto VTABLE{ VTABLE::TESValueForm };
 
 		// members
 		std::int32_t value;	 // 08
@@ -1377,7 +1439,8 @@ namespace RE
 		public BaseFormComponent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESWeightForm };
+		static constexpr auto RTTI{ RTTI::TESWeightForm };
+		static constexpr auto VTABLE{ VTABLE::TESWeightForm };
 
 		// members
 		float weight;  // 08

@@ -105,7 +105,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESCombatStyle };
+		static constexpr auto RTTI{ RTTI::TESCombatStyle };
+		static constexpr auto VTABLE{ VTABLE::TESCombatStyle };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCSTY };
 
 		// members

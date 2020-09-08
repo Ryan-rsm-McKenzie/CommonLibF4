@@ -21,7 +21,8 @@ namespace RE
 		class AcquireInterface
 		{
 		public:
-			static constexpr auto RTTI{ RTTI_Scaleform__AcquireInterface };
+			static constexpr auto RTTI{ RTTI::Scaleform__AcquireInterface };
+			static constexpr auto VTABLE{ VTABLE::Scaleform__AcquireInterface };
 
 			virtual ~AcquireInterface() = default;	// 00
 

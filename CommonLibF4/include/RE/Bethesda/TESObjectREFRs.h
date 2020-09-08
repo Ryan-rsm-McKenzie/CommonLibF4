@@ -72,7 +72,8 @@ namespace RE
 		public NiRefObject	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSHandleRefObject };
+		static constexpr auto RTTI{ RTTI::BSHandleRefObject };
+		static constexpr auto VTABLE{ VTABLE::BSHandleRefObject };
 
 		std::uint32_t DecRefCount()
 		{
@@ -97,7 +98,8 @@ namespace RE
 	class IAnimationGraphManagerHolder
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IAnimationGraphManagerHolder };
+		static constexpr auto RTTI{ RTTI::IAnimationGraphManagerHolder };
+		static constexpr auto VTABLE{ VTABLE::IAnimationGraphManagerHolder };
 
 		virtual ~IAnimationGraphManagerHolder() = default;	// 00
 
@@ -208,7 +210,8 @@ namespace RE
 		public BSTEventSource<ActorValueEvents::ActorValueChangedEvent>	 // 060
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESObjectREFR };
+		static constexpr auto RTTI{ RTTI::TESObjectREFR };
+		static constexpr auto VTABLE{ VTABLE::TESObjectREFR };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kREFR };
 
 		struct RemoveItemData;
@@ -355,7 +358,8 @@ namespace RE
 		public TESObjectREFR  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_Explosion };
+		static constexpr auto RTTI{ RTTI::Explosion };
+		static constexpr auto VTABLE{ VTABLE::Explosion };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kREFR };
 
 		struct ExplodedLimb
@@ -417,7 +421,8 @@ namespace RE
 		public TESObjectREFR  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_Hazard };
+		static constexpr auto RTTI{ RTTI::Hazard };
+		static constexpr auto VTABLE{ VTABLE::Hazard };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPHZD };
 
 		// members

@@ -29,7 +29,8 @@ namespace RE
 	class BGSStoryManagerTreeVisitor
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSStoryManagerTreeVisitor };
+		static constexpr auto RTTI{ RTTI::BGSStoryManagerTreeVisitor };
+		static constexpr auto VTABLE{ VTABLE::BGSStoryManagerTreeVisitor };
 
 		enum class VisitControl;
 
@@ -53,7 +54,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSStoryManagerTreeForm };
+		static constexpr auto RTTI{ RTTI::BGSStoryManagerTreeForm };
+		static constexpr auto VTABLE{ VTABLE::BGSStoryManagerTreeForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
 
 		// add
@@ -83,7 +85,8 @@ namespace RE
 		public TESFullName				 // 028
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESQuest };
+		static constexpr auto RTTI{ RTTI::TESQuest };
+		static constexpr auto VTABLE{ VTABLE::TESQuest };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kQUST };
 
 		struct AliasesAccess;
@@ -128,7 +131,8 @@ namespace RE
 		public BGSStoryManagerTreeForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSStoryManagerNodeBase };
+		static constexpr auto RTTI{ RTTI::BGSStoryManagerNodeBase };
+		static constexpr auto VTABLE{ VTABLE::BGSStoryManagerNodeBase };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
 
 		// add
@@ -147,7 +151,8 @@ namespace RE
 		public BGSStoryManagerNodeBase	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSStoryManagerBranchNode };
+		static constexpr auto RTTI{ RTTI::BGSStoryManagerBranchNode };
+		static constexpr auto VTABLE{ VTABLE::BGSStoryManagerBranchNode };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSMBN };
 
 		// members
@@ -159,7 +164,8 @@ namespace RE
 		public BGSStoryManagerNodeBase	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSStoryManagerQuestNode };
+		static constexpr auto RTTI{ RTTI::BGSStoryManagerQuestNode };
+		static constexpr auto VTABLE{ VTABLE::BGSStoryManagerQuestNode };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSMQN };
 
 		// members
@@ -175,7 +181,8 @@ namespace RE
 		public BGSStoryManagerBranchNode  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSStoryManagerEventNode };
+		static constexpr auto RTTI{ RTTI::BGSStoryManagerEventNode };
+		static constexpr auto VTABLE{ VTABLE::BGSStoryManagerEventNode };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSMEN };
 
 		// members

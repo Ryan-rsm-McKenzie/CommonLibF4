@@ -120,7 +120,8 @@ namespace RE
 		public BSIntrusiveRefCounted  // 008
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSNavmesh };
+		static constexpr auto RTTI{ RTTI::BSNavmesh };
+		static constexpr auto VTABLE{ VTABLE::BSNavmesh };
 
 		struct DisabledLink
 		{
@@ -166,7 +167,8 @@ namespace RE
 		public BSNavmesh	  // 28
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_NavMesh };
+		static constexpr auto RTTI{ RTTI::NavMesh };
+		static constexpr auto VTABLE{ VTABLE::NavMesh };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNAVM };
 
 		// add

@@ -2,7 +2,10 @@
 
 namespace RE
 {
-	class type_info;
+	namespace msvc
+	{
+		class type_info;
+	}
 
 	namespace RTTI
 	{
@@ -38,9 +41,9 @@ namespace RE
 		{
 		public:
 			// members
-			type_info* typeInfo;  // 00
-			void* spare;		  // 08
-			char name[];		  // 10
+			msvc::type_info* typeInfo;	// 00
+			void* spare;				// 08
+			char name[];				// 10
 		};
 		static_assert(sizeof(TypeDescriptor) == 0x10);	// can be larger
 

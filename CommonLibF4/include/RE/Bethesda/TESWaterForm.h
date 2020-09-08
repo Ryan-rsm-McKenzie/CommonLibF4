@@ -64,7 +64,8 @@ namespace RE
 		public TESFullName	// 020
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESWaterForm };
+		static constexpr auto RTTI{ RTTI::TESWaterForm };
+		static constexpr auto VTABLE{ VTABLE::TESWaterForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kWATR };
 
 		// members

@@ -17,7 +17,8 @@ namespace RE
 	struct IMovementInterface
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IMovementInterface };
+		static constexpr auto RTTI{ RTTI::IMovementInterface };
+		static constexpr auto VTABLE{ VTABLE::IMovementInterface };
 
 		virtual ~IMovementInterface() = default;  // 00
 	};
@@ -27,7 +28,8 @@ namespace RE
 		public IMovementInterface  // 0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IMovementState };
+		static constexpr auto RTTI{ RTTI::IMovementState };
+		static constexpr auto VTABLE{ VTABLE::IMovementState };
 
 		enum class CHARACTER_STATE;
 
@@ -90,7 +92,8 @@ namespace RE
 		public IMovementInterface  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IMovementPlayerControls };
+		static constexpr auto RTTI{ RTTI::IMovementPlayerControls };
+		static constexpr auto VTABLE{ VTABLE::IMovementPlayerControls };
 
 		// add
 		virtual void GetControllerOutput(std::uint32_t a_numericID, PlayerControlsMovementData& a_normalizedOutputData) = 0;  // 01
@@ -101,7 +104,8 @@ namespace RE
 		public IMovementInterface  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IMovementPlayerControlsFilter };
+		static constexpr auto RTTI{ RTTI::IMovementPlayerControlsFilter };
+		static constexpr auto VTABLE{ VTABLE::IMovementPlayerControlsFilter };
 
 		// add
 		virtual void FilterControllerOutput(const MovementData& a_previousFrameData, MovementData& a_inOutData, float a_timeDelta) const = 0;  // 01

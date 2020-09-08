@@ -91,7 +91,8 @@ namespace RE
 		public TESReactionForm	// 030
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESFaction };
+		static constexpr auto RTTI{ RTTI::TESFaction };
+		static constexpr auto VTABLE{ VTABLE::TESFaction };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFACT };
 
 		// members

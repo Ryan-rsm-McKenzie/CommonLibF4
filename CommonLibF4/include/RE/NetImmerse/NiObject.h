@@ -37,8 +37,9 @@ namespace RE
 		public NiRefObject	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_NiObject };
-		static constexpr auto Ni_RTTI{ NiRTTI_NiObject };
+		static constexpr auto RTTI{ RTTI::NiObject };
+		static constexpr auto VTABLE{ VTABLE::NiObject };
+		static constexpr auto Ni_RTTI{ Ni_RTTI::NiObject };
 
 		// add
 		virtual const NiRTTI* GetRTTI() const;															   // 02

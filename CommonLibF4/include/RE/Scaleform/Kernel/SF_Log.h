@@ -23,7 +23,8 @@ namespace RE
 			public RefCountBase<Log, 2>	 // 00
 		{
 		public:
-			static constexpr auto RTTI{ RTTI_Scaleform__Log };
+			static constexpr auto RTTI{ RTTI::Scaleform__Log };
+			static constexpr auto VTABLE{ VTABLE::Scaleform__Log };
 
 			virtual ~Log();
 

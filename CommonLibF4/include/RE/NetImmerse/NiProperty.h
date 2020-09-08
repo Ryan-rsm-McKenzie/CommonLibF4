@@ -10,8 +10,8 @@ namespace RE
 		public NiObjectNET	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_NiProperty };
-		static constexpr auto Ni_RTTI{ NiRTTI_NiProperty };
+		static constexpr auto RTTI{ RTTI::NiProperty };
+		static constexpr auto Ni_RTTI{ Ni_RTTI::NiProperty };
 
 		// add
 		virtual std::int32_t Type() const = 0;			  // 28

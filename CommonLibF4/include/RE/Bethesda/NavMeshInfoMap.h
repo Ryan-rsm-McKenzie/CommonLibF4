@@ -15,7 +15,8 @@ namespace RE
 		public BSTSingletonExplicit<BSNavmeshInfoMap>  // 0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSNavmeshInfoMap };
+		static constexpr auto RTTI{ RTTI::BSNavmeshInfoMap };
+		static constexpr auto VTABLE{ VTABLE::BSNavmeshInfoMap };
 
 		struct IVisitor;
 
@@ -34,7 +35,7 @@ namespace RE
 		public BSTSingletonExplicit<BSPrecomputedNavmeshInfoPathMap>  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSPrecomputedNavmeshInfoPathMap };
+		static constexpr auto RTTI{ RTTI::BSPrecomputedNavmeshInfoPathMap };
 
 		// members
 		BSTArray<BSTArray<const BSNavmeshInfo*>*> allPaths;				 // 00
@@ -46,7 +47,7 @@ namespace RE
 		public BSPrecomputedNavmeshInfoPathMap	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_PrecomputedNavmeshInfoPathMap };
+		static constexpr auto RTTI{ RTTI::PrecomputedNavmeshInfoPathMap };
 	};
 	static_assert(sizeof(PrecomputedNavmeshInfoPathMap) == 0x48);
 
@@ -56,7 +57,8 @@ namespace RE
 		public PrecomputedNavmeshInfoPathMap  // 030
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_NavMeshInfoMap };
+		static constexpr auto RTTI{ RTTI::NavMeshInfoMap };
+		static constexpr auto VTABLE{ VTABLE::NavMeshInfoMap };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNAVI };
 
 		// members

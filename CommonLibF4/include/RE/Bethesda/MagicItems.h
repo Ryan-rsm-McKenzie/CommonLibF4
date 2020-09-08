@@ -38,7 +38,8 @@ namespace RE
 		public BGSKeywordForm	// 70
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_MagicItem };
+		static constexpr auto RTTI{ RTTI::MagicItem };
+		static constexpr auto VTABLE{ VTABLE::MagicItem };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
 
 		struct SkillUsageData
@@ -105,7 +106,8 @@ namespace RE
 		public MagicItem  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_EnchantmentItem };
+		static constexpr auto RTTI{ RTTI::EnchantmentItem };
+		static constexpr auto VTABLE{ VTABLE::EnchantmentItem };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kENCH };
 
 		class Data :
@@ -135,7 +137,8 @@ namespace RE
 		public TESDescription		  // 0F0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_EnchantmentItem };
+		static constexpr auto RTTI{ RTTI::EnchantmentItem };
+		static constexpr auto VTABLE{ VTABLE::EnchantmentItem };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSPEL };
 
 		class Data :
@@ -167,7 +170,8 @@ namespace RE
 		public TESValueForm				   // 1A8
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ScrollItem };
+		static constexpr auto RTTI{ RTTI::ScrollItem };
+		static constexpr auto VTABLE{ VTABLE::ScrollItem };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCRL };
 	};
 	static_assert(sizeof(ScrollItem) == 0x1B8);
@@ -183,7 +187,8 @@ namespace RE
 		public TESValueForm				   // 168
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IngredientItem };
+		static constexpr auto RTTI{ RTTI::IngredientItem };
+		static constexpr auto VTABLE{ VTABLE::IngredientItem };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kINGR };
 
 		struct GameData
@@ -214,7 +219,8 @@ namespace RE
 		public TESDescription			   // 190
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_AlchemyItem };
+		static constexpr auto RTTI{ RTTI::AlchemyItem };
+		static constexpr auto VTABLE{ VTABLE::AlchemyItem };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kALCH };
 
 		class Data :

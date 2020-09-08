@@ -11,6 +11,15 @@
 		<DisplayString>{static_cast&lt;$T1&gt;(_impl),en}</DisplayString>
 	</Type>
 
+	<Type Name="RE::RTTI::RVA&lt;*&gt;">
+		<Intrinsic Name="good" Expression="_rva != 0"/>
+		<DisplayString Condition="good()">{($T1*)(REL::Module::_natvis + _rva)}</DisplayString>
+		<DisplayString Condition="!good()">empty</DisplayString>
+		<Expand>
+			<Item Name="[object]" Condition="good()">($T1*)(REL::Module::_natvis + _rva)</Item>
+		</Expand>
+	</Type>
+
 	<Type Name="RE::BSTArray&lt;*,BSTArrayHeapAllocator&gt;">
 		<DisplayString>{{ size={_size} }}</DisplayString>
 		<Expand>

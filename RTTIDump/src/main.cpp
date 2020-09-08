@@ -7,36 +7,56 @@
 class VTable
 {
 public:
-	VTable(std::string_view a_name, std::uint32_t a_offset = 0)
+	using container_type = std::vector<REL::Relocation<const void*>>;
+	using size_type = typename container_type::size_type;
+	using value_type = typename container_type::value_type;
+	using reference = typename container_type::reference;
+	using const_reference = typename container_type::const_reference;
+	using iterator = typename container_type::iterator;
+	using const_iterator = typename container_type::const_iterator;
+
+	VTable(std::string_view a_name) :
+		VTable(type_descriptor(a_name))
+	{}
+
+	VTable(const RE::RTTI::TypeDescriptor* a_typeDescriptor)
 	{
-		const auto typeDesc = type_descriptor(a_name);
-		const auto col = complete_object_locator(typeDesc, a_offset);
-		const auto vtbl = virtual_table(col);
-		_address = reinterpret_cast<std::uintptr_t>(vtbl);
+		auto cols = complete_object_locators(a_typeDescriptor);
+		_vtables = virtual_tables({ cols.data(), cols.size() });
 	}
 
-	[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _address; }
-	[[nodiscard]] std::uintptr_t offset() const noexcept { return address() - REL::Module::get().base(); }
+	[[nodiscard]] reference operator[](std::size_t a_idx) noexcept { return _vtables[a_idx]; }
+	[[nodiscard]] const_reference operator[](std::size_t a_idx) const noexcept { return _vtables[a_idx]; }
+
+	[[nodiscard]] iterator begin() noexcept { return _vtables.begin(); }
+	[[nodiscard]] const_iterator begin() const noexcept { return _vtables.begin(); }
+	[[nodiscard]] const_iterator cbegin() const noexcept { return _vtables.cbegin(); }
+
+	[[nodiscard]] iterator end() noexcept { return _vtables.end(); }
+	[[nodiscard]] const_iterator end() const noexcept { return _vtables.end(); }
+	[[nodiscard]] const_iterator cend() const noexcept { return _vtables.cend(); }
+
+	[[nodiscard]] size_type size() const noexcept { return _vtables.size(); }
 
 private:
-	[[nodiscard]] const RE::RTTI::TypeDescriptor* type_descriptor(std::string_view a_name) const
+	[[nodiscard]] static const RE::RTTI::TypeDescriptor* type_descriptor(std::string_view a_name)
 	{
 		const auto segment = REL::Module::get().segment(REL::Segment::data);
 		const stl::span haystack{ segment.pointer<const char>(), segment.size() };
 
-		boost::algorithm::knuth_morris_pratt search(a_name.cbegin(), a_name.cend());
-		const auto it = search(haystack.cbegin(), haystack.cend());
+		boost::algorithm::knuth_morris_pratt kmp(a_name.cbegin(), a_name.cend());
+		const auto it = kmp(haystack.cbegin(), haystack.cend());
 
 		if (it.first == it.second) {
 			throw std::runtime_error("failed to find type descriptor"s);
+		} else {
+			return reinterpret_cast<const RE::RTTI::TypeDescriptor*>(
+				it.first -
+				offsetof(RE::RTTI::TypeDescriptor, name));
 		}
-
-		return reinterpret_cast<const RE::RTTI::TypeDescriptor*>(
-			it.first -
-			offsetof(RE::RTTI::TypeDescriptor, name));
 	}
 
-	[[nodiscard]] const RE::RTTI::CompleteObjectLocator* complete_object_locator(const RE::RTTI::TypeDescriptor* a_typeDesc, std::uint32_t a_offset) const
+	[[nodiscard]] static std::vector<const RE::RTTI::CompleteObjectLocator*> complete_object_locators(const RE::RTTI::TypeDescriptor* a_typeDesc)
 	{
 		assert(a_typeDesc != nullptr);
 
@@ -49,6 +69,8 @@ private:
 		const auto start = reinterpret_cast<const std::uint32_t*>(base);
 		const auto end = reinterpret_cast<const std::uint32_t*>(base + segment.size());
 
+		std::vector<const RE::RTTI::CompleteObjectLocator*> results;
+
 		for (auto iter = start; iter < end; ++iter) {
 			if (*iter == rva) {
 				// both base class desc and col can point to the type desc so we check
@@ -59,41 +81,52 @@ private:
 
 				const auto ptr = reinterpret_cast<const std::byte*>(iter);
 				const auto col = reinterpret_cast<const RE::RTTI::CompleteObjectLocator*>(ptr - offsetof(RE::RTTI::CompleteObjectLocator, typeDescriptor));
-				if (col->offset != a_offset) {
-					continue;
-				}
-
-				return col;
+				results.push_back(col);
 			}
 		}
 
-		throw std::runtime_error("failed to find complete object locator"s);
+		return results;
 	}
 
-	[[nodiscard]] const void* virtual_table(const RE::RTTI::CompleteObjectLocator* a_col) const
+	[[nodiscard]] static container_type virtual_tables(stl::span<const RE::RTTI::CompleteObjectLocator*> a_cols)
 	{
-		assert(a_col != nullptr);
-
-		const auto col = reinterpret_cast<std::uintptr_t>(a_col);
+		assert(std::all_of(a_cols.begin(), a_cols.end(), [](auto&& a_elem) noexcept { return a_elem != nullptr; }));
 
 		const auto segment = REL::Module::get().segment(REL::Segment::rdata);
 		const auto base = segment.pointer<const std::byte>();
 		const auto start = reinterpret_cast<const std::uintptr_t*>(base);
 		const auto end = reinterpret_cast<const std::uintptr_t*>(base + segment.size());
 
+		container_type results;
+
 		for (auto iter = start; iter < end; ++iter) {
-			if (*iter == col) {
-				return iter + 1;
+			if (std::find_if(
+					a_cols.begin(),
+					a_cols.end(),
+					[&](const RE::RTTI::CompleteObjectLocator* a_col) noexcept {
+						return *iter == reinterpret_cast<std::uintptr_t>(a_col);
+					}) != a_cols.end()) {
+				results.emplace_back(reinterpret_cast<std::uintptr_t>(iter + 1));
 			}
 		}
 
-		throw std::runtime_error("failed to find virtual table"s);
+		if (results.size() != a_cols.size()) {
+			throw std::runtime_error("failed to find virtual tables"s);
+		} else {
+			std::sort(
+				results.begin(),
+				results.end(),
+				[](auto&& a_lhs, auto&& a_rhs) {
+					return a_lhs.address() < a_rhs.address();
+				});
+			return results;
+		}
 	}
 
-	std::uintptr_t _address{ 0 };
+	container_type _vtables;
 };
 
-[[nodiscard]] inline std::string sanitize_name(std::string a_name)
+[[nodiscard]] std::string sanitize_name(std::string a_name)
 {
 	static const std::array expressions{
 		std::make_pair(
@@ -120,7 +153,7 @@ private:
 	return a_name;
 }
 
-[[nodiscard]] inline std::string decode_name(const RE::RTTI::TypeDescriptor* a_typeDesc)
+[[nodiscard]] std::string decode_name(const RE::RTTI::TypeDescriptor* a_typeDesc)
 {
 	assert(a_typeDesc != nullptr);
 
@@ -149,7 +182,7 @@ private:
 	}
 }
 
-[[nodiscard]] inline bool starts_with(std::string_view a_haystack, std::string_view a_needle)
+[[nodiscard]] bool starts_with(std::string_view a_haystack, std::string_view a_needle)
 {
 	if (a_haystack.length() >= a_needle.length()) {
 		return a_haystack.substr(0, a_needle.length()) == a_needle;
@@ -158,9 +191,9 @@ private:
 	}
 }
 
-inline void dump_rtti()
+void dump_rtti()
 {
-	std::vector<std::pair<std::string, std::uint64_t>> results;
+	std::vector<std::tuple<std::string, std::uint64_t, std::vector<std::uint64_t>>> results;  // [ demangled name, rtti id, vtable ids ]
 
 	VTable typeInfo(".?AVtype_info@@"sv);
 	const auto& module = REL::Module::get();
@@ -170,12 +203,21 @@ inline void dump_rtti()
 	const auto end = reinterpret_cast<const std::uintptr_t*>(data.address() + data.size());
 	const auto& iddb = get_iddb();
 	for (auto iter = beg; iter < end; ++iter) {
-		if (*iter == typeInfo.address()) {
+		if (*iter == typeInfo[0].address()) {
 			const auto typeDescriptor = reinterpret_cast<const RE::RTTI::TypeDescriptor*>(iter);
 			try {
-				const auto id = iddb(reinterpret_cast<std::uintptr_t>(iter) - baseAddr);
 				auto name = decode_name(typeDescriptor);
-				results.emplace_back(sanitize_name(std::move(name)), id);
+				const auto rid = iddb(reinterpret_cast<std::uintptr_t>(iter) - baseAddr);
+
+				VTable vtable{ typeDescriptor };
+				std::vector<std::uint64_t> vids(vtable.size());
+				std::transform(
+					vtable.begin(),
+					vtable.end(),
+					vids.begin(),
+					[&](auto&& a_elem) { return iddb(a_elem.offset()); });
+
+				results.emplace_back(sanitize_name(std::move(name)), rid, std::move(vids));
 			} catch (const std::exception&) {
 				logger::error(decode_name(typeDescriptor));
 				continue;
@@ -184,26 +226,74 @@ inline void dump_rtti()
 	}
 
 	std::sort(results.begin(), results.end());
-	const auto it = std::unique(
-		results.begin(),
-		results.end(),
-		[](auto&& a_lhs, auto&& a_rhs) {
-			return a_lhs.first == a_rhs.first;
-		});
-	results.erase(it, results.end());
+	results.erase(
+		std::unique(
+			results.begin(),
+			results.end(),
+			[](auto&& a_lhs, auto&& a_rhs) {
+				return std::get<0>(a_lhs) == std::get<0>(a_rhs);
+			}),
+		results.end());
 
-	std::ofstream file("RTTI_IDs.h"sv);
-	file << "#pragma once\n"sv
-		 << "\n"sv
-		 << "namespace RE\n"sv
-		 << "{\n"sv;
-	for (auto& result : results) {
-		file << "\tinline constexpr REL::ID RTTI_"sv << result.first << "{ "sv << result.second << " };\n"sv;
+	constexpr std::array toRemove{
+		static_cast<std::uint64_t>(25921),	 // float
+		static_cast<std::uint64_t>(950502),	 // unsigned int
+	};
+	results.erase(
+		std::remove_if(
+			results.begin(),
+			results.end(),
+			[&](auto&& a_elem) {
+				return std::find(toRemove.begin(), toRemove.end(), std::get<1>(a_elem)) != toRemove.end();
+			}),
+		results.end());
+
+	std::ofstream file;
+	const auto openf = [&](std::string_view a_name) {
+		file.open(a_name.data() + "_IDs.h"s);
+		file << "#pragma once\n"sv
+			 << "\n"sv
+			 << "namespace RE\n"sv
+			 << "{\n"sv
+			 << "\tnamespace "sv << a_name << "\n"sv
+			 << "\t{\n"sv;
+	};
+	const auto closef = [&]() {
+		file << "\t}\n"sv
+			 << "}\n"sv;
+		file.close();
+	};
+
+	openf("RTTI"sv);
+	for (const auto& [name, rid, vids] : results) {
+		(void)vids;
+		file << "\t\tinline constexpr REL::ID "sv << name << "{ "sv << rid << " };\n"sv;
 	}
-	file << "}\n"sv;
+	closef();
+
+	openf("VTABLE"sv);
+	const auto printVID = [&](std::uint64_t a_vid) { file << "REL::ID("sv << a_vid << ")"sv; };
+	for (const auto& [name, rid, vids] : results) {
+		(void)rid;
+		const stl::span svids{ vids.data(), vids.size() };
+		if (!svids.empty()) {
+			file << "\t\tinline constexpr std::array<REL::ID, "sv
+				 << vids.size()
+				 << "> "sv
+				 << name
+				 << "{ "sv;
+			printVID(svids.front());
+			for (const auto vid : svids.subspan(1)) {
+				file << ", "sv;
+				printVID(vid);
+			}
+			file << " };\n"sv;
+		}
+	}
+	closef();
 }
 
-inline void dump_nirtti()
+void dump_nirtti()
 {
 	{
 		// fix a dumb fuckup
@@ -255,11 +345,9 @@ inline void dump_nirtti()
 	const auto& iddb = get_iddb();
 	for (const auto& result : results) {
 		const auto rtti = reinterpret_cast<const RE::NiRTTI*>(result);
-		std::string name("NiRTTI_"sv);
-		name += rtti->GetName();
 		try {
 			const auto id = iddb(result - base);
-			toPrint.emplace_back(sanitize_name(std::move(name)), id);
+			toPrint.emplace_back(sanitize_name(rtti->GetName()), id);
 		} catch (const std::exception&) {
 			spdlog::error(rtti->GetName());
 		}
@@ -275,14 +363,17 @@ inline void dump_nirtti()
 	output << "#pragma once\n"sv
 		   << "\n"sv
 		   << "namespace RE\n"sv
-		   << "{\n"sv;
+		   << "{\n"sv
+		   << "\tnamespace Ni_RTTI\n"sv
+		   << "\t{\n"sv;
 	for (const auto& elem : toPrint) {
-		output << "\tinline constexpr REL::ID "sv << elem.first << "{ "sv << elem.second << " };\n"sv;
+		output << "\t\tinline constexpr REL::ID "sv << elem.first << "{ "sv << elem.second << " };\n"sv;
 	}
-	output << "}\n"sv;
+	output << "\t}\n"sv
+		   << "}\n"sv;
 }
 
-inline void MessageHandler(F4SE::MessagingInterface::Message* a_message)
+void MessageHandler(F4SE::MessagingInterface::Message* a_message)
 {
 	switch (a_message->type) {
 	case F4SE::MessagingInterface::kGameDataReady:

@@ -11,7 +11,8 @@ namespace RE
 		public BSTSingletonImplicit<BGSDefaultObjectManager>  // 20
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSDefaultObjectManager };
+		static constexpr auto RTTI{ RTTI::BGSDefaultObjectManager };
+		static constexpr auto VTABLE{ VTABLE::BGSDefaultObjectManager };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDOBJ };
 
 		[[nodiscard]] static BGSDefaultObjectManager* GetSingleton()
@@ -31,7 +32,8 @@ namespace RE
 		public TESForm	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSDefaultObject };
+		static constexpr auto RTTI{ RTTI::BGSDefaultObject };
+		static constexpr auto VTABLE{ VTABLE::BGSDefaultObject };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDFOB };
 
 		// members

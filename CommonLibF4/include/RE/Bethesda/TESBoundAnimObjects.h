@@ -23,7 +23,8 @@ namespace RE
 		public TESBoundObject  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESBoundAnimObject };
+		static constexpr auto RTTI{ RTTI::TESBoundAnimObject };
+		static constexpr auto VTABLE{ VTABLE::TESBoundAnimObject };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
 	};
 	static_assert(sizeof(TESBoundAnimObject) == 0x68);
@@ -45,7 +46,8 @@ namespace RE
 		public TESBoundAnimObject  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESSound };
+		static constexpr auto RTTI{ RTTI::TESSound };
+		static constexpr auto VTABLE{ VTABLE::TESSound };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSOUN };
 
 		// members
@@ -68,7 +70,8 @@ namespace RE
 		public BGSNavmeshableObject		   // 120
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESObjectACTI };
+		static constexpr auto RTTI{ RTTI::TESObjectACTI };
+		static constexpr auto VTABLE{ VTABLE::TESObjectACTI };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kACTI };
 
 		// members
@@ -83,7 +86,8 @@ namespace RE
 		public TESObjectACTI  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSTalkingActivator };
+		static constexpr auto RTTI{ RTTI::BGSTalkingActivator };
+		static constexpr auto VTABLE{ VTABLE::BGSTalkingActivator };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kTACT };
 
 		// add
@@ -119,7 +123,8 @@ namespace RE
 		public BGSNativeTerminalForm	   // 138
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESObjectCONT };
+		static constexpr auto RTTI{ RTTI::TESObjectCONT };
+		static constexpr auto VTABLE{ VTABLE::TESObjectCONT };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCONT };
 
 		// members
@@ -143,7 +148,8 @@ namespace RE
 		public BGSNativeTerminalForm	   // 0F0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESObjectDOOR };
+		static constexpr auto RTTI{ RTTI::TESObjectDOOR };
+		static constexpr auto VTABLE{ VTABLE::TESObjectDOOR };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDOOR };
 
 		// members
@@ -192,7 +198,8 @@ namespace RE
 		public BGSKeywordForm			   // 128
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESObjectLIGH };
+		static constexpr auto RTTI{ RTTI::TESObjectLIGH };
+		static constexpr auto VTABLE{ VTABLE::TESObjectLIGH };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLIGH };
 
 		// members
@@ -211,7 +218,8 @@ namespace RE
 		public TESProduceForm  // 148
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESFlora };
+		static constexpr auto RTTI{ RTTI::TESFlora };
+		static constexpr auto VTABLE{ VTABLE::TESFlora };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFLOR };
 	};
 	static_assert(sizeof(TESFlora) == 0x168);
@@ -241,7 +249,8 @@ namespace RE
 		public TESObjectACTI  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESFurniture };
+		static constexpr auto RTTI{ RTTI::TESFurniture };
+		static constexpr auto VTABLE{ VTABLE::TESFurniture };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFURN };
 
 		struct EntryPointData
@@ -279,7 +288,8 @@ namespace RE
 		public BGSPropertySheet			   // 1A0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESActorBase };
+		static constexpr auto RTTI{ RTTI::TESActorBase };
+		static constexpr auto VTABLE{ VTABLE::TESActorBase };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
 
 		// add
@@ -319,7 +329,8 @@ namespace RE
 		public BSTEventSink<MenuOpenCloseEvent>	 // 218
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESActorBase };
+		static constexpr auto RTTI{ RTTI::TESActorBase };
+		static constexpr auto VTABLE{ VTABLE::TESActorBase };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNPC_ };
 
 		struct HeadRelatedData
@@ -378,7 +389,8 @@ namespace RE
 		public BGSModelMaterialSwap	 // 98
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESLevCharacter };
+		static constexpr auto RTTI{ RTTI::TESLevCharacter };
+		static constexpr auto VTABLE{ VTABLE::TESLevCharacter };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kLVLN };
 	};
 	static_assert(sizeof(TESLevCharacter) == 0xD8);
@@ -387,7 +399,8 @@ namespace RE
 		public TESFurniture	 // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BGSTerminal };
+		static constexpr auto RTTI{ RTTI::BGSTerminal };
+		static constexpr auto VTABLE{ VTABLE::BGSTerminal };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kTERM };
 
 		class BodyTextItem

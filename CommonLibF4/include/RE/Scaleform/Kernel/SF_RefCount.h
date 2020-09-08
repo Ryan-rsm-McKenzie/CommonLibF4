@@ -12,7 +12,8 @@ namespace RE
 		class RefCountImplCore
 		{
 		public:
-			static constexpr auto RTTI{ RTTI_Scaleform__RefCountImplCore };
+			static constexpr auto RTTI{ RTTI::Scaleform__RefCountImplCore };
+			static constexpr auto VTABLE{ VTABLE::Scaleform__RefCountImplCore };
 
 			RefCountImplCore() = default;
 			virtual ~RefCountImplCore() = default;	// 00
@@ -27,7 +28,8 @@ namespace RE
 			public RefCountImplCore	 // 00
 		{
 		public:
-			static constexpr auto RTTI{ RTTI_Scaleform__RefCountImpl };
+			static constexpr auto RTTI{ RTTI::Scaleform__RefCountImpl };
+			static constexpr auto VTABLE{ VTABLE::Scaleform__RefCountImpl };
 
 			virtual ~RefCountImpl() = default;	// 00
 

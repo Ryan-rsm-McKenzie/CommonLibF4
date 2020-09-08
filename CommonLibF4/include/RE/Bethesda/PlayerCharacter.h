@@ -213,7 +213,8 @@ namespace RE
 		public IMovementPlayerControlsFilter						  // 4C0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_PlayerCharacter };
+		static constexpr auto RTTI{ RTTI::PlayerCharacter };
+		static constexpr auto VTABLE{ VTABLE::PlayerCharacter };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kACHR };
 
 		enum class GrabbingType;

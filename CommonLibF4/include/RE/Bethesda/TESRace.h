@@ -96,7 +96,8 @@ namespace RE
 		public BGSPreloadable		// 0B8
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_TESRace };
+		static constexpr auto RTTI{ RTTI::TESRace };
+		static constexpr auto VTABLE{ VTABLE::TESRace };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kRACE };
 
 		struct MOVEMENT_SPEED_OVERRIDE

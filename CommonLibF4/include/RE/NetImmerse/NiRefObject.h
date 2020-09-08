@@ -5,7 +5,8 @@ namespace RE
 	class NiRefObject
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_NiRefObject };
+		static constexpr auto RTTI{ RTTI::NiRefObject };
+		static constexpr auto VTABLE{ VTABLE::NiRefObject };
 
 		virtual ~NiRefObject();	 // 00
 

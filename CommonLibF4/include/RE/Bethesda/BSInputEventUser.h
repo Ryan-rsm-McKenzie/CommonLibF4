@@ -8,7 +8,8 @@ namespace RE
 	class BSInputEventUser
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSInputEventUser };
+		static constexpr auto RTTI{ RTTI::BSInputEventUser };
+		static constexpr auto VTABLE{ VTABLE::BSInputEventUser };
 
 		virtual ~BSInputEventUser() = default;	// 00
 

@@ -5,7 +5,7 @@ namespace RE
 	struct BSIntrusiveRefCounted
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSIntrusiveRefCounted };
+		static constexpr auto RTTI{ RTTI::BSIntrusiveRefCounted };
 
 		constexpr BSIntrusiveRefCounted() noexcept {}  // intentional
 

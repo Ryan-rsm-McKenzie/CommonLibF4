@@ -52,7 +52,8 @@ namespace RE
 		public BSTSingletonSDM<BSScaleformManager>		  // 08
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BSScaleformManager };
+		static constexpr auto RTTI{ RTTI::BSScaleformManager };
+		static constexpr auto VTABLE{ VTABLE::BSScaleformManager };
 
 		using ScaleModeType = Scaleform::GFx::Movie::ScaleModeType;
 

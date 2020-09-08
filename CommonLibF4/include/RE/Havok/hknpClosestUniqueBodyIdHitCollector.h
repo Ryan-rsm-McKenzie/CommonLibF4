@@ -9,7 +9,8 @@ namespace RE
 		public hknpUniqueBodyIdHitCollector	 // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_hknpClosestUniqueBodyIdHitCollector };
+		static constexpr auto RTTI{ RTTI::hknpClosestUniqueBodyIdHitCollector };
+		static constexpr auto VTABLE{ VTABLE::hknpClosestUniqueBodyIdHitCollector };
 
 		// members
 		hkVector4f center;	// 400

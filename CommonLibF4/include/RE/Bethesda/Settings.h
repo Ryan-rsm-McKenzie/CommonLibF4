@@ -18,7 +18,8 @@ namespace RE
 	class Setting
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_Setting };
+		static constexpr auto RTTI{ RTTI::Setting };
+		static constexpr auto VTABLE{ VTABLE::Setting };
 
 		enum class SETTING_TYPE
 		{

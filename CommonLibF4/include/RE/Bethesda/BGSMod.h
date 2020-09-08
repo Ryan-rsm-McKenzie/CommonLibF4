@@ -12,7 +12,7 @@ namespace RE
 			public BSTDataBuffer<2>	 // 00
 		{
 		public:
-			static constexpr auto RTTI{ RTTI_BGSMod__Container };
+			static constexpr auto RTTI{ RTTI::BGSMod__Container };
 		};
 		static_assert(sizeof(Container) == 0x10);
 
@@ -26,7 +26,8 @@ namespace RE
 				public Container			  // 88
 			{
 			public:
-				static constexpr auto RTTI{ RTTI_BGSMod__Attachment__Mod };
+				static constexpr auto RTTI{ RTTI::BGSMod__Attachment__Mod };
+				static constexpr auto VTABLE{ VTABLE::BGSMod__Attachment__Mod };
 				static constexpr auto FORM_ID{ ENUM_FORM_ID::kOMOD };
 
 				// members
@@ -50,7 +51,8 @@ namespace RE
 				public BGSMod::Container  // 10
 			{
 			public:
-				static constexpr auto RTTI{ RTTI_BGSMod__Template__Item };
+				static constexpr auto RTTI{ RTTI::BGSMod__Template__Item };
+				static constexpr auto VTABLE{ VTABLE::BGSMod__Template__Item };
 
 				// members
 				BGSMod::Template::Items* parentTemplate;  // 20
@@ -70,7 +72,8 @@ namespace RE
 				public BaseFormComponent  // 00
 			{
 			public:
-				static constexpr auto RTTI{ RTTI_BGSMod__Template__Items };
+				static constexpr auto RTTI{ RTTI::BGSMod__Template__Items };
+				static constexpr auto VTABLE{ VTABLE::BGSMod__Template__Items };
 
 				// override (BaseFormComponent)
 				std::uint32_t GetFormComponentType() const override { return 'TJBO'; }	// 01

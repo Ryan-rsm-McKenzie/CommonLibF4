@@ -50,7 +50,8 @@ namespace RE
 		public TESObjectREFR  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_Projectile };
+		static constexpr auto RTTI{ RTTI::Projectile };
+		static constexpr auto VTABLE{ VTABLE::Projectile };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kREFR };
 
 		struct ImpactCreation;
@@ -166,7 +167,8 @@ namespace RE
 		public Projectile  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_MissileProjectile };
+		static constexpr auto RTTI{ RTTI::MissileProjectile };
+		static constexpr auto VTABLE{ VTABLE::MissileProjectile };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPMIS };
 
 		// add
@@ -186,7 +188,8 @@ namespace RE
 		public MissileProjectile  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ArrowProjectile };
+		static constexpr auto RTTI{ RTTI::ArrowProjectile };
+		static constexpr auto VTABLE{ VTABLE::ArrowProjectile };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPARW };
 
 		// members
@@ -198,7 +201,8 @@ namespace RE
 		public Projectile  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_GrenadeProjectile };
+		static constexpr auto RTTI{ RTTI::GrenadeProjectile };
+		static constexpr auto VTABLE{ VTABLE::GrenadeProjectile };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPGRE };
 
 		// members
@@ -252,7 +256,8 @@ namespace RE
 		public BSTEventSink<BSProceduralGeomEvent>		   // 270
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BeamProjectile };
+		static constexpr auto RTTI{ RTTI::BeamProjectile };
+		static constexpr auto VTABLE{ VTABLE::BeamProjectile };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPBEA };
 
 		// members
@@ -269,7 +274,8 @@ namespace RE
 		public Projectile  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_FlameProjectile };
+		static constexpr auto RTTI{ RTTI::FlameProjectile };
+		static constexpr auto VTABLE{ VTABLE::FlameProjectile };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPFLA };
 
 		// members
@@ -282,7 +288,8 @@ namespace RE
 		public Projectile  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ConeProjectile };
+		static constexpr auto RTTI{ RTTI::ConeProjectile };
+		static constexpr auto VTABLE{ VTABLE::ConeProjectile };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPCON };
 
 		// members
@@ -295,7 +302,8 @@ namespace RE
 		public Projectile  // 000
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_BarrierProjectile };
+		static constexpr auto RTTI{ RTTI::BarrierProjectile };
+		static constexpr auto VTABLE{ VTABLE::BarrierProjectile };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kPBAR };
 
 		struct CollisionData

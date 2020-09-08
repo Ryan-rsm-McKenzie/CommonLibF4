@@ -41,7 +41,8 @@ namespace RE
 	class InputEvent
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_InputEvent };
+		static constexpr auto RTTI{ RTTI::InputEvent };
+		static constexpr auto VTABLE{ VTABLE::InputEvent };
 
 		enum class HANDLED_RESULT : std::int32_t
 		{
@@ -140,7 +141,8 @@ namespace RE
 		public InputEvent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_CharacterEvent };
+		static constexpr auto RTTI{ RTTI::CharacterEvent };
+		static constexpr auto VTABLE{ VTABLE::CharacterEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kChar };
 
 		virtual ~CharacterEvent() = default;  // 00
@@ -157,7 +159,8 @@ namespace RE
 		public InputEvent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_DeviceConnectEvent };
+		static constexpr auto RTTI{ RTTI::DeviceConnectEvent };
+		static constexpr auto VTABLE{ VTABLE::DeviceConnectEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kDeviceConnect };
 
 		virtual ~DeviceConnectEvent() = default;  // 00
@@ -174,7 +177,8 @@ namespace RE
 		public InputEvent  // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_IDEvent };
+		static constexpr auto RTTI{ RTTI::IDEvent };
+		static constexpr auto VTABLE{ VTABLE::IDEvent };
 
 		virtual ~IDEvent() = default;  // 00
 
@@ -196,7 +200,8 @@ namespace RE
 		public IDEvent	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ButtonEvent };
+		static constexpr auto RTTI{ RTTI::ButtonEvent };
+		static constexpr auto VTABLE{ VTABLE::ButtonEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kButton };
 
 		virtual ~ButtonEvent() = default;  // 00
@@ -214,7 +219,8 @@ namespace RE
 		public IDEvent	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_CursorMoveEvent };
+		static constexpr auto RTTI{ RTTI::CursorMoveEvent };
+		static constexpr auto VTABLE{ VTABLE::CursorMoveEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kCursorMove };
 
 		virtual ~CursorMoveEvent() = default;  // 00
@@ -232,7 +238,8 @@ namespace RE
 		public IDEvent	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_KinectEvent };
+		static constexpr auto RTTI{ RTTI::KinectEvent };
+		static constexpr auto VTABLE{ VTABLE::KinectEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kKinect };
 
 		virtual ~KinectEvent() = default;  // 00
@@ -249,7 +256,8 @@ namespace RE
 		public IDEvent	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_MouseMoveEvent };
+		static constexpr auto RTTI{ RTTI::MouseMoveEvent };
+		static constexpr auto VTABLE{ VTABLE::MouseMoveEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kMouseMove };
 
 		virtual ~MouseMoveEvent() = default;  // 00
@@ -267,7 +275,8 @@ namespace RE
 		public IDEvent	// 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI_ThumbstickEvent };
+		static constexpr auto RTTI{ RTTI::ThumbstickEvent };
+		static constexpr auto VTABLE{ VTABLE::ThumbstickEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kTumbstick };
 
 		enum THUMBSTICK_ID : std::int32_t
