@@ -28,7 +28,7 @@ namespace RE
 	template <class T, class>
 	[[nodiscard]] T* TESForm::As() noexcept
 	{
-		const_cast<T*>(static_cast<const TESForm*>(this)->As<T>());
+		return const_cast<T*>(static_cast<const TESForm*>(this)->As<T>());
 	}
 
 	template <class T, class>

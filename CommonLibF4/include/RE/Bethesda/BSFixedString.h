@@ -18,7 +18,7 @@ namespace RE
 			using reference = value_type&;
 			using const_reference = const value_type&;
 
-			constexpr BSFixedString() noexcept = default;
+			BSFixedString() noexcept = default;
 
 			BSFixedString(const BSFixedString& a_rhs) :
 				_data(a_rhs._data)
@@ -114,12 +114,12 @@ namespace RE
 
 			[[nodiscard]] const_pointer c_str() const noexcept { return data(); }
 
-			[[nodiscard]] constexpr operator std::basic_string_view<value_type>() const { return { c_str(), length() }; }
+			[[nodiscard]] operator std::basic_string_view<value_type>() const { return { c_str(), length() }; }
 
-			[[nodiscard]] constexpr bool empty() const noexcept { return size() == 0; }
+			[[nodiscard]] bool empty() const noexcept { return size() == 0; }
 
-			[[nodiscard]] constexpr size_type size() const noexcept { return _data ? _data->size() : 0; }
-			[[nodiscard]] constexpr size_type length() const noexcept { return _data ? _data->length() : 0; }
+			[[nodiscard]] size_type size() const noexcept { return _data ? _data->size() : 0; }
+			[[nodiscard]] size_type length() const noexcept { return _data ? _data->length() : 0; }
 
 			[[nodiscard]] friend bool operator==(const BSFixedString& a_lhs, const BSFixedString& a_rhs) noexcept
 			{
@@ -235,6 +235,8 @@ namespace RE
 
 		[[nodiscard]] const_pointer data() const noexcept { return _data.data(); }
 		[[nodiscard]] const_pointer c_str() const noexcept { return _data.c_str(); }
+
+		[[nodiscard]] operator std::basic_string_view<value_type>() const { return { _data }; }
 
 		[[nodiscard]] bool empty() const noexcept { return _data.empty(); }
 

@@ -8,7 +8,7 @@
 	</Type>
 	
 	<Type Name="F4SE::stl::enumeration&lt;*&gt;">
-		<DisplayString>{static_cast&lt;$T1&gt;(_impl),en}</DisplayString>
+		<DisplayString Optional="true">{static_cast&lt;$T1&gt;(_impl),en}</DisplayString>
 	</Type>
 
 	<Type Name="RE::RTTI::RVA&lt;*&gt;">
@@ -95,10 +95,10 @@
 	</Type>
 
 	<Type Name="RE::BSTScatterTable&lt;*&gt;::iterator_base&lt;*&gt;">
-		<DisplayString Condition="_entry != _end">{_entry->value}</DisplayString>
-		<DisplayString Condition="_entry == _end">end</DisplayString>
+		<DisplayString Condition="_cur != _end">{_cur->value}</DisplayString>
+		<DisplayString Condition="_cur == _end">end</DisplayString>
 		<Expand>
-			<Item Condition="_entry != _end" Name="[value]">_entry->value</Item>
+			<Item Condition="_cur != _end" Name="[value]">_cur->value</Item>
 		</Expand>
 	</Type>
 
@@ -148,6 +148,28 @@
 				<Size>_size</Size>
 				<ValuePointer>_data</ValuePointer>
 			</ArrayItems>
+		</Expand>
+	</Type>
+
+	<Type Name="RE::SCRIPT_FUNCTION">
+		<Intrinsic Name="HasShortName" Expression="shortName &amp;&amp; shortName[0] != '\0'"/>
+		<DisplayString Condition="HasShortName()">{functionName,na} ({shortName,na})</DisplayString>
+		<DisplayString Condition="!HasShortName()">{functionName,na}</DisplayString>
+		<Expand>
+			<Item Name="functionName">functionName</Item>
+			<Item Name="shortName">shortName</Item>
+			<Item Name="helpString">helpString</Item>
+			<Item Name="referenceFunction">referenceFunction</Item>
+			<Item Name="paramCount">paramCount</Item>
+			<ArrayItems>
+				<Size>paramCount</Size>
+				<ValuePointer>parameters</ValuePointer>
+			</ArrayItems>
+			<Item Name="executeFunction">executeFunction</Item>
+			<Item Name="compileFunction">compileFunction</Item>
+			<Item Name="conditionFunction">conditionFunction</Item>
+			<Item Name="editorFilter">editorFilter</Item>
+			<Item Name="invalidatesCellList">invalidatesCellList</Item>
 		</Expand>
 	</Type>
 </AutoVisualizer>

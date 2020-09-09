@@ -1092,7 +1092,14 @@ namespace RE
 		virtual std::uint32_t GetFullNameLength() const { return fullName.length(); }  // 07
 		virtual const char* GetFullName() const { return fullName.c_str(); }		   // 08
 
-		[[nodiscard]] static const char* GetFullName(const TESForm* a_obj);
+		[[nodiscard]] static std::string_view GetFullName(const TESForm& a_obj, bool a_strict = false);
+
+		[[nodiscard]] static auto GetSparseFullNameMap()
+			-> BSTHashMap<const TESForm*, BGSLocalizedString>&
+		{
+			REL::Relocation<BSTHashMap<const TESForm*, BGSLocalizedString>*> sparseFullNameMap{ REL::ID(226372), -0x8 };
+			return *sparseFullNameMap;
+		}
 
 		// members
 		BGSLocalizedString fullName;  // 08

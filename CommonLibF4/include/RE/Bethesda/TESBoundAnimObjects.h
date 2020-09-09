@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RE/Bethesda/BGSCharacterMorph.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTEvent.h"

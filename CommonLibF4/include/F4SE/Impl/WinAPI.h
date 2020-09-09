@@ -98,3 +98,15 @@ namespace F4SE
 			std::uint32_t* a_oldProtect) noexcept;
 	}
 }
+
+namespace RE
+{
+	struct _FILETIME
+	{
+	public:
+		// members
+		std::uint32_t dwLowDateTime;   // 00
+		std::uint32_t dwHighDateTime;  // 04
+	};
+	static_assert(sizeof(_FILETIME) == 0x8);
+}

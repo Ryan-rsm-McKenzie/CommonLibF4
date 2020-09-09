@@ -115,9 +115,9 @@ namespace RE
 	{
 	public:
 		// members
-		const char* paramName;										  // 00
+		const char* paramName{ "" };								  // 00
 		stl::enumeration<SCRIPT_PARAM_TYPE, std::int32_t> paramType;  // 08
-		bool optional;												  // 0C
+		bool optional{ false };										  // 0C
 	};
 	static_assert(sizeof(SCRIPT_PARAMETER) == 0x10);
 

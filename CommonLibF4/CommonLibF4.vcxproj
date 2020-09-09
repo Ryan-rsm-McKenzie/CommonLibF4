@@ -341,6 +341,7 @@
     <ClInclude Include="include\RE\Bethesda\TESCondition.h" />
     <ClInclude Include="include\RE\Bethesda\TESDataHandler.h" />
     <ClInclude Include="include\RE\Bethesda\TESFaction.h" />
+    <ClInclude Include="include\RE\Bethesda\TESFile.h" />
     <ClInclude Include="include\RE\Bethesda\TESForms.h" />
     <ClInclude Include="include\RE\Bethesda\TESObjectREFRs.h" />
     <ClInclude Include="include\RE\Bethesda\TESPackages.h" />
@@ -369,7 +370,9 @@
     <ClInclude Include="include\RE\msvc\functional.h" />
     <ClInclude Include="include\RE\msvc\memory.h" />
     <ClInclude Include="include\RE\NetImmerse\NiAlphaProperty.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiBinaryStream.h" />
     <ClInclude Include="include\RE\NetImmerse\NiColor.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiFile.h" />
     <ClInclude Include="include\RE\NetImmerse\NiFlags.h" />
     <ClInclude Include="include\RE\NetImmerse\NiMatrix3.h" />
     <ClInclude Include="include\RE\NetImmerse\NiObject.h" />

@@ -130,6 +130,9 @@ namespace RE
 			}
 
 		private:
+			template <class>
+			friend class iterator_base;
+
 			void push_level()
 			{
 				for (std::uint32_t i = 0; i <= _cur->usedEntries; ++i) {

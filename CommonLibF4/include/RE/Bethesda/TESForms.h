@@ -533,6 +533,16 @@ namespace RE
 		virtual std::uint32_t GetFilledSlotsImpl() const { return static_cast<std::uint32_t>(-1); }																																	  // 48
 		virtual float GetDesirability([[maybe_unused]] TBO_InstanceData* a_instanceData, [[maybe_unused]] const TESForm* a_user) const { return 0.0F; }																				  // 49
 
+		[[nodiscard]] static auto GetAllForms()
+			-> std::pair<
+				BSTHashMap<std::uint32_t, TESForm*>*,
+				std::reference_wrapper<BSReadWriteLock>>
+		{
+			REL::Relocation<BSTHashMap<std::uint32_t, TESForm*>**> allForms{ REL::ID(422985) };
+			REL::Relocation<BSReadWriteLock*> allFormsMapLock{ REL::ID(691815) };
+			return { *allForms, *allFormsMapLock };
+		}
+
 		[[nodiscard]] std::uint32_t GetFormID() const noexcept { return formID; }
 		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
 		[[nodiscard]] bool IsCreated() const noexcept { return (formID >> (8 * 3)) == 0xFF; }

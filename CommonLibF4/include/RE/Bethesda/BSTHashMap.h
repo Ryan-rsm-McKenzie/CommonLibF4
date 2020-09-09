@@ -64,108 +64,92 @@ namespace RE
 		using allocator_type = Allocator<entry_type, N>;
 
 		template <class U>
-		struct iterator_base
+		class iterator_base :
+			public boost::iterators::iterator_facade<
+				iterator_base<U>,
+				U,
+				std::forward_iterator_tag>
 		{
+		private:
+			using super =
+				boost::iterators::iterator_facade<
+					iterator_base<U>,
+					U,
+					std::forward_iterator_tag>;
+
 		public:
-			using difference_type = std::ptrdiff_t;
-			using value_type = U;
-			using pointer = U*;
-			using reference = U&;
-			using iterator_category = std::forward_iterator_tag;
+			using difference_type = typename super::difference_type;
+			using value_type = typename super::value_type;
+			using pointer = typename super::pointer;
+			using reference = typename super::reference;
+			using iterator_category = typename super::iterator_category;
 
-			constexpr iterator_base() noexcept = default;
+			iterator_base() noexcept = default;
+			iterator_base(const iterator_base&) noexcept = default;
+			iterator_base(iterator_base&&) noexcept = default;
 
-			constexpr iterator_base(const iterator_base& a_rhs) noexcept :
-				_entry(a_rhs._entry),
+			template <class V>
+			iterator_base(iterator_base<V> a_rhs) noexcept :
+				_cur(a_rhs._cur),
 				_end(a_rhs._end)
 			{}
 
-			constexpr iterator_base(iterator_base&& a_rhs) noexcept :
-				_entry(a_rhs._entry),
-				_end(a_rhs._end)
-			{
-				a_rhs._entry = a_rhs._end;
-			}
-
-			constexpr iterator_base(entry_type* a_entry, entry_type* a_end) noexcept :
-				_entry(a_entry),
-				_end(a_end)
-			{
-				while (_entry != _end && !_entry->next) {
-					++_entry;
-				}
-			}
-
 			~iterator_base() noexcept = default;
 
-			constexpr iterator_base& operator=(const iterator_base& a_rhs) noexcept
+			iterator_base& operator=(const iterator_base&) noexcept = default;
+			iterator_base& operator=(iterator_base&&) noexcept = default;
+
+			template <class V>
+			iterator_base& operator=(iterator_base<V> a_rhs)
 			{
-				if (this != std::addressof(a_rhs)) {
-					assert(_end == a_rhs._end);
-					_entry = a_rhs._entry;
-				}
+				_cur = a_rhs._cur;
+				_end = a_rhs._end;
 				return *this;
 			}
 
-			constexpr iterator_base& operator=(iterator_base&& a_rhs) noexcept
+		protected:
+			friend class boost::iterator_core_access;
+
+			template <class, std::uint32_t, template <class, std::uint32_t> class, class, class>
+			friend struct BSTScatterTable;
+
+			iterator_base(entry_type* a_at, entry_type* a_end) noexcept :
+				_cur(a_at),
+				_end(a_end)
 			{
-				if (this != std::addressof(a_rhs)) {
-					assert(_end == a_rhs._end);
-					_entry = a_rhs._entry;
-					a_rhs._entry = a_rhs._end;
+				if (!good()) {
+					increment();
 				}
-				return *this;
 			}
 
-			void swap(iterator_base& a_rhs) noexcept
+			[[nodiscard]] reference dereference() const noexcept
+			{
+				assert(_cur);
+				return _cur->value;
+			}
+
+			template <class U>
+			[[nodiscard]] bool equal(const iterator_base<U>& a_rhs) const noexcept
 			{
 				assert(_end == a_rhs._end);
-				std::swap(_entry, a_rhs._entry);
+				return _cur == a_rhs._cur;
 			}
 
-			[[nodiscard]] constexpr reference operator*() const noexcept
+			void increment() noexcept
 			{
-				assert(_entry != _end);
-				return _entry->value;
-			}
-
-			[[nodiscard]] constexpr pointer operator->() const noexcept
-			{
-				assert(_entry != _end);
-				return std::addressof(_entry->value);
-			}
-
-			[[nodiscard]] constexpr friend bool operator==(const iterator_base& a_lhs, const iterator_base& a_rhs) noexcept
-			{
-				assert(a_lhs._end == a_rhs._end);
-				return a_lhs._entry == a_rhs._entry;
-			}
-
-			[[nodiscard]] constexpr friend bool operator!=(const iterator_base& a_lhs, const iterator_base& a_rhs) noexcept
-			{
-				return !(a_lhs == a_rhs);
-			}
-
-			// prefix
-			constexpr iterator_base& operator++() noexcept
-			{
-				assert(_entry != _end);
+				assert(_cur && _cur != _end);
 				do {
-					++_entry;
-				} while (_entry != _end && !_entry->next);
-				return *this;
-			}
-
-			// postfix
-			[[nodiscard]] constexpr iterator_base operator++(int) noexcept
-			{
-				iterator_base tmp{ *this };
-				++(*this);
-				return tmp;
+					++_cur;
+				} while (!good());
 			}
 
 		private:
-			entry_type* _entry{ nullptr };
+			template <class>
+			friend class iterator_base;
+
+			[[nodiscard]] bool good() const noexcept { return _cur == _end || _cur->next; }
+
+			entry_type* _cur{ nullptr };
 			entry_type* _end{ nullptr };
 		};
 
@@ -176,19 +160,19 @@ namespace RE
 
 		F4_HEAP_REDEFINE_NEW(BSTScatterTable);
 
-		[[nodiscard]] constexpr iterator begin() noexcept { return get_entries() ? make_iterator(get_entries()) : iterator{}; }
-		[[nodiscard]] constexpr const_iterator begin() const noexcept { return get_entries() ? make_iterator(get_entries()) : const_iterator{}; }
-		[[nodiscard]] constexpr const_iterator cbegin() const noexcept { return begin(); }
+		[[nodiscard]] iterator begin() noexcept { return get_entries() ? make_iterator(get_entries()) : iterator{}; }
+		[[nodiscard]] const_iterator begin() const noexcept { return get_entries() ? make_iterator(get_entries()) : const_iterator{}; }
+		[[nodiscard]] const_iterator cbegin() const noexcept { return begin(); }
 
-		[[nodiscard]] constexpr iterator end() noexcept { return get_entries() ? make_iterator(get_entries() + _capacity) : iterator{}; }
-		[[nodiscard]] constexpr const_iterator end() const noexcept { return get_entries() ? make_iterator(get_entries() + _capacity) : const_iterator{}; }
-		[[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
+		[[nodiscard]] iterator end() noexcept { return get_entries() ? make_iterator(get_entries() + _capacity) : iterator{}; }
+		[[nodiscard]] const_iterator end() const noexcept { return get_entries() ? make_iterator(get_entries() + _capacity) : const_iterator{}; }
+		[[nodiscard]] const_iterator cend() const noexcept { return end(); }
 
-		[[nodiscard]] constexpr bool empty() const noexcept { return !get_entries() || _freeCount == 0; }
+		[[nodiscard]] bool empty() const noexcept { return !get_entries() || _freeCount == 0; }
 
-		[[nodiscard]] constexpr size_type size() const noexcept { return _capacity - _freeCount; }
+		[[nodiscard]] size_type size() const noexcept { return _capacity - _freeCount; }
 
-		[[nodiscard]] constexpr size_type max_size() const noexcept { return _allocator.max_size(); }
+		[[nodiscard]] size_type max_size() const noexcept { return _allocator.max_size(); }
 
 		std::pair<iterator, bool> insert(const value_type& a_value) { return insert_impl(false, a_value); }
 		std::pair<iterator, bool> insert(value_type&& a_value) { return insert_impl(false, std::move(a_value)); }
@@ -345,13 +329,13 @@ namespace RE
 			return { make_iterator(idealEntry), true };
 		}
 
-		[[nodiscard]] constexpr iterator make_iterator(entry_type* a_entry) noexcept
+		[[nodiscard]] iterator make_iterator(entry_type* a_entry) noexcept
 		{
 			assert(get_entries() != nullptr);
 			return { a_entry, get_entries() + _capacity };
 		}
 
-		[[nodiscard]] constexpr const_iterator make_iterator(entry_type* a_entry) const noexcept
+		[[nodiscard]] const_iterator make_iterator(entry_type* a_entry) const noexcept
 		{
 			assert(get_entries() != nullptr);
 			return { a_entry, get_entries() + _capacity };
@@ -368,7 +352,7 @@ namespace RE
 		[[nodiscard]] entry_type* calc_pos(const key_type& a_key) const { return const_cast<entry_type*>(get_entries() + calc_idx(a_key)); }
 
 		// assumes not empty
-		[[nodiscard]] constexpr not_null<entry_type*> get_free_entry() noexcept
+		[[nodiscard]] not_null<entry_type*> get_free_entry() noexcept
 		{
 			assert(!empty());
 			entry_type* entry = nullptr;
@@ -431,11 +415,11 @@ namespace RE
 
 		void deallocate(entry_type* a_ptr) { _allocator.deallocate(a_ptr); }
 
-		[[nodiscard]] constexpr entry_type* get_entries() const noexcept { return _allocator.get_entries(); }
+		[[nodiscard]] entry_type* get_entries() const noexcept { return _allocator.get_entries(); }
 
-		constexpr void set_entries(entry_type* a_entries) noexcept { _allocator.set_entries(a_entries); }
+		void set_entries(entry_type* a_entries) noexcept { _allocator.set_entries(a_entries); }
 
-		[[nodiscard]] constexpr size_type min_size() const noexcept { return _allocator.min_size(); }
+		[[nodiscard]] size_type min_size() const noexcept { return _allocator.min_size(); }
 
 		static constexpr std::uint8_t SENTINEL[] = { (std::uint8_t)0xDE, (std::uint8_t)0xAD, (std::uint8_t)0xBE, (std::uint8_t)0xEF };
 
@@ -470,7 +454,7 @@ namespace RE
 		using entry_type = T;
 		using size_type = std::uint32_t;
 
-		constexpr BSTScatterTableHeapAllocator() noexcept = default;
+		BSTScatterTableHeapAllocator() noexcept = default;
 
 		[[nodiscard]] entry_type* allocate(std::size_t a_num)
 		{
@@ -482,13 +466,13 @@ namespace RE
 
 		void deallocate(entry_type* a_ptr) { free(a_ptr); }
 
-		[[nodiscard]] constexpr entry_type* get_entries() const noexcept { return _entries; }
+		[[nodiscard]] entry_type* get_entries() const noexcept { return _entries; }
 
-		constexpr void set_entries(entry_type* a_entries) noexcept { _entries = a_entries; }
+		void set_entries(entry_type* a_entries) noexcept { _entries = a_entries; }
 
-		[[nodiscard]] constexpr size_type min_size() const noexcept { return static_cast<size_type>(1) << 3; }
+		[[nodiscard]] size_type min_size() const noexcept { return static_cast<size_type>(1) << 3; }
 
-		[[nodiscard]] constexpr size_type max_size() const noexcept { return static_cast<size_type>(1) << 31; }
+		[[nodiscard]] size_type max_size() const noexcept { return static_cast<size_type>(1) << 31; }
 
 	private:
 		// members
@@ -548,17 +532,17 @@ namespace RE
 
 			Allocator() = default;
 
-			[[nodiscard]] constexpr entry_type* allocate(std::size_t a_num) noexcept { return a_num <= N ? _data : 0; }
+			[[nodiscard]] entry_type* allocate(std::size_t a_num) noexcept { return a_num <= N ? _data : 0; }
 
-			[[nodiscard]] constexpr void deallocate(entry_type* a_ptr) noexcept { return; }
+			[[nodiscard]] void deallocate(entry_type* a_ptr) noexcept { return; }
 
-			[[nodiscard]] constexpr entry_type* get_entries() const noexcept { return _entries; }
+			[[nodiscard]] entry_type* get_entries() const noexcept { return _entries; }
 
-			constexpr void set_entries(entry_type* a_entries) noexcept { _entries = a_entries; }
+			void set_entries(entry_type* a_entries) noexcept { _entries = a_entries; }
 
-			[[nodiscard]] constexpr size_type min_size() const noexcept { return 1; }
+			[[nodiscard]] size_type min_size() const noexcept { return 1; }
 
-			[[nodiscard]] constexpr size_type max_size() const noexcept { return N; }
+			[[nodiscard]] size_type max_size() const noexcept { return N; }
 
 		private:
 			// members

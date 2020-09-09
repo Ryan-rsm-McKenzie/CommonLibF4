@@ -255,6 +255,9 @@
     <ClInclude Include="include\RE\Bethesda\TESFaction.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\TESFile.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\TESForms.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -339,7 +342,13 @@
     <ClInclude Include="include\RE\NetImmerse\NiAlphaProperty.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiBinaryStream.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiColor.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiFile.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiFlags.h">
