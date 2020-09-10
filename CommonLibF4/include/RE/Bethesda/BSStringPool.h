@@ -34,7 +34,7 @@ namespace RE
 				} while (!flags.compare_exchange_weak(expected, static_cast<std::uint16_t>(expected + 1)));
 			}
 
-			[[nodiscard]] constexpr std::uint16_t crc() const noexcept { return _crc; }
+			[[nodiscard]] std::uint16_t crc() const noexcept { return _crc; }
 
 			template <class T>
 			[[nodiscard]] const T* data() const noexcept;
@@ -51,7 +51,7 @@ namespace RE
 				return u16();
 			}
 
-			[[nodiscard]] constexpr const Entry* leaf() const noexcept
+			[[nodiscard]] const Entry* leaf() const noexcept
 			{
 				auto iter = this;
 				while (iter && iter->shallow()) {
@@ -60,9 +60,14 @@ namespace RE
 				return iter;
 			}
 
-			[[nodiscard]] constexpr std::uint32_t length() const noexcept { return _length; }
-			[[nodiscard]] constexpr bool shallow() const noexcept { return _flags & kShallow; }
-			[[nodiscard]] constexpr std::uint32_t size() const noexcept { return length(); }
+			[[nodiscard]] std::uint32_t length() const noexcept
+			{
+				const auto entry = leaf();
+				return entry ? entry->_length : 0;
+			}
+
+			[[nodiscard]] bool shallow() const noexcept { return _flags & kShallow; }
+			[[nodiscard]] std::uint32_t size() const noexcept { return length(); }
 
 			[[nodiscard]] const char* u8() const noexcept
 			{
@@ -86,7 +91,7 @@ namespace RE
 				}
 			}
 
-			[[nodiscard]] constexpr bool wide() const noexcept { return _flags & kWide; }
+			[[nodiscard]] bool wide() const noexcept { return _flags & kWide; }
 
 			// members
 			Entry* _left;				  // 00

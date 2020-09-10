@@ -115,10 +115,8 @@
 		<DisplayString Condition="shallow()">{*this->_right}</DisplayString>
 		<DisplayString Condition="!shallow()">{*this,view(leaf)}</DisplayString>
 		<Expand>
-			<Item Name="[size]">_length</Item>
-			<Item Name="[crc]">_crc,H</Item>
-			<Item Name="[wide]" Condition="(_flags &amp; kWide) == 0">false</Item>
-			<Item Name="[wide]" Condition="(_flags &amp; kWide) != 0">true</Item>
+			<Item Name="[next]" Condition="shallow()">*this->_right</Item>
+			<Item Name="[leaf]" Condition="!shallow()">*this,view(leaf)</Item>
 		</Expand>
 	</Type>
 
@@ -127,6 +125,9 @@
 		<DisplayString Condition="(_flags &amp; kWide) == 0">{(char*)(this + 1)}</DisplayString>
 		<Expand>
 			<Item Name="[size]">_length</Item>
+			<Item Name="[crc]">_crc,H</Item>
+			<Item Name="[wide]" Condition="(_flags &amp; kWide) == 0">false</Item>
+			<Item Name="[wide]" Condition="(_flags &amp; kWide) != 0">true</Item>
 		</Expand>
 	</Type>
 
@@ -135,7 +136,7 @@
 		<DisplayString Condition="_data == nullptr">&quot;&quot;</DisplayString>
 		<Expand>
 			<Item Name="[data]" Condition="_data != nullptr">_data</Item>
-			<Item Name="[data]" Condition="_data == nullptr">empty</Item>
+			<Item Name="[data]" Condition="_data == nullptr">"empty"</Item>
 		</Expand>
 	</Type>
 
