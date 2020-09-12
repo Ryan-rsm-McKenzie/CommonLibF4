@@ -22,6 +22,8 @@ namespace F4SE
 
 		[[nodiscard]] void*(GetCurrentModule)() noexcept;
 
+		[[nodiscard]] void*(GetCurrentProcess)() noexcept;
+
 		[[nodiscard]] std::uint32_t(GetCurrentThreadID)() noexcept;
 
 		[[nodiscard]] bool(GetFileVersionInfo)(
@@ -73,6 +75,10 @@ namespace F4SE
 			const wchar_t* a_text,
 			const wchar_t* a_caption,
 			unsigned int a_type) noexcept;
+
+		bool(TerminateProcess)(
+			void* a_process,
+			unsigned int a_exitCode) noexcept;
 
 		bool(VirtualFree)(
 			void* a_address,

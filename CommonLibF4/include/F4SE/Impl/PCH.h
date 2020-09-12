@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <cstring>
 #include <ctime>
+#include <execution>
 #include <filesystem>
 #include <functional>
 #include <iterator>
@@ -260,7 +261,7 @@ namespace F4SE
 
 			assert(false);
 			WinAPI::MessageBox(nullptr, a_msg.data(), (caption.empty() ? nullptr : caption.c_str()), 0);
-			std::_Exit(EXIT_FAILURE);
+			WinAPI::TerminateProcess(WinAPI::GetCurrentProcess(), EXIT_FAILURE);
 		}
 
 		template <

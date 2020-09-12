@@ -63,6 +63,12 @@ namespace F4SE
 				std::addressof(__ImageBase));
 		}
 
+		void*(GetCurrentProcess)() noexcept
+		{
+			return static_cast<void*>(
+				::GetCurrentProcess());
+		}
+
 		std::uint32_t(GetCurrentThreadID)() noexcept
 		{
 			return static_cast<std::uint32_t>(
@@ -188,6 +194,16 @@ namespace F4SE
 					static_cast<::LPCWSTR>(a_text),
 					static_cast<::LPCWSTR>(a_caption),
 					static_cast<::UINT>(a_type)));
+		}
+
+		bool(TerminateProcess)(
+			void* a_process,
+			unsigned int a_exitCode) noexcept
+		{
+			return static_cast<bool>(
+				::TerminateProcess(
+					static_cast<::HANDLE>(a_process),
+					static_cast<::UINT>(a_exitCode)));
 		}
 
 		bool(VirtualFree)(

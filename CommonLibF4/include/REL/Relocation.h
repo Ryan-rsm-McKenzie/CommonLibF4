@@ -428,18 +428,35 @@ namespace REL
 		class Offset2ID
 		{
 		public:
-			Offset2ID()
+			using value_type = mapping_t;
+			using container_type = std::vector<value_type>;
+			using size_type = typename container_type::size_type;
+			using const_iterator = typename container_type::const_iterator;
+			using const_reverse_iterator = typename container_type::const_reverse_iterator;
+
+			template <
+				class ExecutionPolicy,
+				std::enable_if_t<
+					std::is_execution_policy_v<
+						stl::remove_cvref_t<ExecutionPolicy>>,
+					int> = 0>
+			Offset2ID(ExecutionPolicy&& a_policy)
 			{
 				const auto id2offset = IDDatabase::get().get_id2offset();
 				_offset2id.reserve(id2offset.size());
 				_offset2id.insert(_offset2id.begin(), id2offset.begin(), id2offset.end());
 				std::sort(
+					a_policy,
 					_offset2id.begin(),
 					_offset2id.end(),
 					[](auto&& a_lhs, auto&& a_rhs) {
 						return a_lhs.offset < a_rhs.offset;
 					});
 			}
+
+			Offset2ID() :
+				Offset2ID(std::execution::sequenced_policy{})
+			{}
 
 			[[nodiscard]] std::uint64_t operator()(std::size_t a_offset) const
 			{
@@ -462,8 +479,22 @@ namespace REL
 				return it->id;
 			}
 
+			[[nodiscard]] const_iterator begin() const noexcept { return _offset2id.begin(); }
+			[[nodiscard]] const_iterator cbegin() const noexcept { return _offset2id.cbegin(); }
+
+			[[nodiscard]] const_iterator end() const noexcept { return _offset2id.end(); }
+			[[nodiscard]] const_iterator cend() const noexcept { return _offset2id.cend(); }
+
+			[[nodiscard]] const_reverse_iterator rbegin() const noexcept { return _offset2id.rbegin(); }
+			[[nodiscard]] const_reverse_iterator crbegin() const noexcept { return _offset2id.crbegin(); }
+
+			[[nodiscard]] const_reverse_iterator rend() const noexcept { return _offset2id.rend(); }
+			[[nodiscard]] const_reverse_iterator crend() const noexcept { return _offset2id.crend(); }
+
+			[[nodiscard]] size_type size() const noexcept { return _offset2id.size(); }
+
 		private:
-			std::vector<mapping_t> _offset2id;
+			container_type _offset2id;
 		};
 
 		[[nodiscard]] static IDDatabase& get()
