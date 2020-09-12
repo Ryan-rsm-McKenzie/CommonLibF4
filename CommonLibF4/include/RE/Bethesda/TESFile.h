@@ -88,7 +88,9 @@ namespace RE
 	public:
 		struct InteriorCellOffsetDataStruct;
 
+		[[nodiscard]] std::uint8_t GetCompileIndex() const noexcept { return compileIndex; }
 		[[nodiscard]] std::string_view GetFilename() const noexcept { return { filename }; }
+		[[nodiscard]] std::uint16_t GetSmallFileCompileIndex() const noexcept { return smallFileCompileIndex; }
 
 		// members
 		stl::enumeration<TES_RETURN_CODE, std::int32_t> lastError;		 // 000
