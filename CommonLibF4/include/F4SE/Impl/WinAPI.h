@@ -76,7 +76,7 @@ namespace F4SE
 			const wchar_t* a_caption,
 			unsigned int a_type) noexcept;
 
-		bool(TerminateProcess)(
+		[[noreturn]] void(TerminateProcess)(
 			void* a_process,
 			unsigned int a_exitCode) noexcept;
 

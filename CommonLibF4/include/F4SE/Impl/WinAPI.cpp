@@ -196,14 +196,13 @@ namespace F4SE
 					static_cast<::UINT>(a_type)));
 		}
 
-		bool(TerminateProcess)(
+		void(TerminateProcess)(
 			void* a_process,
 			unsigned int a_exitCode) noexcept
 		{
-			return static_cast<bool>(
-				::TerminateProcess(
-					static_cast<::HANDLE>(a_process),
-					static_cast<::UINT>(a_exitCode)));
+			::TerminateProcess(
+				static_cast<::HANDLE>(a_process),
+				static_cast<::UINT>(a_exitCode));
 		}
 
 		bool(VirtualFree)(
