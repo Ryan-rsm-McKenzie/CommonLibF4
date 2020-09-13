@@ -477,6 +477,9 @@
     <ClInclude Include="include\RE\Scaleform\Kernel\SF_SysAlloc.h">
       <Filter>include\RE\Scaleform\Kernel</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_System.h">
+      <Filter>include\RE\Scaleform\Kernel</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Scaleform\Kernel\SF_Threads.h">
       <Filter>include\RE\Scaleform\Kernel</Filter>
     </ClInclude>

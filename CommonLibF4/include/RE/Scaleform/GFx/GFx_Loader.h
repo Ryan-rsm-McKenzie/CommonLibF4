@@ -2,6 +2,7 @@
 
 #include "RE/Scaleform/GFx/GFx_Resource.h"
 #include "RE/Scaleform/Kernel/SF_RefCount.h"
+#include "RE/Scaleform/Kernel/SF_System.h"
 
 namespace RE
 {
@@ -12,6 +13,7 @@ namespace RE
 			class LoaderImpl;
 			class MovieDef;
 			class ResourceLib;
+			class System;
 
 			class State :
 				public RefCountBase<State, 2>  // 00
@@ -178,6 +180,13 @@ namespace RE
 				stl::enumeration<LoadConstants, std::uint32_t> defLoadFlags;  // 18
 			};
 			static_assert(sizeof(Loader) == 0x20);
+
+			class System :
+				public Scaleform::System  // 0
+			{
+			public:
+			};
+			static_assert(std::is_empty_v<System>);
 		}
 	}
 }

@@ -415,6 +415,7 @@
     <ClInclude Include="include\RE\Scaleform\Kernel\SF_RefCount.h" />
     <ClInclude Include="include\RE\Scaleform\Kernel\SF_Stats.h" />
     <ClInclude Include="include\RE\Scaleform\Kernel\SF_SysAlloc.h" />
+    <ClInclude Include="include\RE\Scaleform\Kernel\SF_System.h" />
     <ClInclude Include="include\RE\Scaleform\Kernel\SF_Threads.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Render_Color.h" />
     <ClInclude Include="include\RE\Scaleform\Render\Render_Constants.h" />

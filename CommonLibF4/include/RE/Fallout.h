@@ -134,6 +134,7 @@
 #include "RE/Scaleform/Kernel/SF_RefCount.h"
 #include "RE/Scaleform/Kernel/SF_Stats.h"
 #include "RE/Scaleform/Kernel/SF_SysAlloc.h"
+#include "RE/Scaleform/Kernel/SF_System.h"
 #include "RE/Scaleform/Kernel/SF_Threads.h"
 #include "RE/Scaleform/Render/Render_Color.h"
 #include "RE/Scaleform/Render/Render_Constants.h"

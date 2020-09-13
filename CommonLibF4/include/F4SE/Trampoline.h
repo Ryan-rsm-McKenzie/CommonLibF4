@@ -34,20 +34,20 @@ namespace F4SE
 	public:
 		using deleter_type = std::function<void(void* a_mem, std::size_t a_size)>;
 
-		Trampoline() = default;
+		Trampoline() noexcept = default;
 		Trampoline(const Trampoline&) = delete;
 
-		Trampoline(Trampoline&& a_rhs) { move_from(std::move(a_rhs)); }
+		Trampoline(Trampoline&& a_rhs) noexcept { move_from(std::move(a_rhs)); }
 
 		explicit Trampoline(std::string_view a_name) :
 			_name(a_name)
 		{}
 
-		~Trampoline() { release(); }
+		~Trampoline() noexcept { release(); }
 
 		Trampoline& operator=(const Trampoline&) = delete;
 
-		Trampoline& operator=(Trampoline&& a_rhs)
+		Trampoline& operator=(Trampoline&& a_rhs) noexcept
 		{
 			if (this != std::addressof(a_rhs)) {
 				move_from(std::move(a_rhs));

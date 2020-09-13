@@ -13,6 +13,8 @@ namespace F4SE
 	class TaskInterface;
 	class ObjectInterface;
 
+	class Trampoline;
+
 	void Init(const LoadInterface* a_intfc) noexcept;
 
 	[[nodiscard]] PluginHandle GetPluginHandle() noexcept;
@@ -24,4 +26,7 @@ namespace F4SE
 	[[nodiscard]] const SerializationInterface* GetSerializationInterface() noexcept;
 	[[nodiscard]] const TaskInterface* GetTaskInterface() noexcept;
 	[[nodiscard]] const ObjectInterface* GetObjectInterface() noexcept;
+
+	Trampoline& GetTrampoline() noexcept;
+	void AllocTrampoline(std::size_t a_size) noexcept;
 }

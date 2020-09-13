@@ -2,6 +2,7 @@
 
 #include "F4SE/Interfaces.h"
 #include "F4SE/Logger.h"
+#include "F4SE/Trampoline.h"
 
 namespace F4SE
 {
@@ -38,7 +39,7 @@ namespace F4SE
 		};
 
 		template <class T>
-		T* QueryInterface(const LoadInterface* a_intfc, std::uint32_t a_id)
+		T* QueryInterface(const LoadInterface* a_intfc, std::uint32_t a_id) noexcept
 		{
 			auto result = static_cast<T*>(a_intfc->QueryInterface(a_id));
 			if (result && result->Version() > T::kVersion) {
@@ -109,5 +110,17 @@ namespace F4SE
 	const ObjectInterface* GetObjectInterface() noexcept
 	{
 		return detail::APIStorage::get().objectInterface;
+	}
+
+	Trampoline& GetTrampoline() noexcept
+	{
+		static Trampoline trampoline;
+		return trampoline;
+	}
+
+	void AllocTrampoline(std::size_t a_size) noexcept
+	{
+		auto& trampoline = GetTrampoline();
+		trampoline.create(a_size);
 	}
 }
