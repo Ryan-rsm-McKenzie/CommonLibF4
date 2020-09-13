@@ -125,7 +125,7 @@ namespace RE
 			_capacity = a_rhs._capacity;
 			_data = allocator_type::allocate(_capacity);
 
-			std::uninitialized_copy_n(_data, _size, a_rhs._data);
+			std::uninitialized_copy_n(a_rhs._data, _size, _data);
 		}
 
 		void move_from(BSStringT&& a_rhs)

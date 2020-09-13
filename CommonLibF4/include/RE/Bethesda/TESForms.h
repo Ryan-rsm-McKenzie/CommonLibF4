@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RE/Bethesda/Atomic.h"
 #include "RE/Bethesda/BGSBodyPartDefs.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSLock.h"
@@ -411,6 +412,8 @@ namespace RE
 	class BGSScenePhase;
 	class BGSSoundDescriptor;
 	class BSGeometry;
+	class BSMultiBoundNode;
+	class BSPortalGraph;
 	class BSIAudioEffectParameters;
 	class BSLensFlareSpriteRenderData;
 	class ExtraDataList;
@@ -418,6 +421,7 @@ namespace RE
 	class NiColorInterpolator;
 	class NiFloatInterpolator;
 	class NiFormArray;
+	class NiNode;
 	class NiTexture;
 	class QueuedFile;
 	class QueuedPromoteLocationReferencesTask;
@@ -432,7 +436,6 @@ namespace RE
 	struct FORM;
 	struct FORM_GROUP;
 	struct EXTERIOR_DATA;
-	struct LOADED_CELL_DATA;
 	struct OverrideData;
 
 	namespace BGSWaterCollisionManager
@@ -464,6 +467,8 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::TESForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
 
+		using AllFormsByEditorID = BSTHashMap<BSFixedString, TESForm*>;
+
 		// add
 		virtual void InitializeData() { return; }																																													  // 07
 		virtual void ClearData() { return; }																																														  // 08
@@ -471,8 +476,8 @@ namespace RE
 		virtual bool LoadPartial([[maybe_unused]] TESFile* a_file) { return true; }																																					  // 0A
 		virtual bool LoadEdit(TESFile* a_file) { return Load(a_file); }																																								  // 0B
 		virtual TESForm* CreateDuplicateForm(bool a_createEditorID, BSTHashMap<TESForm*, TESForm*>* a_copyMap);																														  // 0C
-		virtual bool AddChange(std::int32_t a_changeFlags);																																											  // 0D
-		virtual void RemoveChange(std::int32_t a_changeFlags);																																										  // 0E
+		virtual bool AddChange(std::uint32_t a_changeFlags);																																										  // 0D
+		virtual void RemoveChange(std::uint32_t a_changeFlags);																																										  // 0E
 		virtual bool FindInFileFast([[maybe_unused]] TESFile* a_file) { return false; }																																				  // 0F
 		virtual bool CheckSaveGame([[maybe_unused]] BGSSaveFormBuffer* a_saveGameBuffer) const { return true; }																														  // 10
 		virtual void SaveGame(BGSSaveFormBuffer* a_saveGameBuffer);																																									  // 11
@@ -541,6 +546,54 @@ namespace RE
 			REL::Relocation<BSTHashMap<std::uint32_t, TESForm*>**> allForms{ REL::ID(422985) };
 			REL::Relocation<BSReadWriteLock*> allFormsMapLock{ REL::ID(691815) };
 			return { *allForms, *allFormsMapLock };
+		}
+
+		[[nodiscard]] static auto GetAllFormsByEditorID()
+			-> std::pair<
+				AllFormsByEditorID*,
+				std::reference_wrapper<BSReadWriteLock>>
+		{
+			REL::Relocation<AllFormsByEditorID**> allFormsByEditorID{ REL::ID(642758) };
+			REL::Relocation<BSReadWriteLock*> allFormsEditorIDMapLock{ REL::ID(910917) };
+			return { *allFormsByEditorID, *allFormsEditorIDMapLock };
+		}
+
+		[[nodiscard]] static TESForm* GetFormByID(std::uint32_t a_formID)
+		{
+			const auto& [map, lock] = GetAllForms();
+			BSAutoReadLock l{ lock };
+			if (map) {
+				const auto it = map->find(a_formID);
+				return it != map->end() ? it->second : nullptr;
+			} else {
+				return nullptr;
+			}
+		}
+
+		template <class T>
+		[[nodiscard]] static T* GetFormByID(std::uint32_t a_formID)
+		{
+			const auto form = GetFormByID(a_formID);
+			return form ? form->As<T>() : nullptr;
+		}
+
+		[[nodiscard]] static TESForm* GetFormByEditorID(const BSFixedString& a_editorID)
+		{
+			const auto& [map, lock] = GetAllFormsByEditorID();
+			BSAutoReadLock l{ lock };
+			if (map) {
+				const auto it = map->find(a_editorID);
+				return it != map->end() ? it->second : nullptr;
+			} else {
+				return nullptr;
+			}
+		}
+
+		template <class T>
+		[[nodiscard]] static T* GetFormByEditorID(const BSFixedString& a_formID)
+		{
+			const auto form = GetFormByEditorID(a_formID);
+			return form ? form->As<T>() : nullptr;
 		}
 
 		[[nodiscard]] std::uint32_t GetFormID() const noexcept { return formID; }
@@ -657,6 +710,8 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::TESGlobal };
 		static constexpr auto VTABLE{ VTABLE::TESGlobal };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kGLOB };
+
+		[[nodiscard]] float GetValue() const noexcept { return value; }
 
 		// members
 		BSStringT<char> formEditorID;  // 20
@@ -1002,6 +1057,57 @@ namespace RE
 	};
 	static_assert(sizeof(TESRegion) == 0x58);
 
+	struct LOADED_CELL_DATA
+	{
+	public:
+		struct AnimatedRefObject
+		{
+		public:
+			// members
+			ObjectRefHandle handle;		 // 0
+			std::int32_t numSkipFrames;	 // 4
+		};
+		static_assert(sizeof(AnimatedRefObject) == 0x8);
+
+		// members
+		BSTHashMap<ObjectRefHandle, TESForm*> emittanceSourceRefMap;				// 000
+		BSTHashMap<ObjectRefHandle, NiNode*> emittanceLightRefMap;					// 030
+		BSTHashMap<ObjectRefHandle, NiPointer<BSMultiBoundNode>> multiboundRefMap;	// 060
+		BSTHashMap<BSMultiBoundNode*, ObjectRefHandle> refMultiboundMap;			// 090
+		BSTArray<NiPointer<NiNode>> preCombined;									// 0C0
+		BSTArray<NiPointer<NiNode>> attachedTransitionCells;						// 0D8
+		BSTArray<AnimatedRefObject> animatedRefs;									// 0F0
+		BSTArray<ObjectRefHandle> flickeringLights;									// 108
+		BSTArray<ObjectRefHandle> movingRefs;										// 120
+		BSTArray<ObjectRefHandle> decalRefs;										// 138
+		BSTArray<ObjectRefHandle> skyActors;										// 150
+		BSTArray<ObjectRefHandle> flightAvoidAreas;									// 168
+		BSReadWriteLock waterLock;													// 180
+		void* combinedGeometry;														// 188 - TODO
+		NiPointer<QueuedFile> combinedGeometryTask;									// 190
+		BSSimpleList<ObjectRefHandle> activatingRefs;								// 198
+		BSSimpleList<ObjectRefHandle> waterRefs;									// 1A8
+		NiPointer<BSPortalGraph> portalGraph;										// 1B8
+		NiPointer<NiNode> cell3D;													// 1C0
+		NiPointer<NiNode> lightMarkerNode;											// 1C8
+		NiPointer<NiNode> soundMarkerNode;											// 1D0
+		NiPointer<NiNode> multiBoundNode;											// 1D8
+		NiPointer<NiNode> combinedObjects;											// 1E0
+		NiPointer<NiNode> combinedStaticCollision;									// 1E8
+		BGSEncounterZone* encounterZone;											// 1F0
+		std::size_t visibleDistantFadeInTime;										// 1F8
+		std::int32_t criticalQueuedRefCount;										// 200
+		std::int32_t queuedRefCount;												// 204
+		std::int32_t queuedDistantRefCount;											// 208
+		std::uint32_t refsAttachedDelay;											// 20C
+		BSTAtomicValue<std::uint32_t> combinedObjectsAttached;						// 210
+		bool decalsQueued;															// 214
+		bool refsFullyLoaded;														// 215
+		bool combinedObjectsRegistered;												// 216
+		bool grassIsShown;															// 217
+	};
+	static_assert(sizeof(LOADED_CELL_DATA) == 0x218);
+
 	class TESObjectCELL :
 		public TESForm,		// 00
 		public TESFullName	// 20
@@ -1010,6 +1116,13 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::TESObjectCELL };
 		static constexpr auto VTABLE{ VTABLE::TESObjectCELL };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCELL };
+
+		[[nodiscard]] BGSEncounterZone* GetEncounterZone() const
+		{
+			using func_t = decltype(&TESObjectCELL::GetEncounterZone);
+			REL::Relocation<func_t> func{ REL::ID(1414637) };
+			return func(this);
+		}
 
 		// members
 		BSSpinLock grassCreateLock;				   // 30
@@ -1029,7 +1142,7 @@ namespace RE
 		TESObjectLAND* cellLand;													  // 58
 		float waterHeight;															  // 60
 		NavMeshArray* navMeshes;													  // 68
-		BSTArray<NiPointer<TESObjectREFR>, BSTArrayHeapAllocator> references;		  // 70
+		BSTArray<NiPointer<TESObjectREFR>> references;								  // 70
 		BSTSmartPointer<BGSWaterCollisionManager::AutoWater> autoWater;				  // 77
 		BSTSet<BSTSmartPointer<BGSWaterCollisionManager::BGSWaterUpdateI>> waterSet;  // 80
 		BSSpinLock spinLock;														  // C0
@@ -1654,6 +1767,21 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::BGSEncounterZone };
 		static constexpr auto VTABLE{ VTABLE::BGSEncounterZone };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kECZN };
+
+		struct ChangeFlags
+		{
+			enum : std::uint32_t
+			{
+				kFlags = 1 << 1,
+				kGameData = std::uint32_t{ 1 } << 31,
+			};
+		};
+
+		void SetDetachTime(std::uint32_t a_time)
+		{
+			gameData.detachTime = a_time;
+			AddChange(ChangeFlags::kGameData);
+		}
 
 		// members
 		ENCOUNTER_ZONE_DATA data;			// 20

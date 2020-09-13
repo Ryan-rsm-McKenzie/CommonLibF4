@@ -261,6 +261,7 @@
     <ClCompile Include="include\RE\Bethesda\BSScaleformManager.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSSpring.cpp" />
     <ClCompile Include="include\RE\Bethesda\BSTArray.cpp" />
+    <ClCompile Include="include\RE\Bethesda\Calendar.cpp" />
     <ClCompile Include="include\RE\Bethesda\CRC.cpp" />
     <ClCompile Include="include\RE\Bethesda\FormComponents.cpp" />
     <ClCompile Include="include\RE\Bethesda\InputEvent.cpp" />
@@ -294,6 +295,7 @@
     <ClInclude Include="include\RE\Bethesda\BSSoundHandle.h" />
     <ClInclude Include="include\RE\Bethesda\BSTBTree.h" />
     <ClInclude Include="include\RE\Bethesda\BSTSmallIndexScatterTable.h" />
+    <ClInclude Include="include\RE\Bethesda\Calendar.h" />
     <ClInclude Include="include\RE\Bethesda\CELLJobs.h" />
     <ClInclude Include="include\RE\Bethesda\Console.h" />
     <ClInclude Include="include\RE\Bethesda\FormUtil.h" />

@@ -41,6 +41,7 @@
 #include "RE/Bethesda/BSTimer.h"
 #include "RE/Bethesda/CELLJobs.h"
 #include "RE/Bethesda/CRC.h"
+#include "RE/Bethesda/Calendar.h"
 #include "RE/Bethesda/Console.h"
 #include "RE/Bethesda/Events.h"
 #include "RE/Bethesda/FormComponents.h"

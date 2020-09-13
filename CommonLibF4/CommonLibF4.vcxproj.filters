@@ -177,6 +177,9 @@
     <ClInclude Include="include\RE\Bethesda\BSTTuple.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Calendar.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\CELLJobs.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -561,6 +564,9 @@
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
     <ClCompile Include="include\RE\Bethesda\BSTArray.cpp">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClCompile>
+    <ClCompile Include="include\RE\Bethesda\Calendar.cpp">
       <Filter>include\RE\Bethesda</Filter>
     </ClCompile>
     <ClCompile Include="include\RE\Bethesda\CRC.cpp">

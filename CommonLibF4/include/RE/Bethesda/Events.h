@@ -10,6 +10,7 @@
 namespace RE
 {
 	class BGSMessage;
+	class TESObjectCELL;
 	class TESObjectREFR;
 
 	enum class QuickContainerMode : std::int32_t
@@ -23,6 +24,23 @@ namespace RE
 		kStealing,
 		kStealingPowerArmor
 	};
+
+	struct CellAttachDetachEvent
+	{
+	public:
+		enum class EVENT_TYPE
+		{
+			kPreAttach,
+			kPostAttach,
+			kPreDetach,
+			kPostDetach
+		};
+
+		// members
+		TESObjectCELL* cell;							  // 00
+		stl::enumeration<EVENT_TYPE, std::int32_t> type;  // 08
+	};
+	static_assert(sizeof(CellAttachDetachEvent) == 0x10);
 
 	struct InventoryItemDisplayData
 	{
@@ -130,4 +148,23 @@ namespace RE
 		stl::enumeration<UserEvents::SENDER_ID, std::int32_t> senderID;				   // 8
 	};
 	static_assert(sizeof(UserEventEnabledEvent) == 0xC);
+
+	namespace CellAttachDetachEventSource
+	{
+		struct CellAttachDetachEventSourceSingleton :
+			public BSTSingletonImplicit<CellAttachDetachEventSourceSingleton>
+		{
+		public:
+			[[nodiscard]] static CellAttachDetachEventSourceSingleton& GetSingleton()
+			{
+				using func_t = decltype(&CellAttachDetachEventSourceSingleton::GetSingleton);
+				REL::Relocation<func_t> func{ REL::ID(862142) };
+				return func();
+			}
+
+			// members
+			BSTEventSource<CellAttachDetachEvent> source;  // 00
+		};
+		static_assert(sizeof(CellAttachDetachEventSourceSingleton) == 0x58);
+	}
 }

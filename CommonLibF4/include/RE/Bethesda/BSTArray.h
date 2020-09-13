@@ -433,7 +433,7 @@ namespace RE
 
 			const auto newSize = a_rhs.size();
 			const auto newData = allocate(newCapacity);
-			std::uninitialized_copy_n(newData, newSize, a_rhs.begin());
+			std::uninitialized_copy_n(a_rhs.begin(), newSize, newData);
 
 			set_allocator_traits(newData, newCapacity);
 			set_size(newSize);

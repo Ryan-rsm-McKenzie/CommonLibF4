@@ -20,7 +20,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="RE::BSTArray&lt;*,BSTArrayHeapAllocator&gt;">
+	<Type Name="RE::BSTArray&lt;*,RE::BSTArrayHeapAllocator&gt;">
 		<DisplayString>{{ size={_size} }}</DisplayString>
 		<Expand>
 			<Item Name="[capacity]">_capacity</Item>
@@ -31,7 +31,7 @@
 		</Expand>
 	</Type>
 
-	<Type Name="RE::BSTArray&lt;*,BSTSmallArrayHeapAllocator&lt;*&gt;&gt;">
+	<Type Name="RE::BSTArray&lt;*,RE::BSTSmallArrayHeapAllocator&lt;*&gt;&gt;">
 		<DisplayString>{{ size={_size} }}</DisplayString>
 		<Expand>
 			<Item Name="[capacity]">_capacity &amp; ~kLocalAlloc</Item>

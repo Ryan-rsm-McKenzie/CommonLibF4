@@ -342,6 +342,8 @@ namespace RE
 		virtual void InitDefaultWornImpl(bool a_weapon, bool a_allowChanges);																																										  // C4
 		virtual bool HasKeywordHelper(const BGSKeyword* a_keyword, const TBO_InstanceData* a_data) const;																																			  // C5
 
+		[[nodiscard]] TESObjectCELL* GetParentCell() const noexcept { return parentCell; }
+
 		// members
 		TESObjectCELL* parentCell;				   // 0B8
 		OBJ_REFR data;							   // 0C0
