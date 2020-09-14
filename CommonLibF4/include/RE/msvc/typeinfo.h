@@ -18,7 +18,7 @@ namespace RE
 				return (*func)(this, std::addressof(get_root_node()));
 			}
 
-			[[nodiscard]] const char* raw_name() const noexcept { return _name; }
+			[[nodiscard]] const char* mangled_name() const noexcept { return _name; }
 
 		private:
 			[[nodiscard]] static __type_info_node& get_root_node() noexcept
