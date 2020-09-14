@@ -162,6 +162,9 @@ namespace REL
 		}
 	}
 
+	inline constexpr std::uint8_t NOP = 0x90;
+	inline constexpr std::uint8_t INT3 = 0xCC;
+
 	template <
 		class F,
 		class... Args,
@@ -216,6 +219,28 @@ namespace REL
 	void safe_write(std::uintptr_t a_dst, stl::span<T> a_data)
 	{
 		safe_write(a_dst, a_data.data(), a_data.size_bytes());
+	}
+
+	inline void safe_fill(std::uintptr_t a_dst, std::uint8_t a_value, std::size_t a_count)
+	{
+		std::uint32_t old{ 0 };
+		auto success =
+			WinAPI::VirtualProtect(
+				reinterpret_cast<void*>(a_dst),
+				a_count,
+				(WinAPI::PAGE_EXECUTE_READWRITE),
+				std::addressof(old));
+		if (success != 0) {
+			std::fill_n(reinterpret_cast<std::uint8_t*>(a_dst), a_count, a_value);
+			success =
+				WinAPI::VirtualProtect(
+					reinterpret_cast<void*>(a_dst),
+					a_count,
+					old,
+					std::addressof(old));
+		}
+
+		assert(success != 0);
 	}
 
 	class Version

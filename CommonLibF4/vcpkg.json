@@ -1,0 +1,11 @@
+{
+	"name": "commonlibf4",
+	"version-string": "1.0.0",
+	"dependencies" : [
+		"boost-atomic",
+		"boost-iostreams",
+		"boost-iterator",
+		"span-lite",
+		"spdlog"
+	]
+}
