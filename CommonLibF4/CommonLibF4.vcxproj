@@ -371,6 +371,7 @@
     <ClInclude Include="include\RE\Havok\hkVector4.h" />
     <ClInclude Include="include\RE\msvc\functional.h" />
     <ClInclude Include="include\RE\msvc\memory.h" />
+    <ClInclude Include="include\RE\msvc\typeinfo.h" />
     <ClInclude Include="include\RE\NetImmerse\NiAlphaProperty.h" />
     <ClInclude Include="include\RE\NetImmerse\NiBinaryStream.h" />
     <ClInclude Include="include\RE\NetImmerse\NiColor.h" />

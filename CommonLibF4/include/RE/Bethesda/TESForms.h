@@ -596,6 +596,7 @@ namespace RE
 			return form ? form->As<T>() : nullptr;
 		}
 
+		[[nodiscard]] std::uint32_t GetFormFlags() const noexcept { return formFlags; }
 		[[nodiscard]] std::uint32_t GetFormID() const noexcept { return formID; }
 		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
 		[[nodiscard]] bool IsCreated() const noexcept { return (formID >> (8 * 3)) == 0xFF; }

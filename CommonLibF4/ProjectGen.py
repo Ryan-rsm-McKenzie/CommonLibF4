@@ -2,6 +2,7 @@ import os
 
 HEADER_TYPES = (".h", ".hpp", ".hxx")
 SOURCE_TYPES = (".c", ".cpp", ".cxx")
+ALL_TYPES = HEADER_TYPES + SOURCE_TYPES
 
 def make_header(a_directory, a_filename, a_exclude):
 	a_exclude.add(a_filename)
@@ -39,10 +40,41 @@ def make_header(a_directory, a_filename, a_exclude):
 	
 	out.write("#pragma warning(pop)\n")
 
-def main():
-	cur = os.path.dirname(os.path.realpath(__file__)) + "/include"
-	os.chdir(cur)
+def make_cmake():
+	tmp = list()
+	for dirpath, dirnames, filenames in os.walk("include"):
+		for filename in filenames:
+			if filename.endswith(ALL_TYPES):
+				path = os.path.join(dirpath, filename)
+				tmp.append(os.path.normpath(path))
 
+	headers = list()
+	sources = list()
+	for file in tmp:
+		name = file.replace("\\", "/")
+		if name.endswith(HEADER_TYPES):
+			headers.append(name)
+		elif name.endswith(SOURCE_TYPES):
+			sources.append(name)
+
+	def do_make(a_filename, a_varname, a_files):
+		out = open(a_filename + ".cmake", "w", encoding="utf-8")
+		out.write("set(" + a_varname + " ${" + a_varname + "}\n")
+
+		for file in a_files:
+			out.write("\t" + file + "\n")
+
+		out.write(")\n")
+
+	do_make("headerlist", "headers", headers)
+	do_make("sourcelist", "sources", sources)
+
+def main():
+	cur = os.path.dirname(os.path.realpath(__file__))
+	os.chdir(cur)
+	make_cmake()
+
+	os.chdir(cur + "/include")
 	make_header("F4SE", "F4SE.h", {"Impl"})
 	make_header("RE", "Fallout.h", {"NiRTTI_IDs.h", "RTTI_IDs.h", "VTABLE_IDs.h"})
 

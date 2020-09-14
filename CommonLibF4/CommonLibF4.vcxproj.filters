@@ -342,6 +342,9 @@
     <ClInclude Include="include\RE\msvc\memory.h">
       <Filter>include\RE\msvc</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\msvc\typeinfo.h">
+      <Filter>include\RE\msvc</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiAlphaProperty.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>

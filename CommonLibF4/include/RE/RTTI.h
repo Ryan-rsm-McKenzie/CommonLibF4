@@ -23,7 +23,8 @@ namespace RE
 				_rva(a_rva)
 			{}
 
-			[[nodiscard]] pointer get() const { return is_good() ? REL::Relocation<T*>(_rva).get() : nullptr; }
+			[[nodiscard]] pointer get() const { return is_good() ? REL::Relocation<T*>{ REL::Offset(_rva) }.get() : nullptr; }
+			[[nodiscard]] std::uint32_t offset() const noexcept { return _rva; }
 			[[nodiscard]] reference operator*() const { return *get(); }
 			[[nodiscard]] pointer operator->() const { return get(); }
 			[[nodiscard]] pointer operator[](std::ptrdiff_t a_idx) const { return get() + a_idx; }
@@ -37,15 +38,7 @@ namespace RE
 		};
 		static_assert(sizeof(RVA<void*>) == 0x4);
 
-		struct TypeDescriptor
-		{
-		public:
-			// members
-			msvc::type_info* typeInfo;	// 00
-			void* spare;				// 08
-			char name[];				// 10
-		};
-		static_assert(sizeof(TypeDescriptor) == 0x10);	// can be larger
+		using TypeDescriptor = msvc::type_info;
 
 		struct PMD
 		{
@@ -57,12 +50,19 @@ namespace RE
 		};
 		static_assert(sizeof(PMD) == 0xC);
 
-		struct BaseClassArray
+		struct BaseClassDescriptor
 		{
 		public:
-			enum class Attribute
+			enum class Attribute : std::uint32_t
 			{
-				kNone = 0
+				kNone = 0,
+				kNotVisible = 1 << 0,
+				kAmbiguous = 1 << 1,
+				kPrivate = 1 << 2,
+				kPrivateOrProtectedBase = 1 << 3,
+				kVirtual = 1 << 4,
+				kNonPolymorphic = 1 << 5,
+				kHasHierarchyDescriptor = 1 << 6
 			};
 
 			// members
@@ -71,7 +71,7 @@ namespace RE
 			PMD pmd;												// 08
 			stl::enumeration<Attribute, std::uint32_t> attributes;	// 14
 		};
-		static_assert(sizeof(BaseClassArray) == 0x18);
+		static_assert(sizeof(BaseClassDescriptor) == 0x18);
 
 		struct ClassHierarchyDescriptor
 		{
@@ -88,7 +88,7 @@ namespace RE
 			std::uint32_t signature;								// 00
 			stl::enumeration<Attribute, std::uint32_t> attributes;	// 04
 			std::uint32_t numBaseClasses;							// 08
-			RVA<BaseClassArray> baseClassArray;						// 0C
+			RVA<BaseClassDescriptor> baseClassArray;				// 0C
 		};
 		static_assert(sizeof(ClassHierarchyDescriptor) == 0x10);
 
@@ -109,29 +109,6 @@ namespace RE
 			RVA<ClassHierarchyDescriptor> classDescriptor;		   // 10
 		};
 		static_assert(sizeof(CompleteObjectLocator) == 0x14);
-
-		struct BaseClassDescriptor
-		{
-		public:
-			enum class Attribute
-			{
-				kNone = 0,
-				kNotVisible = 1 << 0,
-				kAmbiguous = 1 << 1,
-				kPrivate = 1 << 2,
-				kPrivateOrProtectedBase = 1 << 3,
-				kVirtual = 1 << 4,
-				kNonPolymorphic = 1 << 5,
-				kHasHierarchyDescriptor = 1 << 6
-			};
-
-			// members
-			RVA<TypeDescriptor> typeDescriptor;						// 00
-			std::uint32_t numContainedBases;						// 04
-			PMD pmd;												// 08
-			stl::enumeration<Attribute, std::uint32_t> attributes;	// 14
-		};
-		static_assert(sizeof(BaseClassDescriptor) == 0x18);
 	}
 
 	inline void* RTDynamicCast(void* a_inptr, std::int32_t a_vfDelta, void* a_srcType, void* a_targetType, std::int32_t a_isReference)
