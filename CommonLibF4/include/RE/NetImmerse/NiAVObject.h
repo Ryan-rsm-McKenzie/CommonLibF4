@@ -24,24 +24,24 @@ namespace RE
 		static constexpr auto Ni_RTTI{ Ni_RTTI::NiAVObject };
 
 		// add
-		void UpdateControllers(NiUpdateData& a_data);															 // 28
-		void PerformOp(PerformOpFunc& a_operation);																 // 29
-		void AttachProperty([[maybe_unused]] NiAlphaProperty* a_prop) { return; }								 // 2A
-		void SetMaterialNeedsUpdate(bool) { return; }															 // 2B
-		void SetDefaultMaterialNeedsUpdateFlag(bool) { return; }												 // 2C
-		void SetAppCulled(bool a_appCulled);																	 // 2D
-		NiAVObject* GetObjectByName(const BSFixedString& a_name) { return name == a_name ? this : nullptr; }	 // 2E
-		void SetSelectiveUpdateFlags(bool& a_selectiveUpdate, bool a_selectiveUpdateTransforms, bool& a_rigid);	 // 2F
-		void UpdateDownwardPass(NiUpdateData& a_data, std::uint32_t a_flags);									 // 30
-		void UpdateSelectedDownwardPass(NiUpdateData& a_data, std::uint32_t a_flags);							 // 31
-		void UpdateRigidDownwardPass(NiUpdateData& a_data, std::uint32_t a_flags);								 // 32
-		void UpdateWorldBound() { return; }																		 // 33
-		void UpdateWorldData(NiUpdateData* a_data);																 // 34
-		void UpdateTransformAndBounds(NiUpdateData& a_data);													 // 35
-		void UpdateTransforms(NiUpdateData& a_data) { UpdateWorldData(std::addressof(a_data)); }				 // 36
-		void PreAttachUpdate(NiNode* a_eventualParent, NiUpdateData& a_data);									 // 37
-		void PostAttachUpdate();																				 // 38
-		void OnVisible([[maybe_unused]] NiCullingProcess& a_culler) { return; }									 // 39
+		virtual void UpdateControllers(NiUpdateData& a_data);															 // 28
+		virtual void PerformOp(PerformOpFunc& a_operation);																 // 29
+		virtual void AttachProperty([[maybe_unused]] NiAlphaProperty* a_prop) { return; }								 // 2A
+		virtual void SetMaterialNeedsUpdate(bool) { return; }															 // 2B
+		virtual void SetDefaultMaterialNeedsUpdateFlag(bool) { return; }												 // 2C
+		virtual void SetAppCulled(bool a_appCulled);																	 // 2D
+		virtual NiAVObject* GetObjectByName(const BSFixedString& a_name) { return name == a_name ? this : nullptr; }	 // 2E
+		virtual void SetSelectiveUpdateFlags(bool& a_selectiveUpdate, bool a_selectiveUpdateTransforms, bool& a_rigid);	 // 2F
+		virtual void UpdateDownwardPass(NiUpdateData& a_data, std::uint32_t a_flags);									 // 30
+		virtual void UpdateSelectedDownwardPass(NiUpdateData& a_data, std::uint32_t a_flags);							 // 31
+		virtual void UpdateRigidDownwardPass(NiUpdateData& a_data, std::uint32_t a_flags);								 // 32
+		virtual void UpdateWorldBound() { return; }																		 // 33
+		virtual void UpdateWorldData(NiUpdateData* a_data);																 // 34
+		virtual void UpdateTransformAndBounds(NiUpdateData& a_data);													 // 35
+		virtual void UpdateTransforms(NiUpdateData& a_data) { UpdateWorldData(std::addressof(a_data)); }				 // 36
+		virtual void PreAttachUpdate(NiNode* a_eventualParent, NiUpdateData& a_data);									 // 37
+		virtual void PostAttachUpdate();																				 // 38
+		virtual void OnVisible([[maybe_unused]] NiCullingProcess& a_culler) { return; }									 // 39
 
 		// members
 		NiNode* parent;								   // 027

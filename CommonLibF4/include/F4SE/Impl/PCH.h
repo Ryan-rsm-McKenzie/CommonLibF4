@@ -20,9 +20,11 @@
 #pragma warning(disable : 5204)	 // 'type-name': class has virtual functions, but its trivial destructor is not virtual; instances of objects derived from this class may not be destructed correctly
 #pragma warning(disable : 5220)	 // 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 
+// TODO: convert to cmake defines?
 #define WINVER 0x0601  // Windows 7
 #define _WIN32_WINNT 0x0601
 
+// TODO: remove for cmake
 #define SPDLOG_COMPILED_LIB
 
 #include <algorithm>

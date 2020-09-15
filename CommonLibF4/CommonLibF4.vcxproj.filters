@@ -105,6 +105,9 @@
     <ClInclude Include="include\RE\Bethesda\BGSTextureSet.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSExtraData.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSFixedString.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -231,6 +234,9 @@
     <ClInclude Include="include\RE\Bethesda\PlayerControls.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\PowerUtils.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\Projectiles.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -292,6 +298,9 @@
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Bethesda\UserEvents.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\Workshop.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\Fallout.h">

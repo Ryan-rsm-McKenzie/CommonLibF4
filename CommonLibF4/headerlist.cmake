@@ -24,6 +24,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BGSMod.h
 	include/RE/Bethesda/BGSStoryManagerTreeForm.h
 	include/RE/Bethesda/BGSTextureSet.h
+	include/RE/Bethesda/BSExtraData.h
 	include/RE/Bethesda/BSFixedString.h
 	include/RE/Bethesda/BSGraphics.h
 	include/RE/Bethesda/BSInputEventReceiver.h
@@ -66,6 +67,7 @@ set(headers ${headers}
 	include/RE/Bethesda/NavMeshInfoMap.h
 	include/RE/Bethesda/PlayerCharacter.h
 	include/RE/Bethesda/PlayerControls.h
+	include/RE/Bethesda/PowerUtils.h
 	include/RE/Bethesda/Projectiles.h
 	include/RE/Bethesda/Script.h
 	include/RE/Bethesda/Settings.h
@@ -87,6 +89,7 @@ set(headers ${headers}
 	include/RE/Bethesda/UIMessage.h
 	include/RE/Bethesda/UIMessageQueue.h
 	include/RE/Bethesda/UserEvents.h
+	include/RE/Bethesda/Workshop.h
 	include/RE/Havok/hkArray.h
 	include/RE/Havok/hkBaseObject.h
 	include/RE/Havok/hkBaseTypes.h
