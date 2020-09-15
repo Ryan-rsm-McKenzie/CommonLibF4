@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RE/Bethesda/BSGraphics.h"
 #include "RE/Bethesda/BSResource.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTextureSet.h"
@@ -22,11 +23,6 @@ namespace RE
 	class BSNiAlphaPropertyTestRefController;
 	class BSShaderTextureSet;
 	class DecalData;
-
-	namespace BSGraphics
-	{
-		enum class TextureAddressMode;
-	}
 
 	struct BSShaderData :
 		public BSIntrusiveRefCounted  // 000

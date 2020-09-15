@@ -292,6 +292,7 @@
     <ClInclude Include="include\RE\Bethesda\BGSMod.h" />
     <ClInclude Include="include\RE\Bethesda\BGSStoryManagerTreeForm.h" />
     <ClInclude Include="include\RE\Bethesda\BGSTextureSet.h" />
+    <ClInclude Include="include\RE\Bethesda\BSGraphics.h" />
     <ClInclude Include="include\RE\Bethesda\BSSoundHandle.h" />
     <ClInclude Include="include\RE\Bethesda\BSTBTree.h" />
     <ClInclude Include="include\RE\Bethesda\BSTSmallIndexScatterTable.h" />
@@ -373,11 +374,14 @@
     <ClInclude Include="include\RE\msvc\memory.h" />
     <ClInclude Include="include\RE\msvc\typeinfo.h" />
     <ClInclude Include="include\RE\NetImmerse\NiAlphaProperty.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiAVObject.h" />
     <ClInclude Include="include\RE\NetImmerse\NiBinaryStream.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiBound.h" />
     <ClInclude Include="include\RE\NetImmerse\NiColor.h" />
     <ClInclude Include="include\RE\NetImmerse\NiFile.h" />
     <ClInclude Include="include\RE\NetImmerse\NiFlags.h" />
     <ClInclude Include="include\RE\NetImmerse\NiMatrix3.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiNode.h" />
     <ClInclude Include="include\RE\NetImmerse\NiObject.h" />
     <ClInclude Include="include\RE\NetImmerse\NiObjectNET.h" />
     <ClInclude Include="include\RE\NetImmerse\NiPoint2.h" />
@@ -392,6 +396,7 @@
     <ClInclude Include="include\RE\NetImmerse\NiTArray.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTCollection.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTDefaultAllocator.h" />
+    <ClInclude Include="include\RE\NetImmerse\NiTexture.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTList.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTListBase.h" />
     <ClInclude Include="include\RE\NetImmerse\NiTMap.h" />

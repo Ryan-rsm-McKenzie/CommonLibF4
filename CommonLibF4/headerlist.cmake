@@ -25,6 +25,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BGSStoryManagerTreeForm.h
 	include/RE/Bethesda/BGSTextureSet.h
 	include/RE/Bethesda/BSFixedString.h
+	include/RE/Bethesda/BSGraphics.h
 	include/RE/Bethesda/BSInputEventReceiver.h
 	include/RE/Bethesda/BSInputEventUser.h
 	include/RE/Bethesda/BSLock.h
@@ -102,12 +103,16 @@ set(headers ${headers}
 	include/RE/Havok/hkVector4.h
 	include/RE/msvc/functional.h
 	include/RE/msvc/memory.h
+	include/RE/msvc/typeinfo.h
 	include/RE/NetImmerse/NiAlphaProperty.h
+	include/RE/NetImmerse/NiAVObject.h
 	include/RE/NetImmerse/NiBinaryStream.h
+	include/RE/NetImmerse/NiBound.h
 	include/RE/NetImmerse/NiColor.h
 	include/RE/NetImmerse/NiFile.h
 	include/RE/NetImmerse/NiFlags.h
 	include/RE/NetImmerse/NiMatrix3.h
+	include/RE/NetImmerse/NiNode.h
 	include/RE/NetImmerse/NiObject.h
 	include/RE/NetImmerse/NiObjectNET.h
 	include/RE/NetImmerse/NiPoint2.h
@@ -122,6 +127,7 @@ set(headers ${headers}
 	include/RE/NetImmerse/NiTArray.h
 	include/RE/NetImmerse/NiTCollection.h
 	include/RE/NetImmerse/NiTDefaultAllocator.h
+	include/RE/NetImmerse/NiTexture.h
 	include/RE/NetImmerse/NiTList.h
 	include/RE/NetImmerse/NiTListBase.h
 	include/RE/NetImmerse/NiTMap.h

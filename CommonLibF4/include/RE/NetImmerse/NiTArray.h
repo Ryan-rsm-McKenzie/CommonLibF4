@@ -73,6 +73,16 @@ namespace RE
 	};
 
 	template <class T>
+	class NiTObjectArray :
+		public NiTArray<T, NiTNewInterface<T>>	// 00
+	{
+	public:
+		NiTObjectArray(std::uint32_t a_maxSize = 0, std::uint32_t a_growBy = 1) :
+			NiTArray<T, NiTNewInterface<T>>(a_maxSize, a_growBy)
+		{}
+	};
+
+	template <class T>
 	class NiTPrimitiveArray :
 		public NiTArray<T, NiTMallocInterface<T>>  // 00
 	{

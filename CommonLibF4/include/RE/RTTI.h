@@ -27,7 +27,6 @@ namespace RE
 			[[nodiscard]] std::uint32_t offset() const noexcept { return _rva; }
 			[[nodiscard]] reference operator*() const { return *get(); }
 			[[nodiscard]] pointer operator->() const { return get(); }
-			[[nodiscard]] pointer operator[](std::ptrdiff_t a_idx) const { return get() + a_idx; }
 			[[nodiscard]] explicit constexpr operator bool() const noexcept { return is_good(); }
 
 		protected:

@@ -445,7 +445,7 @@ namespace RE
 	}
 
 	class TESFileArray :
-		BSStaticArray<TESFile*>	 // 00
+		public BSStaticArray<TESFile*>	// 00
 	{
 	public:
 	};

@@ -108,6 +108,9 @@
     <ClInclude Include="include\RE\Bethesda\BSFixedString.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\Bethesda\BSGraphics.h">
+      <Filter>include\RE\Bethesda</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\Bethesda\BSInputEventReceiver.h">
       <Filter>include\RE\Bethesda</Filter>
     </ClInclude>
@@ -348,7 +351,13 @@
     <ClInclude Include="include\RE\NetImmerse\NiAlphaProperty.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiAVObject.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiBinaryStream.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiBound.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiColor.h">
@@ -361,6 +370,9 @@
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiMatrix3.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiNode.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiObject.h">
@@ -403,6 +415,9 @@
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiTDefaultAllocator.h">
+      <Filter>include\RE\NetImmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="include\RE\NetImmerse\NiTexture.h">
       <Filter>include\RE\NetImmerse</Filter>
     </ClInclude>
     <ClInclude Include="include\RE\NetImmerse\NiTList.h">

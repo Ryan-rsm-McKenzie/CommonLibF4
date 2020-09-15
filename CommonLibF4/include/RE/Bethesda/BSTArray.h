@@ -28,20 +28,20 @@ namespace RE
 		};
 		static_assert(sizeof(IAllocatorFunctor) == 0x8);
 
-		constexpr BSTArrayBase() noexcept = default;
-		constexpr BSTArrayBase(const BSTArrayBase&) noexcept = default;
-		constexpr BSTArrayBase(BSTArrayBase&&) noexcept = default;
+		BSTArrayBase() noexcept = default;
+		BSTArrayBase(const BSTArrayBase&) noexcept = default;
+		BSTArrayBase(BSTArrayBase&&) noexcept = default;
 
 		~BSTArrayBase() noexcept { _size = 0; }
 
-		constexpr BSTArrayBase& operator=(const BSTArrayBase&) noexcept = default;
-		constexpr BSTArrayBase& operator=(BSTArrayBase&&) noexcept = default;
+		BSTArrayBase& operator=(const BSTArrayBase&) noexcept = default;
+		BSTArrayBase& operator=(BSTArrayBase&&) noexcept = default;
 
-		[[nodiscard]] constexpr bool empty() const noexcept { return _size == 0; }
-		[[nodiscard]] constexpr size_type size() const noexcept { return _size; }
+		[[nodiscard]] bool empty() const noexcept { return _size == 0; }
+		[[nodiscard]] size_type size() const noexcept { return _size; }
 
 	protected:
-		constexpr void set_size(size_type a_size) noexcept { _size = a_size; }
+		void set_size(size_type a_size) noexcept { _size = a_size; }
 
 	private:
 		// members
@@ -54,7 +54,7 @@ namespace RE
 	public:
 		using size_type = std::uint32_t;
 
-		constexpr BSTArrayHeapAllocator() noexcept = default;
+		BSTArrayHeapAllocator() noexcept = default;
 
 		BSTArrayHeapAllocator(const BSTArrayHeapAllocator& a_rhs)
 		{
@@ -65,7 +65,7 @@ namespace RE
 			}
 		}
 
-		constexpr BSTArrayHeapAllocator(BSTArrayHeapAllocator&& a_rhs) noexcept :
+		BSTArrayHeapAllocator(BSTArrayHeapAllocator&& a_rhs) noexcept :
 			_data(a_rhs.data()),
 			_capacity(a_rhs.capacity())
 		{
@@ -111,10 +111,10 @@ namespace RE
 
 		F4_HEAP_REDEFINE_NEW(BSTArrayHeapAllocator);
 
-		[[nodiscard]] constexpr void* data() noexcept { return _data; }
-		[[nodiscard]] constexpr const void* data() const noexcept { return _data; }
+		[[nodiscard]] void* data() noexcept { return _data; }
+		[[nodiscard]] const void* data() const noexcept { return _data; }
 
-		[[nodiscard]] constexpr size_type capacity() const noexcept { return _capacity; }
+		[[nodiscard]] size_type capacity() const noexcept { return _capacity; }
 
 	protected:
 		void* allocate(std::size_t a_size)
@@ -130,7 +130,7 @@ namespace RE
 
 		void deallocate(void* a_ptr) { free(a_ptr); }
 
-		constexpr void set_allocator_traits(void* a_data, std::uint32_t a_capacity, std::size_t) noexcept
+		void set_allocator_traits(void* a_data, std::uint32_t a_capacity, std::size_t) noexcept
 		{
 			_data = a_data;
 			_capacity = a_capacity;
@@ -149,7 +149,7 @@ namespace RE
 	public:
 		using size_type = std::uint32_t;
 
-		constexpr BSTSmallArrayHeapAllocator() noexcept :
+		BSTSmallArrayHeapAllocator() noexcept :
 			_capacity(0),
 			_local(1)
 		{}
@@ -188,10 +188,10 @@ namespace RE
 
 		F4_HEAP_REDEFINE_NEW(BSTSmallArrayHeapAllocator);
 
-		[[nodiscard]] constexpr void* data() noexcept { return local() ? _data.local : _data.heap; }
-		[[nodiscard]] constexpr const void* data() const noexcept { return local() ? _data.local : _data.heap; }
+		[[nodiscard]] void* data() noexcept { return local() ? _data.local : _data.heap; }
+		[[nodiscard]] const void* data() const noexcept { return local() ? _data.local : _data.heap; }
 
-		[[nodiscard]] constexpr size_type capacity() const noexcept { return _capacity; }
+		[[nodiscard]] size_type capacity() const noexcept { return _capacity; }
 
 	protected:
 		void* allocate(std::size_t a_size)
@@ -216,7 +216,7 @@ namespace RE
 			}
 		}
 
-		constexpr void set_allocator_traits(void* a_data, std::uint32_t a_capacity, std::size_t a_typeSize) noexcept
+		void set_allocator_traits(void* a_data, std::uint32_t a_capacity, std::size_t a_typeSize) noexcept
 		{
 			_capacity = a_capacity;
 			if (a_capacity * a_typeSize > N) {
@@ -264,7 +264,7 @@ namespace RE
 			a_rhs._local = 1;
 		}
 
-		[[nodiscard]] constexpr bool local() const noexcept { return _local != 0; }
+		[[nodiscard]] bool local() const noexcept { return _local != 0; }
 
 		void release()
 		{
@@ -288,7 +288,7 @@ namespace RE
 	public:
 		using size_type = std::uint32_t;
 
-		constexpr BSScrapArrayAllocator() noexcept = default;
+		BSScrapArrayAllocator() noexcept = default;
 
 		BSScrapArrayAllocator(const BSScrapArrayAllocator& a_rhs) :
 			_capacity(a_rhs._capacity)
@@ -299,7 +299,7 @@ namespace RE
 			}
 		}
 
-		constexpr BSScrapArrayAllocator(BSScrapArrayAllocator&& a_rhs) noexcept :
+		BSScrapArrayAllocator(BSScrapArrayAllocator&& a_rhs) noexcept :
 			_allocator(a_rhs._allocator),
 			_data(a_rhs._data),
 			_capacity(a_rhs._capacity)
@@ -357,10 +357,10 @@ namespace RE
 
 		F4_HEAP_REDEFINE_NEW(BSScrapArrayAllocator);
 
-		[[nodiscard]] constexpr void* data() noexcept { return _data; }
-		[[nodiscard]] constexpr const void* data() const noexcept { return _data; }
+		[[nodiscard]] void* data() noexcept { return _data; }
+		[[nodiscard]] const void* data() const noexcept { return _data; }
 
-		[[nodiscard]] constexpr size_type capacity() const noexcept { return _capacity; }
+		[[nodiscard]] size_type capacity() const noexcept { return _capacity; }
 
 	protected:
 		void* allocate(std::size_t a_size)
@@ -392,7 +392,7 @@ namespace RE
 			}
 		}
 
-		constexpr void set_allocator_traits(void* a_data, std::uint32_t a_capacity, std::size_t) noexcept
+		void set_allocator_traits(void* a_data, std::uint32_t a_capacity, std::size_t) noexcept
 		{
 			_data = a_data;
 			_capacity = a_capacity;
@@ -497,38 +497,38 @@ namespace RE
 
 		F4_HEAP_REDEFINE_NEW(BSTArray);
 
-		[[nodiscard]] constexpr reference operator[](size_type a_pos) noexcept
+		[[nodiscard]] reference operator[](size_type a_pos) noexcept
 		{
 			assert(a_pos < size());
 			return data()[a_pos];
 		}
 
-		[[nodiscard]] constexpr const_reference operator[](size_type a_pos) const noexcept
+		[[nodiscard]] const_reference operator[](size_type a_pos) const noexcept
 		{
 			assert(a_pos < size());
 			return data()[a_pos];
 		}
 
-		[[nodiscard]] constexpr reference front() noexcept { return operator[](0); }
-		[[nodiscard]] constexpr const_reference front() const noexcept { return operator[](0); }
+		[[nodiscard]] reference front() noexcept { return operator[](0); }
+		[[nodiscard]] const_reference front() const noexcept { return operator[](0); }
 
-		[[nodiscard]] constexpr reference back() noexcept { return operator[](size() - 1); }
-		[[nodiscard]] constexpr const_reference back() const noexcept { return operator[](size() - 1); }
+		[[nodiscard]] reference back() noexcept { return operator[](size() - 1); }
+		[[nodiscard]] const_reference back() const noexcept { return operator[](size() - 1); }
 
-		[[nodiscard]] constexpr pointer data() noexcept { return static_cast<pointer>(allocator_type::data()); }
-		[[nodiscard]] constexpr const_pointer data() const noexcept { return static_cast<const_pointer>(allocator_type::data()); }
+		[[nodiscard]] pointer data() noexcept { return static_cast<pointer>(allocator_type::data()); }
+		[[nodiscard]] const_pointer data() const noexcept { return static_cast<const_pointer>(allocator_type::data()); }
 
-		[[nodiscard]] constexpr iterator begin() noexcept { return empty() ? nullptr : data(); }
-		[[nodiscard]] constexpr const_iterator begin() const noexcept { return empty() ? nullptr : data(); }
-		[[nodiscard]] constexpr const_iterator cbegin() const noexcept { return begin(); }
+		[[nodiscard]] iterator begin() noexcept { return empty() ? nullptr : data(); }
+		[[nodiscard]] const_iterator begin() const noexcept { return empty() ? nullptr : data(); }
+		[[nodiscard]] const_iterator cbegin() const noexcept { return begin(); }
 
-		[[nodiscard]] constexpr iterator end() noexcept { return empty() ? nullptr : data() + size(); }
-		[[nodiscard]] constexpr const_iterator end() const noexcept { return empty() ? nullptr : data() + size(); }
-		[[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
+		[[nodiscard]] iterator end() noexcept { return empty() ? nullptr : data() + size(); }
+		[[nodiscard]] const_iterator end() const noexcept { return empty() ? nullptr : data() + size(); }
+		[[nodiscard]] const_iterator cend() const noexcept { return end(); }
 
-		[[nodiscard]] constexpr bool empty() const noexcept { return BSTArrayBase::empty(); }
+		[[nodiscard]] bool empty() const noexcept { return BSTArrayBase::empty(); }
 
-		[[nodiscard]] constexpr size_type size() const noexcept { return BSTArrayBase::size(); }
+		[[nodiscard]] size_type size() const noexcept { return BSTArrayBase::size(); }
 
 		void reserve(size_type a_newCap)
 		{
@@ -537,7 +537,7 @@ namespace RE
 			}
 		}
 
-		[[nodiscard]] constexpr size_type capacity() const noexcept { return allocator_type::capacity(); }
+		[[nodiscard]] size_type capacity() const noexcept { return allocator_type::capacity(); }
 
 		void shrink_to_fit()
 		{
@@ -618,12 +618,12 @@ namespace RE
 
 		void deallocate(void* a_ptr) { allocator_type::deallocate(a_ptr); }
 
-		constexpr void set_allocator_traits(void* a_data, size_type a_capacity) noexcept
+		void set_allocator_traits(void* a_data, size_type a_capacity) noexcept
 		{
 			allocator_type::set_allocator_traits(a_data, a_capacity, sizeof(value_type));
 		}
 
-		constexpr void set_size(size_type a_size) noexcept { BSTArrayBase::set_size(a_size); }
+		void set_size(size_type a_size) noexcept { BSTArrayBase::set_size(a_size); }
 
 		void change_capacity(size_type a_newCapacity)
 		{
@@ -696,38 +696,38 @@ namespace RE
 		using iterator = pointer;
 		using const_iterator = const_pointer;
 
-		[[nodiscard]] constexpr reference operator[](size_type a_pos) noexcept
+		[[nodiscard]] reference operator[](size_type a_pos) noexcept
 		{
 			assert(a_pos < _size);
 			return _data[a_pos];
 		}
 
-		[[nodiscard]] constexpr const_reference operator[](size_type a_pos) const noexcept
+		[[nodiscard]] const_reference operator[](size_type a_pos) const noexcept
 		{
 			assert(a_pos < _size);
 			return _data[a_pos];
 		}
 
-		[[nodiscard]] constexpr reference front() noexcept { return operator[](0); }
-		[[nodiscard]] constexpr const_reference front() const noexcept { return operator[](0); }
+		[[nodiscard]] reference front() noexcept { return operator[](0); }
+		[[nodiscard]] const_reference front() const noexcept { return operator[](0); }
 
-		[[nodiscard]] constexpr reference back() noexcept { return operator[](size() - 1); }
-		[[nodiscard]] constexpr const_reference back() const noexcept { return operator[](size() - 1); }
+		[[nodiscard]] reference back() noexcept { return operator[](size() - 1); }
+		[[nodiscard]] const_reference back() const noexcept { return operator[](size() - 1); }
 
-		[[nodiscard]] constexpr pointer data() noexcept { return _data; }
-		[[nodiscard]] constexpr const_pointer data() const noexcept { return _data; }
+		[[nodiscard]] pointer data() noexcept { return _data; }
+		[[nodiscard]] const_pointer data() const noexcept { return _data; }
 
-		[[nodiscard]] constexpr iterator begin() noexcept { return empty() ? nullptr : data(); }
-		[[nodiscard]] constexpr const_iterator begin() const noexcept { return empty() ? nullptr : data(); }
-		[[nodiscard]] constexpr const_iterator cbegin() const noexcept { return begin(); }
+		[[nodiscard]] iterator begin() noexcept { return empty() ? nullptr : data(); }
+		[[nodiscard]] const_iterator begin() const noexcept { return empty() ? nullptr : data(); }
+		[[nodiscard]] const_iterator cbegin() const noexcept { return begin(); }
 
-		[[nodiscard]] constexpr iterator end() noexcept { return empty() ? nullptr : data() + size(); }
-		[[nodiscard]] constexpr const_iterator end() const noexcept { return empty() ? nullptr : data() + size(); }
-		[[nodiscard]] constexpr const_iterator cend() const noexcept { return end(); }
+		[[nodiscard]] iterator end() noexcept { return empty() ? nullptr : data() + size(); }
+		[[nodiscard]] const_iterator end() const noexcept { return empty() ? nullptr : data() + size(); }
+		[[nodiscard]] const_iterator cend() const noexcept { return end(); }
 
-		[[nodiscard]] constexpr bool empty() const noexcept { return size() == 0; }
+		[[nodiscard]] bool empty() const noexcept { return size() == 0; }
 
-		[[nodiscard]] constexpr size_type size() const noexcept { return _size; }
+		[[nodiscard]] size_type size() const noexcept { return _size; }
 
 	private:
 		// members
@@ -778,9 +778,9 @@ namespace RE
 		[[nodiscard]] const_iterator end() const noexcept { return data() + size(); }
 		[[nodiscard]] const_iterator cend() const noexcept { return end(); }
 
-		[[nodiscard]] constexpr bool empty() const noexcept { return size() != 0; }
+		[[nodiscard]] bool empty() const noexcept { return size() != 0; }
 
-		[[nodiscard]] constexpr size_type size() const noexcept { return _size; }
+		[[nodiscard]] size_type size() const noexcept { return _size; }
 
 	private:
 		union Data
