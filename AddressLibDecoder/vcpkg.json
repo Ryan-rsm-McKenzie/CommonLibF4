@@ -1,0 +1,13 @@
+{
+  "name": "addresslibdecoder",
+  "version-string": "1.0.0",
+  "description": "A tool for decoding the address bins into a human readable format",
+  "homepage": "https://github.com/Ryan-rsm-McKenzie/CommonLibF4",
+  "license": "MIT",
+  "dependencies": [
+    "boost-filesystem",
+    "boost-iostreams",
+    "fmt",
+    "span-lite"
+  ]
+}

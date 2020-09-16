@@ -50,9 +50,7 @@ private:
 		if (it.first == it.second) {
 			throw std::runtime_error("failed to find type descriptor"s);
 		} else {
-			return reinterpret_cast<const RE::RTTI::TypeDescriptor*>(
-				it.first -
-				offsetof(RE::RTTI::TypeDescriptor, name));
+			return reinterpret_cast<const RE::RTTI::TypeDescriptor*>(it.first - 0x10);
 		}
 	}
 
@@ -160,7 +158,7 @@ private:
 	std::array<char, 0x1000> buf;
 	const auto len =
 		WinAPI::UnDecorateSymbolName(
-			a_typeDesc->name + 1,
+			a_typeDesc->mangled_name() + 1,
 			buf.data(),
 			static_cast<std::uint32_t>(buf.size()),
 			(WinAPI::UNDNAME_NO_MS_KEYWORDS) |
