@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.18)
 
 # ---- Project ----
 
@@ -11,10 +11,10 @@ project(
 # ---- Include guards ----
 
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-  message(
-    FATAL_ERROR
-      "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
-  )
+	message(
+		FATAL_ERROR
+			"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
+)
 endif()
 
 # ---- Dependencies ----
@@ -40,17 +40,11 @@ source_group(
 
 # ---- Create library ----
 
-add_library(CommonLibF4 ${headers} ${sources})
-
-set(MSVC_OPTIONS_PUBLIC
-	/permissive-	# Standards conformance
-
-	/experimental:external
-	/external:anglebrackets
-	/external:W0
-	
+set(MSVC_OPTIONS	
 	/MP	# Build with Multiple Processes
 	/TP	# Specify Source File Type (C++)
+	
+	/permissive-	# Standards conformance
 	
 	/Zc:alignedNew	# C++17 over-aligned allocation
 	/Zc:auto	# Deduce Variable Type
@@ -73,9 +67,11 @@ set(MSVC_OPTIONS_PUBLIC
 	/Zc:tlsGuards
 	/Zc:trigraphs	# Trigraphs Substitution
 	/Zc:wchar_t	# wchar_t Is Native Type
-)
-
-set(MSVC_OPTIONS_PRIVATE
+	
+	/experimental:external
+	/external:anglebrackets
+	/external:W0
+	
 	/Wall	# Warning level (all warnings)
 	/WX	# Warning level (warnings are errors)
 	
@@ -105,12 +101,24 @@ set(MSVC_OPTIONS_PRIVATE
 	/wd5220 # 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 )
 
-target_compile_features(CommonLibF4 PRIVATE cxx_std_17)
-target_compile_options(CommonLibF4
+add_library(CommonLibF4 STATIC)
+
+target_sources(CommonLibF4
 	PUBLIC
-		"$<$<BOOL:${MSVC}>:${MSVC_OPTIONS_PUBLIC}>"
+		${headers}
+		CommonLibF4.natvis
 	PRIVATE
-		"$<$<BOOL:${MSVC}>:${MSVC_OPTIONS_PRIVATE}>"
+		${sources}
+)
+
+target_compile_features(CommonLibF4
+	PUBLIC
+		cxx_std_17
+)
+
+target_compile_options(CommonLibF4
+	PRIVATE
+		"$<$<BOOL:${MSVC}>:${MSVC_OPTIONS}>"
 )
 
 target_include_directories(
@@ -130,5 +138,6 @@ target_link_libraries(CommonLibF4
 )
 
 target_precompile_headers(CommonLibF4
-	PRIVATE include/F4SE/Impl/PCH.h
+	PRIVATE
+		include/F4SE/Impl/PCH.h
 )

@@ -1,6 +1,10 @@
 {
 	"name": "commonlibf4",
 	"version-string": "1.0.0",
+	"description": "A reverse engineered resource for developing F4SE plugins for Fallout 4",
+	"homepage": "https://github.com/Ryan-rsm-McKenzie/CommonLibF4",
+	"license": "MIT",
+	"supports": "windows & x64",
 	"dependencies" : [
 		"boost-atomic",
 		"boost-iostreams",
