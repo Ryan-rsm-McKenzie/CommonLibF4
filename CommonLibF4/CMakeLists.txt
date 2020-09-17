@@ -80,6 +80,13 @@ add_library(CommonLibF4 STATIC
 	CommonLibF4.natvis
 )
 
+target_compile_definitions(CommonLibF4
+	PUBLIC
+		WINVER=0x0601	# windows 7, minimum supported version by fallout 4
+		_WIN32_WINNT=0x0601
+		SPDLOG_COMPILED_LIB	# avoid leaking windows.h
+)
+
 target_compile_features(CommonLibF4
 	PUBLIC
 		cxx_std_17

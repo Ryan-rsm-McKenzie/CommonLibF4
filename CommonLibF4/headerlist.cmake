@@ -33,10 +33,12 @@ set(headers ${headers}
 	include/RE/Bethesda/BSPointerHandle.h
 	include/RE/Bethesda/BSResource.h
 	include/RE/Bethesda/BSScaleformManager.h
+	include/RE/Bethesda/BSScript.h
 	include/RE/Bethesda/BSSoundHandle.h
 	include/RE/Bethesda/BSSpring.h
 	include/RE/Bethesda/BSStringPool.h
 	include/RE/Bethesda/BSStringT.h
+	include/RE/Bethesda/BSSystemFile.h
 	include/RE/Bethesda/BSSystemFileStreamer.h
 	include/RE/Bethesda/BSTArray.h
 	include/RE/Bethesda/BSTBTree.h

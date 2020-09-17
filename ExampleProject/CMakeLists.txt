@@ -65,6 +65,11 @@ add_compile_options(
 
 # ---- Dependencies ----
 
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+set(Boost_USE_DEBUG_RUNTIME ON)
+
 add_subdirectory($ENV{CommonLibF4Path} CommonLibF4)
 
 find_package(spdlog REQUIRED)
@@ -95,6 +100,12 @@ add_library(ExampleProject SHARED
 	${headers}
 	${sources}
 	.clang-format
+)
+
+set_property(
+	GLOBAL
+	PROPERTY
+		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL"
 )
 
 target_compile_features(ExampleProject

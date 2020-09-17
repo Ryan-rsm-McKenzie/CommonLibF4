@@ -1,32 +1,5 @@
 #pragma once
 
-#pragma warning(error : 4715)  // 'function' : not all control paths return a value
-
-#pragma warning(disable : 4061)	 // enumerator 'identifier' in switch of enum 'enumeration' is not explicitly handled by a case label
-#pragma warning(disable : 4200)	 // nonstandard extension used : zero-sized array in struct/union
-#pragma warning(disable : 4263)	 // 'function' : member function does not override any base class virtual member function
-#pragma warning(disable : 4264)	 // 'virtual_function' : no override available for virtual member function from base 'class'; function is hidden
-#pragma warning(disable : 4266)	 // 'function' : no override available for virtual member function from base 'type'; function is hidden
-#pragma warning(disable : 4324)	 // 'struct_name' : structure was padded due to __declspec(align())
-#pragma warning(disable : 4371)	 // 'classname': layout of class may have changed from a previous version of the compiler due to better packing of member 'member'
-#pragma warning(disable : 4582)	 // 'type': constructor is not implicitly called
-#pragma warning(disable : 4583)	 // 'type': destructor is not implicitly called
-#pragma warning(disable : 4623)	 // 'derived class' : default constructor was implicitly defined as deleted because a base class default constructor is inaccessible or deleted
-#pragma warning(disable : 4625)	 // 'derived class' : copy constructor was implicitly defined as deleted because a base class copy constructor is inaccessible or deleted
-#pragma warning(disable : 4626)	 // 'derived class' : assignment operator was implicitly defined as deleted because a base class assignment operator is inaccessible or deleted
-#pragma warning(disable : 4686)	 // 'user-defined type' : possible change in behavior, change in UDT return calling convention
-#pragma warning(disable : 5027)	 // 'type': move assignment operator was implicitly defined as deleted
-#pragma warning(disable : 5053)	 // support for 'explicit(<expr>)' in C++17 and earlier is a vendor extension
-#pragma warning(disable : 5204)	 // 'type-name': class has virtual functions, but its trivial destructor is not virtual; instances of objects derived from this class may not be destructed correctly
-#pragma warning(disable : 5220)	 // 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
-
-// TODO: convert to cmake defines?
-#define WINVER 0x0601  // Windows 7
-#define _WIN32_WINNT 0x0601
-
-// TODO: remove for cmake
-#define SPDLOG_COMPILED_LIB
-
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -53,7 +26,10 @@
 #include <utility>
 #include <vector>
 
-static_assert(std::is_integral_v<std::time_t> && sizeof(std::time_t) == sizeof(std::size_t), "wrap std::time_t instead");
+static_assert(
+	std::is_integral_v<std::time_t> &&
+		sizeof(std::time_t) == sizeof(std::size_t),
+	"wrap std::time_t instead");
 
 #include <boost/atomic.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>

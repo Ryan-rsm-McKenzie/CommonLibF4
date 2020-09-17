@@ -1,6 +1,5 @@
 #pragma once
 
-#pragma warning(push)
 #include "F4SE/Impl/PCH.h"
 
 #include "RE/Bethesda/AITimeStamp.h"
@@ -24,10 +23,12 @@
 #include "RE/Bethesda/BSPointerHandle.h"
 #include "RE/Bethesda/BSResource.h"
 #include "RE/Bethesda/BSScaleformManager.h"
+#include "RE/Bethesda/BSScript.h"
 #include "RE/Bethesda/BSSoundHandle.h"
 #include "RE/Bethesda/BSSpring.h"
 #include "RE/Bethesda/BSStringPool.h"
 #include "RE/Bethesda/BSStringT.h"
+#include "RE/Bethesda/BSSystemFile.h"
 #include "RE/Bethesda/BSSystemFileStreamer.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTBTree.h"
@@ -156,4 +157,3 @@
 #include "RE/Scaleform/Render/Render_TreeNode.h"
 #include "RE/Scaleform/Render/Render_Types2D.h"
 #include "RE/Scaleform/Render/Render_Viewport.h"
-#pragma warning(pop)

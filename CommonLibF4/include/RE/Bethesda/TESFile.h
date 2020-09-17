@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/Bethesda/BSStringT.h"
+#include "RE/Bethesda/BSSystemFile.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/BSTList.h"
@@ -18,17 +19,6 @@ namespace RE
 	struct TESBitArrayFile;
 
 	union _ULARGE_INTEGER;
-
-	namespace BSSystemFileStreamer
-	{
-		struct ID
-		{
-		public:
-			// members
-			std::uint32_t id;  // 0
-		};
-		static_assert(sizeof(ID) == 0x4);
-	}
 
 	class BSFile :
 		public NiFile  // 000

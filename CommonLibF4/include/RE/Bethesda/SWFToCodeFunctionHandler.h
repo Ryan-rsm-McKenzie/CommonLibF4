@@ -17,7 +17,7 @@ namespace RE
 		void Call(const Params&) override { return; }  // 01
 
 		// add
-		virtual void MapCodeObjectFunction() { return; }  // 02
+		virtual void MapCodeObjectFunctions() { return; }  // 02
 
 		void RegisterCodeObject(Scaleform::GFx::Movie& a_movie, Scaleform::GFx::Value& a_menuObj)
 		{

@@ -1,29 +1,10 @@
 #pragma once
 
+#include "RE/Bethesda/BSSystemFile.h"
 #include "RE/NetImmerse/NiBinaryStream.h"
 
 namespace RE
 {
-	class BSSystemFile
-	{
-	public:
-		struct Info
-		{
-		public:
-			// members
-			_FILETIME accessTime;  // 00
-			_FILETIME modifyTime;  // 08
-			_FILETIME createTime;  // 10
-			std::size_t fileSize;  // 18
-		};
-		static_assert(sizeof(Info) == 0x20);
-
-		// members
-		std::uint32_t flags;  // 00
-		void* file;			  // 08
-	};
-	static_assert(sizeof(BSSystemFile) == 0x10);
-
 	class NiFile :
 		public NiBinaryStream  // 00
 	{
