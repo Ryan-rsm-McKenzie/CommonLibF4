@@ -90,12 +90,9 @@ set(MSVC_OPTIONS_PRIVATE
 	/TP	# Specify Source File Type (C++)
 )
 
-add_executable(AddressLibGen ${sources})
-
-target_sources(AddressLibGen
-	PRIVATE
-		${sources}
-		.clang-format
+add_executable(AddressLibGen
+	${sources}
+	.clang-format
 )
 
 target_compile_features(AddressLibGen

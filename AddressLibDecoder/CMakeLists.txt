@@ -91,12 +91,9 @@ set(MSVC_OPTIONS_PRIVATE
 	/TP	# Specify Source File Type (C++)
 )
 
-add_executable(AddressLibDecoder ${sources})
-
-target_sources(AddressLibDecoder
-	PRIVATE
-		${sources}
-		.clang-format
+add_executable(AddressLibDecoder
+	${sources}
+	.clang-format
 )
 
 target_compile_features(AddressLibDecoder

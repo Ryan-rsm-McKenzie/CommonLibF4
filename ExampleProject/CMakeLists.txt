@@ -91,13 +91,10 @@ set(MSVC_OPTIONS_PRIVATE
 	/TP	# Specify Source File Type (C++)
 )
 
-add_library(ExampleProject SHARED ${headers} ${sources})
-
-target_sources(ExampleProject
-	PRIVATE
-		${headers}
-		${sources}
-		.clang-format
+add_library(ExampleProject SHARED
+	${headers}
+	${sources}
+	.clang-format
 )
 
 target_compile_features(ExampleProject

@@ -73,15 +73,11 @@ set(MSVC_OPTIONS
 	/wd5220 # 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 )
 
-add_library(CommonLibF4 STATIC)
-
-target_sources(CommonLibF4
-	PUBLIC
-		${headers}
-	PRIVATE
-		${sources}
-		.clang-format
-		CommonLibF4.natvis
+add_library(CommonLibF4 STATIC
+	${headers}
+	${sources}
+	.clang-format
+	CommonLibF4.natvis
 )
 
 target_compile_features(CommonLibF4

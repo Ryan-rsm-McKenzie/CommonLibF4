@@ -98,13 +98,10 @@ set(MSVC_OPTIONS_PRIVATE
 	/TP	# Specify Source File Type (C++)
 )
 
-add_library(RTTIDump SHARED ${headers} ${sources})
-
-target_sources(RTTIDump
-	PRIVATE
-		${headers}
-		${sources}
-		.clang-format
+add_library(RTTIDump SHARED
+	${headers}
+	${sources}
+	.clang-format
 )
 
 target_compile_features(RTTIDump
