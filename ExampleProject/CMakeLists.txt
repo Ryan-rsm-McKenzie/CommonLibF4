@@ -144,7 +144,9 @@ add_library(ExampleProject SHARED
 )
 
 set_property(
-	TARGET ExampleProject
+	TARGET
+		CommonLibF4
+		ExampleProject
 	PROPERTY
 		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )

@@ -144,7 +144,9 @@ add_library(RTTIDump SHARED
 )
 
 set_property(
-	TARGET RTTIDump
+	TARGET
+		CommonLibF4
+		RTTIDump
 	PROPERTY
 		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
