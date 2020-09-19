@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.18)
 
 # ---- Project ----
 
-cmake_policy(SET CMP0091 NEW)	# MSVC runtime library flags are selected by an abstraction
-
 project(
 	RTTIDump
 	VERSION 1.0.0
