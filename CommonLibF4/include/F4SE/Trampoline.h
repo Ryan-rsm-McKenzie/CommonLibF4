@@ -1,5 +1,10 @@
 #pragma once
 
+namespace Xbyak
+{
+	class CodeGenerator;
+}
+
 namespace F4SE
 {
 	namespace detail
@@ -106,14 +111,8 @@ namespace F4SE
 			return result;
 		}
 
-#if defined(XBYAK32) || defined(XBYAK64)
-		[[nodiscard]] void* allocate(Xbyak::CodeGenerator& a_code)
-		{
-			auto result = do_allocate(a_code.getSize());
-			log_stats();
-			std::memcpy(result, a_code.getCode(), a_code.getSize());
-			return result;
-		}
+#ifdef F4SE_SUPPORT_XBYAK
+		[[nodiscard]] void* allocate(Xbyak::CodeGenerator& a_code);
 #endif
 
 		template <class T>

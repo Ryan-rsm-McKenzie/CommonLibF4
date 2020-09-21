@@ -1,8 +1,13 @@
 #pragma once
 
+#include "RE/Bethesda/BSLock.h"
+#include "RE/Bethesda/BSTSmartPointer.h"
+
 namespace RE
 {
-	enum EXTRA_DATA_TYPE
+	class ExtraLocation;
+
+	enum EXTRA_DATA_TYPE : std::uint32_t
 	{
 		kNone,
 		kHavok,
@@ -141,7 +146,7 @@ namespace RE
 		kCreatureMovementSound,
 		kFollowerSwimBreadcrumbs,
 		kAliasInstanceArray,
-		kLocation,
+		kLocation,	// ExtraLocation
 		kMasterLocation,
 		kLocationRefType,
 		kPromotedRef,
@@ -217,8 +222,12 @@ namespace RE
 		kRefWeaponSounds,
 		kRefInvestedGold,
 		kRefFurnitureEntryData,
-		kVoiceType
+		kVoiceType,
+
+		kTotal
 	};
+
+	class BGSLocation;
 
 	class BSExtraData
 	{
@@ -248,4 +257,129 @@ namespace RE
 		stl::enumeration<EXTRA_DATA_TYPE, std::uint8_t> type;  // 12
 	};
 	static_assert(sizeof(BSExtraData) == 0x18);
+
+	class ExtraLocation :
+		public BSExtraData	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraLocation };
+		static constexpr auto VTABLE{ VTABLE::ExtraLocation };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kLocation };
+
+		// members
+		BGSLocation* location;	// 18
+	};
+	static_assert(sizeof(ExtraLocation) == 0x20);
+
+	class BaseExtraList
+	{
+	public:
+		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
+		{
+			if (HasType(a_type)) {
+				for (auto iter = _head; iter; ++iter) {
+					if (iter->GetExtraType() == a_type) {
+						return iter;
+					}
+				}
+			}
+
+			return nullptr;
+		}
+
+		[[nodiscard]] bool HasType(EXTRA_DATA_TYPE a_type) const noexcept
+		{
+			const auto idx = to_underlying(a_type) % 8;
+			const auto flags = GetFlags();
+			if (!flags.empty() && idx < flags.size()) {
+				const auto pos = 1 << (to_underlying(a_type) & (8 - 1));
+				return (flags[idx] & pos) != 0;
+			} else {
+				return false;
+			}
+		}
+
+	private:
+		static constexpr std::size_t N = (to_underlying(EXTRA_DATA_TYPE::kTotal) / 8) + 1;
+
+		void CreateFlags() { _flags = calloc<std::uint8_t>(N); }
+
+		[[nodiscard]] stl::span<std::uint8_t> GetFlags() const noexcept
+		{
+			if (_flags) {
+				return { _flags, N };
+			} else {
+				return {};
+			}
+		}
+
+		[[nodiscard]] stl::span<std::uint8_t, N> GetOrCreateFlags()
+		{
+			if (!_flags) {
+				CreateFlags();
+			}
+
+			return stl::span{ reinterpret_cast<std::uint8_t(&)[N]>(*_flags) };
+		}
+
+		// members
+		BSExtraData* _head{ nullptr };				   // 00
+		BSExtraData** _tail{ std::addressof(_head) };  // 08
+		std::uint8_t* _flags{ nullptr };			   // 10
+	};
+	static_assert(sizeof(BaseExtraList) == 0x18);
+
+	class ExtraDataList :
+		public BSIntrusiveRefCounted  // 00
+	{
+	public:
+		template <class T>
+		using constraints =
+			std::conjunction<
+				std::is_base_of<
+					BSExtraData,
+					T>,
+				std::negation<
+					std::disjunction<
+						std::is_pointer<T>,
+						std::is_reference<T>>>>;
+
+		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
+		{
+			BSAutoReadLock l{ _extraRWLock };
+			return _extraData.GetByType(a_type);
+		}
+
+		template <
+			class T,
+			std::enable_if_t<
+				constraints<T>::value,
+				int> = 0>
+		[[nodiscard]] T* GetByType() const noexcept
+		{
+			return static_cast<T*>(GetByType(T::TYPE));
+		}
+
+		[[nodiscard]] bool HasType(EXTRA_DATA_TYPE a_type) const noexcept
+		{
+			BSAutoReadLock l{ _extraRWLock };
+			return _extraData.HasType(a_type);
+		}
+
+		template <
+			class T,
+			std::enable_if_t<
+				constraints<T>::value,
+				int> = 0>
+		[[nodiscard]] bool HasType() const noexcept
+		{
+			return HasType(T::TYPE);
+		}
+
+	private:
+		// members
+		BaseExtraList _extraData;			   // 08
+		mutable BSReadWriteLock _extraRWLock;  // 20
+	};
+	static_assert(sizeof(ExtraDataList) == 0x28);
 }

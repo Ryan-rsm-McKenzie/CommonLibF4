@@ -538,6 +538,13 @@ namespace RE
 		virtual std::uint32_t GetFilledSlotsImpl() const { return static_cast<std::uint32_t>(-1); }																																	  // 48
 		virtual float GetDesirability([[maybe_unused]] TBO_InstanceData* a_instanceData, [[maybe_unused]] const TESForm* a_user) const { return 0.0F; }																				  // 49
 
+		static void AddCompileIndex(std::uint32_t& a_id, TESFile* a_file)
+		{
+			using func_t = decltype(&TESForm::AddCompileIndex);
+			REL::Relocation<func_t> func{ REL::ID(1315637) };
+			return func(a_id, a_file);
+		}
+
 		[[nodiscard]] static auto GetAllForms()
 			-> std::pair<
 				BSTHashMap<std::uint32_t, TESForm*>*,
@@ -556,6 +563,13 @@ namespace RE
 			REL::Relocation<AllFormsByEditorID**> allFormsByEditorID{ REL::ID(642758) };
 			REL::Relocation<BSReadWriteLock*> allFormsEditorIDMapLock{ REL::ID(910917) };
 			return { *allFormsByEditorID, *allFormsEditorIDMapLock };
+		}
+
+		[[nodiscard]] TESFile* GetFile(std::int32_t a_index = -1) const
+		{
+			using func_t = decltype(&TESForm::GetFile);
+			REL::Relocation<func_t> func{ REL::ID(1376557) };
+			return func(this, a_index);
 		}
 
 		[[nodiscard]] static TESForm* GetFormByID(std::uint32_t a_formID)
@@ -600,6 +614,7 @@ namespace RE
 		[[nodiscard]] std::uint32_t GetFormID() const noexcept { return formID; }
 		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
 		[[nodiscard]] bool IsCreated() const noexcept { return (formID >> (8 * 3)) == 0xFF; }
+		[[nodiscard]] bool IsInitialized() const noexcept { return (formFlags & (1 << 3)) != 0; }
 
 		template <
 			class T,
