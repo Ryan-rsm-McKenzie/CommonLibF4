@@ -289,10 +289,10 @@ namespace RE
 
 		[[nodiscard]] bool HasType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
-			const auto idx = to_underlying(a_type) % 8;
+			const auto idx = to_underlying(a_type) / 8;
 			const auto flags = GetFlags();
 			if (!flags.empty() && idx < flags.size()) {
-				const auto pos = 1 << (to_underlying(a_type) & (8 - 1));
+				const auto pos = 1 << (to_underlying(a_type) % 8);
 				return (flags[idx] & pos) != 0;
 			} else {
 				return false;
@@ -332,7 +332,7 @@ namespace RE
 	class ExtraDataList :
 		public BSIntrusiveRefCounted  // 00
 	{
-	public:
+	private:
 		template <class T>
 		using constraints =
 			std::conjunction<
@@ -344,6 +344,7 @@ namespace RE
 						std::is_pointer<T>,
 						std::is_reference<T>>>>;
 
+	public:
 		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
 			BSAutoReadLock l{ _extraRWLock };
