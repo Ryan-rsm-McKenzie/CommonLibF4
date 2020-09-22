@@ -13,9 +13,9 @@ namespace RE
 		public NiObject	 // 00
 	{
 	public:
-		static constexpr auto RTTI{ RTTI::NiProperty };
-		static constexpr auto VTABLE{ VTABLE::NiProperty };
-		static constexpr auto Ni_RTTI{ Ni_RTTI::NiProperty };
+		static constexpr auto RTTI{ RTTI::NiObjectNET };
+		static constexpr auto VTABLE{ VTABLE::NiObjectNET };
+		static constexpr auto Ni_RTTI{ Ni_RTTI::NiObjectNET };
 
 		// members
 		BSFixedString name;						  // 10
