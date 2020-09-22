@@ -1133,6 +1133,19 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::TESObjectCELL };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kCELL };
 
+		enum class CELL_STATE
+		{
+			kNotLoaded,
+			kUnloading,
+			kLoadingData,
+			kLoading,
+			kLoaded,
+			kDetaching,
+			kAttachQueued,
+			kAttaching,
+			kAttached
+		};
+
 		[[nodiscard]] BGSEncounterZone* GetEncounterZone() const
 		{
 			using func_t = decltype(&TESObjectCELL::GetEncounterZone);
@@ -1141,14 +1154,14 @@ namespace RE
 		}
 
 		// members
-		BSSpinLock grassCreateLock;				   // 30
-		BSSpinLock grassTaskLock;				   // 38
-		std::uint16_t cellFlags;				   // 40
-		std::uint16_t cellGameFlags;			   // 42
-		std::int8_t cellState;					   // 44
-		bool autoWaterLoaded;					   // 45
-		bool cellDetached;						   // 46
-		BSTSmartPointer<ExtraDataList> extraList;  // 48
+		BSSpinLock grassCreateLock;							  // 30
+		BSSpinLock grassTaskLock;							  // 38
+		std::uint16_t cellFlags;							  // 40
+		std::uint16_t cellGameFlags;						  // 42
+		stl::enumeration<CELL_STATE, std::int8_t> cellState;  // 44
+		bool autoWaterLoaded;								  // 45
+		bool cellDetached;									  // 46
+		BSTSmartPointer<ExtraDataList> extraList;			  // 48
 		union
 		{
 			void* cellData;

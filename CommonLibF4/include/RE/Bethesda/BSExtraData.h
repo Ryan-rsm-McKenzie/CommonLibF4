@@ -277,7 +277,7 @@ namespace RE
 		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
 			if (HasType(a_type)) {
-				for (auto iter = _head; iter; ++iter) {
+				for (auto iter = _head; iter; iter = iter->next) {
 					if (iter->GetExtraType() == a_type) {
 						return iter;
 					}
