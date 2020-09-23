@@ -30,8 +30,8 @@ find_package(spdlog REQUIRED)
 
 # ---- Add source files ----
 
-include(headerlist.cmake)
-include(sourcelist.cmake)
+include(cmake/headerlist.cmake)
+include(cmake/sourcelist.cmake)
 
 source_group(
 	TREE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -116,4 +116,35 @@ target_link_libraries(CommonLibF4
 target_precompile_headers(CommonLibF4
 	PRIVATE
 		include/F4SE/Impl/PCH.h
+)
+
+# ---- Create an installable target ----
+
+include(GNUInstallDirs)
+
+install(
+	TARGETS CommonLibF4
+	EXPORT CommonLibF4-targets
+)
+
+install(
+	DIRECTORY include/
+	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+configure_file(
+	cmake/config.cmake.in
+	CommonLibF4Config.cmake
+	@ONLY
+)
+
+install(
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/CommonLibF4Config.cmake
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CommonLibF4
+)
+
+install(
+	EXPORT CommonLibF4-targets
+	NAMESPACE CommonLibF4::
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CommonLibF4
 )

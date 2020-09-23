@@ -55,7 +55,7 @@ def make_cmake():
 			sources.append(name)
 
 	def do_make(a_filename, a_varname, a_files):
-		out = open(a_filename + ".cmake", "w", encoding="utf-8")
+		out = open("cmake/" + a_filename + ".cmake", "w", encoding="utf-8")
 		out.write("set(" + a_varname + " ${" + a_varname + "}\n")
 
 		for file in a_files:
