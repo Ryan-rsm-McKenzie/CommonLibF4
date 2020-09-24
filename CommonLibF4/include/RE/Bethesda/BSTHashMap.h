@@ -7,7 +7,12 @@
 namespace RE
 {
 	// scatter table with chaining
-	template <class Traits, std::uint32_t N, template <class, std::uint32_t> class Allocator, class Hash, class KeyEqual>
+	template <
+		class Traits,
+		std::uint32_t N,
+		template <class, std::uint32_t> class Allocator,
+		class Hash,
+		class KeyEqual>
 	struct BSTScatterTable
 	{
 	public:
@@ -565,32 +570,49 @@ namespace RE
 			Hash,
 			KeyEqual>;
 
-	//class BSTHashMap<unsigned int, unsigned int, struct BSTDefaultScatterTable>	size(30) :
-	//	+-- -
-	// 0 | +-- - (base class BSTHashMapBase<struct BSTHashMapTraits<unsigned int, unsigned int, struct BSTDefaultScatterTable<unsigned int, unsigned int> > >)
-	// 0	| | +-- - (base class BSTHashMapTraits<unsigned int, unsigned int, struct BSTDefaultScatterTable<unsigned int, unsigned int> >)
-	//	| | +-- -
-	// 8	| | +-- - (base class BSTDefaultScatterTable<unsigned int, unsigned int>)
-	// 8	| | | +-- - (base class BSTScatterTable<unsigned int, unsigned int, struct BSTScatterTableDefaultKVStorage, struct BSTScatterTableDefaultHashPolicy, struct BSTScatterTableHeapAllocator, 8>)
-	// 8	| | | | +-- - (base class BSTScatterTableBase<struct BSTScatterTableTraits<unsigned int, unsigned int, struct BSTScatterTableDefaultKVStorage, struct BSTScatterTableDefaultHashPolicy<unsigned int>, struct BSTScatterTableHeapAllocator<struct BSTScatterTableEntry<unsigned int, unsigned int, struct BSTScatterTableDefaultKVStorage> >, 8> >)
-	// 8	| | | | | +-- - (base class BSTScatterTableKernel<struct BSTScatterTableTraits<unsigned int, unsigned int, struct BSTScatterTableDefaultKVStorage, struct BSTScatterTableDefaultHashPolicy<unsigned int>, struct BSTScatterTableHeapAllocator<struct BSTScatterTableEntry<unsigned int, unsigned int, struct BSTScatterTableDefaultKVStorage> >, 8> >)
-	// 8	| | | | | | +-- - (base class BSTScatterTableTraits<unsigned int, unsigned int, struct BSTScatterTableDefaultKVStorage, struct BSTScatterTableDefaultHashPolicy<unsigned int>, struct BSTScatterTableHeapAllocator<struct BSTScatterTableEntry<unsigned int, unsigned int, struct BSTScatterTableDefaultKVStorage> >, 8>)
-	//	| | | | | | +-- -
-	// 9	| | | | | | +-- - (base class BSTScatterTableDefaultHashPolicy<unsigned int>)
-	//	| | | | | | +-- -
-	//  	| | | | | | <alignment member> (size = 3)
-	//0C	| | | | | | _size
-	//10	| | | | | | _freeCount
-	//14	| | | | | | _freeOffset
-	//18	| | | | | | _eolPtr
-	//	| | | | | +-- -
-	//21	| | | | | +-- - (base class BSTScatterTableHeapAllocator<struct BSTScatterTableEntry<unsigned int, unsigned int, struct BSTScatterTableDefaultKVStorage> >)
-	//	| | | | | +-- -
-	//  	| | | | | <alignment member> (size = 7)
-	//28	| | | | | _entries
-	//	| | | | +-- -
-	//	| | | +-- -
-	//	| | +-- -
-	// | +-- -
-	//	+-- -
+	template <class T, std::uint32_t N>
+	class BSTScatterTableScrapAllocator
+	{
+	public:
+		using entry_type = T;
+		using size_type = std::uint32_t;
+
+		BSTScatterTableScrapAllocator() = default;
+
+		[[nodiscard]] entry_type* allocate(std::size_t a_num)
+		{
+			auto size = a_num * sizeof(entry_type);
+			auto mem = static_cast<entry_type*>(_allocator->Allocate(size, 0x10));
+			std::memset(mem, 0, size);
+			return mem;
+		}
+
+		void deallocate(entry_type* a_ptr) { _allocator->Deallocate(a_ptr); }
+
+		[[nodiscard]] entry_type* get_entries() const noexcept { return _entries; }
+
+		void set_entries(entry_type* a_entries) noexcept { _entries = a_entries; }
+
+		[[nodiscard]] size_type min_size() const noexcept { return static_cast<size_type>(1) << 3; }
+
+		[[nodiscard]] size_type max_size() const noexcept { return static_cast<size_type>(1) << 31; }
+
+	private:
+		// members
+		ScrapHeap* _allocator{ MemoryManager::GetThreadScrapHeap() };  // 00
+		entry_type* _entries{ nullptr };							   // 08
+	};
+
+	template <
+		class Key,
+		class T,
+		class Hash = BSCRC32<Key>,
+		class KeyEqual = std::equal_to<Key>>
+	using BSTScrapHashMap =
+		BSTScatterTable<
+			BSTScatterTableTraits<Key, T>,
+			8,
+			BSTScatterTableScrapAllocator,
+			Hash,
+			KeyEqual>;
 }

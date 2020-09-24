@@ -24,6 +24,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BGSMod.h
 	include/RE/Bethesda/BGSStoryManagerTreeForm.h
 	include/RE/Bethesda/BGSTextureSet.h
+	include/RE/Bethesda/BSContainer.h
 	include/RE/Bethesda/BSExtraData.h
 	include/RE/Bethesda/BSFixedString.h
 	include/RE/Bethesda/BSGraphics.h
@@ -47,6 +48,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSTHashMap.h
 	include/RE/Bethesda/BSTimer.h
 	include/RE/Bethesda/BSTList.h
+	include/RE/Bethesda/BSTObjectArena.h
 	include/RE/Bethesda/BSTOptional.h
 	include/RE/Bethesda/BSTSingleton.h
 	include/RE/Bethesda/BSTSmallIndexScatterTable.h
@@ -59,6 +61,7 @@ set(headers ${headers}
 	include/RE/Bethesda/Events.h
 	include/RE/Bethesda/FormComponents.h
 	include/RE/Bethesda/FormUtil.h
+	include/RE/Bethesda/GameScript.h
 	include/RE/Bethesda/IMenu.h
 	include/RE/Bethesda/IMovementInterface.h
 	include/RE/Bethesda/InputEvent.h

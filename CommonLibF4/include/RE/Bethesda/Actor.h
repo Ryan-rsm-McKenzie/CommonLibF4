@@ -302,6 +302,13 @@ namespace RE
 		virtual float CheckClampDamageModifier(ActorValueInfo& a_info, float a_delta);																													 // 131
 		virtual void ValidateNewPath([[maybe_unused]] const MovementMessageNewPath& a_newPathMessage) { return; }																						 // 132
 
+		[[nodiscard]] bool GetHostileToActor(Actor* a_actor)
+		{
+			using func_t = decltype(&Actor::GetHostileToActor);
+			REL::Relocation<func_t> func{ REL::ID(1148686) };
+			return func(this, a_actor);
+		}
+
 		// members
 		NiTFlags<std::uint32_t, Actor> niFlags;								 // 2D0
 		float updateTargetTimer;											 // 2D4
