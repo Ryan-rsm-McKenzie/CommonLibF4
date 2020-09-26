@@ -163,6 +163,7 @@ namespace REL
 	}
 
 	inline constexpr std::uint8_t NOP = 0x90;
+	inline constexpr std::uint8_t RET = 0xC3;
 	inline constexpr std::uint8_t INT3 = 0xCC;
 
 	template <
