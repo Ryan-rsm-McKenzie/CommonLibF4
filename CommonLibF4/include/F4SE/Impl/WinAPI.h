@@ -80,6 +80,13 @@ namespace F4SE
 			void* a_process,
 			unsigned int a_exitCode) noexcept;
 
+		[[nodiscard]] void*(TlsGetValue)(
+			std::uint32_t a_tlsIndex) noexcept;
+
+		bool(TlsSetValue)(
+			std::uint32_t a_tlsIndex,
+			void* a_tlsValue) noexcept;
+
 		bool(VirtualFree)(
 			void* a_address,
 			std::size_t a_size,

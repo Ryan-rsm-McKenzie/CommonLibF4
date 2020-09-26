@@ -35,6 +35,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSResource.h
 	include/RE/Bethesda/BSScaleformManager.h
 	include/RE/Bethesda/BSScript.h
+	include/RE/Bethesda/BSShader.h
 	include/RE/Bethesda/BSSoundHandle.h
 	include/RE/Bethesda/BSSpring.h
 	include/RE/Bethesda/BSStringPool.h
@@ -99,6 +100,10 @@ set(headers ${headers}
 	include/RE/Havok/hkBaseObject.h
 	include/RE/Havok/hkBaseTypes.h
 	include/RE/Havok/hkHandle.h
+	include/RE/Havok/hkLifoAllocator.h
+	include/RE/Havok/hkMemoryAllocator.h
+	include/RE/Havok/hkMemoryRouter.h
+	include/RE/Havok/hkMemorySystem.h
 	include/RE/Havok/hknpAllHitsCollector.h
 	include/RE/Havok/hknpBodyId.h
 	include/RE/Havok/hknpClosestUniqueBodyIdHitCollector.h

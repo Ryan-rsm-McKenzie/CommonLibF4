@@ -198,6 +198,13 @@ namespace RE
 			return func(this, a_oldMem, a_newSize, a_alignment, a_alignmentRequired);
 		}
 
+		void RegisterMemoryManager()
+		{
+			using func_t = decltype(&MemoryManager::RegisterMemoryManager);
+			const REL::Relocation<func_t> func{ REL::ID(453212) };
+			return func(this);
+		}
+
 		// members
 		bool initialized{ false };								// 000
 		std::uint16_t numHeaps{ 0 };							// 002
@@ -264,6 +271,12 @@ namespace RE
 	{
 		auto& mem = MemoryManager::GetSingleton();
 		return mem.Reallocate(a_ptr, a_newSize, 0, false);
+	}
+
+	[[nodiscard]] inline void* aligned_realloc(void* a_ptr, std::size_t a_alignment, std::size_t a_newSize)
+	{
+		auto& mem = MemoryManager::GetSingleton();
+		return mem.Reallocate(a_ptr, a_newSize, static_cast<std::uint32_t>(a_alignment), true);
 	}
 
 	[[nodiscard]] inline void free(void* a_ptr)

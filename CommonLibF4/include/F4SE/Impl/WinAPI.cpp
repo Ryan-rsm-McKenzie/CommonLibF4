@@ -205,6 +205,24 @@ namespace F4SE
 				static_cast<::UINT>(a_exitCode));
 		}
 
+		void*(TlsGetValue)(
+			std::uint32_t a_tlsIndex) noexcept
+		{
+			return static_cast<void*>(
+				::TlsGetValue(
+					static_cast<::DWORD>(a_tlsIndex)));
+		}
+
+		bool(TlsSetValue)(
+			std::uint32_t a_tlsIndex,
+			void* a_tlsValue) noexcept
+		{
+			return static_cast<bool>(
+				::TlsSetValue(
+					static_cast<::DWORD>(a_tlsIndex),
+					static_cast<::LPVOID>(a_tlsValue)));
+		}
+
 		bool(VirtualFree)(
 			void* a_address,
 			std::size_t a_size,

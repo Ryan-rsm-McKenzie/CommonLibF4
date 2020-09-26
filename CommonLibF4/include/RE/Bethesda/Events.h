@@ -13,6 +13,24 @@ namespace RE
 	class TESObjectCELL;
 	class TESObjectREFR;
 
+	struct BSThreadEvent
+	{
+	public:
+		enum class Event
+		{
+			kOnStartup,
+			kOnShutdown
+		};
+
+		static void InitSDM()
+		{
+			using func_t = decltype(&BSThreadEvent::InitSDM);
+			REL::Relocation<func_t> func{ REL::ID(1425097) };
+			return func();
+		}
+	};
+	static_assert(std::is_empty_v<BSThreadEvent>);
+
 	enum class QuickContainerMode : std::int32_t
 	{
 		kLoot,
