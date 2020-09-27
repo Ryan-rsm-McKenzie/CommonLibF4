@@ -1468,7 +1468,7 @@ namespace RE
 		public:
 			// members
 			bool animatable;									// 00
-			float fduration;									// 04
+			float duration;										// 04
 			std::uint32_t keySize[21][2];						// 08
 			std::uint32_t tintColorKeySize;						// B0
 			std::uint32_t blurKeySize;							// B4
