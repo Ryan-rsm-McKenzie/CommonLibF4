@@ -1,5 +1,7 @@
 #pragma once
 
+#include "RE/Bethesda/MemoryManager.h"
+
 namespace RE
 {
 	class NiRefObject
@@ -8,10 +10,25 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::NiRefObject };
 		static constexpr auto VTABLE{ VTABLE::NiRefObject };
 
-		virtual ~NiRefObject();	 // 00
+		NiRefObject()
+		{
+			emplace_vtable(this);
+			REL::Relocation<std::uint32_t*> objects{ REL::ID(1161724) };
+			stl::atomic_ref myObjects{ *objects };
+			++myObjects;
+		}
+
+		virtual ~NiRefObject()	// 00
+		{
+			REL::Relocation<std::uint32_t*> objects{ REL::ID(1161724) };
+			stl::atomic_ref myObjects{ *objects };
+			--myObjects;
+		}
 
 		// add
 		virtual void DeleteThis() { delete this; }	// 01
+
+		F4_HEAP_REDEFINE_NEW(NiRefObject);
 
 		std::uint32_t DecRefCount()
 		{

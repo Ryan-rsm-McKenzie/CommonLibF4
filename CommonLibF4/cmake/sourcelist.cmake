@@ -18,6 +18,8 @@ set(sources ${sources}
 	include/RE/Bethesda/FormComponents.cpp
 	include/RE/Bethesda/InputEvent.cpp
 	include/RE/Bethesda/Settings.cpp
+	include/RE/NetImmerse/NiAVObject.cpp
+	include/RE/NetImmerse/NiObjectNET.cpp
 	include/RE/NetImmerse/NiRect.cpp
 	include/RE/Scaleform/GFx/GFx_Player.cpp
 	include/REL/Relocation.cpp

@@ -41,8 +41,16 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::NiObject };
 		static constexpr auto Ni_RTTI{ Ni_RTTI::NiObject };
 
+		NiObject() { emplace_vtable(this); }
+		virtual ~NiObject() = default;	// 00
+
 		// add
-		virtual const NiRTTI* GetRTTI() const;															   // 02
+		virtual const NiRTTI* GetRTTI() const  // 02
+		{
+			REL::Relocation<const NiRTTI*> rtti{ Ni_RTTI };
+			return rtti.get();
+		}
+
 		virtual NiNode* IsNode() { return nullptr; }													   // 04
 		virtual const NiNode* IsNode() const { return nullptr; }										   // 03
 		virtual NiSwitchNode* IsSwitchNode() { return nullptr; }										   // 05
@@ -69,17 +77,39 @@ namespace RE
 		virtual NiObject* CreateClone([[maybe_unused]] NiCloningProcess& a_cloneData) { return nullptr; }  // 1A
 		virtual void LoadBinary([[maybe_unused]] NiStream& a_stream) { return; }						   // 1B
 		virtual void LinkObject([[maybe_unused]] NiStream& a_stream) { return; }						   // 1C
-		virtual bool RegisterStreamables(NiStream& a_stream);											   // 1D
-		virtual void SaveBinary([[maybe_unused]] NiStream& a_stream) { return; }						   // 1E
-		virtual bool IsEqual(NiObject* a_object);														   // 1F
-		virtual void ProcessClone(NiCloningProcess& a_cloning);											   // 20
-		virtual void PostLinkObject([[maybe_unused]] NiStream& a_stream) { return; }					   // 21
-		virtual bool StreamCanSkip() { return false; }													   // 22
-		virtual const NiRTTI* GetStreamableRTTI() { return GetRTTI(); }									   // 23
-		virtual std::uint32_t GetBlockAllocationSize() const { return 0; }								   // 24
-		virtual NiObjectGroup* GetGroup() const { return nullptr; }										   // 25
-		virtual void SetGroup(NiObjectGroup*) { return; }												   // 26
-		virtual NiControllerManager* IsNiControllerManager() { return nullptr; }						   // 27
+
+		virtual bool RegisterStreamables(NiStream& a_stream)  // 1D
+		{
+			using func_t = decltype(&NiObject::RegisterStreamables);
+			REL::Relocation<func_t> func{ REL::ID(964047) };
+			return func(this, a_stream);
+		}
+
+		virtual void SaveBinary([[maybe_unused]] NiStream& a_stream) { return; }  // 1E
+
+		virtual bool IsEqual(NiObject* a_object)  // 1F
+		{
+			using func_t = decltype(&NiObject::IsEqual);
+			REL::Relocation<func_t> func{ REL::ID(698582) };
+			return func(this, a_object);
+		}
+
+		virtual void ProcessClone(NiCloningProcess& a_cloning)	// 20
+		{
+			using func_t = decltype(&NiObject::ProcessClone);
+			REL::Relocation<func_t> func{ REL::ID(1109360) };
+			return func(this, a_cloning);
+		}
+
+		virtual void PostLinkObject([[maybe_unused]] NiStream& a_stream) { return; }  // 21
+		virtual bool StreamCanSkip() { return false; }								  // 22
+		virtual const NiRTTI* GetStreamableRTTI() { return GetRTTI(); }				  // 23
+		virtual std::uint32_t GetBlockAllocationSize() const { return 0; }			  // 24
+		virtual NiObjectGroup* GetGroup() const { return nullptr; }					  // 25
+		virtual void SetGroup(NiObjectGroup*) { return; }							  // 26
+		virtual NiControllerManager* IsNiControllerManager() { return nullptr; }	  // 27
+
+		F4_HEAP_REDEFINE_NEW(NiObject);
 	};
 	static_assert(sizeof(NiObject) == 0x10);
 }

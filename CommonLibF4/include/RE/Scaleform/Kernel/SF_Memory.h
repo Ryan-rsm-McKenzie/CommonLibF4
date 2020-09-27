@@ -181,9 +181,9 @@ namespace RE
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \
-	[[nodiscard]] void* operator new(std::size_t a_count, std::align_val_t)                                             \
+	[[nodiscard]] void* operator new(std::size_t a_count, std::align_val_t a_alignment)                                 \
 	{                                                                                                                   \
-		const auto mem = RE::Scaleform::aligned_alloc(alignof(a_type), a_count);                                        \
+		const auto mem = RE::Scaleform::aligned_alloc(static_cast<std::size_t>(a_alignment), a_count);                  \
 		if (mem) {                                                                                                      \
 			return mem;                                                                                                 \
 		} else {                                                                                                        \
@@ -191,9 +191,9 @@ namespace RE
 		}                                                                                                               \
 	}                                                                                                                   \
                                                                                                                         \
-	[[nodiscard]] void* operator new[](std::size_t a_count, std::align_val_t)                                           \
+	[[nodiscard]] void* operator new[](std::size_t a_count, std::align_val_t a_alignment)                               \
 	{                                                                                                                   \
-		const auto mem = RE::Scaleform::aligned_alloc(alignof(a_type), a_count);                                        \
+		const auto mem = RE::Scaleform::aligned_alloc(static_cast<std::size_t>(a_alignment), a_count);                  \
 		if (mem) {                                                                                                      \
 			return mem;                                                                                                 \
 		} else {                                                                                                        \

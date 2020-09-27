@@ -6,9 +6,9 @@ namespace RE
 	{
 	public:
 		// members
-		float x;  // 0
-		float y;  // 4
-		float z;  // 8
+		float x{ 0.0F };  // 0
+		float y{ 0.0F };  // 4
+		float z{ 0.0F };  // 8
 	};
 	static_assert(sizeof(NiPoint3) == 0xC);
 

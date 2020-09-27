@@ -12,7 +12,7 @@ namespace RE
 		union
 		{
 			float fRadius;
-			std::int32_t iRadius;
+			std::int32_t iRadius{ 0 };
 		};	// 0C
 	};
 	static_assert(sizeof(NiBound) == 0x10);

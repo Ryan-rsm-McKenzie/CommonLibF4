@@ -121,6 +121,7 @@ set(headers ${headers}
 	include/RE/NetImmerse/NiAVObject.h
 	include/RE/NetImmerse/NiBinaryStream.h
 	include/RE/NetImmerse/NiBound.h
+	include/RE/NetImmerse/NiCollisionObject.h
 	include/RE/NetImmerse/NiColor.h
 	include/RE/NetImmerse/NiFile.h
 	include/RE/NetImmerse/NiFlags.h
@@ -141,6 +142,7 @@ set(headers ${headers}
 	include/RE/NetImmerse/NiTCollection.h
 	include/RE/NetImmerse/NiTDefaultAllocator.h
 	include/RE/NetImmerse/NiTexture.h
+	include/RE/NetImmerse/NiTimeController.h
 	include/RE/NetImmerse/NiTList.h
 	include/RE/NetImmerse/NiTListBase.h
 	include/RE/NetImmerse/NiTMap.h
