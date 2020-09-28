@@ -253,7 +253,7 @@ namespace RE
 	template <class T>
 	[[nodiscard]] T* aligned_alloc()
 	{
-		return static_cast<T*>(alignof(T), sizeof(T));
+		return static_cast<T*>(aligned_alloc(alignof(T), sizeof(T)));
 	}
 
 	[[nodiscard]] inline void* calloc(std::size_t a_num, std::size_t a_size)
