@@ -82,6 +82,13 @@ namespace RE
 		[[nodiscard]] std::string_view GetFilename() const noexcept { return { filename }; }
 		[[nodiscard]] std::uint16_t GetSmallFileCompileIndex() const noexcept { return smallFileCompileIndex; }
 
+		[[nodiscard]] std::uint32_t GetTESChunk()
+		{
+			using func_t = decltype(&TESFile::GetTESChunk);
+			REL::Relocation<func_t> func{ REL::ID(641361) };
+			return func(this);
+		}
+
 		// members
 		stl::enumeration<TES_RETURN_CODE, std::int32_t> lastError;		 // 000
 		TESFile* threadSafeParent;										 // 008

@@ -15,11 +15,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::NiNode };
 		static constexpr auto Ni_RTTI{ Ni_RTTI::NiNode };
 
-		NiNode() :
-			NiNode(0)
-		{}
-
-		NiNode(std::uint32_t a_numChildren) :
+		NiNode(std::uint32_t a_numChildren = 0) :
 			children(a_numChildren)
 		{
 			emplace_vtable(this);

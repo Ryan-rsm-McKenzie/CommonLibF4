@@ -318,57 +318,63 @@ namespace RE
 	[[nodiscard]] constexpr void* operator new(std::size_t, std::align_val_t, void* a_ptr) noexcept { return a_ptr; }   \
 	[[nodiscard]] constexpr void* operator new[](std::size_t, std::align_val_t, void* a_ptr) noexcept { return a_ptr; } \
                                                                                                                         \
-	void operator delete(void* a_ptr) { RE::free(a_ptr); }                                                              \
-	void operator delete[](void* a_ptr) { RE::free(a_ptr); }                                                            \
 	void operator delete(void* a_ptr, std::align_val_t) { RE::aligned_free(a_ptr); }                                    \
 	void operator delete[](void* a_ptr, std::align_val_t) { RE::aligned_free(a_ptr); }                                  \
-	void operator delete(void* a_ptr, std::size_t) { RE::free(a_ptr); }                                                 \
-	void operator delete[](void* a_ptr, std::size_t) { RE::free(a_ptr); }                                               \
 	void operator delete(void* a_ptr, std::size_t, std::align_val_t) { RE::aligned_free(a_ptr); }                       \
 	void operator delete[](void* a_ptr, std::size_t, std::align_val_t) { RE::aligned_free(a_ptr); }
 
-#define F4_HEAP_REDEFINE_NEW(a_type)                        \
-	[[nodiscard]] void* operator new(std::size_t a_count)   \
-	{                                                       \
-		const auto mem = RE::malloc(a_count);               \
-		if (mem) {                                          \
-			return mem;                                     \
-		} else {                                            \
-			stl::report_and_fail("out of memory"sv);        \
-		}                                                   \
-	}                                                       \
-                                                            \
-	[[nodiscard]] void* operator new[](std::size_t a_count) \
-	{                                                       \
-		const auto mem = RE::malloc(a_count);               \
-		if (mem) {                                          \
-			return mem;                                     \
-		} else {                                            \
-			stl::report_and_fail("out of memory"sv);        \
-		}                                                   \
-	}                                                       \
-                                                            \
+#define F4_HEAP_REDEFINE_NEW(a_type)                                      \
+	[[nodiscard]] void* operator new(std::size_t a_count)                 \
+	{                                                                     \
+		const auto mem = RE::malloc(a_count);                             \
+		if (mem) {                                                        \
+			return mem;                                                   \
+		} else {                                                          \
+			stl::report_and_fail("out of memory"sv);                      \
+		}                                                                 \
+	}                                                                     \
+                                                                          \
+	[[nodiscard]] void* operator new[](std::size_t a_count)               \
+	{                                                                     \
+		const auto mem = RE::malloc(a_count);                             \
+		if (mem) {                                                        \
+			return mem;                                                   \
+		} else {                                                          \
+			stl::report_and_fail("out of memory"sv);                      \
+		}                                                                 \
+	}                                                                     \
+                                                                          \
+	void operator delete(void* a_ptr) { RE::free(a_ptr); }                \
+	void operator delete[](void* a_ptr) { RE::free(a_ptr); }              \
+	void operator delete(void* a_ptr, std::size_t) { RE::free(a_ptr); }   \
+	void operator delete[](void* a_ptr, std::size_t) { RE::free(a_ptr); } \
+                                                                          \
 	F4_HEAP_REDEFINE_HELPER(a_type)
 
-#define F4_HEAP_REDEFINE_ALIGNED_NEW(a_type)                          \
-	[[nodiscard]] void* operator new(std::size_t a_count)             \
-	{                                                                 \
-		const auto mem = RE::aligned_alloc(alignof(a_type), a_count); \
-		if (mem) {                                                    \
-			return mem;                                               \
-		} else {                                                      \
-			stl::report_and_fail("out of memory"sv);                  \
-		}                                                             \
-	}                                                                 \
-                                                                      \
-	[[nodiscard]] void* operator new[](std::size_t a_count)           \
-	{                                                                 \
-		const auto mem = RE::aligned_alloc(alignof(a_type), a_count); \
-		if (mem) {                                                    \
-			return mem;                                               \
-		} else {                                                      \
-			stl::report_and_fail("out of memory"sv);                  \
-		}                                                             \
-	}                                                                 \
-                                                                      \
+#define F4_HEAP_REDEFINE_ALIGNED_NEW(a_type)                                      \
+	[[nodiscard]] void* operator new(std::size_t a_count)                         \
+	{                                                                             \
+		const auto mem = RE::aligned_alloc(alignof(a_type), a_count);             \
+		if (mem) {                                                                \
+			return mem;                                                           \
+		} else {                                                                  \
+			stl::report_and_fail("out of memory"sv);                              \
+		}                                                                         \
+	}                                                                             \
+                                                                                  \
+	[[nodiscard]] void* operator new[](std::size_t a_count)                       \
+	{                                                                             \
+		const auto mem = RE::aligned_alloc(alignof(a_type), a_count);             \
+		if (mem) {                                                                \
+			return mem;                                                           \
+		} else {                                                                  \
+			stl::report_and_fail("out of memory"sv);                              \
+		}                                                                         \
+	}                                                                             \
+                                                                                  \
+	void operator delete(void* a_ptr) { RE::aligned_free(a_ptr); }                \
+	void operator delete[](void* a_ptr) { RE::aligned_free(a_ptr); }              \
+	void operator delete(void* a_ptr, std::size_t) { RE::aligned_free(a_ptr); }   \
+	void operator delete[](void* a_ptr, std::size_t) { RE::aligned_free(a_ptr); } \
+                                                                                  \
 	F4_HEAP_REDEFINE_HELPER(a_type)
