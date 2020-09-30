@@ -168,6 +168,16 @@ namespace F4SE
 					static_cast<::LPCWSTR>(a_moduleName)));
 		}
 
+		void*(GetProcAddress)(
+			void* a_module,
+			const char* a_procName) noexcept
+		{
+			return static_cast<void*>(
+				::GetProcAddress(
+					static_cast<::HMODULE>(a_module),
+					static_cast<::LPCSTR>(a_procName)));
+		}
+
 		std::int32_t(MessageBox)(
 			void* a_wnd,
 			const char* a_text,

@@ -307,6 +307,35 @@ namespace REL
 	[[nodiscard]] constexpr bool operator>(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) > 0; }
 	[[nodiscard]] constexpr bool operator>=(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) >= 0; }
 
+	[[nodiscard]] inline std::optional<Version> get_file_version(stl::zwstring a_filename)
+	{
+		std::uint32_t dummy;
+		std::vector<char> buf(WinAPI::GetFileVersionInfoSize(a_filename.data(), std::addressof(dummy)));
+		if (buf.size() == 0) {
+			return std::nullopt;
+		}
+
+		if (!WinAPI::GetFileVersionInfo(a_filename.data(), 0, static_cast<std::uint32_t>(buf.size()), buf.data())) {
+			return std::nullopt;
+		}
+
+		void* verBuf{ nullptr };
+		std::uint32_t verLen{ 0 };
+		if (!WinAPI::VerQueryValue(buf.data(), L"\\StringFileInfo\\040904B0\\ProductVersion", std::addressof(verBuf), std::addressof(verLen))) {
+			return std::nullopt;
+		}
+
+		Version version;
+		std::wistringstream ss(
+			std::wstring(static_cast<const wchar_t*>(verBuf), verLen));
+		std::wstring token;
+		for (std::size_t i = 0; i < 4 && std::getline(ss, token, L'.'); ++i) {
+			version[i] = static_cast<std::uint16_t>(std::stoi(token));
+		}
+
+		return version;
+	}
+
 	class Segment
 	{
 	public:
@@ -398,27 +427,11 @@ namespace REL
 
 		void load_version()
 		{
-			std::uint32_t dummy;
-			std::vector<char> buf(WinAPI::GetFileVersionInfoSize(FILENAME.data(), std::addressof(dummy)));
-			if (buf.size() == 0) {
-				stl::report_and_fail("failed to obtain file version info size"sv);
-			}
-
-			if (!WinAPI::GetFileVersionInfo(FILENAME.data(), 0, static_cast<std::uint32_t>(buf.size()), buf.data())) {
-				stl::report_and_fail("failed to obtain file version info"sv);
-			}
-
-			void* verBuf{ nullptr };
-			std::uint32_t verLen{ 0 };
-			if (!WinAPI::VerQueryValue(buf.data(), L"\\StringFileInfo\\040904B0\\ProductVersion", std::addressof(verBuf), std::addressof(verLen))) {
-				stl::report_and_fail("failed to query value"sv);
-			}
-
-			std::wistringstream ss(
-				std::wstring(static_cast<const wchar_t*>(verBuf), verLen));
-			std::wstring token;
-			for (std::size_t i = 0; i < 4 && std::getline(ss, token, L'.'); ++i) {
-				_version[i] = static_cast<std::uint16_t>(std::stoi(token));
+			const auto version = get_file_version(FILENAME);
+			if (version) {
+				_version = *version;
+			} else {
+				stl::report_and_fail("failed to obtain file version"sv);
 			}
 		}
 

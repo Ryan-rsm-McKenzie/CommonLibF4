@@ -64,6 +64,10 @@ namespace F4SE
 		[[nodiscard]] void*(GetModuleHandle)(
 			const wchar_t* a_moduleName) noexcept;
 
+		[[nodiscard]] void*(GetProcAddress)(
+			void* a_module,
+			const char* a_procName) noexcept;
+
 		std::int32_t(MessageBox)(
 			void* a_wnd,
 			const char* a_text,
