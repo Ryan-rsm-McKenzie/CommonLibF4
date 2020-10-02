@@ -3,9 +3,8 @@ include(CMakeFindDependencyMacro)
 
 find_dependency(Boost
 	COMPONENTS
-		stacktrace_windbg
+		atomic
+		iostreams
 )
-find_dependency(fmt)
-find_dependency(frozen)
+find_dependency(span-lite)
 find_dependency(spdlog)
-find_dependency(tomlplusplus)

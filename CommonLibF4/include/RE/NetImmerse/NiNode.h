@@ -7,7 +7,7 @@
 
 namespace RE
 {
-	class NiNode :
+	class __declspec(novtable) NiNode :
 		public NiAVObject  // 000
 	{
 	public:
@@ -15,7 +15,11 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::NiNode };
 		static constexpr auto Ni_RTTI{ Ni_RTTI::NiNode };
 
-		NiNode(std::uint32_t a_numChildren = 0) :
+		NiNode() :
+			NiNode(0)
+		{}
+
+		NiNode(std::uint32_t a_numChildren) :
 			children(a_numChildren)
 		{
 			emplace_vtable(this);

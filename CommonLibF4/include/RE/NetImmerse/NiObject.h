@@ -33,7 +33,7 @@ namespace RE
 
 	struct NiRTTI;
 
-	class NiObject :
+	class __declspec(novtable) NiObject :
 		public NiRefObject	// 00
 	{
 	public:

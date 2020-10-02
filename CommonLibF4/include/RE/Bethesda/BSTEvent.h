@@ -16,7 +16,7 @@ namespace RE
 	class BSTEventSource;
 
 	template <class Event>
-	class BSTEventSink
+	class __declspec(novtable) BSTEventSink
 	{
 	public:
 		virtual ~BSTEventSink() = default;	// 00

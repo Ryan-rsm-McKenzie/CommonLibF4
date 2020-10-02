@@ -4,7 +4,7 @@
 
 namespace RE
 {
-	class hkLifoAllocator :
+	class __declspec(novtable) hkLifoAllocator :
 		public hkMemoryAllocator  // 00
 	{
 	public:
@@ -12,6 +12,8 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::hkLifoAllocator };
 
 		class Implementation;
+
+		hkLifoAllocator() { emplace_vtable(this); }
 
 		// override (hkMemoryAllocator)
 		void* BlockAlloc(std::int32_t a_numBytesIn) override  // 01

@@ -2,7 +2,7 @@
 
 namespace RE
 {
-	class hkMemoryAllocator
+	class __declspec(novtable) hkMemoryAllocator
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::hkMemoryAllocator };

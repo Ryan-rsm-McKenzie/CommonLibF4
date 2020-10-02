@@ -28,7 +28,7 @@ namespace RE
 		};
 		static_assert(sizeof(SysAllocBase) == 0x8);
 
-		class SysAlloc :
+		class __declspec(novtable) SysAlloc :
 			public SysAllocBase	 // 0
 		{
 		public:

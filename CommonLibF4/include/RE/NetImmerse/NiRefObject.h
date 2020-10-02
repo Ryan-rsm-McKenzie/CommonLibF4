@@ -4,7 +4,7 @@
 
 namespace RE
 {
-	class NiRefObject
+	class __declspec(novtable) NiRefObject
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::NiRefObject };

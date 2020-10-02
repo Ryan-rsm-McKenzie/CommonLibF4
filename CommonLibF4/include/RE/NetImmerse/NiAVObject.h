@@ -15,7 +15,7 @@ namespace RE
 	class NiUpdateData;
 	class PerformOpFunc;
 
-	class NiAVObject :
+	class __declspec(novtable) NiAVObject :
 		public NiObjectNET	// 000
 	{
 	public:

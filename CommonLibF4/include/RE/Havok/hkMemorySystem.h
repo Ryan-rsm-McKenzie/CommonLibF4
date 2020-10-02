@@ -10,7 +10,7 @@ namespace RE
 	class hkMemorySnapshot;
 	class hkOstream;
 
-	class hkMemorySystem
+	class __declspec(novtable) hkMemorySystem
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::hkMemorySystem };
