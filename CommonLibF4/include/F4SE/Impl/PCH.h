@@ -12,6 +12,7 @@
 #include <execution>
 #include <filesystem>
 #include <functional>
+#include <initializer_list>
 #include <iterator>
 #include <limits>
 #include <map>
@@ -34,6 +35,7 @@ static_assert(
 #include <boost/atomic.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/stl_interfaces/sequence_container_interface.hpp>
 #include <nonstd/span.hpp>
 #include <spdlog/spdlog.h>
 
@@ -139,7 +141,9 @@ namespace F4SE
 					destroy_at(std::addressof(elem));
 				}
 			} else {
-				a_ptr->~T();
+				if (!std::is_trivially_destructible_v<T>) {
+					a_ptr->~T();
+				}
 			}
 		}
 

@@ -10,6 +10,7 @@
     "boost-iostreams",
     "boost-iterator",
     "span-lite",
-    "spdlog"
+    "spdlog",
+    "stl-interfaces"
   ]
 }

@@ -25,8 +25,9 @@ find_package(Boost
 		atomic
 		iostreams
 )
-find_package(span-lite REQUIRED)
-find_package(spdlog REQUIRED)
+find_package(span-lite REQUIRED CONFIG)
+find_package(spdlog REQUIRED CONFIG)
+find_package(stl_interfaces REQUIRED CONFIG)
 
 # ---- Add source files ----
 
@@ -110,6 +111,7 @@ target_link_libraries(CommonLibF4
 		Boost::iostreams
 		nonstd::span-lite
 		spdlog::spdlog
+		stl_interfaces::stl_interfaces
 		Version.lib
 )
 

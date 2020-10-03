@@ -12,6 +12,7 @@
     "boost-regex",
     "robin-hood-hashing",
     "span-lite",
-    "spdlog"
+    "spdlog",
+    "stl-interfaces"
   ]
 }
