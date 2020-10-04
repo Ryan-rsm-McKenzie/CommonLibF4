@@ -1,9 +1,11 @@
 #pragma once
 
+#ifdef F4SE_SUPPORT_XBYAK
 namespace Xbyak
 {
 	class CodeGenerator;
 }
+#endif
 
 namespace F4SE
 {
@@ -112,7 +114,7 @@ namespace F4SE
 		}
 
 #ifdef F4SE_SUPPORT_XBYAK
-		[[nodiscard]] void* allocate(Xbyak::CodeGenerator& a_code);
+		[[nodiscard]] void* allocate(const Xbyak::CodeGenerator& a_code);
 #endif
 
 		template <class T>

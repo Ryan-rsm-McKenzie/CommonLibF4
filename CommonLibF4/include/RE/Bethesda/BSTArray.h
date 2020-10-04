@@ -198,6 +198,7 @@ namespace RE
 		using reverse_iterator = std::reverse_iterator<iterator>;
 		using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+		using super::operator=;
 		using super::operator[];
 
 		using super::assign;
@@ -253,7 +254,7 @@ namespace RE
 				_allocator = std::move(a_rhs._allocator);
 				_size = std::exchange(a_rhs._size, 0);
 			} else {
-				reserve(a_rhs.size());
+				reserve_exact(a_rhs.size());
 				std::for_each(
 					a_rhs.begin(),
 					a_rhs.end(),
@@ -298,7 +299,7 @@ namespace RE
 					_allocator = std::move(a_rhs._allocator);
 					_size = std::exchange(a_rhs._size, 0);
 				} else {
-					reserve(a_rhs.size());
+					reserve_exact(a_rhs.size());
 					std::for_each(
 						a_rhs.begin(),
 						a_rhs.end(),
@@ -321,13 +322,13 @@ namespace RE
 		void reserve(size_type a_capacity)
 		{
 			if (a_capacity > capacity()) {
-				set_capacity(a_capacity);
+				reserve_exact(a_capacity);
 			}
 		}
 
 		[[nodiscard]] size_type capacity() const noexcept { return _allocator.capacity(); }
 
-		void shrink_to_fit() { set_capacity(size()); }
+		void shrink_to_fit() { reserve_exact(size()); }
 
 		template <
 			class ForwardIt,
@@ -354,16 +355,16 @@ namespace RE
 		template <class... Args>
 		iterator emplace(const_iterator a_pos, Args&&... a_args)
 		{
-			size_type incr = 1;
 			const auto pos = static_cast<size_type>(std::distance(cbegin(), a_pos));
 			if (pos < size()) {
 				emplace_back(std::move(back()));
 				std::move_backward(begin() + pos, end() - 2, end() - 1);
-				incr = 0;
+			} else {
+				reserve_auto(size() + 1);
+				_size += 1;
 			}
 
 			stl::construct_at(data() + pos, std::forward<Args>(a_args)...);
-			_size += incr;
 			return begin() + pos;
 		}
 
@@ -405,30 +406,15 @@ namespace RE
 			return const_cast<pointer>(std::addressof(*a_iter));
 		}
 
-		void resize_impl(size_type a_count, const value_type* a_value)
+		void reserve_auto(size_type a_capacity)
 		{
-			if (a_count < size()) {
-				erase(begin() + a_count, end());
-			} else if (a_count > size()) {
-				reserve(a_count);
-				stl::span range{ data() + _size, a_count - _size };
-				if (a_value) {
-					std::for_each(
-						range.begin(),
-						range.end(),
-						[=](auto& a_elem) {
-							stl::construct_at(std::addressof(a_elem), *a_value);
-						});
-				} else {
-					std::uninitialized_default_construct(
-						range.begin(),
-						range.end());
-				}
-				_size = a_count;
+			if (a_capacity > capacity()) {
+				const auto grow = std::max(a_capacity, capacity() * 2);
+				reserve_exact(grow);
 			}
 		}
 
-		void set_capacity(size_type a_capacity)
+		void reserve_exact(size_type a_capacity)
 		{
 			assert(a_capacity >= size());
 			if (a_capacity == capacity()) {
@@ -445,6 +431,29 @@ namespace RE
 				_allocator.deallocate(odata);
 				_allocator.set_data(ndata);
 				_allocator.set_capacity(a_capacity, a_capacity * sizeof(value_type));
+			}
+		}
+
+		void resize_impl(size_type a_count, const value_type* a_value)
+		{
+			if (a_count < size()) {
+				erase(begin() + a_count, end());
+			} else if (a_count > size()) {
+				reserve_auto(a_count);
+				stl::span range{ data() + _size, a_count - _size };
+				if (a_value) {
+					std::for_each(
+						range.begin(),
+						range.end(),
+						[=](auto& a_elem) {
+							stl::construct_at(std::addressof(a_elem), *a_value);
+						});
+				} else {
+					std::uninitialized_default_construct(
+						range.begin(),
+						range.end());
+				}
+				_size = a_count;
 			}
 		}
 

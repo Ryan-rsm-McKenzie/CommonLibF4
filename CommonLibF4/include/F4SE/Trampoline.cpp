@@ -53,7 +53,7 @@
 namespace F4SE
 {
 #ifdef F4SE_SUPPORT_XBYAK
-	void* Trampoline::allocate(Xbyak::CodeGenerator& a_code)
+	void* Trampoline::allocate(const Xbyak::CodeGenerator& a_code)
 	{
 		auto result = do_allocate(a_code.getSize());
 		log_stats();
