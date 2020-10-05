@@ -60,7 +60,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSLargeRefData) == 0x60);
 
-	class TESWorldSpace :
+	class __declspec(novtable) TESWorldSpace :
 		public TESForm,		 // 000
 		public TESFullName,	 // 020
 		public TESTexture	 // 030

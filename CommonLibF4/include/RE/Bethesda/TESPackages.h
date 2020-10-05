@@ -78,7 +78,7 @@ namespace RE
 	};
 	static_assert(sizeof(PackageEventAction) == 0x18);
 
-	class TESPackage :
+	class __declspec(novtable) TESPackage :
 		public TESForm	// 00
 	{
 	public:
@@ -111,7 +111,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESPackage) == 0xC8);
 
-	class AlarmPackage :
+	class __declspec(novtable) AlarmPackage :
 		public TESPackage  // 00
 	{
 	public:
@@ -125,7 +125,7 @@ namespace RE
 	};
 	static_assert(sizeof(AlarmPackage) == 0xE0);
 
-	class DialoguePackage :
+	class __declspec(novtable) DialoguePackage :
 		public TESPackage  // 00
 	{
 	public:
@@ -146,7 +146,7 @@ namespace RE
 	};
 	static_assert(sizeof(DialoguePackage) == 0xE8);
 
-	class FleePackage :
+	class __declspec(novtable) FleePackage :
 		public TESPackage  // 000
 	{
 	public:
@@ -187,7 +187,7 @@ namespace RE
 	};
 	static_assert(sizeof(SpectatorThreatInfo) == 0x40);
 
-	class SpectatorPackage :
+	class __declspec(novtable) SpectatorPackage :
 		public TESPackage  // 000
 	{
 	public:
@@ -207,7 +207,7 @@ namespace RE
 	};
 	static_assert(sizeof(SpectatorPackage) == 0x110);
 
-	class TrespassPackage :
+	class __declspec(novtable) TrespassPackage :
 		public TESPackage  // 00
 	{
 	public:

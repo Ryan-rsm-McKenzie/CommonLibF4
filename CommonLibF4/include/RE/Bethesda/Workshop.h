@@ -24,7 +24,7 @@ namespace RE
 		};
 		static_assert(sizeof(DeletedItemInfo) == 0x8);
 
-		class ExtraData :
+		class __declspec(novtable) ExtraData :
 			public BSExtraData	// 00
 		{
 		public:

@@ -10,7 +10,7 @@ namespace RE
 {
 	namespace Scaleform
 	{
-		class MemoryHeap :
+		class __declspec(novtable) MemoryHeap :
 			public ListNode<MemoryHeap>	 // 08
 		{
 		public:
@@ -41,7 +41,7 @@ namespace RE
 			};
 			static_assert(sizeof(HeapInfo) == 0x50);
 
-			struct HeapVisitor
+			struct __declspec(novtable) HeapVisitor
 			{
 			public:
 				virtual ~HeapVisitor() = default;  // 00
@@ -51,7 +51,7 @@ namespace RE
 			};
 			static_assert(sizeof(HeapVisitor) == 0x8);
 
-			struct LimitHandler
+			struct __declspec(novtable) LimitHandler
 			{
 			public:
 				virtual ~LimitHandler() = default;	// 00
@@ -62,7 +62,7 @@ namespace RE
 			};
 			static_assert(sizeof(LimitHandler) == 0x8);
 
-			struct HeapTracer
+			struct __declspec(novtable) HeapTracer
 			{
 			public:
 				virtual ~HeapTracer() = default;  // 00

@@ -7,7 +7,7 @@ namespace RE
 {
 	class hknpBSWorld;
 
-	class hknpUniqueBodyIdHitCollector :
+	class __declspec(novtable) hknpUniqueBodyIdHitCollector :
 		public hknpAllHitsCollector	 // 000
 	{
 	public:

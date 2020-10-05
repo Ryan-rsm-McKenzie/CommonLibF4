@@ -5,7 +5,7 @@
 
 namespace RE
 {
-	class NiFile :
+	class __declspec(novtable) NiFile :
 		public NiBinaryStream  // 00
 	{
 	public:

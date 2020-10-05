@@ -9,7 +9,7 @@ namespace RE
 	class NiObjectNET;
 	class NiUpdateData;
 
-	class NiTimeController :
+	class __declspec(novtable) NiTimeController :
 		public NiObject	 // 00
 	{
 	public:

@@ -27,7 +27,7 @@ namespace RE
 
 	struct BaseTreeData;
 
-	class TESObject :
+	class __declspec(novtable) TESObject :
 		public TESForm	// 00
 	{
 	public:
@@ -61,7 +61,7 @@ namespace RE
 	};
 	static_assert(sizeof(NiNPShortPoint3) == 0x6);
 
-	class TESBoundObject :
+	class __declspec(novtable) TESBoundObject :
 		public TESObject  // 00
 	{
 	public:
@@ -105,7 +105,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESBoundObject) == 0x68);
 
-	class BGSComponent :
+	class __declspec(novtable) BGSComponent :
 		public TESBoundObject,		// 00
 		public TESFullName,			// 68
 		public TESValueForm,		// 78
@@ -122,7 +122,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSComponent) == 0xA8);
 
-	class BGSAcousticSpace :
+	class __declspec(novtable) BGSAcousticSpace :
 		public TESBoundObject  // 00
 	{
 	public:
@@ -139,7 +139,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAcousticSpace) == 0x88);
 
-	class TESObjectARMO :
+	class __declspec(novtable) TESObjectARMO :
 		public TESBoundObject,			   // 000
 		public TESFullName,				   // 068
 		public TESRaceForm,				   // 078
@@ -159,7 +159,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::TESObjectARMO };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kARMO };
 
-		struct InstanceData :
+		struct __declspec(novtable) InstanceData :
 			public TBO_InstanceData	 // 00
 		{
 		public:
@@ -219,7 +219,7 @@ namespace RE
 	};
 	static_assert(sizeof(OBJ_BOOK) == 0x18);
 
-	class TESObjectBOOK :
+	class __declspec(novtable) TESObjectBOOK :
 		public TESBoundObject,			   // 000
 		public TESFullName,				   // 068
 		public BGSModelMaterialSwap,	   // 078
@@ -245,7 +245,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectBOOK) == 0x1A8);
 
-	class TESObjectMISC :
+	class __declspec(novtable) TESObjectMISC :
 		public TESBoundObject,			   // 000
 		public TESFullName,				   // 068
 		public BGSModelMaterialSwap,	   // 078
@@ -284,7 +284,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectSTATData) == 0x18);
 
-	class TESObjectSTAT :
+	class __declspec(novtable) TESObjectSTAT :
 		public TESBoundObject,		  // 00
 		public BGSModelMaterialSwap,  // 68
 		public BGSPropertySheet,	  // A8
@@ -301,7 +301,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectSTAT) == 0xE8);
 
-	class BGSStaticCollection :
+	class __declspec(novtable) BGSStaticCollection :
 		public TESBoundObject,		 // 00
 		public BGSModelMaterialSwap	 // 68
 	{
@@ -333,7 +333,7 @@ namespace RE
 	};
 	static_assert(sizeof(MOVABLE_STATIC_DATA) == 0x1);
 
-	class BGSMovableStatic :
+	class __declspec(novtable) BGSMovableStatic :
 		public TESObjectSTAT,			   // 000
 		public BGSDestructibleObjectForm,  // 0E8
 		public BGSKeywordForm			   // 0F8
@@ -349,7 +349,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMovableStatic) == 0x128);
 
-	class TESGrass :
+	class __declspec(novtable) TESGrass :
 		public TESBoundObject,	// 00
 		public TESModel			// 68
 	{
@@ -429,7 +429,7 @@ namespace RE
 	};
 	static_assert(sizeof(OBJ_TREE) == 0x30);
 
-	class TESObjectTREE :
+	class __declspec(novtable) TESObjectTREE :
 		public TESBoundObject,		  // 000
 		public BGSModelMaterialSwap,  // 068
 		public TESFullName,			  // 0A8
@@ -449,7 +449,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectTREE) == 0x118);
 
-	class TESObjectWEAP :
+	class __declspec(novtable) TESObjectWEAP :
 		public TESBoundObject,			   // 000
 		public TESFullName,				   // 068
 		public BGSModelMaterialSwap,	   // 078
@@ -488,7 +488,7 @@ namespace RE
 		};
 		static_assert(sizeof(RangedData) == 0x30);
 
-		struct InstanceData :
+		struct __declspec(novtable) InstanceData :
 			public TBO_InstanceData	 // 000
 		{
 		public:
@@ -551,7 +551,7 @@ namespace RE
 		};
 		static_assert(sizeof(InstanceData) == 0x138);
 
-		struct Data :
+		struct __declspec(novtable) Data :
 			public InstanceData	 // 000
 		{
 		public:
@@ -580,7 +580,7 @@ namespace RE
 	};
 	static_assert(sizeof(AMMO_DATA) == 0x18);
 
-	class TESAmmo :
+	class __declspec(novtable) TESAmmo :
 		public TESBoundObject,			   // 000
 		public TESFullName,				   // 068
 		public BGSModelMaterialSwap,	   // 078
@@ -605,7 +605,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESAmmo) == 0x1B0);
 
-	class TESKey :
+	class __declspec(novtable) TESKey :
 		public TESObjectMISC  // 000
 	{
 	public:
@@ -615,7 +615,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESKey) == 0x168);
 
-	class BGSIdleMarker :
+	class __declspec(novtable) BGSIdleMarker :
 		public TESBoundObject,	  // 00
 		public BGSKeywordForm,	  // 68
 		public TESModel,		  // 88
@@ -632,7 +632,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSIdleMarker) == 0xE8);
 
-	class BGSNote :
+	class __declspec(novtable) BGSNote :
 		public TESBoundObject,		   // 000
 		public TESWeightForm,		   // 068
 		public TESValueForm,		   // 078
@@ -689,7 +689,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSProjectileData) == 0x90);
 
-	class BGSProjectile :
+	class __declspec(novtable) BGSProjectile :
 		public TESBoundObject,			  // 000
 		public TESFullName,				  // 068
 		public TESModel,				  // 078
@@ -728,7 +728,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSHazardData) == 0x48);
 
-	class BGSHazard :
+	class __declspec(novtable) BGSHazard :
 		public TESBoundObject,				// 000
 		public TESFullName,					// 068
 		public TESModel,					// 078
@@ -745,7 +745,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSHazard) == 0x108);
 
-	class BGSBendableSpline :
+	class __declspec(novtable) BGSBendableSpline :
 		public TESBoundObject  // 00
 	{
 	public:
@@ -780,7 +780,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSBendableSpline) == 0x90);
 
-	class TESSoulGem :
+	class __declspec(novtable) TESSoulGem :
 		public TESObjectMISC  // 000
 	{
 	public:
@@ -795,7 +795,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESSoulGem) == 0x178);
 
-	class TESLevItem :
+	class __declspec(novtable) TESLevItem :
 		public TESBoundObject,	// 00
 		public TESLeveledList	// 68
 	{
@@ -806,7 +806,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESLevItem) == 0x98);
 
-	class TESLevSpell :
+	class __declspec(novtable) TESLevSpell :
 		public TESBoundObject,	// 00
 		public TESLeveledList	// 68
 	{
@@ -843,7 +843,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSExplosionData) == 0x70);
 
-	class BGSExplosion :
+	class __declspec(novtable) BGSExplosion :
 		public TESBoundObject,				// 000
 		public TESFullName,					// 068
 		public TESModel,					// 078
@@ -870,7 +870,7 @@ namespace RE
 	};
 	static_assert(sizeof(ADDON_DATA) == 0x4);
 
-	class BGSAddonNode :
+	class __declspec(novtable) BGSAddonNode :
 		public TESBoundObject,		 // 00
 		public BGSModelMaterialSwap	 // 68
 	{
@@ -900,7 +900,7 @@ namespace RE
 	};
 	static_assert(sizeof(OBJ_ARMA) == 0xC);
 
-	class TESObjectARMA :
+	class __declspec(novtable) TESObjectARMA :
 		public TESObject,		   // 000
 		public TESRaceForm,		   // 020
 		public BGSBipedObjectForm  // 030
@@ -924,7 +924,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectARMA) == 0x228);
 
-	class BGSArtObject :
+	class __declspec(novtable) BGSArtObject :
 		public TESBoundObject,		 // 00
 		public BGSKeywordForm,		 // 68
 		public BGSModelMaterialSwap	 // 88
@@ -962,7 +962,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSDualCastDataDEF) == 0x30);
 
-	class BGSDualCastData :
+	class __declspec(novtable) BGSDualCastData :
 		public TESBoundObject  // 00
 	{
 	public:

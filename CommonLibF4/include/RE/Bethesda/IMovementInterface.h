@@ -14,7 +14,7 @@ namespace RE
 		struct MaxSpeeds;
 	}
 
-	struct IMovementInterface
+	struct __declspec(novtable) IMovementInterface
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::IMovementInterface };
@@ -24,7 +24,7 @@ namespace RE
 	};
 	static_assert(sizeof(IMovementInterface) == 0x8);
 
-	struct IMovementState :
+	struct __declspec(novtable) IMovementState :
 		public IMovementInterface  // 0
 	{
 	public:
@@ -88,7 +88,7 @@ namespace RE
 	};
 	static_assert(sizeof(PlayerControlsMovementData) == 0x40);
 
-	struct IMovementPlayerControls :
+	struct __declspec(novtable) IMovementPlayerControls :
 		public IMovementInterface  // 00
 	{
 	public:
@@ -100,7 +100,7 @@ namespace RE
 	};
 	static_assert(sizeof(IMovementPlayerControls) == 0x8);
 
-	class IMovementPlayerControlsFilter :
+	class __declspec(novtable) IMovementPlayerControlsFilter :
 		public IMovementInterface  // 00
 	{
 	public:

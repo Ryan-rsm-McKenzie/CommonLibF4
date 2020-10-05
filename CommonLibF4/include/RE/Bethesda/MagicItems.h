@@ -32,7 +32,7 @@ namespace RE
 	};
 	static_assert(sizeof(EffectItem) == 0x28);
 
-	class MagicItem :
+	class __declspec(novtable) MagicItem :
 		public TESBoundObject,	// 00
 		public TESFullName,		// 68
 		public BGSKeywordForm	// 70
@@ -102,7 +102,7 @@ namespace RE
 	};
 	static_assert(sizeof(MagicItem) == 0xD0);
 
-	class EnchantmentItem :
+	class __declspec(novtable) EnchantmentItem :
 		public MagicItem  // 00
 	{
 	public:
@@ -130,7 +130,7 @@ namespace RE
 	};
 	static_assert(sizeof(EnchantmentItem) == 0x100);
 
-	class SpellItem :
+	class __declspec(novtable) SpellItem :
 		public MagicItem,			  // 000
 		public BGSEquipType,		  // 0D0
 		public BGSMenuDisplayObject,  // 0E0
@@ -161,7 +161,7 @@ namespace RE
 	};
 	static_assert(sizeof(SpellItem) == 0x130);
 
-	class ScrollItem :
+	class __declspec(novtable) ScrollItem :
 		public SpellItem,				   // 000
 		public BGSModelMaterialSwap,	   // 130
 		public BGSDestructibleObjectForm,  // 170
@@ -176,7 +176,7 @@ namespace RE
 	};
 	static_assert(sizeof(ScrollItem) == 0x1B8);
 
-	class IngredientItem :
+	class __declspec(novtable) IngredientItem :
 		public MagicItem,				   // 000
 		public BGSModelMaterialSwap,	   //0D0
 		public TESIcon,					   // 110
@@ -206,7 +206,7 @@ namespace RE
 	};
 	static_assert(sizeof(IngredientItem) == 0x188);
 
-	class AlchemyItem :
+	class __declspec(novtable) AlchemyItem :
 		public MagicItem,				   // 000
 		public BGSModelMaterialSwap,	   // 0D0
 		public TESIcon,					   // 110

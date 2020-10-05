@@ -4,7 +4,7 @@ namespace RE
 {
 	class InputEvent;
 
-	class BSInputEventReceiver
+	class __declspec(novtable) BSInputEventReceiver
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSInputEventReceiver };

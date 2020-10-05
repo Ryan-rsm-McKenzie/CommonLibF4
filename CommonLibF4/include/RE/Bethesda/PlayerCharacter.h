@@ -198,7 +198,7 @@ namespace RE
 	};
 	static_assert(sizeof(XPChangeData) == 0x10);
 
-	class PlayerCharacter :
+	class __declspec(novtable) PlayerCharacter :
 		public Actor,												  // 000
 		public BSTEventSource<BGSActorCellEvent>,					  // 4C8
 		public BSTEventSource<BGSActorDeathEvent>,					  // 520

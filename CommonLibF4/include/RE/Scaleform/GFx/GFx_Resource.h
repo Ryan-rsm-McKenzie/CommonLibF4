@@ -73,7 +73,7 @@ namespace RE
 					kSubImage
 				};
 
-				class KeyInterface
+				class __declspec(novtable) KeyInterface
 				{
 				public:
 					virtual ~KeyInterface() = default;	// 00
@@ -94,7 +94,7 @@ namespace RE
 			};
 			static_assert(sizeof(ResourceKey) == 0x10);
 
-			class ResourceLibBase :
+			class __declspec(novtable) ResourceLibBase :
 				public RefCountBase<ResourceLibBase, 2>	 // 00
 			{
 			public:
@@ -105,7 +105,7 @@ namespace RE
 			};
 			static_assert(sizeof(ResourceLibBase) == 0x10);
 
-			class Resource :
+			class __declspec(novtable) Resource :
 				public NewOverrideBase<2>  // 00
 			{
 			public:

@@ -45,7 +45,7 @@ namespace RE
 		struct LogEvent;
 		struct StatsEvent;
 
-		class ICachedErrorMessage
+		class __declspec(novtable) ICachedErrorMessage
 		{
 		public:
 			static constexpr auto RTTI{ RTTI::BSScript__ICachedErrorMessage };
@@ -58,7 +58,7 @@ namespace RE
 		};
 		static_assert(sizeof(ICachedErrorMessage) == 0x8);
 
-		class ErrorLogger :
+		class __declspec(novtable) ErrorLogger :
 			public BSTEventSource<LogEvent>	 // 08
 		{
 		public:
@@ -112,7 +112,7 @@ namespace RE
 		};
 		static_assert(sizeof(TypeInfo) == 0x8);
 
-		class IVirtualMachine :
+		class __declspec(novtable) IVirtualMachine :
 			public BSIntrusiveRefCounted  // 08
 		{
 		public:
@@ -186,7 +186,7 @@ namespace RE
 		};
 		static_assert(sizeof(IVirtualMachine) == 0x10);
 
-		class IComplexType :
+		class __declspec(novtable) IComplexType :
 			public BSIntrusiveRefCounted  // 08
 		{
 		public:
@@ -212,7 +212,7 @@ namespace RE
 		};
 		static_assert(sizeof(PropertyGroupInfo) == 0x38);
 
-		class ObjectTypeInfo :
+		class __declspec(novtable) ObjectTypeInfo :
 			public IComplexType	 // 00
 		{
 		public:

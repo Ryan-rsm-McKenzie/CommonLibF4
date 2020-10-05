@@ -47,7 +47,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSScaleformRenderer) == 0x398);
 
-	class BSScaleformManager :
+	class __declspec(novtable) BSScaleformManager :
 		public BSTEventSink<SFRendererInitializedEvent>,  // 00
 		public BSTSingletonSDM<BSScaleformManager>		  // 08
 	{

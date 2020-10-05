@@ -20,7 +20,7 @@ namespace RE
 		std::uint32_t a;
 	};
 
-	class Setting
+	class __declspec(novtable) Setting
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::Setting };
@@ -151,7 +151,7 @@ namespace RE
 	static_assert(sizeof(Setting) == 0x18);
 
 	template <class T>
-	class SettingT :
+	class __declspec(novtable) SettingT :
 		public Setting	// 00
 	{
 	public:
@@ -170,7 +170,7 @@ namespace RE
 	extern template class SettingT<RegSettingCollection>;
 
 	template <class T>
-	class SettingCollection
+	class __declspec(novtable) SettingCollection
 	{
 	public:
 		virtual ~SettingCollection() = default;	 // 00
@@ -194,7 +194,7 @@ namespace RE
 	extern template class SettingCollection<Setting>;
 
 	template <class T>
-	class SettingCollectionMap :
+	class __declspec(novtable) SettingCollectionMap :
 		public SettingCollection<T>	 // 000
 	{
 	public:
@@ -205,7 +205,7 @@ namespace RE
 	extern template class SettingCollectionMap<Setting>;
 
 	template <class T>
-	class SettingCollectionList :
+	class __declspec(novtable) SettingCollectionList :
 		public SettingCollection<T>
 	{
 	public:
@@ -215,7 +215,7 @@ namespace RE
 
 	extern template class SettingCollectionList<Setting>;
 
-	class GameSettingCollection :
+	class __declspec(novtable) GameSettingCollection :
 		public SettingCollectionMap<Setting>  // 000
 	{
 	public:
@@ -230,7 +230,7 @@ namespace RE
 	};
 	static_assert(sizeof(GameSettingCollection) == 0x138);
 
-	class INISettingCollection :
+	class __declspec(novtable) INISettingCollection :
 		public SettingCollectionList<Setting>  // 000
 	{
 	public:
@@ -245,7 +245,7 @@ namespace RE
 	};
 	static_assert(sizeof(INISettingCollection) == 0x128);
 
-	class INIPrefSettingCollection :
+	class __declspec(novtable) INIPrefSettingCollection :
 		public INISettingCollection	 // 000
 	{
 	public:

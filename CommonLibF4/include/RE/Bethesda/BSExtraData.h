@@ -229,7 +229,7 @@ namespace RE
 
 	class BGSLocation;
 
-	class BSExtraData
+	class __declspec(novtable) BSExtraData
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSExtraData };
@@ -258,7 +258,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSExtraData) == 0x18);
 
-	class ExtraLocation :
+	class __declspec(novtable) ExtraLocation :
 		public BSExtraData	// 00
 	{
 	public:

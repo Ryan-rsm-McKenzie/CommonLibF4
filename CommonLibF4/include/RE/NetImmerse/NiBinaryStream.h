@@ -2,7 +2,7 @@
 
 namespace RE
 {
-	class NiBinaryStream
+	class __declspec(novtable) NiBinaryStream
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::NiBinaryStream };

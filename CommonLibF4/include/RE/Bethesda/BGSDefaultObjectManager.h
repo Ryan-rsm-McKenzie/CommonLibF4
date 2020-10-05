@@ -6,7 +6,7 @@
 
 namespace RE
 {
-	class BGSDefaultObjectManager :
+	class __declspec(novtable) BGSDefaultObjectManager :
 		public TESForm,										  // 00
 		public BSTSingletonImplicit<BGSDefaultObjectManager>  // 20
 	{
@@ -28,7 +28,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSDefaultObjectManager) == 0xE00);
 
-	class BGSDefaultObject :
+	class __declspec(novtable) BGSDefaultObject :
 		public TESForm	// 00
 	{
 	public:

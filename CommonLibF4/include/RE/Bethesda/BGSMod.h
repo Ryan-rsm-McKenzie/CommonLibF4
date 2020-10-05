@@ -18,7 +18,7 @@ namespace RE
 
 		namespace Attachment
 		{
-			class Mod :
+			class __declspec(novtable) Mod :
 				public TESForm,				  // 00
 				public TESFullName,			  // 20
 				public TESDescription,		  // 30
@@ -46,7 +46,7 @@ namespace RE
 
 		namespace Template
 		{
-			class Item :
+			class __declspec(novtable) Item :
 				public TESFullName,		  // 00
 				public BGSMod::Container  // 10
 			{
@@ -68,7 +68,7 @@ namespace RE
 			};
 			static_assert(sizeof(Item) == 0x38);
 
-			class Items :
+			class __declspec(novtable) Items :
 				public BaseFormComponent  // 00
 			{
 			public:

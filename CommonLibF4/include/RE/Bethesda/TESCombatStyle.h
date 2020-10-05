@@ -101,7 +101,7 @@ namespace RE
 	};
 	static_assert(sizeof(CombatStyleFlightData) == 0x20);
 
-	class TESCombatStyle :
+	class __declspec(novtable) TESCombatStyle :
 		public TESForm	// 00
 	{
 	public:

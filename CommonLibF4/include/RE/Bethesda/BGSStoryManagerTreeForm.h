@@ -26,7 +26,7 @@ namespace RE
 	class TESFile;
 	class TESQuestStage;
 
-	class BGSStoryManagerTreeVisitor
+	class __declspec(novtable) BGSStoryManagerTreeVisitor
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BGSStoryManagerTreeVisitor };
@@ -50,7 +50,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSStoryManagerTreeVisitor) == 0x40);
 
-	class BGSStoryManagerTreeForm :
+	class __declspec(novtable) BGSStoryManagerTreeForm :
 		public TESForm	// 00
 	{
 	public:
@@ -80,7 +80,7 @@ namespace RE
 	};
 	static_assert(sizeof(QUEST_DATA) == 0x8);
 
-	class TESQuest :
+	class __declspec(novtable) TESQuest :
 		public BGSStoryManagerTreeForm,	 // 000
 		public TESFullName				 // 028
 	{
@@ -127,7 +127,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESQuest) == 0x2F0);
 
-	class BGSStoryManagerNodeBase :
+	class __declspec(novtable) BGSStoryManagerNodeBase :
 		public BGSStoryManagerTreeForm	// 00
 	{
 	public:
@@ -147,7 +147,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSStoryManagerNodeBase) == 0x48);
 
-	class BGSStoryManagerBranchNode :
+	class __declspec(novtable) BGSStoryManagerBranchNode :
 		public BGSStoryManagerNodeBase	// 00
 	{
 	public:
@@ -160,7 +160,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSStoryManagerBranchNode) == 0x60);
 
-	class BGSStoryManagerQuestNode :
+	class __declspec(novtable) BGSStoryManagerQuestNode :
 		public BGSStoryManagerNodeBase	// 00
 	{
 	public:
@@ -177,7 +177,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSStoryManagerQuestNode) == 0xE0);
 
-	class BGSStoryManagerEventNode :
+	class __declspec(novtable) BGSStoryManagerEventNode :
 		public BGSStoryManagerBranchNode  // 00
 	{
 	public:

@@ -38,7 +38,7 @@ namespace RE
 
 	class IDEvent;
 
-	class InputEvent
+	class __declspec(novtable) InputEvent
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::InputEvent };
@@ -137,7 +137,7 @@ namespace RE
 	};
 	static_assert(sizeof(InputEvent) == 0x28);
 
-	class CharacterEvent :
+	class __declspec(novtable) CharacterEvent :
 		public InputEvent  // 00
 	{
 	public:
@@ -155,7 +155,7 @@ namespace RE
 	extern template CharacterEvent* InputEvent::As() noexcept;
 	extern template const CharacterEvent* InputEvent::As() const noexcept;
 
-	class DeviceConnectEvent :
+	class __declspec(novtable) DeviceConnectEvent :
 		public InputEvent  // 00
 	{
 	public:
@@ -173,7 +173,7 @@ namespace RE
 	extern template DeviceConnectEvent* InputEvent::As() noexcept;
 	extern template const DeviceConnectEvent* InputEvent::As() const noexcept;
 
-	class IDEvent :
+	class __declspec(novtable) IDEvent :
 		public InputEvent  // 00
 	{
 	public:
@@ -196,7 +196,7 @@ namespace RE
 	extern template IDEvent* InputEvent::As();
 	extern template const IDEvent* InputEvent::As() const;
 
-	class ButtonEvent :
+	class __declspec(novtable) ButtonEvent :
 		public IDEvent	// 00
 	{
 	public:
@@ -215,7 +215,7 @@ namespace RE
 	extern template ButtonEvent* InputEvent::As() noexcept;
 	extern template const ButtonEvent* InputEvent::As() const noexcept;
 
-	class CursorMoveEvent :
+	class __declspec(novtable) CursorMoveEvent :
 		public IDEvent	// 00
 	{
 	public:
@@ -234,7 +234,7 @@ namespace RE
 	extern template CursorMoveEvent* InputEvent::As() noexcept;
 	extern template const CursorMoveEvent* InputEvent::As() const noexcept;
 
-	class KinectEvent :
+	class __declspec(novtable) KinectEvent :
 		public IDEvent	// 00
 	{
 	public:
@@ -252,7 +252,7 @@ namespace RE
 	extern template KinectEvent* InputEvent::As() noexcept;
 	extern template const KinectEvent* InputEvent::As() const noexcept;
 
-	class MouseMoveEvent :
+	class __declspec(novtable) MouseMoveEvent :
 		public IDEvent	// 00
 	{
 	public:
@@ -271,7 +271,7 @@ namespace RE
 	extern template MouseMoveEvent* InputEvent::As() noexcept;
 	extern template const MouseMoveEvent* InputEvent::As() const noexcept;
 
-	class ThumbstickEvent :
+	class __declspec(novtable) ThumbstickEvent :
 		public IDEvent	// 00
 	{
 	public:

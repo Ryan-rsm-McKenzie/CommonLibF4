@@ -36,7 +36,7 @@ namespace RE
 			};
 			static_assert(sizeof(Viewport) == 0x34);
 
-			class MemoryContext :
+			class __declspec(novtable) MemoryContext :
 				public RefCountBase<MemoryContext, 2>  // 00
 			{
 			public:
@@ -59,7 +59,7 @@ namespace RE
 			};
 			static_assert(sizeof(MemoryParams) == 0x60);
 
-			class MovieDef :
+			class __declspec(novtable) MovieDef :
 				public Resource,  // 00
 				public StateBag	  // 18
 			{
@@ -86,7 +86,7 @@ namespace RE
 					kAllImages = (kBitmaps | kGradientImages | kNestedMovies)
 				};
 
-				struct ImportVisitor
+				struct __declspec(novtable) ImportVisitor
 				{
 				public:
 					virtual ~ImportVisitor() = default;	 // 00
@@ -96,7 +96,7 @@ namespace RE
 				};
 				static_assert(sizeof(ImportVisitor) == 0x8);
 
-				struct ResourceVisitor :
+				struct __declspec(novtable) ResourceVisitor :
 					public FileTypeConstants  // 00
 				{
 				public:
@@ -284,11 +284,11 @@ namespace RE
 				};
 				static_assert(sizeof(ValueUnion) == 0x8);
 
-				class ObjectInterface :
+				class __declspec(novtable) ObjectInterface :
 					public NewOverrideBase<327>
 				{
 				public:
-					class ObjVisitor
+					class __declspec(novtable) ObjVisitor
 					{
 					public:
 						virtual ~ObjVisitor() = default;  // 00
@@ -299,7 +299,7 @@ namespace RE
 					};
 					static_assert(sizeof(ObjVisitor) == 0x8);
 
-					class ArrVisitor
+					class __declspec(novtable) ArrVisitor
 					{
 					public:
 						virtual ~ArrVisitor() = default;
@@ -623,7 +623,7 @@ namespace RE
 			};
 			static_assert(sizeof(Value) == 0x20);
 
-			class FunctionHandler :
+			class __declspec(novtable) FunctionHandler :
 				public RefCountBase<FunctionHandler, 2>
 			{
 			public:
@@ -653,7 +653,7 @@ namespace RE
 
 			using MovieDisplayHandle = Render::DisplayHandle<Render::TreeRoot>;
 
-			class Movie :
+			class __declspec(novtable) Movie :
 				public RefCountBase<Movie, 327>,  // 00
 				public StateBag					  // 10
 			{

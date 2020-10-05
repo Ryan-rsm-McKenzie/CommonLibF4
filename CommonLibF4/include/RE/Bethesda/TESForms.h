@@ -459,7 +459,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESFileContainer) == 0x8);
 
-	class TESForm :
+	class __declspec(novtable) TESForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -647,7 +647,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESForm) == 0x20);
 
-	class BGSKeyword :
+	class __declspec(novtable) BGSKeyword :
 		public TESForm	// 00
 	{
 	public:
@@ -660,7 +660,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSKeyword) == 0x28);
 
-	class BGSLocationRefType :
+	class __declspec(novtable) BGSLocationRefType :
 		public BGSKeyword  // 00
 	{
 	public:
@@ -670,7 +670,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSLocationRefType) == 0x28);
 
-	class BGSAction :
+	class __declspec(novtable) BGSAction :
 		public BGSKeyword  // 00
 	{
 	public:
@@ -683,7 +683,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAction) == 0x30);
 
-	class BGSTransform :
+	class __declspec(novtable) BGSTransform :
 		public TESForm	// 00
 	{
 	public:
@@ -708,7 +708,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSTransform) == 0x48);
 
-	class BGSMenuIcon :
+	class __declspec(novtable) BGSMenuIcon :
 		public TESForm,	 // 00
 		public TESIcon	 // 20
 	{
@@ -719,7 +719,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMenuIcon) == 0x30);
 
-	class TESGlobal :
+	class __declspec(novtable) TESGlobal :
 		public TESForm	// 00
 	{
 	public:
@@ -735,7 +735,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESGlobal) == 0x38);
 
-	class BGSDamageType :
+	class __declspec(novtable) BGSDamageType :
 		public TESForm	// 00
 	{
 	public:
@@ -766,7 +766,7 @@ namespace RE
 	};
 	static_assert(sizeof(CLASS_DATA) == 0x8);
 
-	class TESClass :
+	class __declspec(novtable) TESClass :
 		public TESForm,			 // 00
 		public TESFullName,		 // 20
 		public TESDescription,	 // 30
@@ -783,7 +783,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESClass) == 0x70);
 
-	class TESEyes :
+	class __declspec(novtable) TESEyes :
 		public TESForm,		 // 00
 		public TESFullName,	 // 20
 		public TESTexture	 // 30
@@ -798,7 +798,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESEyes) == 0x48);
 
-	class EffectSetting :
+	class __declspec(novtable) EffectSetting :
 		public TESForm,				  // 000
 		public TESFullName,			  // 020
 		public BGSMenuDisplayObject,  // 030
@@ -887,7 +887,7 @@ namespace RE
 	};
 	static_assert(sizeof(TEXTURE_HAVOK_DATA) == 0x2);
 
-	class TESLandTexture :
+	class __declspec(novtable) TESLandTexture :
 		public TESForm	// 00
 	{
 	public:
@@ -905,7 +905,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESLandTexture) == 0x50);
 
-	class TESWeather :
+	class __declspec(novtable) TESWeather :
 		public TESForm	// 000
 	{
 	public:
@@ -997,7 +997,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESWeatherList) == 0x10);
 
-	class TESClimate :
+	class __declspec(novtable) TESClimate :
 		public TESForm	// 00
 	{
 	public:
@@ -1013,7 +1013,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESClimate) == 0x88);
 
-	class BGSShaderParticleGeometryData :
+	class __declspec(novtable) BGSShaderParticleGeometryData :
 		public TESForm	// 00
 	{
 	public:
@@ -1028,7 +1028,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSShaderParticleGeometryData) == 0x50);
 
-	class BGSReferenceEffect :
+	class __declspec(novtable) BGSReferenceEffect :
 		public TESForm	// 00
 	{
 	public:
@@ -1051,7 +1051,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSReferenceEffect) == 0x38);
 
-	class TESRegion :
+	class __declspec(novtable) TESRegion :
 		public TESForm	// 00
 	{
 	public:
@@ -1124,7 +1124,7 @@ namespace RE
 	};
 	static_assert(sizeof(LOADED_CELL_DATA) == 0x218);
 
-	class TESObjectCELL :
+	class __declspec(novtable) TESObjectCELL :
 		public TESForm,		// 00
 		public TESFullName	// 20
 	{
@@ -1197,7 +1197,7 @@ namespace RE
 	};
 	static_assert(sizeof(OBJ_LAND) == 0x4);
 
-	class TESObjectLAND :
+	class __declspec(novtable) TESObjectLAND :
 		public TESForm,		 // 00
 		public TESChildCell	 // 20
 	{
@@ -1226,7 +1226,7 @@ namespace RE
 	};
 	static_assert(sizeof(DIALOGUE_DATA) == 0x4);
 
-	class TESTopic :
+	class __declspec(novtable) TESTopic :
 		public TESForm,		// 00
 		public TESFullName	// 20
 	{
@@ -1269,7 +1269,7 @@ namespace RE
 	};
 	static_assert(sizeof(ResponseListWrapper) == 0x8);
 
-	class TESTopicInfo :
+	class __declspec(novtable) TESTopicInfo :
 		public TESForm	// 00
 	{
 	public:
@@ -1301,7 +1301,7 @@ namespace RE
 	};
 	static_assert(sizeof(IDLE_DATA) == 0x6);
 
-	class TESIdleForm :
+	class __declspec(novtable) TESIdleForm :
 		public TESForm	// 00
 	{
 	public:
@@ -1322,7 +1322,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESIdleForm) == 0x70);
 
-	class TESLoadScreen :
+	class __declspec(novtable) TESLoadScreen :
 		public TESForm	// 00
 	{
 	public:
@@ -1339,7 +1339,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESLoadScreen) == 0x38);
 
-	class TESObjectANIO :
+	class __declspec(novtable) TESObjectANIO :
 		public TESForm,				 // 00
 		public BGSModelMaterialSwap	 // 20
 	{
@@ -1397,7 +1397,7 @@ namespace RE
 	};
 	static_assert(sizeof(EffectShaderData) == 0xA8);
 
-	class TESEffectShader :
+	class __declspec(novtable) TESEffectShader :
 		public TESForm,	 // 000
 		public TESModel	 // 020
 	{
@@ -1415,7 +1415,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESEffectShader) == 0x130);
 
-	class BGSDebris :
+	class __declspec(novtable) BGSDebris :
 		public TESForm,		   // 00
 		public BGSPreloadable  // 20
 	{
@@ -1440,7 +1440,7 @@ namespace RE
 	};
 	static_assert(sizeof(ImageSpaceBaseData) == 0x58);
 
-	class TESImageSpace :
+	class __declspec(novtable) TESImageSpace :
 		public TESForm	// 00
 	{
 	public:
@@ -1455,7 +1455,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESImageSpace) == 0x90);
 
-	class TESImageSpaceModifier :
+	class __declspec(novtable) TESImageSpaceModifier :
 		public TESForm	// 000
 	{
 	public:
@@ -1514,7 +1514,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESImageSpaceModifier) == 0x2F8);
 
-	class BGSListForm :
+	class __declspec(novtable) BGSListForm :
 		public TESForm	// 00
 	{
 	public:
@@ -1541,7 +1541,7 @@ namespace RE
 	};
 	static_assert(sizeof(PerkData) == 0x5);
 
-	class BGSPerk :
+	class __declspec(novtable) BGSPerk :
 		public TESForm,			// 00
 		public TESFullName,		// 20
 		public TESDescription,	// 30
@@ -1562,7 +1562,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSPerk) == 0x98);
 
-	class BGSBodyPartData :
+	class __declspec(novtable) BGSBodyPartData :
 		public TESForm,		   // 000
 		public TESModel,	   // 020
 		public BGSPreloadable  // 050
@@ -1578,7 +1578,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSBodyPartData) == 0x150);
 
-	class BGSCameraShot :
+	class __declspec(novtable) BGSCameraShot :
 		public TESForm,						// 00
 		public TESModel,					// 20
 		public TESImageSpaceModifiableForm	// 50
@@ -1628,7 +1628,7 @@ namespace RE
 	};
 	static_assert(sizeof(PATH_DATA) == 0x1);
 
-	class BGSCameraPath :
+	class __declspec(novtable) BGSCameraPath :
 		public TESForm	// 00
 	{
 	public:
@@ -1654,7 +1654,7 @@ namespace RE
 	};
 	static_assert(sizeof(VOICE_TYPE_DATA) == 0x1);
 
-	class BGSVoiceType :
+	class __declspec(novtable) BGSVoiceType :
 		public TESForm	// 00
 	{
 	public:
@@ -1668,7 +1668,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSVoiceType) == 0x38);
 
-	class BGSMaterialType :
+	class __declspec(novtable) BGSMaterialType :
 		public TESForm	// 00
 	{
 	public:
@@ -1713,7 +1713,7 @@ namespace RE
 	};
 	static_assert(sizeof(DecalData) == 0x24);
 
-	class BGSImpactData :
+	class __declspec(novtable) BGSImpactData :
 		public TESForm,	 // 00
 		public TESModel	 // 20
 	{
@@ -1751,7 +1751,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSImpactData) == 0xC0);
 
-	class BGSImpactDataSet :
+	class __declspec(novtable) BGSImpactDataSet :
 		public TESForm,		   // 00
 		public BGSPreloadable  // 20
 	{
@@ -1789,7 +1789,7 @@ namespace RE
 	};
 	static_assert(sizeof(ENCOUNTER_ZONE_DATA) == 0x18);
 
-	class BGSEncounterZone :
+	class __declspec(novtable) BGSEncounterZone :
 		public TESForm	// 00
 	{
 	public:
@@ -1847,7 +1847,7 @@ namespace RE
 	};
 	static_assert(sizeof(UniqueNPCData) == 0x18);
 
-	class BGSLocation :
+	class __declspec(novtable) BGSLocation :
 		public TESForm,		   // 000
 		public TESFullName,	   // 020
 		public BGSKeywordForm  // 030
@@ -1902,7 +1902,7 @@ namespace RE
 	};
 	static_assert(sizeof(MESSAGEBOX_BUTTON) == 0x10);
 
-	class BGSMessage :
+	class __declspec(novtable) BGSMessage :
 		public TESForm,		   // 00
 		public TESFullName,	   // 20
 		public TESDescription  // 30
@@ -1923,7 +1923,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMessage) == 0x80);
 
-	class BGSLightingTemplate :
+	class __declspec(novtable) BGSLightingTemplate :
 		public TESForm	// 00
 	{
 	public:
@@ -1938,7 +1938,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSLightingTemplate) == 0xD8);
 
-	class BGSMusicType :
+	class __declspec(novtable) BGSMusicType :
 		public TESForm,		 // 00
 		public BSIMusicType	 // 20
 	{
@@ -1952,7 +1952,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMusicType) == 0x78);
 
-	class BGSFootstep :
+	class __declspec(novtable) BGSFootstep :
 		public TESForm	// 00
 	{
 	public:
@@ -1966,7 +1966,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSFootstep) == 0x30);
 
-	class BGSFootstepSet :
+	class __declspec(novtable) BGSFootstepSet :
 		public TESForm	// 00
 	{
 	public:
@@ -1979,7 +1979,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSFootstepSet) == 0x98);
 
-	class BGSDialogueBranch :
+	class __declspec(novtable) BGSDialogueBranch :
 		public TESForm	// 00
 	{
 	public:
@@ -1995,7 +1995,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSDialogueBranch) == 0x40);
 
-	class BGSMusicTrackFormWrapper :
+	class __declspec(novtable) BGSMusicTrackFormWrapper :
 		public TESForm,		  // 00
 		public BSIMusicTrack  // 20
 	{
@@ -2009,7 +2009,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMusicTrackFormWrapper) == 0x38);
 
-	class TESWordOfPower :
+	class __declspec(novtable) TESWordOfPower :
 		public TESForm,		// 00
 		public TESFullName	// 20
 	{
@@ -2023,7 +2023,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESWordOfPower) == 0x38);
 
-	class TESShout :
+	class __declspec(novtable) TESShout :
 		public TESForm,				  // 00
 		public TESFullName,			  // 20
 		public BGSMenuDisplayObject,  // 30
@@ -2050,7 +2050,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESShout) == 0xB0);
 
-	class BGSEquipSlot :
+	class __declspec(novtable) BGSEquipSlot :
 		public TESForm	// 00
 	{
 	public:
@@ -2065,7 +2065,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSEquipSlot) == 0x48);
 
-	class BGSRelationship :
+	class __declspec(novtable) BGSRelationship :
 		public TESForm	// 00
 	{
 	public:
@@ -2081,7 +2081,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSRelationship) == 0x40);
 
-	class BGSScene :
+	class __declspec(novtable) BGSScene :
 		public TESForm,			 // 00
 		public IKeywordFormBase	 // 20
 	{
@@ -2111,7 +2111,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSScene) == 0xE8);
 
-	class BGSAssociationType :
+	class __declspec(novtable) BGSAssociationType :
 		public TESForm	// 00
 	{
 	public:
@@ -2125,7 +2125,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAssociationType) == 0x48);
 
-	class BGSOutfit :
+	class __declspec(novtable) BGSOutfit :
 		public TESForm	// 00
 	{
 	public:
@@ -2138,7 +2138,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSOutfit) == 0x38);
 
-	class BGSMaterialObject :
+	class __declspec(novtable) BGSMaterialObject :
 		public TESForm,			 // 00
 		public TESModel,		 // 20
 		public BSMaterialObject	 // 50
@@ -2162,7 +2162,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMaterialObject) == 0xB8);
 
-	class BGSMovementType :
+	class __declspec(novtable) BGSMovementType :
 		public TESForm	// 00
 	{
 	public:
@@ -2175,7 +2175,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMovementType) == 0xA0);
 
-	class BGSSoundDescriptorForm :
+	class __declspec(novtable) BGSSoundDescriptorForm :
 		public TESForm,			   // 00
 		public BSISoundDescriptor  // 20
 	{
@@ -2189,7 +2189,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSSoundDescriptorForm) == 0x30);
 
-	class BGSSoundCategory :
+	class __declspec(novtable) BGSSoundCategory :
 		public TESForm,			 // 00
 		public TESFullName,		 // 20
 		public BSISoundCategory	 // 30
@@ -2216,7 +2216,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSSoundCategory) == 0x78);
 
-	class BGSSoundOutput :
+	class __declspec(novtable) BGSSoundOutput :
 		public TESForm,				// 00
 		public BSISoundOutputModel	// 20
 	{
@@ -2240,7 +2240,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSSoundOutput) == 0x50);
 
-	class BGSCollisionLayer :
+	class __declspec(novtable) BGSCollisionLayer :
 		public TESForm,		   // 00
 		public TESDescription  // 20
 	{
@@ -2258,7 +2258,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSCollisionLayer) == 0x68);
 
-	class BGSColorForm :
+	class __declspec(novtable) BGSColorForm :
 		public TESForm,		// 00
 		public TESFullName	// 20
 	{
@@ -2278,7 +2278,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSColorForm) == 0x48);
 
-	class BGSReverbParameters :
+	class __declspec(novtable) BGSReverbParameters :
 		public TESForm,		  // 00
 		public BSIReverbType  // 20
 	{
@@ -2311,7 +2311,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSReverbParameters) == 0x40);
 
-	class BGSPackIn :
+	class __declspec(novtable) BGSPackIn :
 		public TESForm	// 00
 	{
 	public:
@@ -2321,7 +2321,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSPackIn) == 0x20);
 
-	class BGSAimModel :
+	class __declspec(novtable) BGSAimModel :
 		public TESForm	// 00
 	{
 	public:
@@ -2357,7 +2357,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAimModel) == 0x60);
 
-	class BGSConstructibleObject :
+	class __declspec(novtable) BGSConstructibleObject :
 		public TESForm,					// 00
 		public BGSPickupPutdownSounds,	// 20
 		public TESDescription			// 38
@@ -2386,7 +2386,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSConstructibleObject) == 0x88);
 
-	class BGSMaterialSwap :
+	class __declspec(novtable) BGSMaterialSwap :
 		public TESForm	// 00
 	{
 	public:
@@ -2408,7 +2408,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMaterialSwap) == 0x50);
 
-	class BGSZoomData :
+	class __declspec(novtable) BGSZoomData :
 		public TESForm	// 00
 	{
 	public:
@@ -2433,7 +2433,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSZoomData) == 0x40);
 
-	class BGSInstanceNamingRules :
+	class __declspec(novtable) BGSInstanceNamingRules :
 		public TESForm	// 000
 	{
 	public:
@@ -2469,7 +2469,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSInstanceNamingRules) == 0x130);
 
-	class BGSSoundKeywordMapping :
+	class __declspec(novtable) BGSSoundKeywordMapping :
 		public TESForm	// 00
 	{
 	public:
@@ -2487,7 +2487,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSSoundKeywordMapping) == 0xA0);
 
-	class BGSAudioEffectChain :
+	class __declspec(novtable) BGSAudioEffectChain :
 		public TESForm,				// 00
 		public BSIAudioEffectChain	// 20
 	{
@@ -2501,7 +2501,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAudioEffectChain) == 0x40);
 
-	class BGSAttractionRule :
+	class __declspec(novtable) BGSAttractionRule :
 		public TESForm	// 00
 	{
 	public:
@@ -2527,7 +2527,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAttractionRule) == 0x38);
 
-	class BGSSoundCategorySnapshot :
+	class __declspec(novtable) BGSSoundCategorySnapshot :
 		public TESForm	// 00
 	{
 	public:
@@ -2541,7 +2541,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSSoundCategorySnapshot) == 0x58);
 
-	class BGSSoundTagSet :
+	class __declspec(novtable) BGSSoundTagSet :
 		public TESForm	// 00
 	{
 	public:
@@ -2568,7 +2568,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSLensFlareRenderData) == 0x30);
 
-	class BGSLensFlare :
+	class __declspec(novtable) BGSLensFlare :
 		public TESForm,				  // 00
 		public BSLensFlareRenderData  // 20
 	{
@@ -2579,7 +2579,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSLensFlare) == 0x50);
 
-	class BGSGodRays :
+	class __declspec(novtable) BGSGodRays :
 		public TESForm	// 00
 	{
 	public:

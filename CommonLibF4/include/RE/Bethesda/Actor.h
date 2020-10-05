@@ -66,7 +66,7 @@ namespace RE
 		struct PerkEntryUpdatedEvent;
 	}
 
-	class MagicTarget
+	class __declspec(novtable) MagicTarget
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::MagicTarget };
@@ -98,7 +98,7 @@ namespace RE
 	};
 	static_assert(sizeof(MagicTarget) == 0x18);
 
-	class ActorState :
+	class __declspec(novtable) ActorState :
 		public IMovementState  // 00
 	{
 	public:
@@ -139,7 +139,7 @@ namespace RE
 	};
 	static_assert(sizeof(ActorState) == 0x10);
 
-	class IPostAnimationChannelUpdateFunctor
+	class __declspec(novtable) IPostAnimationChannelUpdateFunctor
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::IPostAnimationChannelUpdateFunctor };
@@ -170,7 +170,7 @@ namespace RE
 	};
 	static_assert(sizeof(ActorValueStorage) == 0x38);
 
-	class Actor :
+	class __declspec(novtable) Actor :
 		public TESObjectREFR,											// 000
 		public MagicTarget,												// 110
 		public ActorState,												// 128

@@ -102,7 +102,7 @@ namespace RE
 	};
 	static_assert(sizeof(HeldStateHandler) == 0x28);
 
-	class PlayerControls :
+	class __declspec(novtable) PlayerControls :
 		BSInputEventReceiver,					 // 000
 		BSTEventSink<MenuOpenCloseEvent>,		 // 010
 		BSTEventSink<MenuModeChangeEvent>,		 // 018

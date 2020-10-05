@@ -68,7 +68,7 @@ namespace RE
 		struct Event;
 	}
 
-	class BSHandleRefObject :
+	class __declspec(novtable) BSHandleRefObject :
 		public NiRefObject	// 00
 	{
 	public:
@@ -95,7 +95,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSHandleRefObject) == 0x10);
 
-	class IAnimationGraphManagerHolder
+	class __declspec(novtable) IAnimationGraphManagerHolder
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::IAnimationGraphManagerHolder };
@@ -198,7 +198,7 @@ namespace RE
 	};
 	static_assert(sizeof(OBJ_REFR) == 0x30);
 
-	class TESObjectREFR :
+	class __declspec(novtable) TESObjectREFR :
 		public TESForm,													 // 000
 		public BSHandleRefObject,										 // 020
 		public BSTEventSink<BSActiveGraphIfInactiveEvent>,				 // 030
@@ -356,7 +356,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectREFR) == 0x110);
 
-	class Explosion :
+	class __declspec(novtable) Explosion :
 		public TESObjectREFR  // 000
 	{
 	public:
@@ -419,7 +419,7 @@ namespace RE
 	};
 	static_assert(sizeof(Explosion) == 0x600);
 
-	class Hazard :
+	class __declspec(novtable) Hazard :
 		public TESObjectREFR  // 000
 	{
 	public:

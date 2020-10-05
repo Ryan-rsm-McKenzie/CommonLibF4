@@ -284,11 +284,12 @@ namespace RE
 	};
 	static_assert(sizeof(SCRIPT_FUNCTION) == 0x50);
 
-	class Script :
+	class __declspec(novtable) Script :
 		public TESForm	// 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::Script };
+		static constexpr auto VTABLE{ VTABLE::TESForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSCPT };
 
 		template <class... Args>

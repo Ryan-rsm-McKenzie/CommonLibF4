@@ -4,7 +4,7 @@
 
 namespace RE
 {
-	class NiCollisionObject :
+	class __declspec(novtable) NiCollisionObject :
 		public NiObject	 // 00
 	{
 	public:

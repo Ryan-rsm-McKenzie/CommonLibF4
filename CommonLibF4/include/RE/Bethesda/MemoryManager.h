@@ -14,7 +14,7 @@ namespace RE
 	struct HeapStats;
 	struct MemoryStats;
 
-	class IMemoryStoreBase
+	class __declspec(novtable) IMemoryStoreBase
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::IMemoryStoreBase };
@@ -29,7 +29,7 @@ namespace RE
 	};
 	static_assert(sizeof(IMemoryStoreBase) == 0x8);
 
-	class IMemoryStore :
+	class __declspec(novtable) IMemoryStore :
 		public IMemoryStoreBase	 // 0
 	{
 	public:
@@ -45,7 +45,7 @@ namespace RE
 	};
 	static_assert(sizeof(IMemoryStore) == 0x8);
 
-	class IMemoryHeap :
+	class __declspec(novtable) IMemoryHeap :
 		public IMemoryStore	 // 00
 	{
 	public:
@@ -71,7 +71,7 @@ namespace RE
 	};
 	static_assert(sizeof(IMemoryHeap) == 0x8);
 
-	class ScrapHeap :
+	class __declspec(novtable) ScrapHeap :
 		public IMemoryStore	 // 00
 	{
 	public:

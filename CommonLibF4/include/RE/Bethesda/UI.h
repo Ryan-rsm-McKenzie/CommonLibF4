@@ -32,7 +32,7 @@ namespace RE
 	};
 	static_assert(sizeof(UIMenuEntry) == 0x18);
 
-	class UI :
+	class __declspec(novtable) UI :
 		public BSInputEventReceiver,						 // 000
 		public BSTSingletonSDM<UI>,							 // 010
 		public BSTEventSource<MenuOpenCloseEvent>,			 // 018

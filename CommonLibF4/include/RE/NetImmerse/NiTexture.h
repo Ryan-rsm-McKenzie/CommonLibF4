@@ -18,7 +18,7 @@ namespace RE
 	};
 	static_assert(std::is_empty_v<BSTextureArray>);
 
-	class NiTexture :
+	class __declspec(novtable) NiTexture :
 		public NiObject	 // 00
 	{
 	public:

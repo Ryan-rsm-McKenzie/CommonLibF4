@@ -43,7 +43,7 @@ namespace RE
 
 			struct ProcessFocusKeyInfo;
 
-			class ASMovieRootBase :
+			class __declspec(novtable) ASMovieRootBase :
 				public RefCountBase<ASMovieRootBase, 327>  // 00
 			{
 			public:

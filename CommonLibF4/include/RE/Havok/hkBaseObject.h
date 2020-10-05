@@ -2,7 +2,7 @@
 
 namespace RE
 {
-	class hkBaseObject
+	class __declspec(novtable) hkBaseObject
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::hkBaseObject };

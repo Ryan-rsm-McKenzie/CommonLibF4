@@ -4,7 +4,7 @@
 
 namespace RE
 {
-	class NiShadeProperty :
+	class __declspec(novtable) NiShadeProperty :
 		public NiProperty  // 00
 	{
 	public:

@@ -6,7 +6,7 @@
 
 namespace RE
 {
-	class hknpAllHitsCollector :
+	class __declspec(novtable) hknpAllHitsCollector :
 		public hknpCollisionQueryCollector	// 000
 	{
 	public:

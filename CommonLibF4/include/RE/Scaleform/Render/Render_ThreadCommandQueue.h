@@ -13,7 +13,7 @@ namespace RE
 			class HAL;
 			class Renderer2D;
 
-			class ThreadCommand :
+			class __declspec(novtable) ThreadCommand :
 				public RefCountBase<ThreadCommand, 2>  // 00
 			{
 			public:
@@ -33,7 +33,7 @@ namespace RE
 			};
 			static_assert(sizeof(Interfaces) == 0x20);
 
-			class ThreadCommandQueue
+			class __declspec(novtable) ThreadCommandQueue
 			{
 			public:
 				virtual ~ThreadCommandQueue() = default;  // 00

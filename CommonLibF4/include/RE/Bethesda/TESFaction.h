@@ -85,7 +85,7 @@ namespace RE
 	};
 	static_assert(sizeof(RANK_DATA) == 0x20);
 
-	class TESFaction :
+	class __declspec(novtable) TESFaction :
 		public TESForm,			// 000
 		public TESFullName,		// 020
 		public TESReactionForm	// 030

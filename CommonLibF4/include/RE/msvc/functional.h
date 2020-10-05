@@ -26,7 +26,7 @@ namespace RE
 
 		private:
 			// class std::_Func_base
-			class proxy_t
+			class __declspec(novtable) proxy_t
 			{
 			public:
 				// add

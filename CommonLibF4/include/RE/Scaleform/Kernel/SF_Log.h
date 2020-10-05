@@ -19,7 +19,7 @@ namespace RE
 		};
 		static_assert(sizeof(LogMessageId) == 0x4);
 
-		class Log :
+		class __declspec(novtable) Log :
 			public RefCountBase<Log, 2>	 // 00
 		{
 		public:

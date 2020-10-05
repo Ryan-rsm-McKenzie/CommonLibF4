@@ -14,7 +14,7 @@ namespace RE
 		class SysAllocBase;
 		class SysAllocPaged;
 
-		class SysAllocBase
+		class __declspec(novtable) SysAllocBase
 		{
 		public:
 			static constexpr auto RTTI{ RTTI::Scaleform__SysAllocBase };
@@ -57,7 +57,7 @@ namespace RE
 		};
 		static_assert(sizeof(SysAlloc) == 0x8);
 
-		class SysAllocPaged :
+		class __declspec(novtable) SysAllocPaged :
 			public SysAllocBase	 // 0
 		{
 		public:

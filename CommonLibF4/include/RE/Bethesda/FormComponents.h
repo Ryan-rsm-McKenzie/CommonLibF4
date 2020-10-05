@@ -143,7 +143,7 @@ namespace RE
 		static_assert(sizeof(SharedVal) == 0x4);
 	}
 
-	class ActorValueOwner
+	class __declspec(novtable) ActorValueOwner
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::ActorValueOwner };
@@ -184,7 +184,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSNavmeshableObject) == 0x8);
 
-	class BGSOpenCloseForm
+	class __declspec(novtable) BGSOpenCloseForm
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BGSOpenCloseForm };
@@ -200,7 +200,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSOpenCloseForm) == 0x8);
 
-	class BSIAudioEffectChain
+	class __declspec(novtable) BSIAudioEffectChain
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSIAudioEffectChain };
@@ -215,7 +215,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSIAudioEffectChain) == 0x8);
 
-	class BSIMusicTrack
+	class __declspec(novtable) BSIMusicTrack
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSIMusicTrack };
@@ -242,7 +242,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSIMusicTrack) == 0x10);
 
-	class BSIMusicType
+	class __declspec(novtable) BSIMusicType
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSIMusicType };
@@ -272,7 +272,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSIMusicType) == 0x50);
 
-	class BSIReverbType
+	class __declspec(novtable) BSIReverbType
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSIReverbType };
@@ -293,7 +293,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSIReverbType) == 0x8);
 
-	class BSISoundCategory
+	class __declspec(novtable) BSISoundCategory
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSISoundCategory };
@@ -320,7 +320,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSISoundCategory) == 0x8);
 
-	class BSISoundDescriptor
+	class __declspec(novtable) BSISoundDescriptor
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSISoundDescriptor };
@@ -339,7 +339,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSISoundDescriptor) == 0x8);
 
-	class BSISoundOutputModel
+	class __declspec(novtable) BSISoundOutputModel
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSISoundOutputModel };
@@ -368,7 +368,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSISoundOutputModel) == 0x8);
 
-	class BSMaterialObject
+	class __declspec(novtable) BSMaterialObject
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSMaterialObject };
@@ -437,7 +437,7 @@ namespace RE
 	};
 	static_assert(sizeof(INTERIOR_DATA) == 0x8C);
 
-	struct TESChildCell
+	struct __declspec(novtable) TESChildCell
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::TESChildCell };
@@ -464,7 +464,7 @@ namespace RE
 	};
 	static_assert(std::is_empty_v<TESMagicTargetForm>);
 
-	class TBO_InstanceData :
+	class __declspec(novtable) TBO_InstanceData :
 		public BSIntrusiveRefCounted  // 08
 	{
 	public:
@@ -495,7 +495,7 @@ namespace RE
 	};
 	static_assert(sizeof(TBO_InstanceData) == 0x10);
 
-	class BaseFormComponent
+	class __declspec(novtable) BaseFormComponent
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BaseFormComponent };
@@ -515,7 +515,7 @@ namespace RE
 	};
 	static_assert(sizeof(BaseFormComponent) == 0x8);
 
-	class TESTexture :
+	class __declspec(novtable) TESTexture :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -537,7 +537,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESTexture) == 0x10);
 
-	class TESIcon :
+	class __declspec(novtable) TESIcon :
 		public TESTexture  // 00
 	{
 	public:
@@ -563,7 +563,7 @@ namespace RE
 		std::uint32_t size;				 // 08
 	};
 
-	class BGSAttachParentArray :
+	class __declspec(novtable) BGSAttachParentArray :
 		public BaseFormComponent,			 // 00
 		public BGSTypedKeywordValueArray<2>	 // 08
 	{
@@ -598,7 +598,7 @@ namespace RE
 	};
 	static_assert(sizeof(AttackData) == 0x38);
 
-	class BGSAttackData :
+	class __declspec(novtable) BGSAttackData :
 		public NiRefObject	// 00
 	{
 	public:
@@ -613,7 +613,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAttackData) == 0x60);
 
-	class BGSAttackDataMap :
+	class __declspec(novtable) BGSAttackDataMap :
 		public NiRefObject	// 00
 	{
 	public:
@@ -626,7 +626,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAttackDataMap) == 0x48);
 
-	class BGSAttackDataForm :
+	class __declspec(novtable) BGSAttackDataForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -638,7 +638,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSAttackDataForm) == 0x10);
 
-	struct BIPED_MODEL
+	struct __declspec(novtable) BIPED_MODEL
 	{
 	public:
 		// members
@@ -646,7 +646,7 @@ namespace RE
 	};
 	static_assert(sizeof(BIPED_MODEL) == 0x4);
 
-	class BGSBipedObjectForm :
+	class __declspec(novtable) BGSBipedObjectForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -658,7 +658,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSBipedObjectForm) == 0x10);
 
-	class BGSBlockBashData :
+	class __declspec(novtable) BGSBlockBashData :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -671,7 +671,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSBlockBashData) == 0x18);
 
-	class BGSCraftingUseSound :
+	class __declspec(novtable) BGSCraftingUseSound :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -713,7 +713,7 @@ namespace RE
 	};
 	static_assert(sizeof(DestructibleObjectData) == 0x28);
 
-	class BGSDestructibleObjectForm :
+	class __declspec(novtable) BGSDestructibleObjectForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -725,7 +725,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSDestructibleObjectForm) == 0x10);
 
-	class BGSEquipType :
+	class __declspec(novtable) BGSEquipType :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -737,7 +737,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSEquipType) == 0x10);
 
-	class BGSFeaturedItemMessage :
+	class __declspec(novtable) BGSFeaturedItemMessage :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -749,7 +749,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSFeaturedItemMessage) == 0x10);
 
-	class BGSForcedLocRefType :
+	class __declspec(novtable) BGSForcedLocRefType :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -761,7 +761,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSForcedLocRefType) == 0x10);
 
-	class BGSIdleCollection :
+	class __declspec(novtable) BGSIdleCollection :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -776,7 +776,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSIdleCollection) == 0x20);
 
-	class BGSInstanceNamingRulesForm :
+	class __declspec(novtable) BGSInstanceNamingRulesForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -788,7 +788,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSInstanceNamingRulesForm) == 0x10);
 
-	class IKeywordFormBase
+	class __declspec(novtable) IKeywordFormBase
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::IKeywordFormBase };
@@ -802,7 +802,7 @@ namespace RE
 	};
 	static_assert(sizeof(IKeywordFormBase) == 0x8);
 
-	class BGSKeywordForm :
+	class __declspec(novtable) BGSKeywordForm :
 		public BaseFormComponent,  // 00
 		public IKeywordFormBase	   // 08
 	{
@@ -829,7 +829,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSKeywordForm) == 0x20);
 
-	class BGSMenuDisplayObject :
+	class __declspec(novtable) BGSMenuDisplayObject :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -841,7 +841,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMenuDisplayObject) == 0x10);
 
-	class BGSMessageIcon :
+	class __declspec(novtable) BGSMessageIcon :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -858,7 +858,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSMessageIcon) == 0x18);
 
-	class BGSNativeTerminalForm :
+	class __declspec(novtable) BGSNativeTerminalForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -870,7 +870,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSNativeTerminalForm) == 0x10);
 
-	class BGSOverridePackCollection :
+	class __declspec(novtable) BGSOverridePackCollection :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -896,7 +896,7 @@ namespace RE
 	};
 	static_assert(sizeof(PerkRankData) == 0x10);
 
-	class BGSPerkRankArray :
+	class __declspec(novtable) BGSPerkRankArray :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -909,7 +909,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSPerkRankArray) == 0x18);
 
-	class BGSPickupPutdownSounds :
+	class __declspec(novtable) BGSPickupPutdownSounds :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -922,7 +922,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSPickupPutdownSounds) == 0x18);
 
-	class BGSPreloadable :
+	class __declspec(novtable) BGSPreloadable :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -934,7 +934,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSPreloadable) == 0x8);
 
-	class BGSPreviewTransform :
+	class __declspec(novtable) BGSPreviewTransform :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -954,7 +954,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSPreviewTransform) == 0x10);
 
-	class BGSPropertySheet :
+	class __declspec(novtable) BGSPropertySheet :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -966,7 +966,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSPropertySheet) == 0x10);
 
-	class BGSSkinForm :
+	class __declspec(novtable) BGSSkinForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -978,7 +978,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSSkinForm) == 0x10);
 
-	class BGSSoundTagComponent :
+	class __declspec(novtable) BGSSoundTagComponent :
 		public BaseFormComponent  // 0
 	{
 	public:
@@ -1020,7 +1020,7 @@ namespace RE
 	};
 	static_assert(sizeof(ContainerObject) == 0x18);
 
-	class TESContainer :
+	class __declspec(novtable) TESContainer :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1041,7 +1041,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSLocalizedStringDL) == 0x4);
 
-	class TESDescription :
+	class __declspec(novtable) TESDescription :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1065,7 +1065,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESDescription) == 0x18);
 
-	class TESEnchantableForm :
+	class __declspec(novtable) TESEnchantableForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1081,7 +1081,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESEnchantableForm) == 0x18);
 
-	class TESFullName :
+	class __declspec(novtable) TESFullName :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1106,7 +1106,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESFullName) == 0x10);
 
-	class TESModel :
+	class __declspec(novtable) TESModel :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1136,7 +1136,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESModel) == 0x30);
 
-	class BGSBehaviorGraphModel :
+	class __declspec(novtable) BGSBehaviorGraphModel :
 		public TESModel	 // 00
 	{
 	public:
@@ -1145,7 +1145,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSBehaviorGraphModel) == 0x30);
 
-	class BGSModelMaterialSwap :
+	class __declspec(novtable) BGSModelMaterialSwap :
 		public TESModel	 // 00
 	{
 	public:
@@ -1158,7 +1158,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSModelMaterialSwap) == 0x40);
 
-	class BGSTextureModel :
+	class __declspec(novtable) BGSTextureModel :
 		public TESModel	 // 00
 	{
 	public:
@@ -1167,7 +1167,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSTextureModel) == 0x30);
 
-	class TESModelRDT :
+	class __declspec(novtable) TESModelRDT :
 		public TESModel	 // 00
 	{
 	public:
@@ -1200,7 +1200,7 @@ namespace RE
 	};
 	static_assert(sizeof(FACTION_RANK) == 0x10);
 
-	class TESActorBaseData :
+	class __declspec(novtable) TESActorBaseData :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1249,7 +1249,7 @@ namespace RE
 	};
 	static_assert(sizeof(PackageList) == 0x10);
 
-	class TESAIForm :
+	class __declspec(novtable) TESAIForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1262,7 +1262,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESAIForm) == 0x28);
 
-	class TESBipedModelForm :
+	class __declspec(novtable) TESBipedModelForm :
 		public BaseFormComponent  // 000
 	{
 	public:
@@ -1277,7 +1277,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESBipedModelForm) == 0x108);
 
-	class TESImageSpaceModifiableForm :
+	class __declspec(novtable) TESImageSpaceModifiableForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1301,7 +1301,7 @@ namespace RE
 	};
 	static_assert(sizeof(LEVELED_OBJECT) == 0x18);
 
-	class TESLeveledList :
+	class __declspec(novtable) TESLeveledList :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1328,7 +1328,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESLeveledList) == 0x30);
 
-	class TESModelTri :
+	class __declspec(novtable) TESModelTri :
 		public TESModel	 // 00
 	{
 	public:
@@ -1337,7 +1337,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESModelTri) == 0x30);
 
-	class TESProduceForm :
+	class __declspec(novtable) TESProduceForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1351,7 +1351,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESProduceForm) == 0x20);
 
-	class TESRaceForm :
+	class __declspec(novtable) TESRaceForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1380,7 +1380,7 @@ namespace RE
 	};
 	static_assert(sizeof(GROUP_REACTION) == 0x10);
 
-	class TESReactionForm :
+	class __declspec(novtable) TESReactionForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1393,7 +1393,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESReactionForm) == 0x20);
 
-	class TESSpellList :
+	class __declspec(novtable) TESSpellList :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1418,7 +1418,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESSpellList) == 0x10);
 
-	class TESTexture1024 :
+	class __declspec(novtable) TESTexture1024 :
 		public TESTexture  // 10
 	{
 	public:
@@ -1430,7 +1430,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESTexture1024) == 0x10);
 
-	class TESValueForm :
+	class __declspec(novtable) TESValueForm :
 		public BaseFormComponent  // 00
 	{
 	public:
@@ -1442,7 +1442,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESValueForm) == 0x10);
 
-	class TESWeightForm :
+	class __declspec(novtable) TESWeightForm :
 		public BaseFormComponent  // 00
 	{
 	public:

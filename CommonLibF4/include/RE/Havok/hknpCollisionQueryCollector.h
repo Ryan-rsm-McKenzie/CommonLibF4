@@ -7,7 +7,7 @@ namespace RE
 {
 	struct hknpCollisionResult;
 
-	class hknpCollisionQueryCollector :
+	class __declspec(novtable) hknpCollisionQueryCollector :
 		public hkBaseObject	 // 00
 	{
 	public:

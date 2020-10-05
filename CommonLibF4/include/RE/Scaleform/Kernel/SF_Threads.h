@@ -18,7 +18,7 @@ namespace RE
 		class WaitCondition;
 		class WaitConditionImpl;
 
-		class AcquireInterface
+		class __declspec(novtable) AcquireInterface
 		{
 		public:
 			static constexpr auto RTTI{ RTTI::Scaleform__AcquireInterface };
@@ -34,7 +34,7 @@ namespace RE
 		};
 		static_assert(sizeof(AcquireInterface) == 0x8);
 
-		class Waitable :
+		class __declspec(novtable) Waitable :
 			public RefCountBase<Waitable, 2>  // 00
 		{
 		public:
@@ -73,7 +73,7 @@ namespace RE
 		};
 		static_assert(sizeof(Waitable) == 0x18);
 
-		class Mutex :
+		class __declspec(novtable) Mutex :
 			public Waitable,		 // 00
 			public AcquireInterface	 // 18
 		{
@@ -93,7 +93,7 @@ namespace RE
 		};
 		static_assert(sizeof(WaitCondition) == 0x8);
 
-		class Event :
+		class __declspec(novtable) Event :
 			public Waitable,		 // 00
 			public AcquireInterface	 // 18
 		{

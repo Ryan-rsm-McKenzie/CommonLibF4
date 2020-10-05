@@ -43,7 +43,7 @@ namespace RE
 
 		namespace Template
 		{
-			class Entry
+			class __declspec(novtable) Entry
 			{
 			public:
 				static constexpr auto RTTI{ RTTI::BGSCharacterTint__Template__Entry };

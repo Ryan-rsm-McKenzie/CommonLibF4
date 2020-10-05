@@ -6,7 +6,7 @@ namespace RE
 {
 	namespace msvc
 	{
-		class type_info
+		class __declspec(novtable) type_info
 		{
 		public:
 			virtual ~type_info();  // 00

@@ -15,7 +15,7 @@ namespace RE
 			class ResourceLib;
 			class System;
 
-			class State :
+			class __declspec(novtable) State :
 				public RefCountBase<State, 2>  // 00
 			{
 			public:
@@ -69,7 +69,7 @@ namespace RE
 			};
 			static_assert(sizeof(State) == 0x18);
 
-			class ActionControl :
+			class __declspec(novtable) ActionControl :
 				public State  // 00
 			{
 			public:
@@ -88,7 +88,7 @@ namespace RE
 			};
 			static_assert(sizeof(ActionControl) == 0x20);
 
-			class StateBag :
+			class __declspec(novtable) StateBag :
 				public FileTypeConstants  // 00
 			{
 			protected:
@@ -142,7 +142,7 @@ namespace RE
 			};
 			static_assert(sizeof(ExporterInfo) == 0x20);
 
-			class Loader :
+			class __declspec(novtable) Loader :
 				public StateBag	 // 00
 			{
 			public:

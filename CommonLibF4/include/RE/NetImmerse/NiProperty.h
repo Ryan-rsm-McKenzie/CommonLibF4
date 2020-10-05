@@ -6,11 +6,12 @@ namespace RE
 {
 	class NiUpdateData;
 
-	class NiProperty :
+	class __declspec(novtable) NiProperty :
 		public NiObjectNET	// 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::NiProperty };
+		static constexpr auto VTABLE{ VTABLE::NiProperty };
 		static constexpr auto Ni_RTTI{ Ni_RTTI::NiProperty };
 
 		// add

@@ -20,7 +20,7 @@ namespace RE
 
 	union _ULARGE_INTEGER;
 
-	class BSFile :
+	class __declspec(novtable) BSFile :
 		public NiFile  // 000
 	{
 	public:

@@ -20,7 +20,7 @@ namespace RE
 		class Entries;
 	}
 
-	class TESBoundAnimObject :
+	class __declspec(novtable) TESBoundAnimObject :
 		public TESBoundObject  // 00
 	{
 	public:
@@ -43,7 +43,7 @@ namespace RE
 		static_assert(sizeof(RepeaterData) == 0xC);
 	}
 
-	class TESSound :
+	class __declspec(novtable) TESSound :
 		public TESBoundAnimObject  // 00
 	{
 	public:
@@ -57,7 +57,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESEyes) == 0x48);
 
-	class TESObjectACTI :
+	class __declspec(novtable) TESObjectACTI :
 		public TESBoundAnimObject,		   // 000
 		public TESFullName,				   // 068
 		public BGSModelMaterialSwap,	   // 078
@@ -83,7 +83,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectACTI) == 0x148);
 
-	class BGSTalkingActivator :
+	class __declspec(novtable) BGSTalkingActivator :
 		public TESObjectACTI  // 000
 	{
 	public:
@@ -108,7 +108,7 @@ namespace RE
 	};
 	static_assert(sizeof(CONT_DATA) == 0x1);
 
-	class TESObjectCONT :
+	class __declspec(novtable) TESObjectCONT :
 		public TESBoundAnimObject,		   // 000
 		public TESContainer,			   // 068
 		public TESFullName,				   // 080
@@ -137,7 +137,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectCONT) == 0x170);
 
-	class TESObjectDOOR :
+	class __declspec(novtable) TESObjectDOOR :
 		public TESBoundAnimObject,		   // 000
 		public TESFullName,				   // 068
 		public BGSModelMaterialSwap,	   // 078
@@ -185,7 +185,7 @@ namespace RE
 	};
 	static_assert(sizeof(OBJ_LIGH) == 0x38);
 
-	class TESObjectLIGH :
+	class __declspec(novtable) TESObjectLIGH :
 		public TESBoundAnimObject,		   // 000
 		public BGSModelMaterialSwap,	   // 068
 		public TESIcon,					   // 0A8
@@ -214,7 +214,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESObjectLIGH) == 0x1C0);
 
-	class TESFlora :
+	class __declspec(novtable) TESFlora :
 		public TESObjectACTI,  // 000
 		public TESProduceForm  // 148
 	{
@@ -246,7 +246,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSFurnitureMarker) == 0x20);
 
-	class TESFurniture :
+	class __declspec(novtable) TESFurniture :
 		public TESObjectACTI  // 000
 	{
 	public:
@@ -273,7 +273,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESFurniture) == 0x1A0);
 
-	class TESActorBase :
+	class __declspec(novtable) TESActorBase :
 		public TESBoundAnimObject,		   // 000
 		public TESActorBaseData,		   // 068
 		public TESContainer,			   // 0D0
@@ -321,7 +321,7 @@ namespace RE
 	};
 	static_assert(sizeof(CreatureSounds) == 0x20);
 
-	class TESNPC :
+	class __declspec(novtable) TESNPC :
 		public TESActorBase,					 // 000
 		public TESRaceForm,						 // 1B0
 		public BGSOverridePackCollection,		 // 1C0
@@ -384,7 +384,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESNPC) == 0x308);
 
-	class TESLevCharacter :
+	class __declspec(novtable) TESLevCharacter :
 		public TESBoundAnimObject,	 // 00
 		public TESLeveledList,		 // 68
 		public BGSModelMaterialSwap	 // 98
@@ -396,7 +396,7 @@ namespace RE
 	};
 	static_assert(sizeof(TESLevCharacter) == 0xD8);
 
-	class BGSTerminal :
+	class __declspec(novtable) BGSTerminal :
 		public TESFurniture	 // 000
 	{
 	public:

@@ -33,7 +33,7 @@ namespace RE
 				struct EntryPageBase;
 				struct SnapshotPage;
 
-				class ContextLock :
+				class __declspec(novtable) ContextLock :
 					public RefCountBase<ContextLock, 69>  // 00
 				{
 				public:
@@ -53,7 +53,7 @@ namespace RE
 						kDead
 					};
 
-					struct HandleData :
+					struct __declspec(novtable) HandleData :
 						public RefCountBase<HandleData, 69>,  // 00
 						public ListNode<HandleData>			  // 10
 					{
@@ -115,7 +115,7 @@ namespace RE
 				using EntryList = List2<Entry, EntryListAccessor>;
 				static_assert(sizeof(EntryList) == 0x38);
 
-				class EntryData
+				class __declspec(novtable) EntryData
 				{
 				public:
 					enum class EntryType : std::uint16_t
@@ -158,7 +158,7 @@ namespace RE
 
 				using ChangeBuffer = PagedItemBuffer<EntryChange, (0x400 - 16) / sizeof(EntryChange)>;
 
-				class RenderNotify
+				class __declspec(novtable) RenderNotify
 				{
 				public:
 					struct ContextNode :
@@ -170,7 +170,7 @@ namespace RE
 					};
 					static_assert(sizeof(ContextNode) == 0x18);
 
-					class ServiceCommand :
+					class __declspec(novtable) ServiceCommand :
 						public ThreadCommand  // 00
 					{
 					public:
@@ -197,7 +197,7 @@ namespace RE
 				};
 				static_assert(sizeof(RenderNotify) == 0x38);
 
-				class ContextCaptureNotify :
+				class __declspec(novtable) ContextCaptureNotify :
 					public ListNode<ContextCaptureNotify>  // 00
 				{
 				public:

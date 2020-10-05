@@ -154,7 +154,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSShaderData) == 0x1E0);
 
-	class BGSTextureSet :
+	class __declspec(novtable) BGSTextureSet :
 		public TESBoundObject,	// 000
 		public BSTextureSet		// 068
 	{

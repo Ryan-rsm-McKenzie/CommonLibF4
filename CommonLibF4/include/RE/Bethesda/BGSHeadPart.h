@@ -8,7 +8,7 @@
 
 namespace RE
 {
-	class BGSHeadPart :
+	class __declspec(novtable) BGSHeadPart :
 		public TESForm,				 // 000
 		public TESFullName,			 // 020
 		public BGSModelMaterialSwap	 // 030

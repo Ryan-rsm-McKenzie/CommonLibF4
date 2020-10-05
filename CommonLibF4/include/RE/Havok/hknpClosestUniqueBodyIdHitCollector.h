@@ -5,7 +5,7 @@
 
 namespace RE
 {
-	class hknpClosestUniqueBodyIdHitCollector :
+	class __declspec(novtable) hknpClosestUniqueBodyIdHitCollector :
 		public hknpUniqueBodyIdHitCollector	 // 000
 	{
 	public:

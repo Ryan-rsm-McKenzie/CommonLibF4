@@ -5,7 +5,7 @@
 
 namespace RE
 {
-	class NiAlphaProperty :
+	class __declspec(novtable) NiAlphaProperty :
 		NiProperty	// 00
 	{
 	public:

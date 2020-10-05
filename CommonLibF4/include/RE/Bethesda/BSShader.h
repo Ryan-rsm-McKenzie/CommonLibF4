@@ -8,7 +8,7 @@ namespace RE
 {
 	class BSIStream;
 
-	struct BSReloadShaderI
+	struct __declspec(novtable) BSReloadShaderI
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSReloadShaderI };
@@ -19,7 +19,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSReloadShaderI) == 0x8);
 
-	class BSShader :
+	class __declspec(novtable) BSShader :
 		public NiRefObject,		// 000
 		public BSReloadShaderI	// 010
 	{
@@ -51,7 +51,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSShader) == 0x118);
 
-	class BSUtilityShader :
+	class __declspec(novtable) BSUtilityShader :
 		public BSShader	 // 000
 	{
 	public:

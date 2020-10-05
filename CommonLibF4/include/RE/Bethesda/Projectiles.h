@@ -46,7 +46,7 @@ namespace RE
 	};
 	static_assert(sizeof(bhkCollisionQueryResultHandle) == 0x8);
 
-	class Projectile :
+	class __declspec(novtable) Projectile :
 		public TESObjectREFR  // 000
 	{
 	public:
@@ -163,7 +163,7 @@ namespace RE
 	};
 	static_assert(sizeof(Projectile) == 0x270);
 
-	class MissileProjectile :
+	class __declspec(novtable) MissileProjectile :
 		public Projectile  // 000
 	{
 	public:
@@ -184,7 +184,7 @@ namespace RE
 	};
 	static_assert(sizeof(MissileProjectile) == 0x2C0);
 
-	class ArrowProjectile :
+	class __declspec(novtable) ArrowProjectile :
 		public MissileProjectile  // 000
 	{
 	public:
@@ -197,7 +197,7 @@ namespace RE
 	};
 	static_assert(sizeof(ArrowProjectile) == 0x2D0);
 
-	class GrenadeProjectile :
+	class __declspec(novtable) GrenadeProjectile :
 		public Projectile  // 000
 	{
 	public:
@@ -250,7 +250,7 @@ namespace RE
 	};
 	static_assert(sizeof(ProjectileLaunchData) == 0xA0);
 
-	class BeamProjectile :
+	class __declspec(novtable) BeamProjectile :
 		public Projectile,								   // 000
 		public BSTEventSource<BeamProjectileImpactEvent>,  // 278
 		public BSTEventSink<BSProceduralGeomEvent>		   // 270
@@ -270,7 +270,7 @@ namespace RE
 	};
 	static_assert(sizeof(BeamProjectile) == 0x380);
 
-	class FlameProjectile :
+	class __declspec(novtable) FlameProjectile :
 		public Projectile  // 000
 	{
 	public:
@@ -284,7 +284,7 @@ namespace RE
 	};
 	static_assert(sizeof(FlameProjectile) == 0x280);
 
-	class ConeProjectile :
+	class __declspec(novtable) ConeProjectile :
 		public Projectile  // 000
 	{
 	public:
@@ -298,7 +298,7 @@ namespace RE
 	};
 	static_assert(sizeof(ConeProjectile) == 0x280);
 
-	class BarrierProjectile :
+	class __declspec(novtable) BarrierProjectile :
 		public Projectile  // 000
 	{
 	public:

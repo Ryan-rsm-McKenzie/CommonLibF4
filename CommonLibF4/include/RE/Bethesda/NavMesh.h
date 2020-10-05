@@ -116,7 +116,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSNavmeshWaypoint) == 0x14);
 
-	class BSNavmesh :
+	class __declspec(novtable) BSNavmesh :
 		public BSIntrusiveRefCounted  // 008
 	{
 	public:
@@ -161,7 +161,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSNavmesh) == 0x208);
 
-	class NavMesh :
+	class __declspec(novtable) NavMesh :
 		public TESForm,		  // 00
 		public TESChildCell,  // 20
 		public BSNavmesh	  // 28

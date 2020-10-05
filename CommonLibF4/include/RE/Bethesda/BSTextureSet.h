@@ -13,7 +13,7 @@ namespace RE
 	class BSShaderMaterial;
 	class NiTexture;
 
-	struct BSShaderProperty :
+	struct __declspec(novtable) BSShaderProperty :
 		public NiShadeProperty	// 00
 	{
 	public:
@@ -73,7 +73,7 @@ namespace RE
 	};
 	static_assert(sizeof(BSShaderProperty) == 0x70);
 
-	class BSTextureSet :
+	class __declspec(novtable) BSTextureSet :
 		public NiObject	 // 00
 	{
 	public:

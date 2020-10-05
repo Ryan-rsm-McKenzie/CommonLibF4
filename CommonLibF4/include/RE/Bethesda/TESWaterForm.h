@@ -59,7 +59,7 @@ namespace RE
 	};
 	static_assert(sizeof(WaterShaderData) == 0xCC);
 
-	class TESWaterForm :
+	class __declspec(novtable) TESWaterForm :
 		public TESForm,		// 000
 		public TESFullName	// 020
 	{

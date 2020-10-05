@@ -40,7 +40,7 @@ namespace RE
 
 	class IUIMessageData;
 
-	class UIMessage
+	class __declspec(novtable) UIMessage
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::UIMessage };
@@ -59,7 +59,7 @@ namespace RE
 	};
 	static_assert(sizeof(UIMessage) == 0x18);
 
-	class IUIMessageData :
+	class __declspec(novtable) IUIMessageData :
 		public UIMessage  // 00
 	{
 	public:
@@ -72,7 +72,7 @@ namespace RE
 	};
 	static_assert(sizeof(IUIMessageData) == 0x18);
 
-	class BSUIScaleformData :
+	class __declspec(novtable) BSUIScaleformData :
 		public IUIMessageData  // 00
 	{
 	public:

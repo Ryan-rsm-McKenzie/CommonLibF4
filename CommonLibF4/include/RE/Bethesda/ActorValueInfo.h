@@ -175,7 +175,7 @@ namespace RE
 	};
 	static_assert(sizeof(ActorValue) == 0x478);
 
-	class ActorValueInfo :
+	class __declspec(novtable) ActorValueInfo :
 		public TESForm,		   // 000
 		public TESFullName,	   // 020
 		public TESDescription  // 030

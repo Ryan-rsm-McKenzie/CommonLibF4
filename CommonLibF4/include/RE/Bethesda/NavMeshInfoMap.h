@@ -11,7 +11,7 @@ namespace RE
 	class BSNavmeshInfo;
 	class NavMeshInfo;
 
-	class BSNavmeshInfoMap :
+	class __declspec(novtable) BSNavmeshInfoMap :
 		public BSTSingletonExplicit<BSNavmeshInfoMap>  // 0
 	{
 	public:
@@ -51,7 +51,7 @@ namespace RE
 	};
 	static_assert(sizeof(PrecomputedNavmeshInfoPathMap) == 0x48);
 
-	class NavMeshInfoMap :
+	class __declspec(novtable) NavMeshInfoMap :
 		public TESForm,						  // 000
 		public BSNavmeshInfoMap,			  // 020
 		public PrecomputedNavmeshInfoPathMap  // 030
