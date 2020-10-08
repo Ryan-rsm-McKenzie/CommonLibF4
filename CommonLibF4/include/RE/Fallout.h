@@ -44,6 +44,7 @@
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTTuple.h"
 #include "RE/Bethesda/BSTextureSet.h"
+#include "RE/Bethesda/BSTextureStreamer.h"
 #include "RE/Bethesda/BSTimer.h"
 #include "RE/Bethesda/CELLJobs.h"
 #include "RE/Bethesda/CRC.h"

@@ -46,6 +46,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSTBTree.h
 	include/RE/Bethesda/BSTEvent.h
 	include/RE/Bethesda/BSTextureSet.h
+	include/RE/Bethesda/BSTextureStreamer.h
 	include/RE/Bethesda/BSTHashMap.h
 	include/RE/Bethesda/BSTimer.h
 	include/RE/Bethesda/BSTList.h
