@@ -1,16 +1,16 @@
 #pragma once
 
-#include "RE/NetImmerse/NiTDefaultAllocator.h"
 #include "RE/NetImmerse/NiTMapBase.h"
+#include "RE/NetImmerse/NiTPointerAllocator.h"
 
 namespace RE
 {
 	template <class Key, class T>
-	class NiTMap :
-		public NiTMapBase<DFALL<NiTMapItem<Key, T>>, Key, T>  // 00
+	class NiTPointerMap :
+		public NiTMapBase<NiTPointerAllocator<std::size_t>, Key, T>	 // 00
 	{
 	private:
-		using super = NiTMapBase<DFALL<NiTMapItem<Key, T>>, Key, T>;
+		using super = NiTMapBase<NiTPointerAllocator<std::size_t>, Key, T>;
 
 	public:
 		using key_type = typename super::key_type;
@@ -20,7 +20,7 @@ namespace RE
 		using allocator_type = typename super::allocator_type;
 
 	protected:
-		value_type* malloc_value() override { return new value_type(); };	// 05
-		void free_value(value_type* a_value) override { delete a_value; };	// 06
+		value_type* malloc_value() override;			// 05
+		void free_value(value_type* a_value) override;	// 06
 	};
 }

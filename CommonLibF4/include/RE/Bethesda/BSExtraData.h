@@ -1,11 +1,15 @@
 #pragma once
 
+#include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSLock.h"
+#include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
+#include "RE/Bethesda/BSTTuple.h"
 
 namespace RE
 {
 	class ExtraLocation;
+	class ExtraTextDisplayData;
 
 	enum EXTRA_DATA_TYPE : std::uint32_t
 	{
@@ -162,7 +166,7 @@ namespace RE
 		kShouldWear,
 		kFavorCost,
 		kAttachArrows3D,
-		kTextDisplayData,
+		kTextDisplayData,  // ExtraTextDisplayData
 		kAlphaCutoff,
 		kEnchantment,
 		kSoul,
@@ -228,6 +232,9 @@ namespace RE
 	};
 
 	class BGSLocation;
+	class BGSMessage;
+	class TESBoundObject;
+	class TESForm;
 
 	class __declspec(novtable) BSExtraData
 	{
@@ -270,6 +277,37 @@ namespace RE
 		BGSLocation* location;	// 18
 	};
 	static_assert(sizeof(ExtraLocation) == 0x20);
+
+	class __declspec(novtable) ExtraTextDisplayData :
+		public BSExtraData	// 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraTextDisplayData };
+		static constexpr auto VTABLE{ VTABLE::ExtraTextDisplayData };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kTextDisplayData };
+
+		enum class DisplayDataType
+		{
+			kUninitialized = -1,
+			kCustomName = -2
+		};
+
+		[[nodiscard]] const BSFixedStringCS& GetDisplayName(TESBoundObject* a_baseObject)
+		{
+			using func_t = decltype(&ExtraTextDisplayData::GetDisplayName);
+			REL::Relocation<func_t> func{ REL::ID(1523343) };
+			return func(this, a_baseObject);
+		}
+
+		// members
+		BSFixedStringCS displayName;									// 18
+		BGSMessage* displayNameText;									// 20
+		TESQuest* ownerQuest;											// 28
+		stl::enumeration<DisplayDataType, std::int32_t> ownerInstance;	// 30
+		BSTArray<BSTTuple<BSFixedString, TESForm*>>* textPairs;			// 38
+		std::uint16_t customNameLength;									// 40
+	};
+	static_assert(sizeof(ExtraTextDisplayData) == 0x48);
 
 	class BaseExtraList
 	{

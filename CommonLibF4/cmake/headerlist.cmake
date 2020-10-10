@@ -139,16 +139,20 @@ set(headers ${headers}
 	include/RE/NetImmerse/NiRTTI.h
 	include/RE/NetImmerse/NiShadeProperty.h
 	include/RE/NetImmerse/NiSmartPointer.h
+	include/RE/NetImmerse/NiStream.h
 	include/RE/NetImmerse/NiTArray.h
 	include/RE/NetImmerse/NiTCollection.h
 	include/RE/NetImmerse/NiTDefaultAllocator.h
 	include/RE/NetImmerse/NiTexture.h
 	include/RE/NetImmerse/NiTimeController.h
+	include/RE/NetImmerse/NiTLargeArray.h
 	include/RE/NetImmerse/NiTList.h
 	include/RE/NetImmerse/NiTListBase.h
 	include/RE/NetImmerse/NiTMap.h
 	include/RE/NetImmerse/NiTMapBase.h
+	include/RE/NetImmerse/NiTPointerAllocator.h
 	include/RE/NetImmerse/NiTPointerListBase.h
+	include/RE/NetImmerse/NiTPointerMap.h
 	include/RE/NetImmerse/NiTransform.h
 	include/RE/Scaleform/GFx/GFx_ASMovieRootBase.h
 	include/RE/Scaleform/GFx/GFx_Loader.h

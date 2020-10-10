@@ -29,6 +29,8 @@ namespace RE
 		// add
 		virtual BSTextureArray::Texture* IsBSTextureArray() { return nullptr; }	 // 28
 
+		[[nodiscard]] std::string_view GetName() const { return name; }
+
 		// members
 		BSFixedString name;							 // 10
 		std::uint32_t flags;						 // 18

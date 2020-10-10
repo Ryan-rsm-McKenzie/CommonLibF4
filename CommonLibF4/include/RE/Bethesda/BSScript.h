@@ -219,6 +219,8 @@ namespace RE
 			static constexpr auto RTTI{ RTTI::BSScript__ObjectTypeInfo };
 			static constexpr auto VTABLE{ VTABLE::BSScript__ObjectTypeInfo };
 
+			[[nodiscard]] std::string_view GetName() const { return name; }
+
 			// members
 			BSFixedString name;											  // 10
 			BSTSmartPointer<BSScript::ObjectTypeInfo> parentTypeInfo;	  // 18

@@ -22,6 +22,8 @@ namespace RE
 
 		F4_HEAP_REDEFINE_NEW(NiObjectNET);
 
+		[[nodiscard]] std::string_view GetName() const { return name; }
+
 		// members
 		BSFixedString name{ "" };				  // 10
 		NiPointer<NiTimeController> controllers;  // 18

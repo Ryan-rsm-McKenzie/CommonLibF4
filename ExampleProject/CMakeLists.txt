@@ -88,7 +88,6 @@ set(MSVC_LINK_OPTIONS_RELEASE
 
 add_compile_definitions(
 	"$<$<BOOL:${MSVC}>:_UNICODE>"
-	TOML_WINDOWS_COMPAT=0
 )
 
 add_compile_options(
@@ -129,12 +128,14 @@ set(sources
 
 source_group(
 	TREE ${CMAKE_CURRENT_SOURCE_DIR}
-	FILES ${headers} ${sources}
+	FILES
+		${headers}
+		${sources}
 )
 
 # ---- Create DLL ----
 
-add_library(ExampleProject SHARED
+add_library(${PROJECT_NAME} SHARED
 	${headers}
 	${sources}
 	${CMAKE_CURRENT_BINARY_DIR}/version.rc
@@ -143,40 +144,40 @@ add_library(ExampleProject SHARED
 
 set_property(
 	TARGET
+		${PROJECT_NAME}
 		CommonLibF4
-		ExampleProject
 	PROPERTY
 		MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
 )
 
-target_compile_features(ExampleProject
+target_compile_features(${PROJECT_NAME}
 	PUBLIC
 		cxx_std_17
 )
 
-target_compile_options(ExampleProject
+target_compile_options(${PROJECT_NAME}
 	PRIVATE
 		"$<$<BOOL:${MSVC}>:/TP>"
 )
 
-target_include_directories(ExampleProject
+target_include_directories(${PROJECT_NAME}
 	PRIVATE 
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
         $<INSTALL_INTERFACE:src>
 )
 
-target_link_libraries(ExampleProject
+target_link_libraries(${PROJECT_NAME}
 	PUBLIC
 		CommonLibF4
 		spdlog::spdlog
 )
 
-target_link_options(ExampleProject
+target_link_options(${PROJECT_NAME}
 	PUBLIC
 		"$<$<AND:$<BOOL:${MSVC}>,$<CONFIG:RELEASE>>:/DEBUG:FULL>"
 )
 
-target_precompile_headers(ExampleProject
+target_precompile_headers(${PROJECT_NAME}
 	PRIVATE
 		src/PCH.h
 )

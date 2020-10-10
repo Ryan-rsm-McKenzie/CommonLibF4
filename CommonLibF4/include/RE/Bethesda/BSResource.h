@@ -30,6 +30,10 @@ namespace RE
 		public:
 			static constexpr auto RTTI{ RTTI::BSResource____LooseFileStreamBase };
 
+			[[nodiscard]] std::string_view GetDirName() const { return dirName; }
+			[[nodiscard]] std::string_view GetFileName() const { return fileName; }
+			[[nodiscard]] std::string_view GetPrefix() const { return prefix; }
+
 			// members
 			BSFixedString prefix;			  // 00
 			BSFixedString dirName;			  // 08

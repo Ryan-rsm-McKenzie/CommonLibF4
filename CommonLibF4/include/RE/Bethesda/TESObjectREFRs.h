@@ -65,7 +65,27 @@ namespace RE
 
 	namespace BGSInventoryListEvent
 	{
-		struct Event;
+		enum class Type
+		{
+			kAddStack,
+			kChangedStack,
+			kAddNewItem,
+			kRemoveItem,
+			kClear,
+			UpdateWeight
+		};
+
+		struct Event
+		{
+		public:
+			// members
+			stl::enumeration<Type, std::uint16_t> changeType;  // 00
+			ObjectRefHandle owner;							   // 04
+			TESBoundObject* objAffected;					   // 08
+			std::uint32_t count;							   // 10
+			std::uint32_t stackID;							   // 14
+		};
+		static_assert(sizeof(Event) == 0x18);
 	}
 
 	class __declspec(novtable) BSHandleRefObject :
@@ -145,11 +165,48 @@ namespace RE
 	class BGSInventoryItem
 	{
 	public:
-		class Stack;
+		class __declspec(novtable) Stack :
+			public BSIntrusiveRefCounted  // 08
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BGSInventoryItem__Stack };
+			static constexpr auto VTABLE{ VTABLE::BGSInventoryItem__Stack };
+
+			enum class Flag
+			{
+				kSlotIndex1 = 1 << 0,
+				kSlotIndex2 = 1 << 1,
+				kSlotIndex3 = 1 << 2,
+				kEquipStateLocked = 1 << 3,
+				kInvShouldEquip = 1 << 4,
+				kTemporary = 1 << 5,
+				kSlotMask = kSlotIndex1 | kSlotIndex2 | kSlotIndex3
+			};
+
+			virtual ~Stack();  // 00
+
+			[[nodiscard]] std::uint32_t GetCount() const noexcept { return count; }
+
+			// members
+			BSTSmartPointer<Stack> nextStack;			  // 10
+			BSTSmartPointer<ExtraDataList> extra;		  // 18
+			std::uint32_t count;						  // 20
+			stl::enumeration<Flag, std::uint16_t> flags;  // 24
+		};
+		static_assert(sizeof(Stack) == 0x28);
+
+		[[nodiscard]] std::uint32_t GetCount() const noexcept
+		{
+			std::uint32_t count = 0;
+			for (auto iter = stackData.get(); iter; iter = iter->nextStack.get()) {
+				count += iter->GetCount();
+			}
+			return count;
+		}
 
 		// members
-		TESBoundObject* object;								 // 00
-		BSTSmartPointer<BGSInventoryItem::Stack> stackData;	 // 08
+		TESBoundObject* object;			   // 00
+		BSTSmartPointer<Stack> stackData;  // 08
 	};
 	static_assert(sizeof(BGSInventoryItem) == 0x10);
 
@@ -197,6 +254,18 @@ namespace RE
 		TESBoundObject* objectReference;  // 20
 	};
 	static_assert(sizeof(OBJ_REFR) == 0x30);
+
+	class BGSInventoryList :
+		public BSTEventSource<BGSInventoryListEvent::Event>	 // 00
+	{
+	public:
+		// members
+		BSTArray<BGSInventoryItem> data;  // 58
+		float cachedWeight;				  // 70
+		ObjectRefHandle owner;			  // 74
+		BSReadWriteLock rwLock;			  // 78
+	};
+	static_assert(sizeof(BGSInventoryList) == 0x80);
 
 	class __declspec(novtable) TESObjectREFR :
 		public TESForm,													 // 000

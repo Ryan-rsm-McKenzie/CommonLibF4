@@ -206,6 +206,8 @@ namespace RE
 
 		virtual ~ButtonEvent() = default;  // 00
 
+		[[nodiscard]] bool JustPressed() const noexcept { return value != 0.0F && heldDownSecs == 0.0F; }
+
 		// members
 		float value{ 0.0F };		 // 38
 		float heldDownSecs{ 0.0F };	 // 3C
