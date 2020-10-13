@@ -28,8 +28,8 @@ namespace RE
 			}
 
 			// members
-			void* _data;	// 08
-			char _name[1];	// 10
+			void* _data;    // 08
+			char _name[1];  // 10
 		};
 		static_assert(sizeof(type_info) == 0x18);
 	}

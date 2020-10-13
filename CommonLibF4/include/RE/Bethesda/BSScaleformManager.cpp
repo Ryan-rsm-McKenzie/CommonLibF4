@@ -26,7 +26,7 @@ namespace RE
 		if (!def) {
 			return false;
 		}
-		def->Release();	 // dumb scaleform thing
+		def->Release();  // dumb scaleform thing
 
 		auto& movie = a_menu.uiMovie;
 		movie.reset(def->CreateInstance(true));

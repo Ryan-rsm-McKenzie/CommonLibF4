@@ -6,9 +6,9 @@ namespace RE
 	struct hkHandle
 	{
 	public:
-		~hkHandle() noexcept {}	 // intentional
+		~hkHandle() noexcept {}  // intentional
 
 		// members
-		Integral value;	 // 0
+		Integral value;  // 0
 	};
 }

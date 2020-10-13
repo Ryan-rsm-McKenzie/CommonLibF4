@@ -29,7 +29,7 @@ namespace RE
 
 		// members
 		std::uint32_t flags;  // 00
-		void* file;			  // 08
+		void* file;           // 08
 	};
 	static_assert(sizeof(BSSystemFile) == 0x10);
 }

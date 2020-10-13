@@ -6,7 +6,7 @@
 namespace RE
 {
 	class __declspec(novtable) NiAlphaProperty :
-		NiProperty	// 00
+		NiProperty  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::NiAlphaProperty };
@@ -41,8 +41,8 @@ namespace RE
 		};
 
 		// members
-		NiTFlags<std::uint16_t, NiProperty> flags;	// 28
-		std::int8_t alphaTestRef;					// 2A
+		NiTFlags<std::uint16_t, NiProperty> flags;  // 28
+		std::int8_t alphaTestRef;                   // 2A
 	};
 	static_assert(sizeof(NiAlphaProperty) == 0x30);
 }

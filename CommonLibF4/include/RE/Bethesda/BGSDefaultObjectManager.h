@@ -7,7 +7,7 @@
 namespace RE
 {
 	class __declspec(novtable) BGSDefaultObjectManager :
-		public TESForm,										  // 00
+		public TESForm,                                       // 00
 		public BSTSingletonImplicit<BGSDefaultObjectManager>  // 20
 	{
 	public:
@@ -23,13 +23,13 @@ namespace RE
 		}
 
 		// members
-		TESForm* objectArray[394];	// 020
-		bool objectInitArray[394];	// C70
+		TESForm* objectArray[394];  // 020
+		bool objectInitArray[394];  // C70
 	};
 	static_assert(sizeof(BGSDefaultObjectManager) == 0xE00);
 
 	class __declspec(novtable) BGSDefaultObject :
-		public TESForm	// 00
+		public TESForm  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BGSDefaultObject };
@@ -37,9 +37,9 @@ namespace RE
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kDFOB };
 
 		// members
-		TESForm* form;				 // 20
-		std::int8_t type;			 // 28
-		BSFixedString formEditorID;	 // 30
+		TESForm* form;               // 20
+		std::int8_t type;            // 28
+		BSFixedString formEditorID;  // 30
 	};
 	static_assert(sizeof(BGSDefaultObject) == 0x38);
 }

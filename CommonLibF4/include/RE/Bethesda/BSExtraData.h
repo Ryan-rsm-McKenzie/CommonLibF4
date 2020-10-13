@@ -150,7 +150,7 @@ namespace RE
 		kCreatureMovementSound,
 		kFollowerSwimBreadcrumbs,
 		kAliasInstanceArray,
-		kLocation,	// ExtraLocation
+		kLocation,  // ExtraLocation
 		kMasterLocation,
 		kLocationRefType,
 		kPromotedRef,
@@ -246,8 +246,8 @@ namespace RE
 		virtual ~BSExtraData() = default;  // 00
 
 		// add
-		virtual bool CompareImpl([[maybe_unused]] const BSExtraData& a_compare) const { return false; }	 // 01
-		virtual bool CompareForUI(const BSExtraData* a_compare) const									 // 02
+		virtual bool CompareImpl([[maybe_unused]] const BSExtraData& a_compare) const { return false; }  // 01
+		virtual bool CompareForUI(const BSExtraData* a_compare) const                                    // 02
 		{
 			if (a_compare && type == a_compare->type) {
 				return CompareImpl(*a_compare);
@@ -259,14 +259,14 @@ namespace RE
 		[[nodiscard]] EXTRA_DATA_TYPE GetExtraType() const noexcept { return *type; }
 
 		// members
-		BSExtraData* next;									   // 08
-		std::uint16_t flags;								   // 10
+		BSExtraData* next;                                     // 08
+		std::uint16_t flags;                                   // 10
 		stl::enumeration<EXTRA_DATA_TYPE, std::uint8_t> type;  // 12
 	};
 	static_assert(sizeof(BSExtraData) == 0x18);
 
 	class __declspec(novtable) ExtraLocation :
-		public BSExtraData	// 00
+		public BSExtraData  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::ExtraLocation };
@@ -274,12 +274,12 @@ namespace RE
 		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kLocation };
 
 		// members
-		BGSLocation* location;	// 18
+		BGSLocation* location;  // 18
 	};
 	static_assert(sizeof(ExtraLocation) == 0x20);
 
 	class __declspec(novtable) ExtraTextDisplayData :
-		public BSExtraData	// 00
+		public BSExtraData  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::ExtraTextDisplayData };
@@ -300,12 +300,12 @@ namespace RE
 		}
 
 		// members
-		BSFixedStringCS displayName;									// 18
-		BGSMessage* displayNameText;									// 20
-		TESQuest* ownerQuest;											// 28
-		stl::enumeration<DisplayDataType, std::int32_t> ownerInstance;	// 30
-		BSTArray<BSTTuple<BSFixedString, TESForm*>>* textPairs;			// 38
-		std::uint16_t customNameLength;									// 40
+		BSFixedStringCS displayName;                                    // 18
+		BGSMessage* displayNameText;                                    // 20
+		TESQuest* ownerQuest;                                           // 28
+		stl::enumeration<DisplayDataType, std::int32_t> ownerInstance;  // 30
+		BSTArray<BSTTuple<BSFixedString, TESForm*>>* textPairs;         // 38
+		std::uint16_t customNameLength;                                 // 40
 	};
 	static_assert(sizeof(ExtraTextDisplayData) == 0x48);
 
@@ -361,9 +361,9 @@ namespace RE
 		}
 
 		// members
-		BSExtraData* _head{ nullptr };				   // 00
+		BSExtraData* _head{ nullptr };                 // 00
 		BSExtraData** _tail{ std::addressof(_head) };  // 08
-		std::uint8_t* _flags{ nullptr };			   // 10
+		std::uint8_t* _flags{ nullptr };               // 10
 	};
 	static_assert(sizeof(BaseExtraList) == 0x18);
 
@@ -417,7 +417,7 @@ namespace RE
 
 	private:
 		// members
-		BaseExtraList _extraData;			   // 08
+		BaseExtraList _extraData;              // 08
 		mutable BSReadWriteLock _extraRWLock;  // 20
 	};
 	static_assert(sizeof(ExtraDataList) == 0x28);

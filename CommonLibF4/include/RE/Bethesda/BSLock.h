@@ -5,7 +5,7 @@ namespace RE
 	class BSNonReentrantSpinLock
 	{
 	public:
-		constexpr BSNonReentrantSpinLock() noexcept {}	// intentional
+		constexpr BSNonReentrantSpinLock() noexcept {}  // intentional
 
 		// members
 		std::uint32_t lock{ 0 };  // 0
@@ -43,8 +43,8 @@ namespace RE
 
 	private:
 		// members
-		std::uint32_t _owningThread{ 0 };		 // 0
-		volatile std::uint32_t _lockCount{ 0 };	 // 4
+		std::uint32_t _owningThread{ 0 };        // 0
+		volatile std::uint32_t _lockCount{ 0 };  // 4
 	};
 	static_assert(sizeof(BSSpinLock) == 0x8);
 
@@ -98,8 +98,8 @@ namespace RE
 
 	private:
 		// members
-		std::uint32_t _writerThread{ 0 };	// 0
-		volatile std::uint32_t _lock{ 0 };	// 4
+		std::uint32_t _writerThread{ 0 };   // 0
+		volatile std::uint32_t _lock{ 0 };  // 4
 	};
 	static_assert(sizeof(BSReadWriteLock) == 0x8);
 

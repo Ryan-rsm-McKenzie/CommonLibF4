@@ -28,7 +28,7 @@ namespace RE
 		{
 		public:
 			// members
-			T root;	 // 00
+			T root;  // 00
 		};
 	}
 }

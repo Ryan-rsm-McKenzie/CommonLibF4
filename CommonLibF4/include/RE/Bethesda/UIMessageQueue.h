@@ -9,7 +9,7 @@
 namespace RE
 {
 	class UIMessageQueue :
-		public BSTSingletonSDM<UIMessageQueue>	// 000
+		public BSTSingletonSDM<UIMessageQueue>  // 000
 	{
 	public:
 		[[nodiscard]] static UIMessageQueue* GetSingleton()
@@ -27,7 +27,7 @@ namespace RE
 
 		// members
 		BSTSmallArray<msvc::unique_ptr<UIMessage>, 64> messages;  // 008
-		BSSpinLock uiMessagesLock;								  // 218
+		BSSpinLock uiMessagesLock;                                // 218
 	};
 	static_assert(sizeof(UIMessageQueue) == 0x220);
 }

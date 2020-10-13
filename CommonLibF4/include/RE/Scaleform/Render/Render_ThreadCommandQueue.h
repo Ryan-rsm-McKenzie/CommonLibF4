@@ -18,7 +18,7 @@ namespace RE
 			{
 			public:
 				// add
-				virtual void Execute() = 0;	 // 01
+				virtual void Execute() = 0;  // 01
 			};
 			static_assert(sizeof(ThreadCommand) == 0x10);
 
@@ -26,10 +26,10 @@ namespace RE
 			{
 			public:
 				// members
-				TextureManager* textureManager;	 // 00
-				HAL* hal;						 // 08
-				Renderer2D* renderer2D;			 // 10
-				ThreadId renderThreadID;		 // 18
+				TextureManager* textureManager;  // 00
+				HAL* hal;                        // 08
+				Renderer2D* renderer2D;          // 10
+				ThreadId renderThreadID;         // 18
 			};
 			static_assert(sizeof(Interfaces) == 0x20);
 
@@ -40,7 +40,7 @@ namespace RE
 
 				// add
 				virtual void PushThreadCommand(ThreadCommand* a_command) = 0;  // 01
-				virtual void GetRenderInterfaces(Interfaces* a_ptr);		   // 02
+				virtual void GetRenderInterfaces(Interfaces* a_ptr);           // 02
 			};
 			static_assert(sizeof(ThreadCommandQueue) == 0x8);
 		}

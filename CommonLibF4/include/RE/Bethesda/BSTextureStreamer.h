@@ -11,10 +11,10 @@ namespace RE
 			struct FreeBlock;
 
 			// members
-			std::byte* memoryBase;			// 00
-			FreeBlock* freeList;			// 08
-			std::uint32_t freeBlocks;		// 10
-			std::uint32_t allocatedBlocks;	// 14
+			std::byte* memoryBase;          // 00
+			FreeBlock* freeList;            // 08
+			std::uint32_t freeBlocks;       // 10
+			std::uint32_t allocatedBlocks;  // 14
 		};
 		static_assert(sizeof(LocalHeap) == 0x18);
 	};

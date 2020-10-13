@@ -96,9 +96,9 @@ namespace RE
 				virtual StateBag* GetStateBagImpl() const { return nullptr; }  // 00
 
 			public:
-				virtual ~StateBag() = default;	// 01
+				virtual ~StateBag() = default;  // 01
 
-				virtual void SetState(State::StateType a_stateType, State* a_state)	 // 02
+				virtual void SetState(State::StateType a_stateType, State* a_state)  // 02
 				{
 					assert(a_state ? true : a_state->GetStateType() == a_stateType);
 					const auto bag = GetStateBagImpl();
@@ -135,15 +135,15 @@ namespace RE
 
 				// members
 				stl::enumeration<FileTypeConstants::FileFormatType, std::int32_t> format;  // 00
-				const char* prefix;														   // 08
-				const char* swfName;													   // 10
-				std::uint16_t version;													   // 18
-				stl::enumeration<ExportFlagConstants, std::uint32_t> exportFlags;		   // 1C
+				const char* prefix;                                                        // 08
+				const char* swfName;                                                       // 10
+				std::uint16_t version;                                                     // 18
+				stl::enumeration<ExportFlagConstants, std::uint32_t> exportFlags;          // 1C
 			};
 			static_assert(sizeof(ExporterInfo) == 0x20);
 
 			class __declspec(novtable) Loader :
-				public StateBag	 // 00
+				public StateBag  // 00
 			{
 			public:
 				enum class LoadConstants : std::uint32_t
@@ -162,10 +162,10 @@ namespace RE
 					kDebugHeap = 1 << 28
 				};
 
-				virtual ~Loader();	// 00
+				virtual ~Loader();  // 00
 
 				// add
-				virtual bool CheckTagLoader(std::int32_t a_tagType) const;	// 04
+				virtual bool CheckTagLoader(std::int32_t a_tagType) const;  // 04
 
 				[[nodiscard]] MovieDef* CreateMovie(const char* a_filename, LoadConstants a_loadConstants = LoadConstants::kAll, std::size_t a_memoryArena = 0)
 				{
@@ -175,8 +175,8 @@ namespace RE
 				}
 
 				// members
-				LoaderImpl* impl;											  // 08
-				ResourceLib* strongResourceLib;								  // 10
+				LoaderImpl* impl;                                             // 08
+				ResourceLib* strongResourceLib;                               // 10
 				stl::enumeration<LoadConstants, std::uint32_t> defLoadFlags;  // 18
 			};
 			static_assert(sizeof(Loader) == 0x20);

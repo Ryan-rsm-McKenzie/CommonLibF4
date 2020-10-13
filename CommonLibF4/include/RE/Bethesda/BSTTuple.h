@@ -204,8 +204,8 @@ namespace RE
 		}
 
 		// members
-		T1 first;	// 00
-		T2 second;	// ??
+		T1 first;   // 00
+		T2 second;  // ??
 	};
 
 	template <

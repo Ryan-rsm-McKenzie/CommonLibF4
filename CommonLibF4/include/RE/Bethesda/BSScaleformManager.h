@@ -39,17 +39,17 @@ namespace RE
 	{
 	public:
 		// members
-		Scaleform::Ptr<Scaleform::Render::Renderer2D> renderer;			   // 058
-		Scaleform::Ptr<Scaleform::Render::HAL> renderConfig;			   // 060
+		Scaleform::Ptr<Scaleform::Render::Renderer2D> renderer;            // 058
+		Scaleform::Ptr<Scaleform::Render::HAL> renderConfig;               // 060
 		Scaleform::Ptr<Scaleform::Render::TextureManager> textureManager;  // 068
-		Scaleform::Render::RenderTarget* renderTargets[100];			   // 070
-		bool initialized;												   // 390
+		Scaleform::Render::RenderTarget* renderTargets[100];               // 070
+		bool initialized;                                                  // 390
 	};
 	static_assert(sizeof(BSScaleformRenderer) == 0x398);
 
 	class __declspec(novtable) BSScaleformManager :
 		public BSTEventSink<SFRendererInitializedEvent>,  // 00
-		public BSTSingletonSDM<BSScaleformManager>		  // 08
+		public BSTSingletonSDM<BSScaleformManager>        // 08
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BSScaleformManager };
@@ -84,11 +84,11 @@ namespace RE
 			float a_backgroundAlpha = 0.0F);
 
 		// members
-		Scaleform::GFx::Loader* loader;								  // 10
-		BSScaleformRenderer* renderer;								  // 18
+		Scaleform::GFx::Loader* loader;                               // 10
+		BSScaleformRenderer* renderer;                                // 18
 		Scaleform::Ptr<Scaleform::GFx::DrawTextManager> textManager;  // 20
-		Scaleform::Ptr<BSScaleformImageLoader> imageLoader;			  // 28
-		BSStringT<char> validNameChars;								  // 30
+		Scaleform::Ptr<BSScaleformImageLoader> imageLoader;           // 28
+		BSStringT<char> validNameChars;                               // 30
 
 	private:
 		[[nodiscard]] bool GetMovieFilename(char const* a_menuName, BSStaticStringT<260>& a_filePath)

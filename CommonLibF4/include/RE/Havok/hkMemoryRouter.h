@@ -36,12 +36,12 @@ namespace RE
 		[[nodiscard]] Stack& GetStack() noexcept { return stack; }
 
 		// members
-		Stack stack;						   // 00
-		hkMemoryAllocator* temp{ nullptr };	   // 50
-		hkMemoryAllocator* heap{ nullptr };	   // 58
+		Stack stack;                           // 00
+		hkMemoryAllocator* temp{ nullptr };    // 50
+		hkMemoryAllocator* heap{ nullptr };    // 58
 		hkMemoryAllocator* debug{ nullptr };   // 60
 		hkMemoryAllocator* solver{ nullptr };  // 68
-		void* userData{ nullptr };			   // 70
+		void* userData{ nullptr };             // 70
 		std::uint32_t refObjLocalStore{ 0 };   // 78
 	};
 	static_assert(sizeof(hkMemoryRouter) == 0x80);

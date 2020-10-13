@@ -55,13 +55,13 @@ namespace RE
 
 					struct __declspec(novtable) HandleData :
 						public RefCountBase<HandleData, 69>,  // 00
-						public ListNode<HandleData>			  // 10
+						public ListNode<HandleData>           // 10
 					{
 					public:
 						// members
-						Ptr<ContextLock> contextLock;						// 20
-						stl::enumeration<HandleState, std::int32_t> state;	// 28
-						Entry* entry;										// 30
+						Ptr<ContextLock> contextLock;                       // 20
+						stl::enumeration<HandleState, std::int32_t> state;  // 28
+						Entry* entry;                                       // 30
 					};
 					static_assert(sizeof(HandleData) == 0x38);
 
@@ -72,7 +72,7 @@ namespace RE
 
 				template <class C>
 				class DisplayHandle :
-					public RTHandle	 // 0
+					public RTHandle  // 0
 				{
 				public:
 				};
@@ -82,7 +82,7 @@ namespace RE
 				{
 				public:
 					struct PropagateNode :
-						public ListNode<PropagateNode>	// 00
+						public ListNode<PropagateNode>  // 00
 					{
 					public:
 					};
@@ -93,16 +93,16 @@ namespace RE
 					{
 						Entry* prev;
 						EntryChange* change;
-					};	// 00
+					};  // 00
 					union
 					{
 						Entry* next;
 						std::size_t refCount;
-					};						  // 08
-					EntryData* native;		  // 10
+					};                        // 08
+					EntryData* native;        // 10
 					TreeCacheNode* renderer;  // 18
-					Entry* parent;			  // 20
-					PropagateNode node;		  // 28
+					Entry* parent;            // 20
+					PropagateNode node;       // 28
 				};
 				static_assert(sizeof(Entry) == 0x38);
 
@@ -131,15 +131,15 @@ namespace RE
 					virtual ~EntryData();  // 00
 
 					// add
-					virtual EntryData* ConstructCopy(LinearHeap& a_heap) const = 0;	 // 01
-					virtual void CopyTo(void* a_dest) const = 0;					 // 02
-					virtual void ReleaseNodes() const {}							 // 03
-					virtual void Destroy() = 0;										 // 04
-					virtual bool PropagateUp(Entry* a_entry) const;					 // 05
+					virtual EntryData* ConstructCopy(LinearHeap& a_heap) const = 0;  // 01
+					virtual void CopyTo(void* a_dest) const = 0;                     // 02
+					virtual void ReleaseNodes() const {}                             // 03
+					virtual void Destroy() = 0;                                      // 04
+					virtual bool PropagateUp(Entry* a_entry) const;                  // 05
 
 					// members
 					stl::enumeration<EntryType, std::uint16_t> type;  // 08
-					std::uint16_t flags;							  // 0A
+					std::uint16_t flags;                              // 0A
 				};
 				static_assert(sizeof(EntryData) == 0x10);
 
@@ -152,7 +152,7 @@ namespace RE
 					{
 						std::uint32_t changeBits;
 						EntryChange* nextFreeNode;
-					};	// 08
+					};  // 08
 				};
 				static_assert(sizeof(EntryChange) == 0x10);
 
@@ -191,9 +191,9 @@ namespace RE
 					virtual void EntryFlush(Entry*) {}
 
 					// members
-					List<ContextNode> activeContextSet;		// 08
-					ThreadCommandQueue* rtCommandQueue;		// 18
-					ServiceCommand serviceCommandInstance;	// 20
+					List<ContextNode> activeContextSet;     // 08
+					ThreadCommandQueue* rtCommandQueue;     // 18
+					ServiceCommand serviceCommandInstance;  // 20
 				};
 				static_assert(sizeof(RenderNotify) == 0x38);
 
@@ -204,9 +204,9 @@ namespace RE
 					virtual ~ContextCaptureNotify();  // 00
 
 					// add
-					virtual void OnCapture() {}												// 01
-					virtual void OnNextCapture([[maybe_unused]] RenderNotify* a_notify) {}	// 02
-					virtual void OnShutdown([[maybe_unused]] bool a_waitFlag) {}			// 03
+					virtual void OnCapture() {}                                             // 01
+					virtual void OnNextCapture([[maybe_unused]] RenderNotify* a_notify) {}  // 02
+					virtual void OnShutdown([[maybe_unused]] bool a_waitFlag) {}            // 03
 
 					// members
 					Context* ownedContext{ nullptr };  // 18
@@ -214,15 +214,15 @@ namespace RE
 				static_assert(sizeof(ContextCaptureNotify) == 0x20);
 
 				struct EntryPageBase :
-					public ListNode<EntryPageBase>	// 00
+					public ListNode<EntryPageBase>  // 00
 				{
 				public:
 					// members
-					std::uint32_t useCount;				// 10
-					Snapshot* snapshot;					// 18
-					SnapshotPage* snapshotPage;			// 20
-					SnapshotPage* displaySnapshotPage;	// 28
-					SnapshotPage* tempPage;				// 30
+					std::uint32_t useCount;             // 10
+					Snapshot* snapshot;                 // 18
+					SnapshotPage* snapshotPage;         // 20
+					SnapshotPage* displaySnapshotPage;  // 28
+					SnapshotPage* tempPage;             // 30
 				};
 				static_assert(sizeof(EntryPageBase) == 0x38);
 
@@ -231,7 +231,7 @@ namespace RE
 				{
 				public:
 					// members
-					Entry entries[72];	// 038
+					Entry entries[72];  // 038
 				};
 				static_assert(sizeof(EntryPage) == 0xFF8);
 
@@ -239,11 +239,11 @@ namespace RE
 				{
 				public:
 					// members
-					Context* context;							// 00
-					MemoryHeap* heap;							// 08
-					List<EntryPage, EntryPageBase> entryPages;	// 10
-					EntryList freeNodes;						// 20
-					Snapshot* activeSnapshot;					// 58
+					Context* context;                           // 00
+					MemoryHeap* heap;                           // 08
+					List<EntryPage, EntryPageBase> entryPages;  // 10
+					EntryList freeNodes;                        // 20
+					Snapshot* activeSnapshot;                   // 58
 				};
 				static_assert(sizeof(EntryTable) == 0x60);
 
@@ -252,10 +252,10 @@ namespace RE
 				{
 				public:
 					// members
-					EntryPage* entryPage;			  // 010
+					EntryPage* entryPage;             // 010
 					SnapshotPage* olderSnapshotPage;  // 018
 					SnapshotPage* newerSnapshotPage;  // 020
-					EntryData* data[72];			  // 028
+					EntryData* data[72];              // 028
 				};
 				static_assert(sizeof(SnapshotPage) == 0x268);
 
@@ -265,23 +265,23 @@ namespace RE
 					using Entry = ContextImpl::Entry;
 
 					// members
-					MemoryHeap* heap;							   // 000
-					ThreadId createThreadID;					   // 008
-					EntryTable table;							   // 010
-					Ptr<ContextLock> captureLock;				   // 070
+					MemoryHeap* heap;                              // 000
+					ThreadId createThreadID;                       // 008
+					EntryTable table;                              // 010
+					Ptr<ContextLock> captureLock;                  // 070
 					List<ContextCaptureNotify> captureNotifyList;  // 078
-					RenderNotify* renderer;						   // 088
-					bool multiThreadedUse;						   // 090
-					bool nextCaptureCalledInFrame;				   // 091
-					volatile bool captureCalled;				   // 092
-					volatile bool diChangesRequired;			   // 093
-					volatile bool shutdownRequested;			   // 094
-					Event* volatile shutdownEvent;				   // 098
-					RenderNotify::ContextNode renderNode;		   // 0A0
-					List<RTHandle::HandleData> rtHandleList;	   // 0B8
-					Snapshot* snapshots[4];						   // 0C8
-					std::uint64_t snapshotFrameIDs[4];			   // 0E8
-					std::uint64_t finalizedFrameID;				   // 108
+					RenderNotify* renderer;                        // 088
+					bool multiThreadedUse;                         // 090
+					bool nextCaptureCalledInFrame;                 // 091
+					volatile bool captureCalled;                   // 092
+					volatile bool diChangesRequired;               // 093
+					volatile bool shutdownRequested;               // 094
+					Event* volatile shutdownEvent;                 // 098
+					RenderNotify::ContextNode renderNode;          // 0A0
+					List<RTHandle::HandleData> rtHandleList;       // 0B8
+					Snapshot* snapshots[4];                        // 0C8
+					std::uint64_t snapshotFrameIDs[4];             // 0E8
+					std::uint64_t finalizedFrameID;                // 108
 				};
 				static_assert(sizeof(Context) == 0x110);
 			}

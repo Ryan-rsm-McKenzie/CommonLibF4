@@ -16,7 +16,7 @@ namespace RE
 		struct DeletedItemInfo
 		{
 		public:
-			~DeletedItemInfo() noexcept {}	// intentional
+			~DeletedItemInfo() noexcept {}  // intentional
 
 			// members
 			std::uint32_t formID;  // 0
@@ -25,7 +25,7 @@ namespace RE
 		static_assert(sizeof(DeletedItemInfo) == 0x8);
 
 		class __declspec(novtable) ExtraData :
-			public BSExtraData	// 00
+			public BSExtraData  // 00
 		{
 		public:
 			static constexpr auto RTTI{ RTTI::Workshop__ExtraData };
@@ -33,11 +33,11 @@ namespace RE
 			static constexpr auto TYPE{ EXTRA_DATA_TYPE::kWorkshop };
 
 			// members
-			PowerUtils::PowerGrid* currentPowerGrid;			// 18
-			BSTArray<PowerUtils::PowerGrid*> powerGrid;			// 20
-			BSTArray<Workshop::DeletedItemInfo*> deletedItems;	// 38
-			std::int32_t powerRating;							// 50
-			bool offGridItems;									// 54
+			PowerUtils::PowerGrid* currentPowerGrid;            // 18
+			BSTArray<PowerUtils::PowerGrid*> powerGrid;         // 20
+			BSTArray<Workshop::DeletedItemInfo*> deletedItems;  // 38
+			std::int32_t powerRating;                           // 50
+			bool offGridItems;                                  // 54
 		};
 		static_assert(sizeof(ExtraData) == 0x58);
 	};

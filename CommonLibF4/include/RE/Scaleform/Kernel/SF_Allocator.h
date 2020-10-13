@@ -23,7 +23,7 @@ namespace RE
 		template <class T, std::int32_t SID = 2>
 		struct AllocatorGH :
 			public AllocatorBaseGH<SID>,  // 0
-			public ConstructorMov<T>	  // 1
+			public ConstructorMov<T>      // 1
 		{
 		public:
 		};

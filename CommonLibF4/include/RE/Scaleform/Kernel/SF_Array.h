@@ -22,7 +22,7 @@ namespace RE
 		struct ArrayConstPolicy
 		{
 		public:
-			~ArrayConstPolicy() noexcept {}	 // intentional
+			~ArrayConstPolicy() noexcept {}  // intentional
 
 			// members
 			std::size_t capacity;  // 0
@@ -34,14 +34,14 @@ namespace RE
 		{
 		public:
 			// members
-			T* data;			// 00
-			std::size_t size;	// 08
-			SizePolicy policy;	// 10
+			T* data;            // 00
+			std::size_t size;   // 08
+			SizePolicy policy;  // 10
 		};
 
 		template <class T, class Allocator, class SizePolicy>
 		struct ArrayData :
-			public ArrayDataBase<T, Allocator, SizePolicy>	// 0
+			public ArrayDataBase<T, Allocator, SizePolicy>  // 0
 		{
 		public:
 		};
@@ -51,12 +51,12 @@ namespace RE
 		{
 		public:
 			// membrs
-			ArrayData data;	 // 0
+			ArrayData data;  // 0
 		};
 
 		template <class T, std::int32_t SID = 2, class SizePolicy = ArrayDefaultPolicy>
 		class Array :
-			public ArrayBase<ArrayData<T, AllocatorGH<T, SID>, SizePolicy>>	 // 0
+			public ArrayBase<ArrayData<T, AllocatorGH<T, SID>, SizePolicy>>  // 0
 		{
 		public:
 		};

@@ -47,7 +47,7 @@ namespace RE
 		std::uint16_t N = static_cast<std::uint16_t>(-1),
 		template <class, std::uint16_t> class Allocator = DynamicMemoryManagementPol>
 	class BSStringT :
-		public Allocator<CharT, N>	// 00
+		public Allocator<CharT, N>  // 00
 	{
 	public:
 		using value_type = CharT;
@@ -142,7 +142,7 @@ namespace RE
 		}
 
 		pointer _data{ nullptr };  // ??
-		size_type _size{ 0 };	   // ??
+		size_type _size{ 0 };      // ??
 		size_type _capacity{ 0 };  // ??
 	};
 

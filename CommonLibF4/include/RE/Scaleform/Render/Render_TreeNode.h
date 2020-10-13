@@ -21,7 +21,7 @@ namespace RE
 			static_assert(sizeof(TreeNode) == 0x38);
 
 			class TreeContainer :
-				public TreeNode	 // 00
+				public TreeNode  // 00
 			{
 			public:
 			};

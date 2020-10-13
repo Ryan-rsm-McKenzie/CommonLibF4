@@ -61,8 +61,8 @@ namespace RE
 				return *this;
 			}
 
-			value_type value{};						// 00
-			BSTScatterTableEntry* next{ nullptr };	// ??
+			value_type value{};                     // 00
+			BSTScatterTableEntry* next{ nullptr };  // ??
 		};
 
 		using entry_type = BSTScatterTableEntry;
@@ -192,7 +192,7 @@ namespace RE
 			}
 
 			const auto entry = calc_pos(a_key);
-			if (!entry->next) {	 // key not in table
+			if (!entry->next) {  // key not in table
 				return 0;
 			}
 
@@ -205,7 +205,7 @@ namespace RE
 				}
 			}
 
-			if (entry->next == _sentinel) {	 // if no chain
+			if (entry->next == _sentinel) {  // if no chain
 				if (tail) {
 					tail->next = const_cast<entry_type*>(_sentinel);
 				}
@@ -271,7 +271,7 @@ namespace RE
 
 			auto probe = calc_pos(a_key);  // try ideal pos
 			if (!probe->next) {
-				return nullptr;	 // nothing there
+				return nullptr;  // nothing there
 			}
 
 			do {
@@ -303,7 +303,7 @@ namespace RE
 			}
 
 			for (auto iter = idealEntry; iter != _sentinel; iter = iter->next) {
-				if (comp_key(get_key(iter->value), get_key(a_value))) {	 // if entry already in table
+				if (comp_key(get_key(iter->value), get_key(a_value))) {  // if entry already in table
 					if (a_overwrite) {
 						iter->value = std::forward<Arg>(a_value);
 					}
@@ -429,13 +429,13 @@ namespace RE
 		static constexpr std::uint8_t SENTINEL[] = { (std::uint8_t)0xDE, (std::uint8_t)0xAD, (std::uint8_t)0xBE, (std::uint8_t)0xEF };
 
 		// members
-		std::uint64_t _pad00{ 0 };													   // 00
-		std::uint32_t _pad08{ 0 };													   // 08
-		std::uint32_t _capacity{ 0 };												   // 0C - this must be 2^n, or else terrible things will happen
-		std::uint32_t _freeCount{ 0 };												   // 10
-		std::uint32_t _freeIdx{ 0 };												   // 14
+		std::uint64_t _pad00{ 0 };                                                     // 00
+		std::uint32_t _pad08{ 0 };                                                     // 08
+		std::uint32_t _capacity{ 0 };                                                  // 0C - this must be 2^n, or else terrible things will happen
+		std::uint32_t _freeCount{ 0 };                                                 // 10
+		std::uint32_t _freeIdx{ 0 };                                                   // 14
 		const entry_type* _sentinel{ reinterpret_cast<const entry_type*>(SENTINEL) };  // 18
-		allocator_type _allocator;													   // 20
+		allocator_type _allocator;                                                     // 20
 	};
 
 	template <class Key, class T>
@@ -481,7 +481,7 @@ namespace RE
 
 	private:
 		// members
-		std::uint64_t _pad00{ 0 };		  // 00 (20)
+		std::uint64_t _pad00{ 0 };        // 00 (20)
 		entry_type* _entries{ nullptr };  // 08 (28)
 	};
 	static_assert(sizeof(BSTScatterTableHeapAllocator<void*, 8>) == 0x10);
@@ -551,8 +551,8 @@ namespace RE
 
 		private:
 			// members
-			entry_type _data[N]{};			// 00
-			entry_type* _entries{ _data };	// ??
+			entry_type _data[N]{};          // 00
+			entry_type* _entries{ _data };  // ??
 		};
 	};
 
@@ -600,7 +600,7 @@ namespace RE
 	private:
 		// members
 		ScrapHeap* _allocator{ MemoryManager::GetThreadScrapHeap() };  // 00
-		entry_type* _entries{ nullptr };							   // 08
+		entry_type* _entries{ nullptr };                               // 08
 	};
 
 	template <

@@ -15,7 +15,7 @@ namespace RE
 		}
 
 		// members
-		NiPoint4 entry[3];	// 00
+		NiPoint4 entry[3];  // 00
 	};
 	static_assert(sizeof(NiMatrix3) == 0x30);
 }

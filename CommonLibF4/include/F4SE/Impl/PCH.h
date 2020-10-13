@@ -123,7 +123,7 @@ namespace F4SE
 			std::enable_if_t<
 				std::conjunction_v<
 					detail::can_construct_at<T, Args...>,
-					std::is_constructible<T, Args...>>,	 // more strict
+					std::is_constructible<T, Args...>>,  // more strict
 				int> = 0>
 		T* construct_at(T* a_ptr, Args&&... a_args)
 		{

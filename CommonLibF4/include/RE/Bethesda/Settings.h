@@ -29,18 +29,18 @@ namespace RE
 		enum class SETTING_TYPE
 		{
 			kBinary,  // b
-			kChar,	  // c
-			kUChar,	  // h
-			kInt,	  // i
-			kUInt,	  // u
-			kFloat,	  // f
+			kChar,    // c
+			kUChar,   // h
+			kInt,     // i
+			kUInt,    // u
+			kFloat,   // f
 			kString,  // s/S
-			kRGB,	  // r
-			kRGBA,	  // a
+			kRGB,     // r
+			kRGBA,    // a
 			kNone
 		};
 
-		virtual ~Setting()	// 00
+		virtual ~Setting()  // 00
 		{
 			if (_key && _key[0] == 'S') {
 				free(const_cast<char*>(_key));
@@ -146,13 +146,13 @@ namespace RE
 	private:
 		// members
 		SETTING_VALUE _value;  // 08
-		const char* _key;	   // 10
+		const char* _key;      // 10
 	};
 	static_assert(sizeof(Setting) == 0x18);
 
 	template <class T>
 	class __declspec(novtable) SettingT :
-		public Setting	// 00
+		public Setting  // 00
 	{
 	public:
 	};
@@ -173,29 +173,29 @@ namespace RE
 	class __declspec(novtable) SettingCollection
 	{
 	public:
-		virtual ~SettingCollection() = default;	 // 00
+		virtual ~SettingCollection() = default;  // 00
 
 		// add
-		virtual void Add(T* a_setting) = 0;									// 01
-		virtual void Remove(T* a_setting) = 0;								// 02
-		virtual bool WriteSetting(T& a_setting) = 0;						// 03
-		virtual bool ReadSetting(T& a_setting) = 0;							// 04
-		virtual bool Open([[maybe_unused]] bool a_write) { return false; }	// 05
-		virtual bool Close() { return true; }								// 06
-		virtual bool ReadSettingsFromProfile() { return false; }			// 07
-		virtual bool WriteSettings() { return handle != nullptr; }			// 08
-		virtual bool ReadSettings() { return handle != nullptr; }			// 09
+		virtual void Add(T* a_setting) = 0;                                 // 01
+		virtual void Remove(T* a_setting) = 0;                              // 02
+		virtual bool WriteSetting(T& a_setting) = 0;                        // 03
+		virtual bool ReadSetting(T& a_setting) = 0;                         // 04
+		virtual bool Open([[maybe_unused]] bool a_write) { return false; }  // 05
+		virtual bool Close() { return true; }                               // 06
+		virtual bool ReadSettingsFromProfile() { return false; }            // 07
+		virtual bool WriteSettings() { return handle != nullptr; }          // 08
+		virtual bool ReadSettings() { return handle != nullptr; }           // 09
 
 		// members
-		char settingFile[260];	// 008
-		void* handle;			// 110
+		char settingFile[260];  // 008
+		void* handle;           // 110
 	};
 
 	extern template class SettingCollection<Setting>;
 
 	template <class T>
 	class __declspec(novtable) SettingCollectionMap :
-		public SettingCollection<T>	 // 000
+		public SettingCollection<T>  // 000
 	{
 	public:
 		// members
@@ -210,7 +210,7 @@ namespace RE
 	{
 	public:
 		// members
-		BSSimpleList<T*> settings;	// 118
+		BSSimpleList<T*> settings;  // 118
 	};
 
 	extern template class SettingCollectionList<Setting>;
@@ -246,7 +246,7 @@ namespace RE
 	static_assert(sizeof(INISettingCollection) == 0x128);
 
 	class __declspec(novtable) INIPrefSettingCollection :
-		public INISettingCollection	 // 000
+		public INISettingCollection  // 000
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::INIPrefSettingCollection };

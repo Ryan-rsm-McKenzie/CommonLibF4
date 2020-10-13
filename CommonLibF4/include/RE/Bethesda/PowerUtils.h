@@ -15,8 +15,8 @@ namespace RE
 			~GridConnection() noexcept {}  // intentional
 
 			// members
-			std::uint32_t connection{ 0 };	// 0 - formID
-			std::uint32_t connector{ 0 };	// 4 - formID
+			std::uint32_t connection{ 0 };  // 0 - formID
+			std::uint32_t connector{ 0 };   // 4 - formID
 		};
 		static_assert(sizeof(GridConnection) == 0x8);
 	}
@@ -38,11 +38,11 @@ namespace RE
 		struct GridSaveLoadData
 		{
 		public:
-			~GridSaveLoadData() noexcept {}	 // intentional
+			~GridSaveLoadData() noexcept {}  // intentional
 
 			// members
-			std::uint32_t node{ 0 };	// 0 - formID
-			GridConnection connection;	// 4
+			std::uint32_t node{ 0 };    // 0 - formID
+			GridConnection connection;  // 4
 		};
 		static_assert(sizeof(GridSaveLoadData) == 0xC);
 
@@ -53,11 +53,11 @@ namespace RE
 
 			// members
 			BSTHashMap<std::uint32_t, BSTSet<GridConnection>*> adjacencyMap;  // 00 - key -> formID
-			BSTArray<GridSaveLoadData> loadGameData;						  // 30
-			std::uint32_t loadElement{ 0 };									  // 48
-			BSTArray<std::uint32_t> currentlyPowered;						  // 50
-			float capacity{ 0.0F };											  // 68
-			float load{ 0.0F };												  // 6C
+			BSTArray<GridSaveLoadData> loadGameData;                          // 30
+			std::uint32_t loadElement{ 0 };                                   // 48
+			BSTArray<std::uint32_t> currentlyPowered;                         // 50
+			float capacity{ 0.0F };                                           // 68
+			float load{ 0.0F };                                               // 6C
 		};
 		static_assert(sizeof(PowerGrid) == 0x70);
 	}

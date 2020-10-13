@@ -16,8 +16,8 @@ namespace RE
 		}
 
 		// members
-		NiMatrix3 rotate;	  // 00
-		NiPoint3 translate;	  // 30
+		NiMatrix3 rotate;     // 00
+		NiPoint3 translate;   // 30
 		float scale{ 1.0F };  // 3C
 	};
 	static_assert(sizeof(NiTransform) == 0x40);

@@ -110,7 +110,7 @@ namespace F4SE
 	{
 		auto pct = (static_cast<double>(_size) /
 					   static_cast<double>(_capacity)) *
-				   100.0;
+		           100.0;
 		log::info("{} => {}B / {}B ({:05.2f}%)"sv, _name, _size, _capacity, pct);
 	}
 }

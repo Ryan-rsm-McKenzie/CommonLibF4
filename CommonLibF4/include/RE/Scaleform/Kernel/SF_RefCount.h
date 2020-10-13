@@ -16,7 +16,7 @@ namespace RE
 			static constexpr auto VTABLE{ VTABLE::Scaleform__RefCountImplCore };
 
 			RefCountImplCore() = default;
-			virtual ~RefCountImplCore() = default;	// 00
+			virtual ~RefCountImplCore() = default;  // 00
 
 		protected:
 			// members
@@ -25,13 +25,13 @@ namespace RE
 		static_assert(sizeof(RefCountImplCore) == 0x10);
 
 		class RefCountImpl :
-			public RefCountImplCore	 // 00
+			public RefCountImplCore  // 00
 		{
 		public:
 			static constexpr auto RTTI{ RTTI::Scaleform__RefCountImpl };
 			static constexpr auto VTABLE{ VTABLE::Scaleform__RefCountImpl };
 
-			virtual ~RefCountImpl() = default;	// 00
+			virtual ~RefCountImpl() = default;  // 00
 
 			void AddRef()
 			{
@@ -51,7 +51,7 @@ namespace RE
 
 		template <class Base, std::int32_t>
 		class RefCountBaseStatImpl :
-			public Base	 // 00
+			public Base  // 00
 		{
 		public:
 			RefCountBaseStatImpl() = default;
@@ -62,7 +62,7 @@ namespace RE
 
 		template <class, std::int32_t STAT>
 		class RefCountBase :
-			public RefCountBaseStatImpl<RefCountImpl, STAT>	 // 00
+			public RefCountBaseStatImpl<RefCountImpl, STAT>  // 00
 		{
 		public:
 			RefCountBase() = default;
@@ -253,7 +253,7 @@ namespace RE
 			}
 
 			// members
-			element_type* _ptr{ nullptr };	// 0
+			element_type* _ptr{ nullptr };  // 0
 		};
 		//static_assert(sizeof(Ptr<void*>) == 0x8);
 
@@ -262,7 +262,7 @@ namespace RE
 		{
 			auto ptr = Ptr<T>{ new T(std::forward<Args>(a_args)...) };
 			if (ptr) {
-				ptr->Release();	 // ensure lifetime ends with smart pointer
+				ptr->Release();  // ensure lifetime ends with smart pointer
 			}
 			return ptr;
 		}

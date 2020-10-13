@@ -53,16 +53,16 @@ namespace RE
 
 				// add
 				virtual float GetDefaultValue() { return 0.0F; }  // 01
-				virtual void InitItem(TESForm* a_owner);		  // 02
-				virtual void CopyData(Entry* a_copy);			  // 03
-				virtual void LoadImpl(TESFile* a_file) = 0;		  // 04
+				virtual void InitItem(TESForm* a_owner);          // 02
+				virtual void CopyData(Entry* a_copy);             // 03
+				virtual void LoadImpl(TESFile* a_file) = 0;       // 04
 
 				// members
-				BGSLocalizedString name;						 // 08
-				TESCondition chargenConditions;					 // 10
-				stl::enumeration<EntrySlot, std::int32_t> slot;	 // 18
-				const std::uint16_t uniqueID;					 // 1C
-				std::int8_t flags;								 // 1E
+				BGSLocalizedString name;                         // 08
+				TESCondition chargenConditions;                  // 10
+				stl::enumeration<EntrySlot, std::int32_t> slot;  // 18
+				const std::uint16_t uniqueID;                    // 1C
+				std::int8_t flags;                               // 1E
 			};
 			static_assert(sizeof(Entry) == 0x20);
 
@@ -70,10 +70,10 @@ namespace RE
 			{
 			public:
 				// members
-				BGSLocalizedString name;	 // 00
-				std::uint32_t id;			 // 08
-				std::uint32_t chargenIndex;	 // 0C
-				BSTArray<Entry*> entries;	 // 10
+				BGSLocalizedString name;     // 00
+				std::uint32_t id;            // 08
+				std::uint32_t chargenIndex;  // 0C
+				BSTArray<Entry*> entries;    // 10
 			};
 			static_assert(sizeof(Group) == 0x28);
 

@@ -20,7 +20,7 @@ namespace RE
 		using allocator_type = typename super::allocator_type;
 
 	protected:
-		value_type* malloc_value() override { return new value_type(); };	// 05
-		void free_value(value_type* a_value) override { delete a_value; };	// 06
+		value_type* malloc_value() override { return new value_type(); };   // 05
+		void free_value(value_type* a_value) override { delete a_value; };  // 06
 	};
 }

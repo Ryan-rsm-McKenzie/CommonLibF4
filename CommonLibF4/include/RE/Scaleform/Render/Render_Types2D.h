@@ -28,7 +28,7 @@ namespace RE
 
 			template <class T>
 			class Rect :
-				public RectData<T>	// 00
+				public RectData<T>  // 00
 			{
 			public:
 			};

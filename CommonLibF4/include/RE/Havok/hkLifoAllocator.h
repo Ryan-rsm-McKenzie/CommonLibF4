@@ -23,7 +23,7 @@ namespace RE
 			return func(this, a_numBytesIn);
 		}
 
-		void BlockFree(void* a_ptr, std::int32_t a_numBytesIn) override	 // 02
+		void BlockFree(void* a_ptr, std::int32_t a_numBytesIn) override  // 02
 		{
 			using func_t = decltype(&hkLifoAllocator::BlockFree);
 			REL::Relocation<func_t> func{ REL::ID(778687) };
@@ -37,7 +37,7 @@ namespace RE
 			return func(this, a_reqNumBytesInOut);
 		}
 
-		void BufFree(void* a_ptr, std::int32_t a_numBytes) override	 // 04
+		void BufFree(void* a_ptr, std::int32_t a_numBytes) override  // 04
 		{
 			using func_t = decltype(&hkLifoAllocator::BufFree);
 			REL::Relocation<func_t> func{ REL::ID(1123850) };
@@ -52,10 +52,10 @@ namespace RE
 		}
 
 		void GetMemoryStatistics(
-			[[maybe_unused]] MemoryStatistics& a_stats) const override { return; }	// 08
+			[[maybe_unused]] MemoryStatistics& a_stats) const override { return; }  // 08
 		std::int32_t GetAllocatedSize(
 			[[maybe_unused]] const void* a_obj,
-			std::int32_t a_numBytes) const override { return a_numBytes; }	// 09
+			std::int32_t a_numBytes) const override { return a_numBytes; }  // 09
 
 		void Init(
 			hkMemoryAllocator* a_slabAllocator,
@@ -75,14 +75,14 @@ namespace RE
 		}
 
 		// members
-		Implementation* impl{ nullptr };				  // 08
-		const std::int32_t slabSize{ 0x8000 };			  // 10
-		void* cur{ nullptr };							  // 18
-		void* end{ nullptr };							  // 20
-		void* firstNonLifoEnd{ nullptr };				  // 28
-		void* cachedEmptySlab{ nullptr };				  // 30
-		hkMemoryAllocator* slabAllocator{ nullptr };	  // 38
-		hkMemoryAllocator* largeAllocator{ nullptr };	  // 40
+		Implementation* impl{ nullptr };                  // 08
+		const std::int32_t slabSize{ 0x8000 };            // 10
+		void* cur{ nullptr };                             // 18
+		void* end{ nullptr };                             // 20
+		void* firstNonLifoEnd{ nullptr };                 // 28
+		void* cachedEmptySlab{ nullptr };                 // 30
+		hkMemoryAllocator* slabAllocator{ nullptr };      // 38
+		hkMemoryAllocator* largeAllocator{ nullptr };     // 40
 		hkMemoryAllocator* internalAllocator{ nullptr };  // 48
 	};
 	static_assert(sizeof(hkLifoAllocator) == 0x50);

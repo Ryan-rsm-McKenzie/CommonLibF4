@@ -14,12 +14,12 @@ namespace RE
 			{
 			public:
 				// members
-				T m[3][4];	// 00
+				T m[3][4];  // 00
 			};
 
 			template <class T>
 			class Matrix3x4 :
-				public Matrix3x4Data<T>	 // 00
+				public Matrix3x4Data<T>  // 00
 			{
 			public:
 			};

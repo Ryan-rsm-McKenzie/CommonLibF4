@@ -11,12 +11,12 @@ namespace F4SE
 		{
 		public:
 			// members
-			void* DebugInfo;			  // 00
-			std::int32_t LockCount;		  // 08
+			void* DebugInfo;              // 00
+			std::int32_t LockCount;       // 08
 			std::int32_t RecursionCount;  // 0C
-			void* OwningThread;			  // 10
-			void* LockSemaphore;		  // 18
-			std::uint64_t* SpinCount;	  // 20
+			void* OwningThread;           // 10
+			void* LockSemaphore;          // 18
+			std::uint64_t* SpinCount;     // 20
 		};
 		static_assert(sizeof(CRITICAL_SECTION) == 0x28);
 

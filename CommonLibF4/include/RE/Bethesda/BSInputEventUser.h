@@ -11,22 +11,22 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::BSInputEventUser };
 		static constexpr auto VTABLE{ VTABLE::BSInputEventUser };
 
-		virtual ~BSInputEventUser() = default;	// 00
+		virtual ~BSInputEventUser() = default;  // 00
 
 		// add
-		virtual bool ShouldHandleEvent(const InputEvent*) { return false; }	 // 01
-		virtual void HandleEvent(const ButtonEvent*) { return; }			 // 08
-		virtual void HandleEvent(const CharacterEvent*) { return; }			 // 07
-		virtual void HandleEvent(const MouseMoveEvent*) { return; }			 // 06
-		virtual void HandleEvent(const CursorMoveEvent*) { return; }		 // 05
-		virtual void HandleEvent(const ThumbstickEvent*) { return; }		 // 04
-		virtual void HandleEvent(const DeviceConnectEvent*) { return; }		 // 03
-		virtual void HandleEvent(const KinectEvent*) { return; }			 // 02
+		virtual bool ShouldHandleEvent(const InputEvent*) { return false; }  // 01
+		virtual void HandleEvent(const ButtonEvent*) { return; }             // 08
+		virtual void HandleEvent(const CharacterEvent*) { return; }          // 07
+		virtual void HandleEvent(const MouseMoveEvent*) { return; }          // 06
+		virtual void HandleEvent(const CursorMoveEvent*) { return; }         // 05
+		virtual void HandleEvent(const ThumbstickEvent*) { return; }         // 04
+		virtual void HandleEvent(const DeviceConnectEvent*) { return; }      // 03
+		virtual void HandleEvent(const KinectEvent*) { return; }             // 02
 
 		F4_HEAP_REDEFINE_NEW(BSInputEventUser);
 
 		// members
-		bool inputEventHandlingEnabled{ true };	 // 08
+		bool inputEventHandlingEnabled{ true };  // 08
 	};
 	static_assert(sizeof(BSInputEventUser) == 0x10);
 }

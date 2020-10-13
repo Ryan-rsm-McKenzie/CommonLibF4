@@ -11,7 +11,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BSInputEventReceiver };
 
 		// add
-		virtual void PerformInputProcessing(const InputEvent* a_queueHead) = 0;	 // 00
+		virtual void PerformInputProcessing(const InputEvent* a_queueHead) = 0;  // 00
 
 		// members
 		std::uint32_t currInputTimeCount;  // 08

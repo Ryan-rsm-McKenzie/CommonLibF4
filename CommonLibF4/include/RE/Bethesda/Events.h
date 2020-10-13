@@ -55,7 +55,7 @@ namespace RE
 		};
 
 		// members
-		TESObjectCELL* cell;							  // 00
+		TESObjectCELL* cell;                              // 00
 		stl::enumeration<EVENT_TYPE, std::int32_t> type;  // 08
 	};
 	static_assert(sizeof(CellAttachDetachEvent) == 0x10);
@@ -64,14 +64,14 @@ namespace RE
 	{
 	public:
 		// members
-		BSFixedStringCS itemName;		// 00
-		std::uint32_t itemCount;		// 08
-		std::uint32_t equipState;		// 0C
-		std::uint32_t filterFlag;		// 10
-		bool isLegendary;				// 14
-		bool isFavorite;				// 15
-		bool isTaggedForSearch;			// 16
-		bool isBetterThanEquippedItem;	// 17
+		BSFixedStringCS itemName;       // 00
+		std::uint32_t itemCount;        // 08
+		std::uint32_t equipState;       // 0C
+		std::uint32_t filterFlag;       // 10
+		bool isLegendary;               // 14
+		bool isFavorite;                // 15
+		bool isTaggedForSearch;         // 16
+		bool isBetterThanEquippedItem;  // 17
 	};
 	static_assert(sizeof(InventoryItemDisplayData) == 0x18);
 
@@ -79,8 +79,8 @@ namespace RE
 	{
 	public:
 		// members
-		BSFixedString menuName;	 // 00
-		bool enteringMenuMode;	 // 08
+		BSFixedString menuName;  // 00
+		bool enteringMenuMode;   // 08
 	};
 	static_assert(sizeof(MenuModeChangeEvent) == 0x10);
 
@@ -88,8 +88,8 @@ namespace RE
 	{
 	public:
 		// members
-		BSFixedString menuName;	 // 00
-		bool incrementing;		 // 08
+		BSFixedString menuName;  // 00
+		bool incrementing;       // 08
 	};
 	static_assert(sizeof(MenuModeCounterChangedEvent) == 0x10);
 
@@ -97,8 +97,8 @@ namespace RE
 	{
 	public:
 		// members
-		BSFixedString menuName;	 // 00
-		bool opening;			 // 08
+		BSFixedString menuName;  // 00
+		bool opening;            // 08
 	};
 	static_assert(sizeof(MenuOpenCloseEvent) == 0x10);
 
@@ -106,22 +106,22 @@ namespace RE
 	{
 	public:
 		// members
-		BSTSmallArray<InventoryItemDisplayData, 5> itemData;	  // 00
-		ObjectRefHandle containerRef;							  // 88
-		ObjectRefHandle inventoryRef;							  // 8C
-		BSFixedStringCS aButtonText;							  // 90
-		BSFixedString containerName;							  // 98
-		BSFixedStringCS perkButtonText;							  // A0
-		std::int32_t selectedClipIndex;							  // A8
+		BSTSmallArray<InventoryItemDisplayData, 5> itemData;      // 00
+		ObjectRefHandle containerRef;                             // 88
+		ObjectRefHandle inventoryRef;                             // 8C
+		BSFixedStringCS aButtonText;                              // 90
+		BSFixedString containerName;                              // 98
+		BSFixedStringCS perkButtonText;                           // A0
+		std::int32_t selectedClipIndex;                           // A8
 		stl::enumeration<QuickContainerMode, std::int32_t> mode;  // AC
-		bool perkButtonEnabled;									  // B0
-		bool isNewContainer;									  // B1
-		bool addedDroppedItems;									  // B2
-		bool isLocked;											  // B3
-		bool buttonAEnabled;									  // B4
-		bool buttonXEnabled;									  // B5
-		bool refreshContainerSize;								  // B6
-		bool containerActivated;								  // B7
+		bool perkButtonEnabled;                                   // B0
+		bool isNewContainer;                                      // B1
+		bool addedDroppedItems;                                   // B2
+		bool isLocked;                                            // B3
+		bool buttonAEnabled;                                      // B4
+		bool buttonXEnabled;                                      // B5
+		bool refreshContainerSize;                                // B6
+		bool containerActivated;                                  // B7
 	};
 	static_assert(sizeof(QuickContainerStateData) == 0xB8);
 
@@ -142,8 +142,8 @@ namespace RE
 		};
 
 		// members
-		NiPointer<TESObjectREFR> actor;							  // 00
-		NiPointer<TESObjectREFR> targetFurniture;				  // 08
+		NiPointer<TESObjectREFR> actor;                           // 00
+		NiPointer<TESObjectREFR> targetFurniture;                 // 08
 		stl::enumeration<FurnitureEventType, std::int32_t> type;  // 10
 	};
 	static_assert(sizeof(TESFurnitureEvent) == 0x18);
@@ -152,8 +152,8 @@ namespace RE
 	{
 	public:
 		// members
-		BSFixedString eventName;	 // 00
-		const BGSMessage* assocMsg;	 // 08
+		BSFixedString eventName;     // 00
+		const BGSMessage* assocMsg;  // 08
 	};
 	static_assert(sizeof(TutorialEvent) == 0x10);
 
@@ -163,7 +163,7 @@ namespace RE
 		// members
 		stl::enumeration<UserEvents::USER_EVENT_FLAG, std::int32_t> newUserEventFlag;  // 0
 		stl::enumeration<UserEvents::USER_EVENT_FLAG, std::int32_t> oldUserEventFlag;  // 4
-		stl::enumeration<UserEvents::SENDER_ID, std::int32_t> senderID;				   // 8
+		stl::enumeration<UserEvents::SENDER_ID, std::int32_t> senderID;                // 8
 	};
 	static_assert(sizeof(UserEventEnabledEvent) == 0xC);
 

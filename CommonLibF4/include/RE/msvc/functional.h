@@ -30,19 +30,19 @@ namespace RE
 			{
 			public:
 				// add
-				virtual proxy_t* copy(void*) = 0;				   // 00
-				virtual proxy_t* move(void*) = 0;				   // 01
-				virtual result_type do_call(Args&&...) = 0;		   // 02
+				virtual proxy_t* copy(void*) = 0;                  // 00
+				virtual proxy_t* move(void*) = 0;                  // 01
+				virtual result_type do_call(Args&&...) = 0;        // 02
 				virtual const type_info& target_type() const = 0;  // 03
-				virtual void delete_this(bool) = 0;				   // 04
-				virtual ~proxy_t() = default;					   // 05
-				virtual const void* get() const = 0;			   // 06
+				virtual void delete_this(bool) = 0;                // 04
+				virtual ~proxy_t() = default;                      // 05
+				virtual const void* get() const = 0;               // 06
 			};
 
 			[[nodiscard]] bool good() const noexcept { return _fn != nullptr; }
 
 			std::aligned_storage_t<3 * sizeof(void*), alignof(long double)> _storage;  // 00
-			proxy_t* _fn;															   // 18
+			proxy_t* _fn;                                                              // 18
 		};
 	}
 }

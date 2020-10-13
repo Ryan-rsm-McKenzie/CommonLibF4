@@ -43,9 +43,9 @@ namespace RE
 		{
 		public:
 			// members
-			std::int32_t mDisp;	 // 0
-			std::int32_t pDisp;	 // 4
-			std::int32_t vDisp;	 // 8
+			std::int32_t mDisp;  // 0
+			std::int32_t pDisp;  // 4
+			std::int32_t vDisp;  // 8
 		};
 		static_assert(sizeof(PMD) == 0xC);
 
@@ -65,10 +65,10 @@ namespace RE
 			};
 
 			// members
-			RVA<TypeDescriptor> typeDescriptor;						// 00
-			std::uint32_t numContainedBases;						// 04
-			PMD pmd;												// 08
-			stl::enumeration<Attribute, std::uint32_t> attributes;	// 14
+			RVA<TypeDescriptor> typeDescriptor;                     // 00
+			std::uint32_t numContainedBases;                        // 04
+			PMD pmd;                                                // 08
+			stl::enumeration<Attribute, std::uint32_t> attributes;  // 14
 		};
 		static_assert(sizeof(BaseClassDescriptor) == 0x18);
 
@@ -84,10 +84,10 @@ namespace RE
 			};
 
 			// members
-			std::uint32_t signature;								// 00
-			stl::enumeration<Attribute, std::uint32_t> attributes;	// 04
-			std::uint32_t numBaseClasses;							// 08
-			RVA<BaseClassDescriptor> baseClassArray;				// 0C
+			std::uint32_t signature;                                // 00
+			stl::enumeration<Attribute, std::uint32_t> attributes;  // 04
+			std::uint32_t numBaseClasses;                           // 08
+			RVA<BaseClassDescriptor> baseClassArray;                // 0C
 		};
 		static_assert(sizeof(ClassHierarchyDescriptor) == 0x10);
 
@@ -102,10 +102,10 @@ namespace RE
 
 			// members
 			stl::enumeration<Signature, std::uint32_t> signature;  // 00
-			std::uint32_t offset;								   // 04
-			std::uint32_t ctorDispOffset;						   // 08
-			RVA<TypeDescriptor> typeDescriptor;					   // 0C
-			RVA<ClassHierarchyDescriptor> classDescriptor;		   // 10
+			std::uint32_t offset;                                  // 04
+			std::uint32_t ctorDispOffset;                          // 08
+			RVA<TypeDescriptor> typeDescriptor;                    // 0C
+			RVA<ClassHierarchyDescriptor> classDescriptor;         // 10
 		};
 		static_assert(sizeof(CompleteObjectLocator) == 0x14);
 	}
@@ -180,8 +180,7 @@ namespace RE
 		struct implements_rtti<
 			T,
 			std::void_t<
-				decltype(
-					remove_cvpr_t<T>::RTTI)>> :
+				decltype(remove_cvpr_t<T>::RTTI)>> :
 			std::true_type
 		{};
 

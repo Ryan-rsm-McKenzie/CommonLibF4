@@ -94,14 +94,14 @@ namespace RE
 			[[nodiscard]] bool wide() const noexcept { return _flags & kWide; }
 
 			// members
-			Entry* _left;				  // 00
-			std::uint16_t _flags;		  // 08
+			Entry* _left;                 // 00
+			std::uint16_t _flags;         // 08
 			volatile std::uint16_t _crc;  // 08
 			union
 			{
 				std::uint32_t _length;
 				Entry* _right;
-			};	// 10
+			};  // 10
 		};
 		static_assert(sizeof(Entry) == 0x18);
 	};
@@ -114,7 +114,7 @@ namespace RE
 		{
 		public:
 			// members
-			volatile std::uint32_t val;	 // 00
+			volatile std::uint32_t val;  // 00
 		};
 		static_assert(sizeof(AlignedLock) == 0x10);
 
@@ -126,9 +126,9 @@ namespace RE
 		}
 
 		// members
-		BSStringPool::Entry* buckets[0x10000];	// 00000
-		AlignedLock locks[0x10000 / 0x200];		// 80000
-		bool initialized;						// 80800
+		BSStringPool::Entry* buckets[0x10000];  // 00000
+		AlignedLock locks[0x10000 / 0x200];     // 80000
+		bool initialized;                       // 80800
 	};
 	static_assert(sizeof(BucketTable) == 0x80810);
 

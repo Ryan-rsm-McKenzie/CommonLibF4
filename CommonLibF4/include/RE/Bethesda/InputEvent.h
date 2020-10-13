@@ -54,8 +54,8 @@ namespace RE
 		virtual ~InputEvent() = default;  // 00
 
 		// add
-		virtual bool HasIDCode() const { return false; }				// 02
-		virtual const BSFixedString& QUserEvent() const { return {}; }	// 03
+		virtual bool HasIDCode() const { return false; }                // 02
+		virtual const BSFixedString& QUserEvent() const { return {}; }  // 03
 
 		template <
 			class T,
@@ -128,12 +128,12 @@ namespace RE
 		}
 
 		// members
-		stl::enumeration<INPUT_DEVICE, std::int32_t> device{ INPUT_DEVICE::kNone };				// 08
-		std::int32_t deviceID{ 0 };																// 0C
-		stl::enumeration<INPUT_EVENT_TYPE, std::int32_t> eventType{ INPUT_EVENT_TYPE::kNone };	// 10
-		InputEvent* next{ nullptr };															// 18
-		std::uint32_t timeCode{ static_cast<std::uint32_t>(-1) };								// 20
-		stl::enumeration<HANDLED_RESULT, std::int32_t> handled{ HANDLED_RESULT::kUnhandled };	// 24
+		stl::enumeration<INPUT_DEVICE, std::int32_t> device{ INPUT_DEVICE::kNone };             // 08
+		std::int32_t deviceID{ 0 };                                                             // 0C
+		stl::enumeration<INPUT_EVENT_TYPE, std::int32_t> eventType{ INPUT_EVENT_TYPE::kNone };  // 10
+		InputEvent* next{ nullptr };                                                            // 18
+		std::uint32_t timeCode{ static_cast<std::uint32_t>(-1) };                               // 20
+		stl::enumeration<HANDLED_RESULT, std::int32_t> handled{ HANDLED_RESULT::kUnhandled };   // 24
 	};
 	static_assert(sizeof(InputEvent) == 0x28);
 
@@ -166,7 +166,7 @@ namespace RE
 		virtual ~DeviceConnectEvent() = default;  // 00
 
 		// members
-		bool connected{ true };	 // 28
+		bool connected{ true };  // 28
 	};
 	static_assert(sizeof(DeviceConnectEvent) == 0x30);
 
@@ -183,13 +183,13 @@ namespace RE
 		virtual ~IDEvent() = default;  // 00
 
 		// override (InputEvent)
-		bool HasIDCode() const override { return true; }						   // 02
+		bool HasIDCode() const override { return true; }                           // 02
 		const BSFixedString& QUserEvent() const override { return "DISABLED"sv; }  // 03
 
 		// members
-		BSFixedString strUserEvent;	 // 28
-		std::int32_t idCode{ -1 };	 // 30
-		bool disabled{ false };		 // 34
+		BSFixedString strUserEvent;  // 28
+		std::int32_t idCode{ -1 };   // 30
+		bool disabled{ false };      // 34
 	};
 	static_assert(sizeof(IDEvent) == 0x38);
 
@@ -197,7 +197,7 @@ namespace RE
 	extern template const IDEvent* InputEvent::As() const;
 
 	class __declspec(novtable) ButtonEvent :
-		public IDEvent	// 00
+		public IDEvent  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::ButtonEvent };
@@ -209,8 +209,8 @@ namespace RE
 		[[nodiscard]] bool JustPressed() const noexcept { return value != 0.0F && heldDownSecs == 0.0F; }
 
 		// members
-		float value{ 0.0F };		 // 38
-		float heldDownSecs{ 0.0F };	 // 3C
+		float value{ 0.0F };         // 38
+		float heldDownSecs{ 0.0F };  // 3C
 	};
 	static_assert(sizeof(ButtonEvent) == 0x40);
 
@@ -218,7 +218,7 @@ namespace RE
 	extern template const ButtonEvent* InputEvent::As() const noexcept;
 
 	class __declspec(novtable) CursorMoveEvent :
-		public IDEvent	// 00
+		public IDEvent  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::CursorMoveEvent };
@@ -237,7 +237,7 @@ namespace RE
 	extern template const CursorMoveEvent* InputEvent::As() const noexcept;
 
 	class __declspec(novtable) KinectEvent :
-		public IDEvent	// 00
+		public IDEvent  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::KinectEvent };
@@ -247,7 +247,7 @@ namespace RE
 		virtual ~KinectEvent() = default;  // 00
 
 		// members
-		BSFixedString strHeard;	 // 38
+		BSFixedString strHeard;  // 38
 	};
 	static_assert(sizeof(KinectEvent) == 0x40);
 
@@ -255,7 +255,7 @@ namespace RE
 	extern template const KinectEvent* InputEvent::As() const noexcept;
 
 	class __declspec(novtable) MouseMoveEvent :
-		public IDEvent	// 00
+		public IDEvent  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::MouseMoveEvent };
@@ -265,8 +265,8 @@ namespace RE
 		virtual ~MouseMoveEvent() = default;  // 00
 
 		// members
-		std::int32_t mouseInputX{ 0 };	// 38
-		std::int32_t mouseInputY{ 0 };	// 3C
+		std::int32_t mouseInputX{ 0 };  // 38
+		std::int32_t mouseInputY{ 0 };  // 3C
 	};
 	static_assert(sizeof(MouseMoveEvent) == 0x40);
 
@@ -274,7 +274,7 @@ namespace RE
 	extern template const MouseMoveEvent* InputEvent::As() const noexcept;
 
 	class __declspec(novtable) ThumbstickEvent :
-		public IDEvent	// 00
+		public IDEvent  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::ThumbstickEvent };
@@ -290,10 +290,10 @@ namespace RE
 		virtual ~ThumbstickEvent() = default;  // 00
 
 		// members
-		float xValue{ 0.0F };							// 38
-		float yValue{ 0.0F };							// 3C
-		DIRECTION_VAL prevDir{ DIRECTION_VAL::kNone };	// 40
-		DIRECTION_VAL currDir{ DIRECTION_VAL::kNone };	// 44
+		float xValue{ 0.0F };                           // 38
+		float yValue{ 0.0F };                           // 3C
+		DIRECTION_VAL prevDir{ DIRECTION_VAL::kNone };  // 40
+		DIRECTION_VAL currDir{ DIRECTION_VAL::kNone };  // 44
 	};
 	static_assert(sizeof(ThumbstickEvent) == 0x48);
 

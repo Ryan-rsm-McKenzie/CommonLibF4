@@ -16,11 +16,11 @@ namespace RE
 		virtual ~NiTLargeArray();
 
 	private:
-		pointer _data;		  // 08
+		pointer _data;        // 08
 		size_type _capacity;  // 10
-		size_type _freeIdx;	  // 14
-		size_type _size;	  // 18
-		size_type _growBy;	  // 1C
+		size_type _freeIdx;   // 14
+		size_type _size;      // 18
+		size_type _growBy;    // 1C
 	};
 
 	template <class T>

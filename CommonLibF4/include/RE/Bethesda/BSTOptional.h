@@ -344,7 +344,7 @@ namespace RE
 		{
 			std::remove_const_t<value_type> _value;
 			std::byte _buffer[sizeof(value_type)]{};
-		};						  // 00
+		};                        // 00
 		bool _hasValue{ false };  // ??
 	};
 

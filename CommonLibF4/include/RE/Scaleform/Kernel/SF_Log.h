@@ -12,7 +12,7 @@ namespace RE
 		class LogMessageId
 		{
 		public:
-			~LogMessageId() noexcept {}	 // intentional
+			~LogMessageId() noexcept {}  // intentional
 
 			// members
 			std::int32_t id;  // 0
@@ -20,7 +20,7 @@ namespace RE
 		static_assert(sizeof(LogMessageId) == 0x4);
 
 		class __declspec(novtable) Log :
-			public RefCountBase<Log, 2>	 // 00
+			public RefCountBase<Log, 2>  // 00
 		{
 		public:
 			static constexpr auto RTTI{ RTTI::Scaleform__Log };

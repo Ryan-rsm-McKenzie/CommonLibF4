@@ -18,7 +18,7 @@ namespace RE
 			++myObjects;
 		}
 
-		virtual ~NiRefObject()	// 00
+		virtual ~NiRefObject()  // 00
 		{
 			REL::Relocation<std::uint32_t*> objects{ REL::ID(1161724) };
 			stl::atomic_ref myObjects{ *objects };
@@ -26,7 +26,7 @@ namespace RE
 		}
 
 		// add
-		virtual void DeleteThis() { delete this; }	// 01
+		virtual void DeleteThis() { delete this; }  // 01
 
 		F4_HEAP_REDEFINE_NEW(NiRefObject);
 
@@ -47,7 +47,7 @@ namespace RE
 		}
 
 		// members
-		std::uint32_t refCount;	 // 08
+		std::uint32_t refCount;  // 08
 	};
 	static_assert(sizeof(NiRefObject) == 0x10);
 }

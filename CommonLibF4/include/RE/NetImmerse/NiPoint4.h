@@ -21,7 +21,7 @@ namespace RE
 		{
 			NiPoint4Struct v;
 			float pt[4]{ 0.0F };
-		};	// 00
+		};  // 00
 	};
 	static_assert(sizeof(NiPoint4) == 0x10);
 }

@@ -11,7 +11,7 @@ namespace RE
 		public:
 			// members
 			BSFixedString chainStart;  // 00
-			BSFixedString chainEnd;	   // 08
+			BSFixedString chainEnd;    // 08
 			BSFixedString variableX;   // 10
 			BSFixedString variableY;   // 18
 			BSFixedString variableZ;   // 20

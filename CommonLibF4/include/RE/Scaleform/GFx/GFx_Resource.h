@@ -76,32 +76,32 @@ namespace RE
 				class __declspec(novtable) KeyInterface
 				{
 				public:
-					virtual ~KeyInterface() = default;	// 00
+					virtual ~KeyInterface() = default;  // 00
 
 					// add
-					virtual void AddRef(KeyHandle a_data) = 0;								   // 01
-					virtual void Release(KeyHandle a_data) = 0;								   // 02
-					virtual KeyType GetKeyType(KeyHandle a_data) const = 0;					   // 03
-					virtual std::size_t GetHashCode(KeyHandle a_data) const = 0;			   // 04
+					virtual void AddRef(KeyHandle a_data) = 0;                                 // 01
+					virtual void Release(KeyHandle a_data) = 0;                                // 02
+					virtual KeyType GetKeyType(KeyHandle a_data) const = 0;                    // 03
+					virtual std::size_t GetHashCode(KeyHandle a_data) const = 0;               // 04
 					virtual bool KeyEquals(KeyHandle a_data, const ResourceKey& a_other) = 0;  // 05
-					virtual const char* GetFileURL(KeyHandle) const { return nullptr; }		   // 06
+					virtual const char* GetFileURL(KeyHandle) const { return nullptr; }        // 06
 				};
 				static_assert(sizeof(KeyInterface) == 0x8);
 
 				// members
-				KeyInterface* keyInterface;	 // 00
-				KeyHandle keyData;			 // 08
+				KeyInterface* keyInterface;  // 00
+				KeyHandle keyData;           // 08
 			};
 			static_assert(sizeof(ResourceKey) == 0x10);
 
 			class __declspec(novtable) ResourceLibBase :
-				public RefCountBase<ResourceLibBase, 2>	 // 00
+				public RefCountBase<ResourceLibBase, 2>  // 00
 			{
 			public:
 				// add
-				virtual void RemoveResourceOnRelease(Resource* a_res) = 0;	// 01
-				virtual void PinResource(Resource* a_res) = 0;				// 02
-				virtual void UnpinResource(Resource* a_res) = 0;			// 03
+				virtual void RemoveResourceOnRelease(Resource* a_res) = 0;  // 01
+				virtual void PinResource(Resource* a_res) = 0;              // 02
+				virtual void UnpinResource(Resource* a_res) = 0;            // 03
 			};
 			static_assert(sizeof(ResourceLibBase) == 0x10);
 
@@ -109,12 +109,12 @@ namespace RE
 				public NewOverrideBase<2>  // 00
 			{
 			public:
-				virtual ~Resource() = default;	// 00
+				virtual ~Resource() = default;  // 00
 
 				// add
-				virtual ResourceKey GetKey();						// 01
-				virtual std::uint32_t GetResourceTypeCode() const;	// 02
-				virtual ResourceReport* GetResourceReport();		// 03
+				virtual ResourceKey GetKey();                       // 01
+				virtual std::uint32_t GetResourceTypeCode() const;  // 02
+				virtual ResourceReport* GetResourceReport();        // 03
 
 				void AddRef()
 				{
@@ -134,7 +134,7 @@ namespace RE
 
 				// members
 				AtomicInt<std::int32_t> refCount;  // 08
-				ResourceLibBase* lib;			   // 10
+				ResourceLibBase* lib;              // 10
 			};
 			static_assert(sizeof(Resource) == 0x18);
 		}

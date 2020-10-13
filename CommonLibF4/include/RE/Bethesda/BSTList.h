@@ -71,7 +71,7 @@ namespace RE
 			F4_HEAP_REDEFINE_NEW(Node);
 
 			// members
-			value_type item{};				  // 00
+			value_type item{};                // 00
 			observer<Node*> next{ nullptr };  // ??
 		};
 

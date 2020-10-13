@@ -55,7 +55,7 @@ namespace RE
 
 	class IMenu :
 		public SWFToCodeFunctionHandler,  // 00
-		public BSInputEventUser			  // 10
+		public BSInputEventUser           // 10
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::IMenu };
@@ -78,7 +78,7 @@ namespace RE
 		}
 
 		// override (BSInputEventUser)
-		bool ShouldHandleEvent(const InputEvent* a_event) override	// 01
+		bool ShouldHandleEvent(const InputEvent* a_event) override  // 01
 		{
 			using func_t = decltype(&IMenu::ShouldHandleEvent);
 			REL::Relocation<func_t> func{ REL::ID(1241790) };
@@ -95,7 +95,7 @@ namespace RE
 		}
 
 		// add
-		virtual UI_MESSAGE_RESULTS ProcessMessage(UIMessage& a_message)	 // 03
+		virtual UI_MESSAGE_RESULTS ProcessMessage(UIMessage& a_message)  // 03
 		{
 			switch (*a_message.type) {
 			case UI_MESSAGE_TYPE::kShow:
@@ -111,7 +111,7 @@ namespace RE
 			}
 		}
 
-		virtual void AdvanceMovie(float a_timeDelta, [[maybe_unused]] std::uint64_t a_time)	 // 04
+		virtual void AdvanceMovie(float a_timeDelta, [[maybe_unused]] std::uint64_t a_time)  // 04
 		{
 			if (uiMovie) {
 				DoAdvanceMovie(a_timeDelta);
@@ -119,8 +119,8 @@ namespace RE
 			}
 		}
 
-		virtual void PreDisplay() { return; }	// 05
-		virtual void PostDisplay() { return; }	// 06
+		virtual void PreDisplay() { return; }   // 05
+		virtual void PostDisplay() { return; }  // 06
 
 		virtual bool PassesRenderConditionText(MENU_RENDER_CONTEXT a_reason, const BSFixedString& a_customRendererName) const  // 07
 		{
@@ -129,7 +129,7 @@ namespace RE
 			return func(this, a_reason, a_customRendererName);
 		}
 
-		virtual void SetIsTopButtonBar([[maybe_unused]] bool a_isTopButtonBar) { return; }	// 08
+		virtual void SetIsTopButtonBar([[maybe_unused]] bool a_isTopButtonBar) { return; }  // 08
 
 		virtual void OnMenuStackChanged(const BSFixedString& a_topMenuName, bool a_passesTopMenuTest)  // 09
 		{
@@ -159,11 +159,11 @@ namespace RE
 			return !a_pauseMenuShowing || depthPriority > 10 || AdvancesUnderPauseMenu();
 		}
 
-		virtual bool CanHandleWhenDisabled([[maybe_unused]] const ButtonEvent* a_event) { return false; }					   // 0E
-		virtual bool OnButtonEventRelease([[maybe_unused]] const BSFixedString& a_eventName) { return false; }				   // 0F
-		virtual bool CacheShaderFXQuadsForRenderer_Impl() { return false; }													   // 10
+		virtual bool CanHandleWhenDisabled([[maybe_unused]] const ButtonEvent* a_event) { return false; }                      // 0E
+		virtual bool OnButtonEventRelease([[maybe_unused]] const BSFixedString& a_eventName) { return false; }                 // 0F
+		virtual bool CacheShaderFXQuadsForRenderer_Impl() { return false; }                                                    // 10
 		virtual void TransferCachedShaderFXQuadsForRenderer([[maybe_unused]] const BSFixedString& a_rendererName) { return; }  // 11
-		virtual void SetViewportRect([[maybe_unused]] const NiRect<float>& a_viewportRect) { return; }						   // 12
+		virtual void SetViewportRect([[maybe_unused]] const NiRect<float>& a_viewportRect) { return; }                         // 12
 
 		[[nodiscard]] constexpr bool AdvancesUnderPauseMenu() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kAdvancesUnderPauseMenu); }
 
@@ -203,17 +203,17 @@ namespace RE
 		}
 
 		// members
-		Scaleform::GFx::Value menuObj;																					   // 20
-		Scaleform::Ptr<Scaleform::GFx::Movie> uiMovie;																	   // 40
-		BSFixedString customRendererName;																				   // 48
-		BSFixedString menuName;																							   // 50
-		stl::enumeration<UI_MENU_FLAGS, std::uint32_t> menuFlags;														   // 58
-		BSTAtomicValue<std::uint32_t> advanceWithoutRenderCount{ 0 };													   // 5C
-		bool passesTopMenuTest{ true };																					   // 60
-		bool menuCanBeVisible{ true };																					   // 61
-		bool hasQuadsForCumstomRenderer{ false };																		   // 62
-		bool hasDoneFirstAdvanceMovie{ false };																			   // 63
-		std::int8_t depthPriority{ 6 };																					   // 64
+		Scaleform::GFx::Value menuObj;                                                                                     // 20
+		Scaleform::Ptr<Scaleform::GFx::Movie> uiMovie;                                                                     // 40
+		BSFixedString customRendererName;                                                                                  // 48
+		BSFixedString menuName;                                                                                            // 50
+		stl::enumeration<UI_MENU_FLAGS, std::uint32_t> menuFlags;                                                          // 58
+		BSTAtomicValue<std::uint32_t> advanceWithoutRenderCount{ 0 };                                                      // 5C
+		bool passesTopMenuTest{ true };                                                                                    // 60
+		bool menuCanBeVisible{ true };                                                                                     // 61
+		bool hasQuadsForCumstomRenderer{ false };                                                                          // 62
+		bool hasDoneFirstAdvanceMovie{ false };                                                                            // 63
+		std::int8_t depthPriority{ 6 };                                                                                    // 64
 		stl::enumeration<UserEvents::INPUT_CONTEXT_ID, std::int32_t> inputContext{ UserEvents::INPUT_CONTEXT_ID::kNone };  // 68
 	};
 	static_assert(sizeof(IMenu) == 0x70);

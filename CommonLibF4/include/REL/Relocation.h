@@ -176,7 +176,7 @@ namespace REL
 		std::is_nothrow_invocable<F, Args...>)
 	{
 		if constexpr (std::is_member_function_pointer_v<std::decay_t<F>>) {
-			if constexpr (detail::is_x64_pod_v<std::invoke_result_t<F, Args...>>) {	 // member functions == free functions in x64
+			if constexpr (detail::is_x64_pod_v<std::invoke_result_t<F, Args...>>) {  // member functions == free functions in x64
 				using func_t = detail::member_function_pod_type_t<std::decay_t<F>>;
 				auto func = unrestricted_cast<func_t*>(std::forward<F>(a_func));
 				return func(std::forward<Args>(a_args)...);

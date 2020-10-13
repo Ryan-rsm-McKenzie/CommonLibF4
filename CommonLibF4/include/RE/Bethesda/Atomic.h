@@ -41,7 +41,7 @@ namespace RE
 		}
 
 		// members
-		value_type _value{ 0 };	 // 0
+		value_type _value{ 0 };  // 0
 	};
 
 	extern template class BSTAtomicValue<std::int32_t>;

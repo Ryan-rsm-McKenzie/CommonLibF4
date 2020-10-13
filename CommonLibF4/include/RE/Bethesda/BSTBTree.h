@@ -20,9 +20,9 @@ namespace RE
 		{
 		public:
 			// members
-			value_type entries[4];			 // 00
-			node_type* nodes[5]{ nullptr };	 // ??
-			std::uint32_t usedEntries{ 0 };	 // ??
+			value_type entries[4];           // 00
+			node_type* nodes[5]{ nullptr };  // ??
+			std::uint32_t usedEntries{ 0 };  // ??
 		};
 
 	private:
@@ -161,10 +161,10 @@ namespace RE
 		[[nodiscard]] const_iterator cend() const noexcept { return {}; }
 
 	private:
-		std::uint64_t pad{ 0 };				// 00
-		std::uint32_t _activeEntry{ 0 };	// 08
-		std::uint32_t _allocatedSize{ 0 };	// 0C
-		node_type* _root{ nullptr };		// 10
-		node_type* _availNodes{ nullptr };	// 18
+		std::uint64_t pad{ 0 };             // 00
+		std::uint32_t _activeEntry{ 0 };    // 08
+		std::uint32_t _allocatedSize{ 0 };  // 0C
+		node_type* _root{ nullptr };        // 10
+		node_type* _availNodes{ nullptr };  // 18
 	};
 }

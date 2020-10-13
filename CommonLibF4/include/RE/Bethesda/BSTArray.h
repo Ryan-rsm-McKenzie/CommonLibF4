@@ -46,7 +46,7 @@ namespace RE
 
 	private:
 		// members
-		void* _data{ nullptr };	   // 00
+		void* _data{ nullptr };    // 00
 		size_type _capacity{ 0 };  // 08
 	};
 
@@ -103,13 +103,13 @@ namespace RE
 
 	private:
 		// members
-		size_type _capacity : 31;  // 00:00
-		size_type _local : 1;	   // 00:31
+		size_type _capacity: 31;  // 00:00
+		size_type _local: 1;      // 00:31
 		union
 		{
 			void* _heap{ nullptr };
 			std::byte _stack[N];
-		};	// 08
+		};  // 08
 	};
 
 	class BSScrapArrayAllocator
@@ -166,8 +166,8 @@ namespace RE
 	private:
 		// members
 		ScrapHeap* _allocator{ nullptr };  // 00
-		void* _data{ nullptr };			   // 08
-		size_type _capacity{ 0 };		   // 10
+		void* _data{ nullptr };            // 08
+		size_type _capacity{ 0 };          // 10
 	};
 
 	template <
@@ -458,8 +458,8 @@ namespace RE
 		}
 
 		// members
-		allocator_type _allocator;	// 00
-		size_type _size{ 0 };		// ??
+		allocator_type _allocator;  // 00
+		size_type _size{ 0 };       // ??
 	};
 
 	template <class T, std::uint32_t N = 1>
@@ -576,7 +576,7 @@ namespace RE
 
 		// members
 		std::uint32_t _size{ 0 };  // 00
-		Data _data;				   // 08
+		Data _data;                // 08
 	};
 
 	class BSDataBufferHeapAllocator;
@@ -586,8 +586,8 @@ namespace RE
 	{
 	public:
 		// members
-		char* buffer;		 // 00
-		std::uint32_t size;	 // 08
+		char* buffer;        // 00
+		std::uint32_t size;  // 08
 	};
 
 	extern template class BSTDataBuffer<1>;

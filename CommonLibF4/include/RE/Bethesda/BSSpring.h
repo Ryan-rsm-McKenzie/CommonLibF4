@@ -12,8 +12,8 @@ namespace RE
 		{
 		public:
 			// members
-			T position;			   // 00
-			T velocity;			   // ??
+			T position;            // 00
+			T velocity;            // ??
 			float springConstant;  // ??
 		};
 

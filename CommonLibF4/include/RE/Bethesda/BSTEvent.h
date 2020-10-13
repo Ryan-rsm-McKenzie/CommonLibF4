@@ -19,7 +19,7 @@ namespace RE
 	class __declspec(novtable) BSTEventSink
 	{
 	public:
-		virtual ~BSTEventSink() = default;	// 00
+		virtual ~BSTEventSink() = default;  // 00
 
 		// add
 		virtual BSEventNotifyControl ProcessEvent(const Event& a_event, BSTEventSource<Event>* a_source) = 0;  // 01
@@ -117,11 +117,11 @@ namespace RE
 
 	private:
 		// members
-		BSSpinLock _lock;										  // 00
-		BSTArray<BSTEventSink<event_type>*> _sinks;				  // 08
-		BSTArray<BSTEventSink<event_type>*> _pendingRegisters;	  // 20
+		BSSpinLock _lock;                                         // 00
+		BSTArray<BSTEventSink<event_type>*> _sinks;               // 08
+		BSTArray<BSTEventSink<event_type>*> _pendingRegisters;    // 20
 		BSTArray<BSTEventSink<event_type>*> _pendingUnregisters;  // 38
-		std::int8_t _notifying{ 0 };							  // 50
+		std::int8_t _notifying{ 0 };                              // 50
 	};
 	//static_assert(sizeof(BSTEventSource<void*>) == 0x58);
 
@@ -137,20 +137,20 @@ namespace RE
 
 	template <class T>
 	class BSTValueEventSink :
-		public BSTEventSink<T>	// 00
+		public BSTEventSink<T>  // 00
 	{
 	public:
 		struct BSTEventValueData
 		{
 		public:
 			// members
-			BSTOptional<typename T::value_type> optionalValue;	// 00
-			bool eventReceived;									// ??
+			BSTOptional<typename T::value_type> optionalValue;  // 00
+			bool eventReceived;                                 // ??
 		};
 
 		// members
-		BSTEventValueData eventDataStruct;	// 08
-		BSSpinLock dataLock;				// ??
+		BSTEventValueData eventDataStruct;  // 08
+		BSSpinLock dataLock;                // ??
 	};
 
 	template <class T>
@@ -169,7 +169,7 @@ namespace RE
 		using event_type = BSTValueRequestEvent<T>;
 
 		// override (BSTEventSink<BSTValueRequestEvent<T>>)
-		BSEventNotifyControl ProcessEvent(const event_type& a_event, BSTEventSource<event_type>*) override	// 01
+		BSEventNotifyControl ProcessEvent(const event_type& a_event, BSTEventSource<event_type>*) override  // 01
 		{
 			BSAutoLock l{ dataLock };
 			T event;
@@ -178,7 +178,7 @@ namespace RE
 		}
 
 		// members
-		BSTOptional<typename T::value_type> optionalValue;	// ??
-		BSSpinLock dataLock;								// ??
+		BSTOptional<typename T::value_type> optionalValue;  // ??
+		BSSpinLock dataLock;                                // ??
 	};
 }

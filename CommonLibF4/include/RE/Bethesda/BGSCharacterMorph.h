@@ -26,11 +26,11 @@ namespace RE
 		{
 		public:
 			// members
-			BGSLocalizedString name;	// 00
-			BSFixedString morph;		// 08
-			BGSTextureSet* textureSet;	// 10
-			std::int8_t flags;			// 18
-			std::uint32_t id;			// 1C
+			BGSLocalizedString name;    // 00
+			BSFixedString morph;        // 08
+			BGSTextureSet* textureSet;  // 10
+			std::int8_t flags;          // 18
+			std::uint32_t id;           // 1C
 		};
 		static_assert(sizeof(Preset) == 0x20);
 
@@ -38,10 +38,10 @@ namespace RE
 		{
 		public:
 			// members
-			BSFixedString name;				  // 00
-			BSTArray<Preset> presets;		  // 08
+			BSFixedString name;               // 00
+			BSTArray<Preset> presets;         // 08
 			BSTArray<std::uint32_t> sliders;  // 20
-			std::uint16_t presetMaskID;		  // 38
+			std::uint16_t presetMaskID;       // 38
 		};
 		static_assert(sizeof(Group) == 0x40);
 
@@ -49,9 +49,9 @@ namespace RE
 		{
 		public:
 			// members
-			NiPoint3 position;	// 00
-			NiPoint3 rotation;	// 0C
-			NiPoint3 scale;		// 18
+			NiPoint3 position;  // 00
+			NiPoint3 rotation;  // 0C
+			NiPoint3 scale;     // 18
 		};
 		static_assert(sizeof(Transform) == 0x24);
 
@@ -68,14 +68,14 @@ namespace RE
 		{
 		public:
 			// members
-			Transform defaultTransform;									// 00
-			BGSLocalizedString name;									// 28
-			BSFixedString associatedMorphGroupName;						// 30
-			BGSCharacterTint::EntrySlot associatedTintSlot;				// 38
-			BGSHeadPart::HeadPartType associatedHeadPartType;			// 3C
-			BSTHashMap<BSFixedString, TransformMinMax*> boneMinMaxMap;	// 40
-			BSTArray<std::uint32_t> associatedMorphSliders;				// 70
-			const std::uint32_t id;										// 88
+			Transform defaultTransform;                                 // 00
+			BGSLocalizedString name;                                    // 28
+			BSFixedString associatedMorphGroupName;                     // 30
+			BGSCharacterTint::EntrySlot associatedTintSlot;             // 38
+			BGSHeadPart::HeadPartType associatedHeadPartType;           // 3C
+			BSTHashMap<BSFixedString, TransformMinMax*> boneMinMaxMap;  // 40
+			BSTArray<std::uint32_t> associatedMorphSliders;             // 70
+			const std::uint32_t id;                                     // 88
 		};
 		static_assert(sizeof(FacialBoneRegion) == 0x90);
 
@@ -83,7 +83,7 @@ namespace RE
 		{
 		public:
 			// members
-			NiPoint3 scales[3];	 // 00
+			NiPoint3 scales[3];  // 00
 		};
 		static_assert(sizeof(BoneBaseScales) == 0x24);
 
@@ -91,10 +91,10 @@ namespace RE
 		{
 		public:
 			// members
-			float minY;	 // 00
-			float minZ;	 // 04
-			float maxY;	 // 08
-			float maxZ;	 // 0C
+			float minY;  // 00
+			float minZ;  // 04
+			float maxY;  // 08
+			float maxZ;  // 0C
 		};
 		static_assert(sizeof(BONE_MODIFIER_MIN_MAX) == 0x10);
 	}

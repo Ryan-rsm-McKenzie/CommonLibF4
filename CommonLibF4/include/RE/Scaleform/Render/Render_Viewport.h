@@ -38,16 +38,16 @@ namespace RE
 				};
 
 				// members
-				std::int32_t bufferWidth;					  // 00
-				std::int32_t bufferHeight;					  // 04
-				std::int32_t left;							  // 08
-				std::int32_t top;							  // 0C
-				std::int32_t width;							  // 10
-				std::int32_t height;						  // 14
-				std::int32_t scissorLeft;					  // 18
-				std::int32_t scissorTop;					  // 1C
-				std::int32_t scissorWidth;					  // 20
-				std::int32_t scissorHeight;					  // 24
+				std::int32_t bufferWidth;                     // 00
+				std::int32_t bufferHeight;                    // 04
+				std::int32_t left;                            // 08
+				std::int32_t top;                             // 0C
+				std::int32_t width;                           // 10
+				std::int32_t height;                          // 14
+				std::int32_t scissorLeft;                     // 18
+				std::int32_t scissorTop;                      // 1C
+				std::int32_t scissorWidth;                    // 20
+				std::int32_t scissorHeight;                   // 24
 				stl::enumeration<Flag, std::uint32_t> flags;  // 28
 			};
 			static_assert(sizeof(Viewport) == 0x2C);

@@ -6,7 +6,7 @@ namespace RE
 	class hkRefPtr
 	{
 	public:
-		~hkRefPtr() noexcept {}	 // intentional
+		~hkRefPtr() noexcept {}  // intentional
 
 		T* _ptr;
 	};

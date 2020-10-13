@@ -27,7 +27,7 @@ namespace RE
 			}
 		}
 
-		virtual ~NiTArray() { allocator_type::deallocate(_data); }	// 00
+		virtual ~NiTArray() { allocator_type::deallocate(_data); }  // 00
 
 		[[nodiscard]] reference operator[](size_type a_pos)
 		{
@@ -65,11 +65,11 @@ namespace RE
 
 	private:
 		// members
-		pointer _data{ nullptr };	 // 08
-		size_type _capacity{ 0 };	 // 10
-		size_type _freeIdx{ 0 };	 // 12
-		size_type _size{ 0 };		 // 14
-		size_type _growthSize{ 0 };	 // 16
+		pointer _data{ nullptr };    // 08
+		size_type _capacity{ 0 };    // 10
+		size_type _freeIdx{ 0 };     // 12
+		size_type _size{ 0 };        // 14
+		size_type _growthSize{ 0 };  // 16
 	};
 
 	template <class T>
