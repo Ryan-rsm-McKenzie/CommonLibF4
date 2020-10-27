@@ -8,3 +8,4 @@ find_dependency(Boost
 )
 find_dependency(span-lite)
 find_dependency(spdlog)
+find_dependency(stl_interfaces)

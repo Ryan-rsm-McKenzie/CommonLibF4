@@ -12,6 +12,7 @@
 #include "RE/Bethesda/BGSDefaultObjectManager.h"
 #include "RE/Bethesda/BGSHeadPart.h"
 #include "RE/Bethesda/BGSMod.h"
+#include "RE/Bethesda/BGSPrimitive.h"
 #include "RE/Bethesda/BGSStoryManagerTreeForm.h"
 #include "RE/Bethesda/BGSTextureSet.h"
 #include "RE/Bethesda/BSContainer.h"
