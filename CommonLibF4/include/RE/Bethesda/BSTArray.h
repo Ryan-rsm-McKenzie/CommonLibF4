@@ -440,7 +440,7 @@ namespace RE
 				erase(begin() + a_count, end());
 			} else if (a_count > size()) {
 				reserve_auto(a_count);
-				stl::span range{ data() + _size, a_count - _size };
+				stl::span<value_type> range{ data() + _size, a_count - _size };
 				if (a_value) {
 					std::for_each(
 						range.begin(),

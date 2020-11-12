@@ -1,6 +1,0 @@
-{
-  "name": "stl-interfaces",
-  "version-string": "1.74.0",
-  "description": "C++14 and later CRTP templates for defining iterators, views, and containers.",
-  "homepage": "https://github.com/boostorg/stl_interfaces"
-}
