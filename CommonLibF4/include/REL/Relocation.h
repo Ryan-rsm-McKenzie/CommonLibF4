@@ -400,7 +400,24 @@ namespace REL
 		}
 
 	private:
-		Module() { load(); }
+		Module()
+		{
+			const auto getFilename = [&]() {
+				return WinAPI::GetEnvironmentVariable(
+					ENVIRONMENT.data(),
+					_filename.data(),
+					_filename.size());
+			};
+
+			_filename.resize(getFilename());
+			if (const auto result = getFilename();
+				result != _filename.size() - 1 ||
+				result == 0) {
+				_filename = L"Fallout4.exe"sv;
+			}
+
+			load();
+		}
 
 		Module(const Module&) = delete;
 		Module(Module&&) = delete;
@@ -412,7 +429,7 @@ namespace REL
 
 		void load()
 		{
-			auto handle = WinAPI::GetModuleHandle(FILENAME.data());
+			auto handle = WinAPI::GetModuleHandle(_filename.c_str());
 			if (handle == nullptr) {
 				stl::report_and_fail("failed to obtain module handle"sv);
 			}
@@ -427,7 +444,7 @@ namespace REL
 
 		void load_version()
 		{
-			const auto version = get_file_version(FILENAME);
+			const auto version = get_file_version(_filename);
 			if (version) {
 				_version = *version;
 			} else {
@@ -435,7 +452,7 @@ namespace REL
 			}
 		}
 
-		static constexpr auto FILENAME = L"Fallout4.exe"sv;
+		static constexpr auto ENVIRONMENT = L"F4SE_RUNTIME"sv;
 
 		static constexpr std::array SEGMENTS{
 			".text"sv,
@@ -449,6 +466,7 @@ namespace REL
 
 		static inline std::uintptr_t _natvis{ 0 };
 
+		std::wstring _filename;
 		std::array<Segment, Segment::total> _segments;
 		Version _version;
 		std::uintptr_t _base{ 0 };

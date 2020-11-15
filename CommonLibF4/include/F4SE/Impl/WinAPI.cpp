@@ -44,6 +44,7 @@
 
 #include <Windows.h>
 
+#undef GetEnvironmentVariable
 #undef GetFileVersionInfo
 #undef GetFileVersionInfoSize
 #undef GetModuleFileName
@@ -73,6 +74,30 @@ namespace F4SE
 		{
 			return static_cast<std::uint32_t>(
 				::GetCurrentThreadId());
+		}
+
+		[[nodiscard]] std::uint32_t(GetEnvironmentVariable)(
+			const char* a_name,
+			char* a_buffer,
+			std::uint32_t a_size) noexcept
+		{
+			return static_cast<std::uint32_t>(
+				::GetEnvironmentVariableA(
+					static_cast<::LPCSTR>(a_name),
+					static_cast<::LPSTR>(a_buffer),
+					static_cast<::DWORD>(a_size)));
+		}
+
+		[[nodiscard]] std::uint32_t(GetEnvironmentVariable)(
+			const wchar_t* a_name,
+			wchar_t* a_buffer,
+			std::uint32_t a_size) noexcept
+		{
+			return static_cast<std::uint32_t>(
+				::GetEnvironmentVariableW(
+					static_cast<::LPCWSTR>(a_name),
+					static_cast<::LPWSTR>(a_buffer),
+					static_cast<::DWORD>(a_size)));
 		}
 
 		bool(GetFileVersionInfo)(

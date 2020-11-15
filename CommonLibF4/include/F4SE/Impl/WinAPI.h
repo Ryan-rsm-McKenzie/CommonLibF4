@@ -26,6 +26,16 @@ namespace F4SE
 
 		[[nodiscard]] std::uint32_t(GetCurrentThreadID)() noexcept;
 
+		[[nodiscard]] std::uint32_t(GetEnvironmentVariable)(
+			const char* a_name,
+			char* a_buffer,
+			std::uint32_t a_size) noexcept;
+
+		[[nodiscard]] std::uint32_t(GetEnvironmentVariable)(
+			const wchar_t* a_name,
+			wchar_t* a_buffer,
+			std::uint32_t a_size) noexcept;
+
 		[[nodiscard]] bool(GetFileVersionInfo)(
 			const char* a_filename,
 			std::uint32_t a_handle,
