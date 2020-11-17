@@ -21,6 +21,8 @@ namespace RE
 		struct node_type
 		{
 		public:
+			F4_HEAP_REDEFINE_NEW(node_type);
+
 			value_type value{};
 			node_type* next{ nullptr };
 		};
@@ -174,6 +176,8 @@ namespace RE
 			assign(a_init.begin(), a_init.end());
 			return *this;
 		}
+
+		F4_HEAP_REDEFINE_NEW(BSSimpleList<T>);
 
 		// 1)
 		void assign(size_type a_count, const_reference a_value)
