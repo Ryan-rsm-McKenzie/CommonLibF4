@@ -34,7 +34,9 @@ static_assert(
 
 #include <boost/atomic.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
+#include <boost/iterator/function_input_iterator.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/stl_interfaces/iterator_interface.hpp>
 #include <boost/stl_interfaces/sequence_container_interface.hpp>
 #include <nonstd/span.hpp>
 #include <spdlog/spdlog.h>
