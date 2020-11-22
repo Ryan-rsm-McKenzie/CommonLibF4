@@ -12,7 +12,7 @@ namespace RE
 		struct GridConnection
 		{
 		public:
-			~GridConnection() noexcept {}  // intentional
+			~GridConnection() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 			// members
 			std::uint32_t connection{ 0 };  // 0 - formID
@@ -38,7 +38,7 @@ namespace RE
 		struct GridSaveLoadData
 		{
 		public:
-			~GridSaveLoadData() noexcept {}  // intentional
+			~GridSaveLoadData() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 			// members
 			std::uint32_t node{ 0 };    // 0 - formID

@@ -1,11 +1,8 @@
 #pragma once
 
-namespace RE
+namespace RE::BSContainer
 {
-	namespace BSContainer
+	enum class ForEachResult
 	{
-		enum class ForEachResult
-		{
-		};
-	}
+	};
 }

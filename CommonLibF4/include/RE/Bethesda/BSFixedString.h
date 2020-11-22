@@ -26,13 +26,13 @@ namespace RE
 				try_acquire();
 			}
 
-			BSFixedString(BSFixedString&& a_rhs) :
+			BSFixedString(BSFixedString&& a_rhs) noexcept :
 				_data(a_rhs._data)
 			{
 				a_rhs._data = nullptr;
 			}
 
-			BSFixedString(const_pointer a_string)
+			BSFixedString(const_pointer a_string)  // NOLINT(google-explicit-constructor)
 			{
 				if (a_string) {
 					GetEntry<value_type>(_data, a_string, CS);

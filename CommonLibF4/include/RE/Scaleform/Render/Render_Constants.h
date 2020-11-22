@@ -1,18 +1,12 @@
 #pragma once
 
-namespace RE
+namespace RE::Scaleform::Render
 {
-	namespace Scaleform
+	enum class EdgeAAMode : std::int32_t
 	{
-		namespace Render
-		{
-			enum class EdgeAAMode : std::int32_t
-			{
-				kInherit = 0x0000,
-				kOn = 1 << 2,
-				kOff = 1 << 3,
-				kDisable = kOn | kOff
-			};
-		}
-	}
+		kInherit = 0x0000,
+		kOn = 1 << 2,
+		kOff = 1 << 3,
+		kDisable = kOn | kOff
+	};
 }

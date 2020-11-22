@@ -5,6 +5,8 @@
 	* Atomic
 	* Iostreams
 	* Iterator
+	* Predef
+	* Stl_interfaces
 * [span lite](https://github.com/martinmoene/span-lite)
 * [spdlog](https://github.com/gabime/spdlog)
 * [Visual Studio Community 2019 Preview+](https://visualstudio.microsoft.com/vs/preview/)

@@ -13,7 +13,7 @@ namespace RE
 		virtual ~NiBinaryStream();  // 00
 
 		// add
-		virtual operator bool() const = 0;                                           // 01
+		virtual explicit operator bool() const = 0;                                  // 01
 		virtual void Seek(std::ptrdiff_t a_numBytes) = 0;                            // 02
 		virtual std::size_t GetPosition() const { return absoluteCurrentPos; }       // 03
 		virtual void GetBufferInfo(BufferInfo& a_info);                              // 04

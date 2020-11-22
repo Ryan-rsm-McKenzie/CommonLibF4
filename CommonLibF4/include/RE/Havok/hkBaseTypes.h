@@ -9,7 +9,7 @@ namespace RE
 	class hkPadSpu
 	{
 	public:
-		~hkPadSpu() noexcept {}  // intentional
+		~hkPadSpu() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 		// members
 		T storage;
@@ -24,7 +24,7 @@ namespace RE
 	struct hkResult
 	{
 	public:
-		~hkResult() noexcept {}  // intentional
+		~hkResult() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 		// members
 		hkResultEnum e;  // 0

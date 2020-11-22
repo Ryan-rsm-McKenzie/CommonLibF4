@@ -16,7 +16,7 @@ namespace RE
 		struct DeletedItemInfo
 		{
 		public:
-			~DeletedItemInfo() noexcept {}  // intentional
+			~DeletedItemInfo() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 			// members
 			std::uint32_t formID;  // 0

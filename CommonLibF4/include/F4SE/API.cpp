@@ -11,6 +11,12 @@ namespace F4SE
 		struct APIStorage
 		{
 		public:
+			APIStorage(const APIStorage&) = delete;
+			APIStorage(APIStorage&&) = delete;
+
+			APIStorage& operator=(const APIStorage&) = delete;
+			APIStorage& operator=(APIStorage&&) = delete;
+
 			[[nodiscard]] static APIStorage& get() noexcept
 			{
 				static APIStorage singleton;
@@ -26,16 +32,11 @@ namespace F4SE
 			SerializationInterface* serializationInterface{ nullptr };
 			TaskInterface* taskInterface{ nullptr };
 			ObjectInterface* objectInterface{ nullptr };
+			//TrampolineInterface* trampolineInterface{ nullptr };
 
 		private:
 			APIStorage() noexcept = default;
-			APIStorage(const APIStorage&) = delete;
-			APIStorage(APIStorage&&) = delete;
-
 			~APIStorage() noexcept = default;
-
-			APIStorage& operator=(const APIStorage&) = delete;
-			APIStorage& operator=(APIStorage&&) = delete;
 		};
 
 		template <class T>
@@ -70,6 +71,7 @@ namespace F4SE
 		storage.serializationInterface = detail::QueryInterface<SerializationInterface>(a_intfc, LoadInterface::kSerialization);
 		storage.taskInterface = detail::QueryInterface<TaskInterface>(a_intfc, LoadInterface::kTask);
 		storage.objectInterface = detail::QueryInterface<ObjectInterface>(a_intfc, LoadInterface::kObject);
+		//storage.trampolineInterface = detail::QueryInterface<TrampolineInterface>(a_intfc, LoadInterface::kTrampoline);
 	}
 
 	PluginHandle GetPluginHandle() noexcept
@@ -112,6 +114,13 @@ namespace F4SE
 		return detail::APIStorage::get().objectInterface;
 	}
 
+#if 0
+	const TrampolineInterface* GetTrampolineInterface() noexcept
+	{
+		return detail::APIStorage::get().trampolineInterface;
+	}
+#endif
+
 	Trampoline& GetTrampoline() noexcept
 	{
 		static Trampoline trampoline;
@@ -121,6 +130,16 @@ namespace F4SE
 	void AllocTrampoline(std::size_t a_size) noexcept
 	{
 		auto& trampoline = GetTrampoline();
+#if 0
+		const auto interface = GetTrampolineInterface();
+		const auto mem = interface ? interface->AllocateFromBranchPool(a_size) : nullptr;
+		if (mem) {
+			trampoline.set_trampoline(mem, a_size);
+		} else {
+			trampoline.create(a_size);
+		}
+#else
 		trampoline.create(a_size);
+#endif
 	}
 }

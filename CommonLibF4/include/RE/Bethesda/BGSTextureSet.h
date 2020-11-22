@@ -5,6 +5,7 @@
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTextureSet.h"
 #include "RE/Bethesda/FormComponents.h"
+#include "RE/Bethesda/MemoryManager.h"
 #include "RE/Bethesda/TESBoundObjects.h"
 #include "RE/Bethesda/TESForms.h"
 #include "RE/NetImmerse/NiAlphaProperty.h"
@@ -162,6 +163,8 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::BGSTextureSet };
 		static constexpr auto VTABLE{ VTABLE::BGSTextureSet };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kTXST };
+
+		F4_HEAP_REDEFINE_NEW(BGSTextureSet);
 
 		// members
 		BSFixedString materialName;        // 078

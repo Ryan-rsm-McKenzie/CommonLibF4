@@ -10,7 +10,7 @@ namespace RE
 
 		static_assert(std::is_integral_v<integral_type>);
 
-		constexpr NiTFlags() noexcept {}  // intentional
+		constexpr NiTFlags() noexcept {}  // NOLINT(moderinize-use-equals-default)
 
 		// members
 		integral_type flags{ 0 };  // 00

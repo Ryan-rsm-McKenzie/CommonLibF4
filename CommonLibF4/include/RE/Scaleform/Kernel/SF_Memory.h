@@ -2,161 +2,158 @@
 
 #include "RE/Scaleform/Kernel/SF_MemoryHeap.h"
 
-namespace RE
+namespace RE::Scaleform
 {
-	namespace Scaleform
+	class Memory;
+
+	class Memory
 	{
-		class Memory;
-
-		class Memory
+	public:
+		static void SetGlobalHeap(MemoryHeap* a_heap)
 		{
-		public:
-			static void SetGlobalHeap(MemoryHeap* a_heap)
-			{
-				REL::Relocation<MemoryHeap**> heap{ REL::ID(939898) };
-				*heap = a_heap;
-			}
-
-			[[nodiscard]] static MemoryHeap* GetGlobalHeap()
-			{
-				REL::Relocation<MemoryHeap**> heap{ REL::ID(939898) };
-				return *heap;
-			}
-
-			static void CreateArena(std::size_t a_arena, SysAllocPaged* a_sysAlloc)
-			{
-				GetGlobalHeap()->CreateArena(a_arena, a_sysAlloc);
-			}
-
-			static void DestroyArena(std::size_t a_arena)
-			{
-				GetGlobalHeap()->DestroyArena(a_arena);
-			}
-
-			[[nodiscard]] static bool ArenaIsEmpty(std::size_t a_arena)
-			{
-				return GetGlobalHeap()->ArenaIsEmpty(a_arena);
-			}
-
-			[[nodiscard]] static void* Alloc(std::size_t a_size)
-			{
-				return GetGlobalHeap()->Alloc(a_size);
-			}
-
-			[[nodiscard]] static void* Alloc(std::size_t a_size, std::size_t a_align)
-			{
-				return GetGlobalHeap()->Alloc(a_size, a_align);
-			}
-
-			[[nodiscard]] static void* Alloc(std::size_t a_size, const AllocInfo& a_info)
-			{
-				return GetGlobalHeap()->Alloc(a_size, std::addressof(a_info));
-			}
-
-			[[nodiscard]] static void* Alloc(std::size_t a_size, std::size_t a_align, const AllocInfo& a_info)
-			{
-				return GetGlobalHeap()->Alloc(a_size, a_align, std::addressof(a_info));
-			}
-
-			[[nodiscard]] static void* AllocAutoHeap(const void* a_ptr, std::size_t a_size)
-			{
-				return GetGlobalHeap()->AllocAutoHeap(a_ptr, a_size);
-			}
-
-			[[nodiscard]] static void* AllocAutoHeap(const void* a_ptr, std::size_t a_size, std::size_t a_align)
-			{
-				return GetGlobalHeap()->AllocAutoHeap(a_ptr, a_size, a_align);
-			}
-
-			[[nodiscard]] static void* AllocAutoHeap(const void* a_ptr, std::size_t a_size, const AllocInfo& a_info)
-			{
-				return GetGlobalHeap()->AllocAutoHeap(a_ptr, a_size, std::addressof(a_info));
-			}
-
-			[[nodiscard]] static void* AllocAutoHeap(const void* a_ptr, std::size_t a_size, std::size_t a_align, const AllocInfo& a_info)
-			{
-				return GetGlobalHeap()->AllocAutoHeap(a_ptr, a_size, a_align, std::addressof(a_info));
-			}
-
-			[[nodiscard]] static void* AllocInHeap(MemoryHeap* a_heap, std::size_t a_size)
-			{
-				return a_heap->Alloc(a_size);
-			}
-
-			[[nodiscard]] static void* AllocInHeap(MemoryHeap* a_heap, std::size_t a_size, std::size_t a_align)
-			{
-				return a_heap->Alloc(a_size, a_align);
-			}
-
-			[[nodiscard]] static void* AllocInHeap(MemoryHeap* a_heap, std::size_t a_size, const AllocInfo& a_info)
-			{
-				return a_heap->Alloc(a_size, std::addressof(a_info));
-			}
-
-			[[nodiscard]] static void* AllocInHeap(MemoryHeap* a_heap, std::size_t a_size, std::size_t a_align, const AllocInfo& a_info)
-			{
-				return a_heap->Alloc(a_size, a_align, std::addressof(a_info));
-			}
-
-			[[nodiscard]] static void* Realloc(void* a_ptr, std::size_t a_newSize)
-			{
-				return GetGlobalHeap()->Realloc(a_ptr, a_newSize);
-			}
-
-			static void Free(void* a_ptr)
-			{
-				GetGlobalHeap()->Free(a_ptr);
-			}
-
-			[[nodiscard]] static MemoryHeap* GetHeapByAddress(const void* a_ptr)
-			{
-				return GetGlobalHeap()->GetAllocHeap(a_ptr);
-			}
-		};
-		static_assert(std::is_empty_v<Memory>);
-
-		[[nodiscard]] inline void* malloc(std::size_t a_size)
-		{
-			return Memory::Alloc(a_size);
+			REL::Relocation<MemoryHeap**> heap{ REL::ID(939898) };
+			*heap = a_heap;
 		}
 
-		template <class T>
-		[[nodiscard]] T* malloc()
+		[[nodiscard]] static MemoryHeap* GetGlobalHeap()
 		{
-			return static_cast<T*>(malloc(sizeof(T)));
+			REL::Relocation<MemoryHeap**> heap{ REL::ID(939898) };
+			return *heap;
 		}
 
-		[[nodiscard]] inline void* aligned_alloc(std::size_t a_alignment, std::size_t a_size)
+		static void CreateArena(std::size_t a_arena, SysAllocPaged* a_sysAlloc)
 		{
-			return Memory::Alloc(a_size, a_alignment);
+			GetGlobalHeap()->CreateArena(a_arena, a_sysAlloc);
 		}
 
-		template <class T>
-		[[nodiscard]] T* aligned_alloc()
+		static void DestroyArena(std::size_t a_arena)
 		{
-			return static_cast<T*>(alignof(T), sizeof(T));
+			GetGlobalHeap()->DestroyArena(a_arena);
 		}
 
-		[[nodiscard]] inline void* calloc(std::size_t a_num, std::size_t a_size)
+		[[nodiscard]] static bool ArenaIsEmpty(std::size_t a_arena)
 		{
-			return malloc(a_num * a_size);
+			return GetGlobalHeap()->ArenaIsEmpty(a_arena);
 		}
 
-		template <class T>
-		[[nodiscard]] T* calloc(std::size_t a_num)
+		[[nodiscard]] static void* Alloc(std::size_t a_size)
 		{
-			return static_cast<T*>(calloc(a_num, sizeof(T)));
+			return GetGlobalHeap()->Alloc(a_size);
 		}
 
-		[[nodiscard]] inline void* realloc(void* a_ptr, std::size_t a_newSize)
+		[[nodiscard]] static void* Alloc(std::size_t a_size, std::size_t a_align)
 		{
-			return Memory::Realloc(a_ptr, a_newSize);
+			return GetGlobalHeap()->Alloc(a_size, a_align);
 		}
 
-		[[nodiscard]] inline void free(void* a_ptr)
+		[[nodiscard]] static void* Alloc(std::size_t a_size, const AllocInfo& a_info)
 		{
-			return Memory::Free(a_ptr);
+			return GetGlobalHeap()->Alloc(a_size, std::addressof(a_info));
 		}
+
+		[[nodiscard]] static void* Alloc(std::size_t a_size, std::size_t a_align, const AllocInfo& a_info)
+		{
+			return GetGlobalHeap()->Alloc(a_size, a_align, std::addressof(a_info));
+		}
+
+		[[nodiscard]] static void* AllocAutoHeap(const void* a_ptr, std::size_t a_size)
+		{
+			return GetGlobalHeap()->AllocAutoHeap(a_ptr, a_size);
+		}
+
+		[[nodiscard]] static void* AllocAutoHeap(const void* a_ptr, std::size_t a_size, std::size_t a_align)
+		{
+			return GetGlobalHeap()->AllocAutoHeap(a_ptr, a_size, a_align);
+		}
+
+		[[nodiscard]] static void* AllocAutoHeap(const void* a_ptr, std::size_t a_size, const AllocInfo& a_info)
+		{
+			return GetGlobalHeap()->AllocAutoHeap(a_ptr, a_size, std::addressof(a_info));
+		}
+
+		[[nodiscard]] static void* AllocAutoHeap(const void* a_ptr, std::size_t a_size, std::size_t a_align, const AllocInfo& a_info)
+		{
+			return GetGlobalHeap()->AllocAutoHeap(a_ptr, a_size, a_align, std::addressof(a_info));
+		}
+
+		[[nodiscard]] static void* AllocInHeap(MemoryHeap* a_heap, std::size_t a_size)
+		{
+			return a_heap->Alloc(a_size);
+		}
+
+		[[nodiscard]] static void* AllocInHeap(MemoryHeap* a_heap, std::size_t a_size, std::size_t a_align)
+		{
+			return a_heap->Alloc(a_size, a_align);
+		}
+
+		[[nodiscard]] static void* AllocInHeap(MemoryHeap* a_heap, std::size_t a_size, const AllocInfo& a_info)
+		{
+			return a_heap->Alloc(a_size, std::addressof(a_info));
+		}
+
+		[[nodiscard]] static void* AllocInHeap(MemoryHeap* a_heap, std::size_t a_size, std::size_t a_align, const AllocInfo& a_info)
+		{
+			return a_heap->Alloc(a_size, a_align, std::addressof(a_info));
+		}
+
+		[[nodiscard]] static void* Realloc(void* a_ptr, std::size_t a_newSize)
+		{
+			return GetGlobalHeap()->Realloc(a_ptr, a_newSize);
+		}
+
+		static void Free(void* a_ptr)
+		{
+			GetGlobalHeap()->Free(a_ptr);
+		}
+
+		[[nodiscard]] static MemoryHeap* GetHeapByAddress(const void* a_ptr)
+		{
+			return GetGlobalHeap()->GetAllocHeap(a_ptr);
+		}
+	};
+	static_assert(std::is_empty_v<Memory>);
+
+	[[nodiscard]] inline void* malloc(std::size_t a_size)
+	{
+		return Memory::Alloc(a_size);
+	}
+
+	template <class T>
+	[[nodiscard]] T* malloc()
+	{
+		return static_cast<T*>(malloc(sizeof(T)));
+	}
+
+	[[nodiscard]] inline void* aligned_alloc(std::size_t a_alignment, std::size_t a_size)
+	{
+		return Memory::Alloc(a_size, a_alignment);
+	}
+
+	template <class T>
+	[[nodiscard]] T* aligned_alloc()
+	{
+		return static_cast<T*>(aligned_alloc(alignof(T), sizeof(T)));
+	}
+
+	[[nodiscard]] inline void* calloc(std::size_t a_num, std::size_t a_size)
+	{
+		return malloc(a_num * a_size);
+	}
+
+	template <class T>
+	[[nodiscard]] T* calloc(std::size_t a_num)
+	{
+		return static_cast<T*>(calloc(a_num, sizeof(T)));
+	}
+
+	[[nodiscard]] inline void* realloc(void* a_ptr, std::size_t a_newSize)
+	{
+		return Memory::Realloc(a_ptr, a_newSize);
+	}
+
+	inline void free(void* a_ptr)
+	{
+		return Memory::Free(a_ptr);
 	}
 }
 
@@ -215,16 +212,13 @@ namespace RE
 	void operator delete(void* a_ptr, std::size_t, std::align_val_t) { RE::Scaleform::free(a_ptr); }                    \
 	void operator delete[](void* a_ptr, std::size_t, std::align_val_t) { RE::Scaleform::free(a_ptr); }
 
-namespace RE
+namespace RE::Scaleform
 {
-	namespace Scaleform
+	template <std::int32_t>
+	class NewOverrideBase
 	{
-		template <std::int32_t>
-		class NewOverrideBase
-		{
-		public:
-			SF_HEAP_REDEFINE_NEW(NewOverrideBase)
-		};
-		//static_assert(std::is_empty_v<NewOverrideBase<0>>);
-	}
+	public:
+		SF_HEAP_REDEFINE_NEW(NewOverrideBase)
+	};
+	//static_assert(std::is_empty_v<NewOverrideBase<0>>);
 }

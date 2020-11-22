@@ -63,7 +63,7 @@ namespace RE
 
 		BSStringT(const BSStringT& a_rhs) { copy_from(a_rhs); }
 
-		BSStringT(BSStringT&& a_rhs)
+		BSStringT(BSStringT&& a_rhs) noexcept
 		{
 			if constexpr (allocator_type::propagate_on_container_move_assignment::value) {
 				move_from(std::move(a_rhs));
@@ -82,7 +82,7 @@ namespace RE
 			return *this;
 		}
 
-		BSStringT& operator=(BSStringT&& a_rhs)
+		BSStringT& operator=(BSStringT&& a_rhs) noexcept
 		{
 			if (this != std::addressof(a_rhs)) {
 				if constexpr (allocator_type::propagate_on_container_move_assignment::value) {

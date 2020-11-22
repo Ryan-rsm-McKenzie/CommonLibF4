@@ -149,12 +149,12 @@ namespace RE
 		BSSimpleList(const BSSimpleList& a_rhs) { assign(a_rhs.begin(), a_rhs.end()); }
 
 		// 8)
-		BSSimpleList(BSSimpleList&& a_rhs) :
+		BSSimpleList(BSSimpleList&& a_rhs) noexcept :
 			_root(std::exchange(a_rhs._root, node_type{}))
 		{}
 
 		// 10)
-		BSSimpleList(std::initializer_list<value_type> a_init) { assign(a_init.begin(), a_init.end()); }
+		explicit BSSimpleList(std::initializer_list<value_type> a_init) { assign(a_init.begin(), a_init.end()); }
 
 		~BSSimpleList() { clear(); }
 
@@ -164,7 +164,7 @@ namespace RE
 			return *this;
 		}
 
-		BSSimpleList& operator=(BSSimpleList&& a_rhs)
+		BSSimpleList& operator=(BSSimpleList&& a_rhs) noexcept
 		{
 			clear();
 			_root = std::exchange(a_rhs._root, node_type{});

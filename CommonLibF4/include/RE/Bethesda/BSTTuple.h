@@ -126,7 +126,7 @@ namespace RE
 		BSTTuple(const BSTTuple&) = default;
 
 		// 8
-		BSTTuple(BSTTuple&&) = default;
+		BSTTuple(BSTTuple&&) = default;  // NOLINT(performance-noexcept-move-constructor)
 
 		// 1
 		template <

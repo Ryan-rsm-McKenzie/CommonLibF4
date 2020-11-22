@@ -2,16 +2,10 @@
 
 #include "RE/Scaleform/GFx/GFx_ASMovieRootBase.h"
 
-namespace RE
+namespace RE::Scaleform::GFx
 {
-	namespace Scaleform
+	bool Movie::GetVariable(Value* a_val, const char* a_pathToVar) const
 	{
-		namespace GFx
-		{
-			bool Movie::GetVariable(Value* a_val, const char* a_pathToVar) const
-			{
-				return asMovieRoot->GetVariable(a_val, a_pathToVar);
-			}
-		}
+		return asMovieRoot->GetVariable(a_val, a_pathToVar);
 	}
 }

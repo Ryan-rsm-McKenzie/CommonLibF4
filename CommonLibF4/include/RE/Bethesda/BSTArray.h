@@ -16,7 +16,7 @@ namespace RE
 		BSTArrayHeapAllocator() noexcept = default;
 		BSTArrayHeapAllocator(const BSTArrayHeapAllocator&) = delete;
 
-		BSTArrayHeapAllocator(BSTArrayHeapAllocator&& a_rhs) :
+		BSTArrayHeapAllocator(BSTArrayHeapAllocator&& a_rhs) noexcept :
 			_data{ std::exchange(a_rhs._data, nullptr) },
 			_capacity{ std::exchange(a_rhs._capacity, 0) }
 		{}
@@ -25,7 +25,7 @@ namespace RE
 
 		BSTArrayHeapAllocator& operator=(const BSTArrayHeapAllocator&) = delete;
 
-		BSTArrayHeapAllocator& operator=(BSTArrayHeapAllocator&& a_rhs)
+		BSTArrayHeapAllocator& operator=(BSTArrayHeapAllocator&& a_rhs) noexcept
 		{
 			if (this != std::addressof(a_rhs)) {
 				_data = std::exchange(a_rhs._data, nullptr);
@@ -258,7 +258,7 @@ namespace RE
 				std::for_each(
 					a_rhs.begin(),
 					a_rhs.end(),
-					[](auto& a_elem) {
+					[&](auto& a_elem) {
 						emplace_back(std::move(a_elem));
 					});
 				a_rhs.clear();
@@ -303,7 +303,7 @@ namespace RE
 					std::for_each(
 						a_rhs.begin(),
 						a_rhs.end(),
-						[](auto& a_elem) {
+						[&](auto& a_elem) {
 							emplace_back(std::move(a_elem));
 						});
 					a_rhs.clear();

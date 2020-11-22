@@ -5,7 +5,7 @@ namespace RE
 	class BSNonReentrantSpinLock
 	{
 	public:
-		constexpr BSNonReentrantSpinLock() noexcept {}  // intentional
+		constexpr BSNonReentrantSpinLock() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 		// members
 		std::uint32_t lock{ 0 };  // 0
@@ -140,13 +140,13 @@ namespace RE
 		using mutex_type = Mutex;
 		using policy_type = Policy<mutex_type>;
 
-		BSAutoLock(mutex_type& a_mutex) :
+		explicit BSAutoLock(mutex_type& a_mutex) :
 			_lock(std::addressof(a_mutex))
 		{
 			policy_type::lock(*_lock);
 		}
 
-		BSAutoLock(mutex_type* a_mutex) :
+		explicit BSAutoLock(mutex_type* a_mutex) :
 			_lock(a_mutex)
 		{
 			if (_lock) {

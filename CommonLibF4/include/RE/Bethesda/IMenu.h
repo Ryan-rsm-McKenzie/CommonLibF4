@@ -64,6 +64,7 @@ namespace RE
 		using SWFToCodeFunctionHandler::operator new;
 		using SWFToCodeFunctionHandler::operator delete;
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~IMenu()  // 00
 		{
 			if (uiMovie) {

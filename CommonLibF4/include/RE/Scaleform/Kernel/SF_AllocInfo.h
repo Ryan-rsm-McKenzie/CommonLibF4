@@ -2,20 +2,17 @@
 
 #include "RE/Scaleform/Kernel/SF_Stats.h"
 
-namespace RE
+namespace RE::Scaleform
 {
-	namespace Scaleform
+	struct AllocInfo;
+
+	struct AllocInfo
 	{
-		struct AllocInfo;
+	public:
+		~AllocInfo() noexcept {}  // NOLINT(modernize-use-equals-default)
 
-		struct AllocInfo
-		{
-		public:
-			~AllocInfo() noexcept {}  // intentional
-
-			// members
-			std::uint32_t statID;  // 0
-		};
-		static_assert(sizeof(AllocInfo) == 0x4);
-	}
+		// members
+		std::uint32_t statID;  // 0
+	};
+	static_assert(sizeof(AllocInfo) == 0x4);
 }

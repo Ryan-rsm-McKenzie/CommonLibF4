@@ -2,13 +2,7 @@
 
 #include "RE/Scaleform/Kernel/SF_Log.h"
 
-namespace RE
+namespace RE::Scaleform::GFx
 {
-	namespace Scaleform
-	{
-		namespace GFx
-		{
-			using Log = Scaleform::Log;
-		}
-	}
+	using Log = Scaleform::Log;
 }

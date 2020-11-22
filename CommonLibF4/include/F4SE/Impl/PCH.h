@@ -36,10 +36,21 @@ static_assert(
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/iterator/function_input_iterator.hpp>
 #include <boost/iterator/iterator_facade.hpp>
+#include <boost/predef.h>
 #include <boost/stl_interfaces/iterator_interface.hpp>
 #include <boost/stl_interfaces/sequence_container_interface.hpp>
 #include <nonstd/span.hpp>
 #include <spdlog/spdlog.h>
+
+#if BOOST_COMP_CLANG
+// offsetof is required to evaluate to a constant expression, but msvc's cstddef does not
+// define it as a constant expression (it probably uses compiler hooks to evaulate it as
+// one)
+// clang chokes on this, so we redefine the macro to use clang's builtins, just as its defined
+// in libc++
+#undef offsetof
+#define offsetof(a_type, a_member) __builtin_offsetof(a_type, a_member)
+#endif
 
 #include "F4SE/Impl/WinAPI.h"
 
@@ -243,7 +254,7 @@ namespace F4SE
 				}
 			}();
 
-			WinAPI::MessageBox(nullptr, a_msg.data(), (caption.empty() ? nullptr : caption.c_str()), 0);
+			WinAPI::MessageBox(nullptr, body.c_str(), (caption.empty() ? nullptr : caption.c_str()), 0);
 			WinAPI::TerminateProcess(WinAPI::GetCurrentProcess(), EXIT_FAILURE);
 		}
 
@@ -265,7 +276,7 @@ namespace F4SE
 
 			constexpr enumeration(enumeration&&) noexcept = default;
 
-			template <class U2>
+			template <class U2>  // NOLINTNEXTLINE(google-explicit-constructor)
 			constexpr enumeration(enumeration<Enum, U2> a_rhs) noexcept :
 				_impl(static_cast<underlying_type>(a_rhs.get()))
 			{}
@@ -277,7 +288,7 @@ namespace F4SE
 						std::is_same<
 							Args,
 							enum_type>...>,
-					int> = 0>
+					int> = 0>  // NOLINTNEXTLINE(google-explicit-constructor)
 			constexpr enumeration(Args... a_values) noexcept :
 				_impl((static_cast<underlying_type>(a_values) | ...))
 			{}

@@ -28,7 +28,7 @@ namespace RE
 		class RenderPassArray
 		{
 		public:
-			constexpr RenderPassArray() noexcept {}  // intentional
+			constexpr RenderPassArray() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 			// members
 			BSRenderPass* passList{ nullptr };  // 0

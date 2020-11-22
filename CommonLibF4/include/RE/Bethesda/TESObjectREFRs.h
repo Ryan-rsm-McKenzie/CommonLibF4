@@ -6,6 +6,7 @@
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTEvent.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
+#include "RE/Bethesda/MemoryManager.h"
 #include "RE/Bethesda/TESForms.h"
 #include "RE/Havok/hknpBodyId.h"
 #include "RE/Havok/hknpClosestUniqueBodyIdHitCollector.h"
@@ -155,7 +156,7 @@ namespace RE
 	class BGSEquipIndex
 	{
 	public:
-		~BGSEquipIndex() noexcept {}  // intentional
+		~BGSEquipIndex() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 		// members
 		std::uint32_t index;  // 0
@@ -284,6 +285,8 @@ namespace RE
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kREFR };
 
 		struct RemoveItemData;
+
+		F4_HEAP_REDEFINE_NEW(TESObjectREFR);
 
 		// add
 		virtual void Predestroy();                                                                                                                                                                                                                    // 4A

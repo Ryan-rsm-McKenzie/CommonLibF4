@@ -13,5 +13,5 @@ namespace RE
 		flags.flags = 0xE;
 	}
 
-	NiAVObject::~NiAVObject() {}
+	NiAVObject::~NiAVObject() {}  // NOLINT(modernize-use-equals-default)
 }

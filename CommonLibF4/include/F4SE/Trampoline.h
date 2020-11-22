@@ -141,7 +141,7 @@ namespace F4SE
 				// JMP r/m64
 				data = 0x25;
 			} else {
-				static_assert(false, "invalid branch size");
+				static_assert(false && N, "invalid branch size");
 			}
 
 			return write_branch<N>(a_src, a_dst, data);
@@ -166,7 +166,7 @@ namespace F4SE
 				// CALL r/m64
 				data = 0x15;
 			} else {
-				static_assert(false, "invalid call size");
+				static_assert(false && N, "invalid call size");
 			}
 
 			return write_branch<N>(a_src, a_dst, data);
@@ -179,7 +179,15 @@ namespace F4SE
 		}
 
 	private:
-		[[nodiscard]] void* do_create(std::size_t a_size, std::uintptr_t a_address);
+		[[nodiscard]] static void* do_create(std::size_t a_size, std::uintptr_t a_address);
+
+		[[nodiscard]] static bool in_range(std::ptrdiff_t a_disp)
+		{
+			constexpr auto min = std::numeric_limits<std::int32_t>::min();
+			constexpr auto max = std::numeric_limits<std::int32_t>::max();
+
+			return min <= a_disp && a_disp <= max;
+		}
 
 		[[nodiscard]] void* do_allocate(std::size_t a_size)
 		{
@@ -199,8 +207,8 @@ namespace F4SE
 			struct SrcAssembly
 			{
 				// jmp/call [rip + imm32]
-				std::uint8_t opcode;  // 0 - 0xE9/0xE8
-				std::int32_t disp;    // 1
+				std::uint8_t opcode{ 0 };  // 0 - 0xE9/0xE8
+				std::int32_t disp{ 0 };    // 1
 			};
 			static_assert(offsetof(SrcAssembly, opcode) == 0x0);
 			static_assert(offsetof(SrcAssembly, disp) == 0x1);
@@ -211,10 +219,10 @@ namespace F4SE
 			struct TrampolineAssembly
 			{
 				// jmp [rip]
-				std::uint8_t jmp;    // 0 - 0xFF
-				std::uint8_t modrm;  // 1 - 0x25
-				std::int32_t disp;   // 2 - 0x00000000
-				std::uint64_t addr;  // 6 - [rip]
+				std::uint8_t jmp{ 0 };    // 0 - 0xFF
+				std::uint8_t modrm{ 0 };  // 1 - 0x25
+				std::int32_t disp{ 0 };   // 2 - 0x00000000
+				std::uint64_t addr{ 0 };  // 6 - [rip]
 			};
 			static_assert(offsetof(TrampolineAssembly, jmp) == 0x0);
 			static_assert(offsetof(TrampolineAssembly, modrm) == 0x1);
@@ -255,9 +263,9 @@ namespace F4SE
 			struct Assembly
 			{
 				// jmp/call [rip + imm32]
-				std::uint8_t opcode;  // 0 - 0xFF
-				std::uint8_t modrm;   // 1 - 0x25/0x15
-				std::int32_t disp;    // 2
+				std::uint8_t opcode{ 0 };  // 0 - 0xFF
+				std::uint8_t modrm{ 0 };   // 1 - 0x25/0x15
+				std::int32_t disp{ 0 };    // 2
 			};
 			static_assert(offsetof(Assembly, opcode) == 0x0);
 			static_assert(offsetof(Assembly, modrm) == 0x1);
@@ -301,7 +309,7 @@ namespace F4SE
 			} else if constexpr (N == 6) {
 				write_6branch(a_src, a_dst, a_data);
 			} else {
-				static_assert(false, "invalid branch size");
+				static_assert(false && N, "invalid branch size");
 			}
 
 			return func;
@@ -326,14 +334,6 @@ namespace F4SE
 		}
 
 		void log_stats() const;
-
-		bool in_range(std::ptrdiff_t a_disp) const
-		{
-			constexpr auto min = std::numeric_limits<std::int32_t>::min();
-			constexpr auto max = std::numeric_limits<std::int32_t>::max();
-
-			return min <= a_disp && a_disp <= max;
-		}
 
 		void release()
 		{

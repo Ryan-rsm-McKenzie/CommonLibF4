@@ -5,12 +5,9 @@
 
 namespace RE
 {
-	namespace Scaleform
+	namespace Scaleform::GFx
 	{
-		namespace GFx
-		{
-			class Event;
-		}
+		class Event;
 	}
 
 	enum class UI_MESSAGE_RESULTS : std::int32_t

@@ -34,12 +34,10 @@ namespace RE
 				next(a_rhs.next)
 			{}
 
-			BSTScatterTableEntry(BSTScatterTableEntry&& a_rhs) :
-				value(std::move(a_rhs.value)),
+			BSTScatterTableEntry(BSTScatterTableEntry&& a_rhs) noexcept :
+				value(std::exchange(a_rhs.value, nullptr)),
 				next(a_rhs.next)
-			{
-				a_rhs.next = nullptr;
-			}
+			{}
 
 			BSTScatterTableEntry& operator=(const BSTScatterTableEntry& a_rhs)
 			{
@@ -50,13 +48,11 @@ namespace RE
 				return *this;
 			}
 
-			BSTScatterTableEntry& operator=(BSTScatterTableEntry&& a_rhs)
+			BSTScatterTableEntry& operator=(BSTScatterTableEntry&& a_rhs) noexcept
 			{
 				if (this != std::addressof(a_rhs)) {
 					value = std::move(a_rhs.value);
-
-					next = a_rhs.next;
-					a_rhs.next = nullptr;
+					next = std::exchange(a_rhs.next, nullptr);
 				}
 				return *this;
 			}
@@ -93,7 +89,7 @@ namespace RE
 			iterator_base(const iterator_base&) noexcept = default;
 			iterator_base(iterator_base&&) noexcept = default;
 
-			template <class V>
+			template <class V>  // NOLINTNEXTLINE(google-explicit-constructor)
 			iterator_base(iterator_base<V> a_rhs) noexcept :
 				_cur(a_rhs._cur),
 				_end(a_rhs._end)
@@ -133,8 +129,8 @@ namespace RE
 				return _cur->value;
 			}
 
-			template <class U>
-			[[nodiscard]] bool equal(const iterator_base<U>& a_rhs) const noexcept
+			template <class V>
+			[[nodiscard]] bool equal(const iterator_base<V>& a_rhs) const noexcept
 			{
 				assert(_end == a_rhs._end);
 				return _cur == a_rhs._cur;
@@ -539,7 +535,7 @@ namespace RE
 
 			[[nodiscard]] entry_type* allocate(std::size_t a_num) noexcept { return a_num <= N ? _data : 0; }
 
-			[[nodiscard]] void deallocate(entry_type* a_ptr) noexcept { return; }
+			void deallocate(entry_type* a_ptr) noexcept { return; }
 
 			[[nodiscard]] entry_type* get_entries() const noexcept { return _entries; }
 
@@ -599,8 +595,8 @@ namespace RE
 
 	private:
 		// members
-		ScrapHeap* _allocator{ MemoryManager::GetThreadScrapHeap() };  // 00
-		entry_type* _entries{ nullptr };                               // 08
+		ScrapHeap* _allocator{ MemoryManager::GetSingleton().GetThreadScrapHeap() };  // 00
+		entry_type* _entries{ nullptr };                                              // 08
 	};
 
 	template <

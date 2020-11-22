@@ -2,29 +2,23 @@
 
 #include "RE/Scaleform/Render/Render_Types2D.h"
 
-namespace RE
+namespace RE::Scaleform::Render
 {
-	namespace Scaleform
+	template <class T>
+	class Matrix2x4Data
 	{
-		namespace Render
-		{
-			template <class T>
-			class Matrix2x4Data
-			{
-			public:
-				// members
-				T m[2][4];  // 00
-			};
+	public:
+		// members
+		T m[2][4];  // 00
+	};
 
-			template <class T>
-			class Matrix2x4 :
-				public Matrix2x4Data<T>  // 00
-			{
-			public:
-			};
+	template <class T>
+	class Matrix2x4 :
+		public Matrix2x4Data<T>  // 00
+	{
+	public:
+	};
 
-			using Matrix2F = Matrix2x4<float>;
-			static_assert(sizeof(Matrix2F) == 0x20);
-		}
-	}
+	using Matrix2F = Matrix2x4<float>;
+	static_assert(sizeof(Matrix2F) == 0x20);
 }

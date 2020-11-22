@@ -6,5 +6,5 @@ namespace RE
 {
 	NiObjectNET::NiObjectNET() { emplace_vtable(this); }
 
-	NiObjectNET::~NiObjectNET() {}
+	NiObjectNET::~NiObjectNET() {}  // NOLINT(modernize-use-equals-default)
 }

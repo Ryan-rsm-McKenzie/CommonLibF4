@@ -379,11 +379,11 @@ namespace RE
 
 		// add
 		virtual std::int8_t GetDensity() const { return data.density; }                                                                                   // 67
-		virtual bool SetDensity(const std::int8_t a_density);                                                                                             // 68
+		virtual bool SetDensity(std::int8_t a_density);                                                                                                   // 68
 		virtual std::int8_t GetMinSlopeDegrees() const { return data.minSlopeDegrees; }                                                                   // 69
-		virtual bool SetMinSlopeDegrees(const std::int8_t a_minSlopeDegrees);                                                                             // 6A
+		virtual bool SetMinSlopeDegrees(std::int8_t a_minSlopeDegrees);                                                                                   // 6A
 		virtual std::int8_t GetMaxSlopeDegrees() const { return data.maxSlopeDegrees; }                                                                   // 6B
-		virtual bool SetMaxSlopeDegrees(const std::int8_t a_maxSlopeDegrees);                                                                             // 6C
+		virtual bool SetMaxSlopeDegrees(std::int8_t a_maxSlopeDegrees);                                                                                   // 6C
 		virtual float GetMinSlope() const;                                                                                                                // 6D
 		virtual float GetMaxSlope() const;                                                                                                                // 6E
 		virtual std::uint16_t GetDistanceFromWaterLevel() const { return data.distanceFromWaterLevel; }                                                   // 6F
@@ -391,13 +391,13 @@ namespace RE
 		virtual GRASS_WATER_STATE GetUnderwaterState() const { return *data.underwater; }                                                                 // 71
 		virtual void SetUnderwaterState(const GRASS_WATER_STATE a_underwater) { data.underwater = a_underwater; }                                         // 72
 		virtual float GetPositionRange() const { return data.positionRange; }                                                                             // 73
-		virtual bool SetPositionRange(const float a_range);                                                                                               // 74
+		virtual bool SetPositionRange(float a_range);                                                                                                     // 74
 		virtual float GetHeightRange() const { return data.heightRange; }                                                                                 // 75
-		virtual bool SetHeightRange(const float a_range);                                                                                                 // 76
+		virtual bool SetHeightRange(float a_range);                                                                                                       // 76
 		virtual float GetColorRange() const { return data.colorRange; }                                                                                   // 77
-		virtual bool SetColorRange(const float a_range);                                                                                                  // 78
+		virtual bool SetColorRange(float a_range);                                                                                                        // 78
 		virtual float GetWavePeriod() const { return data.wavePeriod; }                                                                                   // 79
-		virtual bool SetWavePeriod(const float a_period);                                                                                                 // 7A
+		virtual bool SetWavePeriod(float a_period);                                                                                                       // 7A
 		virtual bool GetVertexLighting() const;                                                                                                           // 7B
 		virtual void SetVertexLighting(bool a_flag);                                                                                                      // 7C
 		virtual bool GetUniformScaling() const;                                                                                                           // 7D

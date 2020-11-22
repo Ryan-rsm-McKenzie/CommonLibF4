@@ -101,7 +101,7 @@ namespace RE
 		public:
 			enum class RawType : std::uint32_t;
 
-			~TypeInfo() noexcept {}  // intentional
+			~TypeInfo() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 			// members
 			union

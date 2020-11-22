@@ -13,7 +13,7 @@ namespace F4SE
 				a_sender.data(),
 				a_handler);
 		if (!success) {
-			log::warn("failed to register listener for {}", a_sender);
+			log::warn("failed to register listener for {}"sv, a_sender);
 		}
 		return success;
 	}
@@ -28,7 +28,7 @@ namespace F4SE
 				a_dataLen,
 				a_receiver);
 		if (!success) {
-			log::warn("failed to dispatch to {}", (a_receiver ? a_receiver : "all listeners"));
+			log::warn("failed to dispatch to {}"sv, (a_receiver ? a_receiver : "all listeners"));
 		}
 		return success;
 	}
@@ -40,7 +40,7 @@ namespace F4SE
 				a_name.data(),
 				a_callback);
 		if (!success) {
-			log::warn("failed to register {}", a_name);
+			log::warn("failed to register {}"sv, a_name);
 		}
 		return success;
 	}
@@ -89,7 +89,7 @@ namespace F4SE
 				a_buf,
 				a_length);
 		if (!success) {
-			log::warn("failed to write record");
+			log::warn("failed to write record"sv);
 		}
 		return success;
 	}
@@ -101,7 +101,7 @@ namespace F4SE
 				a_type,
 				a_version);
 		if (!success) {
-			log::warn("failed to open record");
+			log::warn("failed to open record"sv);
 		}
 		return success;
 	}
@@ -113,7 +113,7 @@ namespace F4SE
 				a_buf,
 				a_length);
 		if (!success) {
-			log::warn("failed to write record data");
+			log::warn("failed to write record data"sv);
 		}
 		return success;
 	}
@@ -126,18 +126,19 @@ namespace F4SE
 				std::addressof(a_version),
 				std::addressof(a_length));
 		if (!success) {
-			log::warn("failed to get next record info");
+			log::warn("failed to get next record info"sv);
 		}
 		return success;
 	}
 
 	std::uint32_t SerializationInterface::ReadRecordData(void* a_buf, std::uint32_t a_length) const
 	{
-		const auto read = GetProxy().ReadRecordData(
-			a_buf,
-			a_length);
+		const auto read =
+			GetProxy().ReadRecordData(
+				a_buf,
+				a_length);
 		if (read != a_length) {
-			log::warn("failed to read full record data {}B of {}B", read, a_length);
+			log::warn("failed to read full record data {}B of {}B"sv, read, a_length);
 		}
 		return read;
 	}
@@ -146,8 +147,34 @@ namespace F4SE
 	{
 		const auto success = GetProxy().Register(a_callback);
 		if (!success) {
-			log::warn("failed to register callback");
+			log::warn("failed to register callback"sv);
 		}
 		return success;
 	}
+
+#if 0
+	void* TrampolineInterface::AllocateFromBranchPool(std::size_t a_size) const
+	{
+		const auto mem =
+			GetProxy().AllocateFromBranchPool(
+				GetPluginHandle(),
+				a_size);
+		if (!mem) {
+			log::warn("failed to allocate from branch pool"sv);
+		}
+		return mem;
+	}
+
+	void* TrampolineInterface::AllocateFromLocalPool(std::size_t a_size) const
+	{
+		const auto mem =
+			GetProxy().AllocateFromLocalPool(
+				GetPluginHandle(),
+				a_size);
+		if (!mem) {
+			log::warn("failed to allocate from local pool"sv);
+		}
+		return mem;
+	}
+#endif
 }

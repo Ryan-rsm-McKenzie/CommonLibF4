@@ -91,6 +91,15 @@ namespace F4SE
 			ObjectRegistry&(F4SEAPI* GetObjectRegistry)(void);
 			PersistentObjectStorage&(F4SEAPI* GetPersistentObjectStorage)(void);
 		};
+
+#if 0
+		struct F4SETrampolineInterface
+		{
+			std::uint32_t interfaceVersion;
+			void*(F4SEAPI* AllocateFromBranchPool)(std::uint32_t, std::size_t);
+			void*(F4SEAPI* AllocateFromLocalPool)(std::uint32_t, std::size_t);
+		};
+#endif
 	}
 
 	class QueryInterface
@@ -102,13 +111,13 @@ namespace F4SE
 		}
 
 	private:
-		[[nodiscard]] constexpr REL::Version MakeVersion(std::uint32_t a_version) const noexcept
+		[[nodiscard]] constexpr static REL::Version MakeVersion(std::uint32_t a_version) noexcept
 		{
 			return {
-				(a_version >> 8 * 3) & 0x0FF,
-				(a_version >> 8 * 2) & 0x0FF,
-				(a_version >> 8 / 2) & 0xFFF,
-				(a_version >> 8 * 0) & 0x00F
+				static_cast<std::uint16_t>((a_version >> 8 * 3) & 0x0FF),
+				static_cast<std::uint16_t>((a_version >> 8 * 2) & 0x0FF),
+				static_cast<std::uint16_t>((a_version >> 8 / 2) & 0xFFF),
+				static_cast<std::uint16_t>((a_version >> 8 * 0) & 0x00F)
 			};
 		}
 
@@ -133,7 +142,8 @@ namespace F4SE
 			kPapyrus,
 			kSerialization,
 			kTask,
-			kObject
+			kObject,
+			//kTrampoline
 		};
 
 		[[nodiscard]] void* QueryInterface(std::uint32_t a_id) const { return GetProxy().QueryInterface(a_id); }
@@ -287,7 +297,7 @@ namespace F4SE
 
 		void GetExternalEventRegistrations(stl::zstring a_eventName, void* a_data, RegistrantFunctor* a_functor) const
 		{
-			GetProxy().GetExternalEventRegistrations(a_eventName.data(), a_data, a_functor);
+			GetProxy().GetExternalEventRegistrations(a_eventName.data(), a_data, reinterpret_cast<void*>(a_functor));
 		}
 	};
 
@@ -310,7 +320,7 @@ namespace F4SE
 			public ITaskDelegate
 		{
 		public:
-			TaskDelegate(std::function<void()> a_task) noexcept :
+			explicit TaskDelegate(std::function<void()> a_task) noexcept :
 				_impl(std::move(a_task))
 			{}
 
@@ -353,6 +363,27 @@ namespace F4SE
 		[[nodiscard]] ObjectRegistry& GetObjectRegistry() const { return GetProxy().GetObjectRegistry(); }
 		[[nodiscard]] PersistentObjectStorage& GetPersistentObjectStorage() const { return GetProxy().GetPersistentObjectStorage(); }
 	};
+
+#if 0
+	class TrampolineInterface
+	{
+	private:
+		[[nodiscard]] decltype(auto) GetProxy() const noexcept
+		{
+			return reinterpret_cast<const detail::F4SETrampolineInterface&>(*this);
+		}
+
+	public:
+		enum
+		{
+			kVersion = 1
+		};
+
+		[[nodiscard]] std::uint32_t Version() const noexcept { return GetProxy().interfaceVersion; }
+		[[nodiscard]] void* AllocateFromBranchPool(std::size_t a_size) const;
+		[[nodiscard]] void* AllocateFromLocalPool(std::size_t a_size) const;
+	};
+#endif
 
 	struct PluginInfo
 	{

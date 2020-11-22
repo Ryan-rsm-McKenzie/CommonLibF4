@@ -36,6 +36,7 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::IMemoryStore };
 		static constexpr auto VTABLE{ VTABLE::IMemoryStore };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~IMemoryStore() = default;  // 00
 
 		// add
@@ -52,6 +53,7 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::IMemoryHeap };
 		static constexpr auto VTABLE{ VTABLE::IMemoryHeap };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~IMemoryHeap() = default;
 
 		// override (IMemoryStore)
@@ -109,7 +111,8 @@ namespace RE
 		};
 		static_assert(sizeof(FreeTreeNode) == 0x40);
 
-		virtual ~ScrapHeap() { WinAPI::VirtualFree(baseAddress, 0, (WinAPI::MEM_RELEASE)); }
+		// NOLINTNEXTLINE(modernize-use-equals-default)
+		~ScrapHeap() override { WinAPI::VirtualFree(baseAddress, 0, (WinAPI::MEM_RELEASE)); }  // 00
 
 		// override (IMemoryStore)
 		std::size_t Size(void const* a_mem) const override { return *static_cast<const std::size_t*>(a_mem) & ~(std::size_t{ 3 } << 62); }  // 01
@@ -279,13 +282,13 @@ namespace RE
 		return mem.Reallocate(a_ptr, a_newSize, static_cast<std::uint32_t>(a_alignment), true);
 	}
 
-	[[nodiscard]] inline void free(void* a_ptr)
+	inline void free(void* a_ptr)
 	{
 		auto& mem = MemoryManager::GetSingleton();
 		return mem.Deallocate(a_ptr, false);
 	}
 
-	[[nodiscard]] inline void aligned_free(void* a_ptr)
+	inline void aligned_free(void* a_ptr)
 	{
 		auto& mem = MemoryManager::GetSingleton();
 		return mem.Deallocate(a_ptr, true);

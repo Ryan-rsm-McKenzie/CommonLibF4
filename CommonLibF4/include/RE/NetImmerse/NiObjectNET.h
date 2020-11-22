@@ -18,7 +18,7 @@ namespace RE
 		static constexpr auto Ni_RTTI{ Ni_RTTI::NiObjectNET };
 
 		NiObjectNET();
-		virtual ~NiObjectNET();  // 00
+		virtual ~NiObjectNET();  // NOLINT(modernize-use-override) 00
 
 		F4_HEAP_REDEFINE_NEW(NiObjectNET);
 

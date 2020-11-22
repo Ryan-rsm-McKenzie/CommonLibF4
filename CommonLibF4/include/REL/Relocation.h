@@ -173,7 +173,7 @@ namespace REL
 			std::is_invocable_v<F, Args...>,
 			int> = 0>
 	std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args) noexcept(
-		std::is_nothrow_invocable<F, Args...>)
+		std::is_nothrow_invocable_v<F, Args...>)
 	{
 		if constexpr (std::is_member_function_pointer_v<std::decay_t<F>>) {
 			if constexpr (detail::is_x64_pod_v<std::invoke_result_t<F, Args...>>) {  // member functions == free functions in x64
@@ -253,7 +253,7 @@ namespace REL
 
 		constexpr Version() noexcept = default;
 
-		constexpr Version(std::array<value_type, 4> a_version) noexcept :
+		explicit constexpr Version(std::array<value_type, 4> a_version) noexcept :
 			_impl(a_version)
 		{}
 
@@ -277,8 +277,8 @@ namespace REL
 		[[nodiscard]] std::string string() const
 		{
 			std::string result;
-			for (std::size_t i = 0; i < _impl.size(); ++i) {
-				result += std::to_string(_impl[i]);
+			for (auto&& ver : _impl) {
+				result += std::to_string(ver);
 				result += '-';
 			}
 			result.pop_back();
@@ -288,8 +288,8 @@ namespace REL
 		[[nodiscard]] std::wstring wstring() const
 		{
 			std::wstring result;
-			for (std::size_t i = 0; i < _impl.size(); ++i) {
-				result += std::to_wstring(_impl[i]);
+			for (auto&& ver : _impl) {
+				result += std::to_wstring(ver);
 				result += L'-';
 			}
 			result.pop_back();
@@ -311,7 +311,7 @@ namespace REL
 	{
 		std::uint32_t dummy;
 		std::vector<char> buf(WinAPI::GetFileVersionInfoSize(a_filename.data(), std::addressof(dummy)));
-		if (buf.size() == 0) {
+		if (buf.empty()) {
 			return std::nullopt;
 		}
 
@@ -380,6 +380,12 @@ namespace REL
 	class Module
 	{
 	public:
+		Module(const Module&) = delete;
+		Module(Module&&) = delete;
+
+		Module& operator=(const Module&) = delete;
+		Module& operator=(Module&&) = delete;
+
 		[[nodiscard]] static Module& get()
 		{
 			static Module singleton;
@@ -419,13 +425,7 @@ namespace REL
 			load();
 		}
 
-		Module(const Module&) = delete;
-		Module(Module&&) = delete;
-
 		~Module() noexcept = default;
-
-		Module& operator=(const Module&) = delete;
-		Module& operator=(Module&&) = delete;
 
 		void load()
 		{
@@ -482,6 +482,12 @@ namespace REL
 		};
 
 	public:
+		IDDatabase(const IDDatabase&) = delete;
+		IDDatabase(IDDatabase&&) = delete;
+
+		IDDatabase& operator=(const IDDatabase&) = delete;
+		IDDatabase& operator=(IDDatabase&&) = delete;
+
 		class Offset2ID
 		{
 		public:
@@ -497,7 +503,7 @@ namespace REL
 					std::is_execution_policy_v<
 						stl::remove_cvref_t<ExecutionPolicy>>,
 					int> = 0>
-			Offset2ID(ExecutionPolicy&& a_policy)
+			explicit Offset2ID(ExecutionPolicy&& a_policy)  // NOLINT(bugprone-forwarding-reference-overload)
 			{
 				const auto id2offset = IDDatabase::get().get_id2offset();
 				_offset2id.reserve(id2offset.size());
@@ -588,14 +594,7 @@ namespace REL
 
 	private:
 		IDDatabase() { load(); }
-
-		IDDatabase(const IDDatabase&) = delete;
-		IDDatabase(IDDatabase&&) = delete;
-
 		~IDDatabase() = default;
-
-		IDDatabase& operator=(const IDDatabase&) = delete;
-		IDDatabase& operator=(IDDatabase&&) = delete;
 
 		void load()
 		{
@@ -620,7 +619,7 @@ namespace REL
 	public:
 		constexpr Offset() noexcept = default;
 
-		constexpr Offset(std::size_t a_offset) noexcept :
+		explicit constexpr Offset(std::size_t a_offset) noexcept :
 			_offset(a_offset)
 		{}
 

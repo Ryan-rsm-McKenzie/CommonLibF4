@@ -24,7 +24,7 @@ namespace RE
 		static constexpr auto Ni_RTTI{ Ni_RTTI::NiAVObject };
 
 		NiAVObject();
-		virtual ~NiAVObject();
+		virtual ~NiAVObject();  // NOLINT(modernize-use-override) 00
 
 		// add
 		virtual void UpdateControllers(NiUpdateData& a_data);                                                            // 28

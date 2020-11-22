@@ -18,7 +18,7 @@ namespace RE
 		using iterator = value_type*;
 		using const_iterator = const value_type*;
 
-		NiTArray(std::uint32_t a_maxSize = 0, std::uint32_t a_growBy = 1) :
+		explicit NiTArray(std::uint32_t a_maxSize = 0, std::uint32_t a_growBy = 1) :
 			_capacity(static_cast<std::uint16_t>(a_maxSize)),
 			_growthSize(static_cast<std::uint16_t>(a_growBy))
 		{

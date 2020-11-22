@@ -11,7 +11,8 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::SWFToCodeFunctionHandler };
 		static constexpr auto VTABLE{ VTABLE::SWFToCodeFunctionHandler };
 
-		virtual ~SWFToCodeFunctionHandler() = default;
+		// NOLINTNEXTLINE(modernize-use-override)
+		virtual ~SWFToCodeFunctionHandler() = default;  // 00
 
 		// override (Scaleform::GFx::FunctionHandler)
 		void Call(const Params&) override { return; }  // 01

@@ -60,10 +60,11 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::PlayerInputHandler };
 		static constexpr auto VTABLE{ VTABLE::PlayerInputHandler };
 
-		constexpr PlayerInputHandler(PlayerControlsData& a_data) noexcept :
+		explicit constexpr PlayerInputHandler(PlayerControlsData& a_data) noexcept :
 			data(a_data)
 		{}
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~PlayerInputHandler() = default;  // 00
 
 		// add
@@ -82,10 +83,11 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::HeldStateHandler };
 		static constexpr auto VTABLE{ VTABLE::HeldStateHandler };
 
-		constexpr HeldStateHandler(PlayerControlsData& a_data) noexcept :
+		explicit constexpr HeldStateHandler(PlayerControlsData& a_data) noexcept :
 			PlayerInputHandler(a_data)
 		{}
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~HeldStateHandler() = default;  // 00
 
 		// add

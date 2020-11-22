@@ -5,7 +5,7 @@ namespace RE
 	class BSSoundHandle
 	{
 	public:
-		~BSSoundHandle() noexcept {}  // intentional
+		~BSSoundHandle() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 		// members
 		std::uint32_t soundID;  // 0

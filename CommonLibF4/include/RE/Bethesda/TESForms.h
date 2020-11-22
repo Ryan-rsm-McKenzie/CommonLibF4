@@ -183,12 +183,9 @@ namespace RE
 	class BGSLensFlare;
 	class BGSGodRays;
 
-	namespace BGSMod
+	namespace BGSMod::Attachment
 	{
-		namespace Attachment
-		{
-			class Mod;
-		}
+		class Mod;
 	}
 
 	enum class ENUM_FORM_ID
@@ -371,9 +368,9 @@ namespace RE
 		kTotal
 	};
 
-	enum class _D3DBLEND;
-	enum class _D3DBLENDOP;
-	enum class _D3DCMPFUNC;
+	enum class _D3DBLEND;    // NOLINT(bugprone-reserved-identifier)
+	enum class _D3DBLENDOP;  // NOLINT(bugprone-reserved-identifier)
+	enum class _D3DCMPFUNC;  // NOLINT(bugprone-reserved-identifier)
 	enum class CHUNK_ID;
 	enum class COMMAND_REFUSAL_TYPE;
 	enum class DIALOGUE_SUBTYPE;
@@ -381,12 +378,9 @@ namespace RE
 	enum class SOUND_LEVEL;
 	enum class STAGGER_MAGNITUDE;
 
-	namespace BGSMod
+	namespace BGSMod::Template
 	{
-		namespace Template
-		{
-			class Items;
-		}
+		class Items;
 	}
 
 	namespace EffectArchetypes

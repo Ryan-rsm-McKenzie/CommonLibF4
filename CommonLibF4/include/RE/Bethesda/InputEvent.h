@@ -54,8 +54,8 @@ namespace RE
 		virtual ~InputEvent() = default;  // 00
 
 		// add
-		virtual bool HasIDCode() const { return false; }                // 02
-		virtual const BSFixedString& QUserEvent() const { return {}; }  // 03
+		virtual bool HasIDCode() const { return false; }  // 02
+		virtual const BSFixedString& QUserEvent() const;  // 03
 
 		template <
 			class T,
@@ -145,6 +145,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::CharacterEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kChar };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~CharacterEvent() = default;  // 00
 
 		// members
@@ -163,6 +164,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::DeviceConnectEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kDeviceConnect };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~DeviceConnectEvent() = default;  // 00
 
 		// members
@@ -180,11 +182,12 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::IDEvent };
 		static constexpr auto VTABLE{ VTABLE::IDEvent };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~IDEvent() = default;  // 00
 
 		// override (InputEvent)
-		bool HasIDCode() const override { return true; }                           // 02
-		const BSFixedString& QUserEvent() const override { return "DISABLED"sv; }  // 03
+		bool HasIDCode() const override { return true; }   // 02
+		const BSFixedString& QUserEvent() const override;  // 03
 
 		// members
 		BSFixedString strUserEvent;  // 28
@@ -204,6 +207,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::ButtonEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kButton };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~ButtonEvent() = default;  // 00
 
 		[[nodiscard]] bool JustPressed() const noexcept { return value != 0.0F && heldDownSecs == 0.0F; }
@@ -225,6 +229,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::CursorMoveEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kCursorMove };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~CursorMoveEvent() = default;  // 00
 
 		// members
@@ -244,6 +249,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::KinectEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kKinect };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~KinectEvent() = default;  // 00
 
 		// members
@@ -262,6 +268,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::MouseMoveEvent };
 		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kMouseMove };
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~MouseMoveEvent() = default;  // 00
 
 		// members
@@ -287,6 +294,7 @@ namespace RE
 			kRight = 0xC,
 		};
 
+		// NOLINTNEXTLINE(modernize-use-override)
 		virtual ~ThumbstickEvent() = default;  // 00
 
 		// members

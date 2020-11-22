@@ -12,7 +12,7 @@ namespace RE
 
 		constexpr BSTAtomicValue() noexcept = default;
 
-		constexpr BSTAtomicValue(T a_rhs) noexcept :
+		explicit constexpr BSTAtomicValue(T a_rhs) noexcept :
 			_value(a_rhs)
 		{}
 

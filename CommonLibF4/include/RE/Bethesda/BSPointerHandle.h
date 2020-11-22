@@ -39,7 +39,7 @@ namespace RE
 			a_rhs.reset();
 		}
 
-		constexpr BSUntypedPointerHandle(value_type a_handle) noexcept :
+		explicit constexpr BSUntypedPointerHandle(value_type a_handle) noexcept :
 			_handle(a_handle)
 		{}
 
@@ -190,7 +190,7 @@ namespace RE
 
 	private:
 		void get_handle(T* a_ptr);
-		bool get_smartptr(NiPointer<T>& a_refPtr) const;
+		bool get_smartptr(NiPointer<T>& a_smartPointerOut) const;
 	};
 
 	extern template class BSPointerHandle<Actor>;

@@ -7,7 +7,7 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::BSIntrusiveRefCounted };
 
-		constexpr BSIntrusiveRefCounted() noexcept {}  // intentional
+		constexpr BSIntrusiveRefCounted() noexcept {}  // NOLINT(modernize-use-equals-default)
 
 		std::uint32_t DecRef()
 		{

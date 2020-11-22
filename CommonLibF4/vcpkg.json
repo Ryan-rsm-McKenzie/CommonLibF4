@@ -9,7 +9,8 @@
     "boost-atomic",
     "boost-iostreams",
     "boost-iterator",
-	"boost-stl-interfaces",
+    "boost-predef",
+    "boost-stl-interfaces",
     "span-lite",
     "spdlog"
   ]

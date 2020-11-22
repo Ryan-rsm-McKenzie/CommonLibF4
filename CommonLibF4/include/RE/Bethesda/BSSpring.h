@@ -3,22 +3,19 @@
 #include "RE/NetImmerse/NiPoint2.h"
 #include "RE/NetImmerse/NiPoint3.h"
 
-namespace RE
+namespace RE::BSSpring
 {
-	namespace BSSpring
+	template <class T>
+	struct SpringState
 	{
-		template <class T>
-		struct SpringState
-		{
-		public:
-			// members
-			T position;            // 00
-			T velocity;            // ??
-			float springConstant;  // ??
-		};
+	public:
+		// members
+		T position;            // 00
+		T velocity;            // ??
+		float springConstant;  // ??
+	};
 
-		extern template struct SpringState<float>;
-		extern template struct SpringState<NiPoint2>;
-		extern template struct SpringState<NiPoint3>;
-	}
+	extern template struct SpringState<float>;
+	extern template struct SpringState<NiPoint2>;
+	extern template struct SpringState<NiPoint3>;
 }

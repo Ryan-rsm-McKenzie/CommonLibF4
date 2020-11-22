@@ -18,7 +18,7 @@ namespace RE
 	struct FORM_GROUP;
 	struct TESBitArrayFile;
 
-	union _ULARGE_INTEGER;
+	union _ULARGE_INTEGER;  // NOLINT(bugprone-reserved-identifier)
 
 	class __declspec(novtable) BSFile :
 		public NiFile  // 000

@@ -6,33 +6,27 @@
 #include "RE/Scaleform/Render/Render_Matrix4x4.h"
 #include "RE/Scaleform/Render/Render_Types2D.h"
 
-namespace RE
+namespace RE::Scaleform::GFx
 {
-	namespace Scaleform
+	using Render::Color;
+	using Render::Matrix2F;
+	using Render::Matrix3F;
+	using Render::Matrix4F;
+	using Render::Point;
+	using Render::PointF;
+	using Render::Rect;
+	using Render::RectF;
+
+	enum class PlayState
 	{
-		namespace GFx
-		{
-			using Render::Color;
-			using Render::Matrix2F;
-			using Render::Matrix3F;
-			using Render::Matrix4F;
-			using Render::Point;
-			using Render::PointF;
-			using Render::Rect;
-			using Render::RectF;
+		kPlaying,
+		kStopped
+	};
 
-			enum class PlayState
-			{
-				kPlaying,
-				kStopped
-			};
-
-			enum class FocusMovedType
-			{
-				kByMouse = 1,
-				kByKeyboard,
-				kByAS
-			};
-		}
-	}
+	enum class FocusMovedType
+	{
+		kByMouse = 1,
+		kByKeyboard,
+		kByAS
+	};
 }

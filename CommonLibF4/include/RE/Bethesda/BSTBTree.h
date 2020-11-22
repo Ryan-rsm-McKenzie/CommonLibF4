@@ -26,18 +26,18 @@ namespace RE
 		};
 
 	private:
-		template <class T>
+		template <class U>
 		class iterator_base :
 			public boost::iterators::iterator_facade<
-				iterator_base<T>,
-				T,
+				iterator_base<U>,
+				U,
 				std::forward_iterator_tag>
 		{
 		private:
 			using super =
 				boost::iterators::iterator_facade<
-					iterator_base<T>,
-					T,
+					iterator_base<U>,
+					U,
 					std::forward_iterator_tag>;
 
 		public:
@@ -49,15 +49,15 @@ namespace RE
 
 			iterator_base() noexcept = default;
 
-			template <class U>
-			iterator_base(const iterator_base<U>& a_rhs) :
+			template <class V>  // NOLINTNEXTLINE(google-explicit-constructor)
+			iterator_base(const iterator_base<V>& a_rhs) :
 				_queued(a_rhs._queued),
 				_cur(a_rhs._cur),
 				_pos(a_rhs._pos)
 			{}
 
-			template <class U>
-			iterator_base(iterator_base<U>&& a_rhs) noexcept :
+			template <class V>  // NOLINTNEXTLINE(google-explicit-constructor)
+			iterator_base(iterator_base<V>&& a_rhs) noexcept :
 				_queued(std::move(a_rhs._queued)),
 				_cur(a_rhs._cur),
 				_pos(a_rhs._pos)
@@ -68,8 +68,8 @@ namespace RE
 
 			~iterator_base() noexcept = default;
 
-			template <class U>
-			iterator_base& operator=(const iterator_base<U>& a_rhs)
+			template <class V>
+			iterator_base& operator=(const iterator_base<V>& a_rhs)
 			{
 				if (this != std::addressof(a_rhs)) {
 					_queued = a_rhs._queued;
@@ -79,8 +79,8 @@ namespace RE
 				return *this;
 			}
 
-			template <class U>
-			iterator_base& operator=(iterator_base<U>&& a_rhs) noexcept
+			template <class V>
+			iterator_base& operator=(iterator_base<V>&& a_rhs) noexcept
 			{
 				if (this != std::addressof(a_rhs)) {
 					_queued = std::move(a_rhs._queued);
@@ -99,7 +99,7 @@ namespace RE
 			template <class, class>
 			friend class BSTBTree;
 
-			iterator_base(node_type* a_node) noexcept
+			explicit iterator_base(node_type* a_node) noexcept
 			{
 				if (a_node && a_node->usedEntries > 0) {
 					_cur = a_node;
@@ -109,8 +109,8 @@ namespace RE
 
 			[[nodiscard]] reference dereference() const noexcept { return _cur->entries[_pos]; }
 
-			template <class U>
-			[[nodiscard]] bool equal(const iterator_base<U>& a_rhs) const noexcept
+			template <class V>
+			[[nodiscard]] bool equal(const iterator_base<V>& a_rhs) const noexcept
 			{
 				return _cur == nullptr && a_rhs._cur == nullptr;
 			}

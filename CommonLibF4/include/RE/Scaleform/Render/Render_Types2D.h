@@ -1,43 +1,37 @@
 #pragma once
 
-namespace RE
+namespace RE::Scaleform::Render
 {
-	namespace Scaleform
+	template <class T>
+	class Point
 	{
-		namespace Render
-		{
-			template <class T>
-			class Point
-			{
-			public:
-				// members
-				T x;  // 00
-				T y;  // ??
-			};
+	public:
+		// members
+		T x;  // 00
+		T y;  // ??
+	};
 
-			template <class T>
-			class RectData
-			{
-			public:
-				// members
-				T x1;  // 00
-				T y1;  // ??
-				T x2;  // ??
-				T y2;  // ??
-			};
+	template <class T>
+	class RectData
+	{
+	public:
+		// members
+		T x1;  // 00
+		T y1;  // ??
+		T x2;  // ??
+		T y2;  // ??
+	};
 
-			template <class T>
-			class Rect :
-				public RectData<T>  // 00
-			{
-			public:
-			};
+	template <class T>
+	class Rect :
+		public RectData<T>  // 00
+	{
+	public:
+	};
 
-			using PointF = Point<float>;
-			static_assert(sizeof(PointF) == 0x8);
+	using PointF = Point<float>;
+	static_assert(sizeof(PointF) == 0x8);
 
-			using RectF = Rect<float>;
-			static_assert(sizeof(RectF) == 0x10);
-		}
-	}
+	using RectF = Rect<float>;
+	static_assert(sizeof(RectF) == 0x10);
 }

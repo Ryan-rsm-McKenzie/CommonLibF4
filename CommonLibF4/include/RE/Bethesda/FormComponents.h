@@ -63,13 +63,10 @@ namespace RE
 	class TESValueForm;
 	class TESWeightForm;
 
-	namespace BGSMod
+	namespace BGSMod::Template
 	{
-		namespace Template
-		{
-			class Item;
-			class Items;
-		}
+		class Item;
+		class Items;
 	}
 
 	enum class ACTOR_VALUE_MODIFIER;

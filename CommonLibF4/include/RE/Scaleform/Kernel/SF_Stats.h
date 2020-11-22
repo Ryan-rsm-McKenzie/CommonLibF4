@@ -1,13 +1,10 @@
 #pragma once
 
-namespace RE
+namespace RE::Scaleform
 {
-	namespace Scaleform
+	class StatBag
 	{
-		class StatBag
-		{
-		public:
-		};
-		static_assert(std::is_empty_v<StatBag>);
-	}
+	public:
+	};
+	static_assert(std::is_empty_v<StatBag>);
 }
