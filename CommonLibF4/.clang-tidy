@@ -5,6 +5,7 @@ Checks: >
     bugprone-*,
     -bugprone-branch-clone,
     -bugprone-macro-parentheses,
+    -bugprone-narrowing-conversions,
     -bugprone-unhandled-self-assignment,
     
     clang-analyzer-*,

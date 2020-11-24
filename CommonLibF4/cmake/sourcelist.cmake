@@ -11,6 +11,7 @@ set(sources ${sources}
 	include/RE/Bethesda/BSLock.cpp
 	include/RE/Bethesda/BSPointerHandle.cpp
 	include/RE/Bethesda/BSScaleformManager.cpp
+	include/RE/Bethesda/BSScript.cpp
 	include/RE/Bethesda/BSSpring.cpp
 	include/RE/Bethesda/BSTArray.cpp
 	include/RE/Bethesda/Calendar.cpp

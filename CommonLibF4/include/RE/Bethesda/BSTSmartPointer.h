@@ -9,13 +9,13 @@ namespace RE
 
 		constexpr BSIntrusiveRefCounted() noexcept {}  // NOLINT(modernize-use-equals-default)
 
-		std::uint32_t DecRef()
+		[[nodiscard]] std::uint32_t DecRef() const
 		{
 			stl::atomic_ref myRefCount{ refCount };
 			return --myRefCount;
 		}
 
-		std::uint32_t IncRef()
+		std::uint32_t IncRef() const
 		{
 			stl::atomic_ref myRefCount{ refCount };
 			return ++myRefCount;
@@ -24,7 +24,7 @@ namespace RE
 		[[nodiscard]] constexpr std::uint32_t QRefCount() const noexcept { return refCount; }
 
 		// members
-		std::uint32_t refCount{ 0 };  // 0
+		mutable std::uint32_t refCount{ 0 };  // 0
 	};
 	static_assert(sizeof(BSIntrusiveRefCounted) == 0x4);
 

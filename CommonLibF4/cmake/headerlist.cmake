@@ -36,6 +36,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSResource.h
 	include/RE/Bethesda/BSScaleformManager.h
 	include/RE/Bethesda/BSScript.h
+	include/RE/Bethesda/BSScriptUtil.h
 	include/RE/Bethesda/BSShader.h
 	include/RE/Bethesda/BSSoundHandle.h
 	include/RE/Bethesda/BSSpring.h
@@ -48,9 +49,11 @@ set(headers ${headers}
 	include/RE/Bethesda/BSTEvent.h
 	include/RE/Bethesda/BSTextureSet.h
 	include/RE/Bethesda/BSTextureStreamer.h
+	include/RE/Bethesda/BSTFreeList.h
 	include/RE/Bethesda/BSTHashMap.h
 	include/RE/Bethesda/BSTimer.h
 	include/RE/Bethesda/BSTList.h
+	include/RE/Bethesda/BSTMessageQueue.h
 	include/RE/Bethesda/BSTObjectArena.h
 	include/RE/Bethesda/BSTOptional.h
 	include/RE/Bethesda/BSTSingleton.h

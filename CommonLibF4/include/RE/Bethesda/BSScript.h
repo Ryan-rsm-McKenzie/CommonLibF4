@@ -2,6 +2,7 @@
 
 #include "RE/Bethesda/BSContainer.h"
 #include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/BSLock.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTEvent.h"
 #include "RE/Bethesda/BSTHashMap.h"
@@ -14,11 +15,20 @@ namespace RE
 	template <class F>
 	using BSTThreadScrapFunction = msvc::function<F>;
 
+	class BSStorage;
+
 	namespace BSScript
 	{
 		namespace Internal
 		{
+			class CodeTasklet;
+			class IFuncCallQuery;
 			class VirtualMachine;
+		}
+
+		namespace UnlinkedTypes
+		{
+			struct Object;
 		}
 
 		class Array;
@@ -27,10 +37,13 @@ namespace RE
 		class ICachedErrorMessage;
 		class IComplexType;
 		class IFunction;
+		class IProfilePolicy;
 		class ISavePatcherInterface;
 		class IStackCallbackFunctor;
+		class IStore;
 		class ITypeLinkedCallback;
 		class JobList;
+		class MemoryPage;
 		class Object;
 		class ObjectBindPolicy;
 		class ObjectTypeInfo;
@@ -40,8 +53,11 @@ namespace RE
 		class StructTypeInfo;
 		class Variable;
 
+		struct IHandleReaderWriter;
 		struct ILoader;
+		struct IMemoryPagePolicy;
 		struct IObjectHandlePolicy;
+		struct IVMObjectBindInterface;
 		struct LogEvent;
 		struct StatsEvent;
 
@@ -99,18 +115,452 @@ namespace RE
 		class TypeInfo
 		{
 		public:
-			enum class RawType : std::uint32_t;
+			enum class RawType : std::uint32_t
+			{
+				kNone,
+				kObject,
+				kString,
+				kInt,
+				kFloat,
+				kBool,
+				kVar,
+				kStruct,
 
-			~TypeInfo() noexcept {}  // NOLINT(modernize-use-equals-default)
+				kArrayObject = 11,
+				kArrayString,
+				kArrayInt,
+				kArrayFloat,
+				kArrayBool,
+				kArrayVar,
+				kArrayStruct
+			};
+
+			TypeInfo() noexcept = default;
+			TypeInfo(const TypeInfo& a_rhs) noexcept { data.complexTypeInfo = a_rhs.data.complexTypeInfo; }
+			TypeInfo(TypeInfo&& a_rhs) noexcept { data.complexTypeInfo = std::exchange(a_rhs.data.complexTypeInfo, nullptr); }
+
+			TypeInfo& operator=(const TypeInfo& a_rhs) noexcept
+			{
+				if (this != std::addressof(a_rhs)) {
+					data.complexTypeInfo = a_rhs.data.complexTypeInfo;
+				}
+				return *this;
+			}
+
+			TypeInfo& operator=(TypeInfo&& a_rhs) noexcept
+			{
+				if (this != std::addressof(a_rhs)) {
+					data.complexTypeInfo = std::exchange(a_rhs.data.complexTypeInfo, nullptr);
+				}
+				return *this;
+			}
+
+			TypeInfo& operator=(RawType a_type) noexcept
+			{
+				data.rawType = a_type;
+				return *this;
+			}
+
+			TypeInfo& operator=(IComplexType* a_type) noexcept
+			{
+				data.complexTypeInfo = a_type;
+				return *this;
+			}
+
+			[[nodiscard]] RawType GetRawType() const;
+			[[nodiscard]] bool IsComplex() const noexcept { return data.rawType > RawType::kArrayStruct; }
+
+			void SetArray(bool a_set) noexcept
+			{
+				if (a_set) {
+					data.rawType.set(static_cast<RawType>(1));
+				} else {
+					data.rawType.reset(static_cast<RawType>(1));
+				}
+			}
 
 			// members
-			union
+			union D
 			{
-				stl::enumeration<RawType, std::uint32_t> rawType;
+				D()
+				noexcept :
+					complexTypeInfo(nullptr)
+				{}
+
+				~D() noexcept { complexTypeInfo = nullptr; }
+
+				stl::enumeration<RawType, std::size_t> rawType;
 				IComplexType* complexTypeInfo;
 			} data;  // 0
 		};
 		static_assert(sizeof(TypeInfo) == 0x8);
+
+		class Variable
+		{
+		public:
+			Variable() noexcept = default;
+			Variable(const Variable& a_rhs) { copy(a_rhs); }
+			Variable(Variable&& a_rhs) noexcept = default;
+
+			~Variable() { reset(); }
+
+			Variable& operator=(const Variable& a_rhs)
+			{
+				if (this != std::addressof(a_rhs)) {
+					reset();
+					copy(a_rhs);
+				}
+				return *this;
+			}
+
+			Variable& operator=(Variable&& a_rhs) noexcept = default;
+
+			Variable& operator=(std::nullptr_t)
+			{
+				reset();
+				return *this;
+			}
+
+			Variable& operator=(BSTSmartPointer<Object> a_object);
+
+			Variable& operator=(BSFixedString a_string)
+			{
+				reset();
+				value.s = std::move(a_string);
+				varType = RawType::kString;
+				return *this;
+			}
+
+			Variable& operator=(std::uint32_t a_unsigned)
+			{
+				reset();
+				value.u = a_unsigned;
+				varType = RawType::kInt;
+				return *this;
+			}
+
+			Variable& operator=(std::int32_t a_signed)
+			{
+				reset();
+				value.i = a_signed;
+				varType = RawType::kInt;
+				return *this;
+			}
+
+			Variable& operator=(float a_float)
+			{
+				reset();
+				value.f = a_float;
+				varType = RawType::kFloat;
+				return *this;
+			}
+
+			Variable& operator=(bool a_boolean)
+			{
+				reset();
+				value.b = a_boolean;
+				varType = RawType::kBool;
+				return *this;
+			}
+
+			Variable& operator=(owner<Variable*> a_variable)
+			{
+				assert(a_variable != nullptr);
+				assert(a_variable->varType.GetRawType() != RawType::kVar);
+
+				reset();
+				value.v = a_variable;
+				varType = RawType::kVar;
+				return *this;
+			}
+
+			Variable& operator=(BSTSmartPointer<Struct> a_struct);
+			Variable& operator=(BSTSmartPointer<Array> a_array);
+
+			template <class T>
+			[[nodiscard]] friend BSTSmartPointer<Object> get(const Variable& a_var)
+				requires std::same_as<T, Object>
+			{
+				assert(a_var.is<Object>());
+				return a_var.value.o;
+			}
+
+			template <class T>
+			[[nodiscard]] friend BSFixedString get(const Variable& a_var)
+				requires std::same_as<T, BSFixedString>
+			{
+				assert(a_var.is<BSFixedString>());
+				return a_var.value.s;
+			}
+
+			template <class T>
+			[[nodiscard]] friend std::uint32_t get(const Variable& a_var)
+				requires std::same_as<T, std::uint32_t>
+			{
+				assert(a_var.is<std::uint32_t>());
+				return a_var.value.u;
+			}
+
+			template <class T>
+			[[nodiscard]] friend std::int32_t get(const Variable& a_var)
+				requires std::same_as<T, std::int32_t>
+			{
+				assert(a_var.is<std::int32_t>());
+				return a_var.value.i;
+			}
+
+			template <class T>
+			[[nodiscard]] friend float get(const Variable& a_var)
+				requires std::same_as<T, float>
+			{
+				assert(a_var.is<float>());
+				return a_var.value.f;
+			}
+
+			template <class T>
+			[[nodiscard]] friend bool get(const Variable& a_var)
+				requires std::same_as<T, bool>
+			{
+				assert(a_var.is<bool>());
+				return a_var.value.b;
+			}
+
+			template <class T>
+			[[nodiscard]] bool is() const
+				requires std::same_as<T, std::nullptr_t>
+			{
+				return varType.GetRawType() == RawType::kNone;
+			}
+
+			template <class T>
+			[[nodiscard]] bool is() const
+				requires std::same_as<T, Object>
+			{
+				return varType.GetRawType() == RawType::kObject;
+			}
+
+			template <class T>
+			[[nodiscard]] bool is() const
+				requires std::same_as<T, BSFixedString>
+			{
+				return varType.GetRawType() == RawType::kString;
+			}
+
+			template <class T>
+				[[nodiscard]] bool is() const
+				requires std::same_as<T, std::uint32_t> ||
+				std::same_as<T, std::int32_t>
+			{
+				return varType.GetRawType() == RawType::kInt;
+			}
+
+			template <class T>
+			[[nodiscard]] bool is() const
+				requires std::same_as<T, float>
+			{
+				return varType.GetRawType() == RawType::kFloat;
+			}
+
+			template <class T>
+			[[nodiscard]] bool is() const
+				requires std::same_as<T, bool>
+			{
+				return varType.GetRawType() == RawType::kBool;
+			}
+
+			void reset();
+
+		private:
+			using RawType = TypeInfo::RawType;
+
+			void copy(const Variable& a_rhs);
+
+			// members
+			TypeInfo varType;  // 00
+			union V
+			{
+				// NOLINTNEXTLINE(modernize-use-equals-default)
+				V() :
+					v(nullptr)
+				{}
+
+				V(V&& a_rhs)
+				noexcept :
+					v(std::exchange(a_rhs.v, nullptr))
+				{}
+
+				~V() {}  // NOLINT(modernize-use-equals-default)
+
+				V& operator=(V&& a_rhs) noexcept
+				{
+					if (this != std::addressof(a_rhs)) {
+						v = std::exchange(a_rhs.v, nullptr);
+					}
+					return *this;
+				}
+
+				BSTSmartPointer<Object> o;
+				BSFixedString s;
+				std::uint32_t u;
+				std::int32_t i;
+				float f;
+				bool b;
+				owner<Variable*> v;
+				BSTSmartPointer<Struct> t;
+				BSTSmartPointer<Array> a;
+			} value;  // 08
+		};
+		static_assert(sizeof(Variable) == 0x10);
+
+		class Object
+		{
+		public:
+			~Object();
+
+			[[nodiscard]] bool Constructed() const noexcept { return constructed; }
+
+			[[nodiscard]] std::uint32_t DecRef() const
+			{
+				using func_t = decltype(&Object::DecRef);
+				REL::Relocation<func_t> func{ REL::ID(541793) };
+				return func(this);
+			}
+
+			[[nodiscard]] std::size_t GetHandle() const
+			{
+				using func_t = decltype(&Object::GetHandle);
+				REL::Relocation<func_t> func{ REL::ID(1452752) };
+				return func(this);
+			}
+
+			void IncRef() const
+			{
+				using func_t = decltype(&Object::IncRef);
+				REL::Relocation<func_t> func{ REL::ID(461710) };
+				return func(this);
+			}
+
+			// members
+			std::uint32_t constructed: 1;            // 00:00
+			std::uint32_t initialized: 1;            // 00:01
+			std::uint32_t valid: 1;                  // 00:02
+			std::uint32_t remainingPropsToInit: 29;  // 00:03
+			BSTSmartPointer<ObjectTypeInfo> type;    // 08
+			BSFixedString currentState;              // 10
+			void* lockStructure;                     // 18
+			std::size_t handle;                      // 20
+			std::uint32_t refCountAndHandleLock;     // 28
+			Variable variables[0];                   // 30
+		};
+		static_assert(sizeof(Object) == 0x30);
+
+		class Struct :
+			public BSIntrusiveRefCounted  // 00
+		{
+		public:
+			~Struct();
+
+			// members
+			BSSpinLock structLock;                 // 04
+			BSTSmartPointer<StructTypeInfo> type;  // 10
+			bool constructed{ true };              // 18
+			bool valid{ false };                   // 19
+			Variable variables[0];                 // 20
+		};
+		static_assert(sizeof(Struct) == 0x20);
+
+		class Array :
+			public BSIntrusiveRefCounted  // 00
+		{
+		public:
+			// members
+			TypeInfo elementType;         // 08
+			BSSpinLock elementsLock;      // 10
+			BSTArray<Variable> elements;  // 18
+		};
+		static_assert(sizeof(Array) == 0x30);
+
+		class Stack :
+			public BSIntrusiveRefCounted  // 00
+		{
+		public:
+			enum class StackType;
+
+			enum class FreezeState
+			{
+				kUnfrozen,
+				kFreezing,
+				kFrozen
+			};
+
+			enum class State
+			{
+				kRunning,
+				kFinished,
+				kWaitingOnMemory,
+				kWaitingOnLatentFunction,
+				kWaitingInOtherStackForCall,
+				kWaitingInOtherStackForReturn,
+				kWaitingInOtherStackForReturnNoPop,
+				kRetryReturnNoPop,
+				kRetryCall
+			};
+
+			struct MemoryPageData
+			{
+			public:
+				// members
+				BSTAutoPointer<MemoryPage> page;       // 00
+				std::uint32_t availableMemoryInBytes;  // 08
+			};
+			static_assert(sizeof(MemoryPageData) == 0x10);
+
+			[[nodiscard]] std::uint32_t GetPageForFrame(const StackFrame* a_frame) const
+			{
+				using func_t = decltype(&Stack::GetPageForFrame);
+				REL::Relocation<func_t> func{ REL::ID(1429302) };
+				return func(this, a_frame);
+			}
+
+			[[nodiscard]] Variable& GetStackFrameVariable(const StackFrame* a_frame, std::uint32_t a_index, std::uint32_t a_pageHint)
+			{
+				using func_t = decltype(&Stack::GetStackFrameVariable);
+				REL::Relocation<func_t> func{ REL::ID(897539) };
+				return func(this, a_frame, a_index, a_pageHint);
+			}
+
+			// members
+			IMemoryPagePolicy* policy;                                // 08
+			IProfilePolicy* profilePolicy;                            // 10
+			BSTSmallArray<MemoryPageData, 3> pages;                   // 18
+			std::uint32_t frames;                                     // 58
+			StackFrame* top;                                          // 60
+			stl::enumeration<State, std::int32_t> state;              // 68
+			stl::enumeration<FreezeState, std::int32_t> freezeState;  // 6C
+			Variable returnValue;                                     // 70
+			std::uint32_t stackID;                                    // 80
+			stl::enumeration<StackType, std::int32_t> stackType;      // 84
+			BSTSmartPointer<Internal::CodeTasklet> owningTasklet;     // 88
+			BSTSmartPointer<IStackCallbackFunctor> callback;          // 90
+			BSTSmartPointer<Object> objToUnbind;                      // 98
+			BSTSmartPointer<Stack> nextStack;                         // A0
+		};
+		static_assert(sizeof(Stack) == 0xA8);
+
+		class StackFrame
+		{
+		public:
+			// members
+			Stack* parent;                                     // 00
+			StackFrame* previousFrame;                         // 08
+			BSTSmartPointer<IFunction> owningFunction;         // 10
+			BSTSmartPointer<ObjectTypeInfo> owningObjectType;  // 18
+			std::uint32_t ip;                                  // 20
+			Variable self;                                     // 28
+			std::uint32_t size;                                // 38
+			bool instructionsValid;                            // 3C
+		};
+		static_assert(sizeof(StackFrame) == 0x40);
 
 		class __declspec(novtable) IVirtualMachine :
 			public BSIntrusiveRefCounted  // 08
@@ -171,12 +621,12 @@ namespace RE
 			virtual bool DispatchUnboundMethodCall(std::uint64_t a_objHandle, const BSTSmartPointer<BoundScript>& a_script, const BSFixedString& a_funcName, const BSTThreadScrapFunction<bool(BSScrapArray<Variable>&)>& a_arguments, const BSTSmartPointer<IStackCallbackFunctor>& a_callback) = 0;                   // 2F
 			virtual bool IsWaitingOnLatent(std::uint32_t a_stackID) const = 0;                                                                                                                                                                                                                                          // 30
 			virtual void ReturnFromLatent(std::uint32_t a_stackID, const Variable& a_retValue) = 0;                                                                                                                                                                                                                     // 31
-			virtual ErrorLogger& GetErrorLogger() const = 0;                                                                                                                                                                                                                                                            // 32
-			virtual const IObjectHandlePolicy& GetObjectHandlePolicy() const = 0;                                                                                                                                                                                                                                       // 34
-			virtual IObjectHandlePolicy& GetObjectHandlePolicy() = 0;                                                                                                                                                                                                                                                   // 33
-			virtual const ObjectBindPolicy& GetObjectBindPolicy() const = 0;                                                                                                                                                                                                                                            // 36
-			virtual ObjectBindPolicy& GetObjectBindPolicy() = 0;                                                                                                                                                                                                                                                        // 35
-			virtual ISavePatcherInterface& GetSavePatcherInterface() = 0;                                                                                                                                                                                                                                               // 37
+			[[nodiscard]] virtual ErrorLogger& GetErrorLogger() const = 0;                                                                                                                                                                                                                                              // 32
+			[[nodiscard]] virtual const IObjectHandlePolicy& GetObjectHandlePolicy() const = 0;                                                                                                                                                                                                                         // 34
+			[[nodiscard]] virtual IObjectHandlePolicy& GetObjectHandlePolicy() = 0;                                                                                                                                                                                                                                     // 33
+			[[nodiscard]] virtual const ObjectBindPolicy& GetObjectBindPolicy() const = 0;                                                                                                                                                                                                                              // 36
+			[[nodiscard]] virtual ObjectBindPolicy& GetObjectBindPolicy() = 0;                                                                                                                                                                                                                                          // 35
+			[[nodiscard]] virtual ISavePatcherInterface& GetSavePatcherInterface() = 0;                                                                                                                                                                                                                                 // 37
 			virtual void RegisterForLogEvent(BSTEventSink<LogEvent>* a_sink) = 0;                                                                                                                                                                                                                                       // 38
 			virtual void UnregisterForLogEvent(BSTEventSink<LogEvent>* a_sink) = 0;                                                                                                                                                                                                                                     // 39
 			virtual void RegisterForStatsEvent(BSTEventSink<StatsEvent>* a_sink) = 0;                                                                                                                                                                                                                                   // 3A
@@ -185,6 +635,34 @@ namespace RE
 			virtual void PostCachedErrorToLogger(const ICachedErrorMessage& a_errorFunctor, std::uint32_t aStackID, ErrorLogger::Severity a_severity) const = 0;                                                                                                                                                        // 3C
 		};
 		static_assert(sizeof(IVirtualMachine) == 0x10);
+
+		class __declspec(novtable) IClientVM
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__IClientVM };
+			static constexpr auto VTABLE{ VTABLE::BSScript__IClientVM };
+
+			virtual ~IClientVM();  // 00
+
+			// add
+			virtual bool IsVMFrozen() const;  // 01
+			virtual void PreSave();           // 02
+		};
+		static_assert(sizeof(IClientVM) == 0x8);
+
+		class __declspec(novtable) IStackCallbackSaveInterface
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__IStackCallbackSaveInterface };
+			static constexpr auto VTABLE{ VTABLE::BSScript__IStackCallbackSaveInterface };
+
+			virtual ~IStackCallbackSaveInterface();  // 00
+
+			// add
+			virtual bool SaveStackCallback(BSStorage& a_buffer, const BSTSmartPointer<IStackCallbackFunctor>& a_callback) const;         // 01
+			virtual bool LoadStackCallback(const BSStorage& a_buffer, bool&, BSTSmartPointer<IStackCallbackFunctor>& a_callback) const;  // 02
+		};
+		static_assert(sizeof(IStackCallbackSaveInterface) == 0x8);
 
 		class __declspec(novtable) IComplexType :
 			public BSIntrusiveRefCounted  // 08
@@ -219,14 +697,31 @@ namespace RE
 			static constexpr auto RTTI{ RTTI::BSScript__ObjectTypeInfo };
 			static constexpr auto VTABLE{ VTABLE::BSScript__ObjectTypeInfo };
 
-			[[nodiscard]] std::string_view GetName() const { return name; }
+			enum class LinkValidState : std::uint32_t
+			{
+				kNotLinked,
+				kCurrentlyLinking,
+				kLinkedInvalid,
+				kLinkedValid
+			};
+
+			[[nodiscard]] std::uint32_t GetVariableCount() const noexcept
+			{
+				std::uint32_t count = 0;
+				for (BSTSmartPointer iter{ this }; iter && iter->Valid(); iter = iter->parentTypeInfo) {
+					count += iter->variableCount;
+				}
+				return count;
+			}
+
+			[[nodiscard]] bool Valid() const noexcept { return linkedValid == LinkValidState::kLinkedValid; }
 
 			// members
 			BSFixedString name;                                           // 10
-			BSTSmartPointer<BSScript::ObjectTypeInfo> parentTypeInfo;     // 18
+			BSTSmartPointer<ObjectTypeInfo> parentTypeInfo;               // 18
 			BSFixedString docString;                                      // 20
 			BSTArray<BSTSmartPointer<PropertyGroupInfo>> propertyGroups;  // 28
-			std::uint32_t linkedValid: 2;                                 // 40:00
+			LinkValidState linkedValid: 2;                                // 40:00
 			std::uint32_t isConst: 1;                                     // 40:02
 			std::uint32_t userFlagCount: 5;                               // 40:03
 			std::uint32_t variableCount: 10;                              // 40:08
@@ -241,20 +736,298 @@ namespace RE
 		};
 		static_assert(sizeof(ObjectTypeInfo) == 0x58);
 
+		class __declspec(novtable) StructTypeInfo :
+			public IComplexType  // 00
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__StructTypeInfo };
+			static constexpr auto VTABLE{ VTABLE::BSScript__StructTypeInfo };
+
+			enum class LinkValidState
+			{
+				kNotLinked,
+				kCurrentlyLinking,
+				kLinkedInvalid,
+				kLinkedValid
+			};
+
+			struct StructVar
+			{
+			public:
+				// members
+				Variable initialValue;    // 00
+				TypeInfo varType;         // 10
+				BSFixedString docString;  // 18
+				std::uint32_t userFlags;  // 20
+				bool isConst;             // 24
+			};
+			static_assert(sizeof(StructVar) == 0x28);
+
+			// members
+			BSFixedString name;                                          // 10
+			BSTSmartPointer<ObjectTypeInfo> containingObjTypeInfo;       // 18
+			BSTArray<StructVar> variables;                               // 20
+			BSTHashMap<BSFixedString, std::uint32_t> varNameIndexMap;    // 38
+			stl::enumeration<LinkValidState, std::int32_t> linkedValid;  // 68
+		};
+		static_assert(sizeof(StructTypeInfo) == 0x70);
+
+		struct __declspec(novtable) IMemoryPagePolicy
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__IMemoryPagePolicy };
+			static constexpr auto VTABLE{ VTABLE::BSScript__IMemoryPagePolicy };
+
+			enum class AllocationStatus;
+			enum class NewPageStrategy;
+
+			virtual ~IMemoryPagePolicy() = default;  // 00
+
+			// add
+			virtual std::uint32_t MaximumPageSize() const = 0;                                                                                          // 01
+			virtual std::uint32_t MaximumStackDepth() const = 0;                                                                                        // 02
+			virtual AllocationStatus AllocatePage(std::uint32_t a_sizeInBytes, NewPageStrategy a_strategy, BSTAutoPointer<MemoryPage>& a_newPage) = 0;  // 03
+			virtual AllocationStatus GetLargestAvailablePage(BSTAutoPointer<MemoryPage>& a_newPage) = 0;                                                // 04
+			virtual void DisposePage(BSTAutoPointer<MemoryPage>& a_oldPage) = 0;                                                                        // 05
+		};
+		static_assert(sizeof(IMemoryPagePolicy) == 0x8);
+
+		class __declspec(novtable) SimpleAllocMemoryPagePolicy :
+			public IMemoryPagePolicy
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__SimpleAllocMemoryPagePolicy };
+			static constexpr auto VTABLE{ VTABLE::BSScript__SimpleAllocMemoryPagePolicy };
+
+			// override (IMemoryPagePolicy)
+			std::uint32_t MaximumPageSize() const override { return maxPageSize; }                                                                   // 01
+			std::uint32_t MaximumStackDepth() const override { return maxStackDepth; }                                                               // 02
+			AllocationStatus AllocatePage(std::uint32_t a_sizeInBytes, NewPageStrategy a_strategy, BSTAutoPointer<MemoryPage>& a_newPage) override;  // 03
+			AllocationStatus GetLargestAvailablePage(BSTAutoPointer<MemoryPage>& a_newPage) override;                                                // 04
+			void DisposePage(BSTAutoPointer<MemoryPage>& a_oldPage) override;                                                                        // 05
+
+			// members
+			const std::uint32_t minPageSize{ 0x80 };            // 08
+			const std::uint32_t maxPageSize{ 0x200 };           // 0C
+			const std::uint32_t maxAllocatedMemory{ 0x25800 };  // 10
+			const std::uint32_t maxStackDepth{ 0x64 };          // 14
+			bool ignoreMemoryLimit;                             // 18
+			bool outOfMemory;                                   // 19
+			BSSpinLock dataLock;                                // 1C
+			std::uint32_t currentMemorySize;                    // 24
+			std::uint32_t maxAdditionalAllocations;             // 28
+		};
+		static_assert(sizeof(SimpleAllocMemoryPagePolicy) == 0x30);
+
+		struct __declspec(novtable) ILoader
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__ILoader };
+			static constexpr auto VTABLE{ VTABLE::BSScript__ILoader };
+
+			virtual ~ILoader() = default;  // 00
+
+			// add
+			virtual ILoader* Clone() const = 0;                                                     // 01
+			virtual void SetScriptStore(const BSTSmartPointer<IStore>& a_newStore) = 0;             // 02
+			virtual bool GetClass(const char* a_name, UnlinkedTypes::Object& a_unlinkedClass) = 0;  // 03
+		};
+		static_assert(sizeof(ILoader) == 0x8);
+
+		namespace Internal
+		{
+			enum class StringIndexSize
+			{
+				kSmall,
+				kLarge
+			};
+
+			class ReadableStringTable
+			{
+			public:
+				class StringEntry
+				{
+				public:
+					// members
+					const char* originalData;       // 00
+					BSFixedString convertedString;  // 08
+				};
+				static_assert(sizeof(StringEntry) == 0x10);
+
+				class StringTableScrapPage
+				{
+				public:
+					// members
+					char buffer[0x1000];    // 0000
+					char* curr;             // 1000
+					const char* const end;  // 1008
+				};
+				static_assert(sizeof(StringTableScrapPage) == 0x1010);
+
+				// members
+				msvc::unique_ptr<BSTObjectArena<StringTableScrapPage, BSTObjectArenaScrapAlloc, 1>> scrapPages;  // 00
+				msvc::unique_ptr<BSScrapArray<StringEntry>> entries;                                             // 08
+				stl::enumeration<StringIndexSize, std::int32_t> indexSize;                                       // 10
+			};
+			static_assert(sizeof(ReadableStringTable) == 0x18);
+		}
+
+		class __declspec(novtable) CompiledScriptLoader :
+			public ILoader  // 00
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__CompiledScriptLoader };
+			static constexpr auto VTABLE{ VTABLE::BSScript__CompiledScriptLoader };
+
+			// override (ILoader)
+			ILoader* Clone() const override;                                                     // 01
+			void SetScriptStore(const BSTSmartPointer<IStore>& a_newStore) override;             // 02
+			bool GetClass(const char* a_name, UnlinkedTypes::Object& a_unlinkedClass) override;  // 03
+
+			// members
+			ErrorLogger* errorHandler;                  // 08
+			BSTSmartPointer<IStore> scriptStore;        // 10
+			Internal::ReadableStringTable stringTable;  // 18
+			std::int8_t fileMajorVersion;               // 30
+			std::int8_t fileMinorVersion;               // 31
+			std::int8_t loadFlags;                      // 32
+		};
+		static_assert(sizeof(CompiledScriptLoader) == 0x38);
+
+		struct __declspec(novtable) IObjectHandlePolicy
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__IObjectHandlePolicy };
+			static constexpr auto VTABLE{ VTABLE::BSScript__IObjectHandlePolicy };
+
+			virtual ~IObjectHandlePolicy() = default;  // 00
+
+			// add
+			virtual bool HandleIsType(std::uint32_t a_type, std::size_t a_handle) const = 0;               // 01
+			virtual bool GetHandleType(std::size_t a_handle, std::uint32_t& a_type) const = 0;             // 02
+			virtual bool IsHandleLoaded(std::size_t a_handle) const = 0;                                   // 03
+			virtual bool IsHandleObjectAvailable(std::size_t a_handle) const = 0;                          // 04
+			virtual bool ShouldAttemptToCleanHandle(std::size_t a_handle) const = 0;                       // 05
+			virtual std::size_t EmptyHandle() const = 0;                                                   // 06
+			virtual std::size_t GetHandleForObject(std::uint32_t a_type, const void* a_object) const = 0;  // 07
+			virtual bool HasParent(std::size_t a_childHandle) const = 0;                                   // 08
+			virtual std::size_t GetParentHandle(std::size_t a_childHandle) const = 0;                      // 09
+			virtual std::size_t GetHandleScriptsMovedFrom(std::size_t a_newHandle) const = 0;              // 0A
+			virtual std::size_t GetSaveRemappedHandle(std::size_t a_saveHandle) const = 0;                 // 0B
+			virtual void* GetObjectForHandle(std::uint32_t a_type, std::size_t a_handle) const = 0;        // 0C
+			virtual void PersistHandle(std::size_t a_handle) = 0;                                          // 0D
+			virtual void ReleaseHandle(std::size_t a_handle) = 0;                                          // 0E
+			virtual void ConvertHandleToString(std::size_t a_handle, BSFixedString& a_string) const = 0;   // 0F
+		};
+		static_assert(sizeof(IObjectHandlePolicy) == 0x8);
+
+		class MergedBoundScript
+		{
+		public:
+			// members
+			BSTSmartPointer<BoundScript> childScript;   // 00
+			BSTSmartPointer<BoundScript> parentScript;  // 08
+		};
+		static_assert(sizeof(MergedBoundScript) == 0x10);
+
+		class __declspec(novtable) ObjectBindPolicy
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__ObjectBindPolicy };
+			static constexpr auto VTABLE{ VTABLE::BSScript__ObjectBindPolicy };
+
+			virtual ~ObjectBindPolicy();  // 00
+
+			// add
+			virtual void EnsureBaseDataLoaded(std::size_t a_objHandle) = 0;                                                                                                                                                                           // 01
+			virtual void ObjectNoLongerNeeded(std::size_t a_objHandle) = 0;                                                                                                                                                                           // 02
+			virtual void AddBoundInfoImpl(std::size_t a_objHandle) = 0;                                                                                                                                                                               // 03
+			virtual void ClearBoundInfoImpl(std::size_t a_objHandle) = 0;                                                                                                                                                                             // 04
+			virtual void ClearDiskLoadedBoundInfoImpl(std::size_t a_objHandle) = 0;                                                                                                                                                                   // 05
+			virtual void ClearAllBoundInfoImpl() = 0;                                                                                                                                                                                                 // 06
+			virtual void PostBindObject(std::size_t a_objHandle) = 0;                                                                                                                                                                                 // 07
+			virtual std::uint32_t GetExtraInfoSize(std::size_t) const = 0;                                                                                                                                                                            // 08
+			virtual void WriteExtraInfo(std::size_t, const IHandleReaderWriter&, BSStorage&) const = 0;                                                                                                                                               // 09
+			virtual void ReadExtraInfo(std::size_t a_objHandle, std::uint16_t a_handleVersion, const IHandleReaderWriter& a_handleReaderWriter, const BSStorage& a_storage) = 0;                                                                      // 0A
+			virtual bool IsIgnoringClear() const = 0;                                                                                                                                                                                                 // 0B
+			virtual void ResolveProperties(std::size_t a_objTarget, const BSTSmartPointer<Object>& a_object, const BSTSmartPointer<BoundScript>& a_boundScript, bool a_postSaveConstOnly) = 0;                                                        // 0D
+			virtual void ResolveProperties(std::size_t a_objTarget, const BSTSmartPointer<Object>& a_object, const MergedBoundScript& a_boundScript, bool a_postSaveConstOnly) = 0;                                                                   // 0C
+			virtual void ConvertProperties(std::size_t a_objTarget, const BSTSmartPointer<BoundScript>& a_boundScript, bool a_constOnly, BSTScrapHashMap<BSFixedString, Variable>& a_properties, std::uint32_t& a_nonConvertedProperties) const = 0;  // 0F
+			virtual void ConvertProperties(std::size_t a_objTarget, const MergedBoundScript& a_mergedScript, bool a_constOnly, BSTScrapHashMap<BSFixedString, Variable>& a_properties, std::uint32_t& a_nonConvertedProperties) const = 0;            // 0E
+
+			void BindObject(const BSTSmartPointer<Object>& a_obj, std::size_t a_objHandle)
+			{
+				using func_t = decltype(&ObjectBindPolicy::BindObject);
+				REL::Relocation<func_t> func{ REL::ID(709728) };
+				return func(this, a_obj, a_objHandle);
+			}
+
+			// members
+			IVirtualMachine* vm;                                                                         // 10
+			IVMObjectBindInterface* bindInterface;                                                       // 18
+			BSSpinLock attachedScriptsLock;                                                              // 20
+			BSTHashMap<std::size_t, BSTSmallSharedArray<BSTSmartPointer<BoundScript>>> attachedScripts;  // 50
+		};
+		static_assert(sizeof(ObjectBindPolicy) == 0x50);
+
+		class __declspec(novtable) IProfilePolicy
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__IProfilePolicy };
+			static constexpr auto VTABLE{ VTABLE::BSScript__IProfilePolicy };
+
+			virtual ~IProfilePolicy() = default;  // 00
+
+			// add
+			virtual void StackFramePushQueued(std::uint32_t a_stackID, std::uint32_t a_frameNumber, const BSTSmartPointer<Internal::IFuncCallQuery>& a_funcCallQuery) = 0;                                                                 // 01
+			virtual void StackFramePushed(std::uint32_t a_stackID, std::uint32_t a_frameNumber, const Variable& a_self, const BSFixedString& a_scriptName, const BSFixedString& a_stateName, const BSFixedString& a_functionName) = 0;     // 02
+			virtual void StackFramePopQueued(std::uint32_t a_stackID, std::uint32_t a_frameNumber, const Variable& a_self, const BSFixedString& a_scriptName, const BSFixedString& a_stateName, const BSFixedString& a_functionName) = 0;  // 03
+			virtual void StackFramePopped(std::uint32_t a_stackID, std::uint32_t a_frameNumber, const Variable& a_self, const BSFixedString& a_scriptName, const BSFixedString& a_stateName, const BSFixedString& a_functionName) = 0;     // 04
+		};
+		static_assert(sizeof(IProfilePolicy) == 0x8);
+
+		class ISavePatcherInterface
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BSScript__ISavePatcherInterface };
+			static constexpr auto VTABLE{ VTABLE::BSScript__ISavePatcherInterface };
+
+			virtual ~ISavePatcherInterface() = default;  // 00
+
+			// add
+			virtual void PatchStackFrame(StackFrame&, IVirtualMachine&) = 0;  // 01
+		};
+		static_assert(sizeof(ISavePatcherInterface) == 0x8);
+
 		namespace Internal
 		{
 			class VDescTable
 			{
 			public:
+				using value_type = BSTTuple<BSFixedString, TypeInfo>;
+				using size_type = std::uint16_t;
+
+				VDescTable(size_type a_params, size_type a_locals) :
+					paramCount(a_params),
+					totalEntries(a_params + a_locals)
+				{
+					const auto total = paramCount + totalEntries;
+					if (total > 0) {
+						entries = new value_type[total];
+					}
+				}
+
+				~VDescTable() { delete[] entries; }
+
 				// members
-				BSTTuple<BSFixedString, BSScript::TypeInfo>* entries;  // 00
-				std::uint16_t paramCount;                              // 08
-				std::uint16_t totalEntries;                            // 0A
+				value_type* entries{ nullptr };  // 00
+				size_type paramCount{ 0 };       // 08
+				size_type totalEntries{ 0 };     // 0A
 			};
 			static_assert(sizeof(VDescTable) == 0x10);
 		}
 
-		class IFunction :
+		class __declspec(novtable) IFunction :
 			public BSIntrusiveRefCounted  // 08
 		{
 		public:
@@ -285,7 +1058,7 @@ namespace RE
 			virtual const BSFixedString& GetStateName() const = 0;                                                                                                         // 03
 			virtual TypeInfo GetReturnType() const = 0;                                                                                                                    // 04
 			virtual std::uint32_t GetParamCount() const = 0;                                                                                                               // 05
-			virtual void GetParam(std::uint32_t a_param, BSFixedString& a_aramName, TypeInfo& a_paramType) const = 0;                                                      // 06
+			virtual void GetParam(std::uint32_t a_param, BSFixedString& a_paramName, TypeInfo& a_paramType) const = 0;                                                     // 06
 			virtual std::uint32_t GetStackFrameSize() const = 0;                                                                                                           // 07
 			virtual bool GetIsNative() const = 0;                                                                                                                          // 08
 			virtual bool GetIsStatic() const = 0;                                                                                                                          // 09
@@ -305,28 +1078,102 @@ namespace RE
 
 		namespace NF_util
 		{
-			class NativeFunctionBase :
+			class __declspec(novtable) NativeFunctionBase :
 				public IFunction  // 00
 			{
 			public:
 				static constexpr auto RTTI{ RTTI::BSScript__NF_util__NativeFunctionBase };
 				static constexpr auto VTABLE{ VTABLE::BSScript__NF_util__NativeFunctionBase };
 
+				NativeFunctionBase(std::string_view a_object, std::string_view a_function, std::uint16_t a_paramCount, bool a_isStatic) :
+					name(a_function),
+					objName(a_object),
+					descTable(a_paramCount, 0),
+					isStatic(a_isStatic)
+				{
+					for (std::size_t i = 0; i < descTable.paramCount; ++i) {
+						descTable.entries[i].first = fmt::format(FMT_STRING("param{}"), i + 1);
+					}
+				}
+
+				// override (IFunction)
+				const BSFixedString& GetName() const override { return name; }                   // 01
+				const BSFixedString& GetObjectTypeName() const override { return objName; }      // 02
+				const BSFixedString& GetStateName() const override { return stateName; }         // 03
+				TypeInfo GetReturnType() const override { return retType; }                      // 04
+				std::uint32_t GetParamCount() const override { return descTable.totalEntries; }  // 05
+
+				void GetParam(std::uint32_t a_param, BSFixedString& a_paramName, TypeInfo& a_paramType) const override  // 06
+				{
+					if (a_param < descTable.paramCount) {
+						assert(descTable.entries != nullptr);
+						const auto& entry = descTable.entries[a_param];
+						a_paramName = entry.first;
+						a_paramType = entry.second;
+					} else {
+						a_paramName = ""sv;
+						a_paramType = nullptr;
+					}
+				}
+
+				std::uint32_t GetStackFrameSize() const override { return descTable.totalEntries; }  // 07
+				bool GetIsNative() const override { return true; }                                   // 08
+				bool GetIsStatic() const override { return isStatic; }                               // 09
+				bool GetIsEmpty() const override { return false; }                                   // 0A
+				FunctionType GetFunctionType() const override { return FunctionType::kNormal; }      // 0B
+				std::uint32_t GetUserFlags() const override { return userFlags; }                    // 0C
+				const BSFixedString& GetDocString() const override { return docString; }             // 0D
+				void InsertLocals(StackFrame&) const override { return; }                            // 0E
+
+				CallResult Call(const BSTSmartPointer<Stack>& a_stack, ErrorLogger& a_errorLogger, Internal::VirtualMachine& a_vm, bool a_inScriptTasklet) const override  // 0F
+				{
+					using func_t = decltype(&NativeFunctionBase::Call);
+					REL::Relocation<func_t> func{ REL::ID(571037) };
+					return func(this, a_stack, a_errorLogger, a_vm, a_inScriptTasklet);
+				}
+
+				const BSFixedString& GetSourceFilename() const override  // 10
+				{
+					static BSFixedString native{ "<native>"sv };
+					return native;
+				}
+
+				bool TranslateIPToLineNumber(std::uint32_t, std::uint32_t& a_lineNumber) const override  // 11
+				{
+					a_lineNumber = 0;
+					return false;
+				}
+
+				bool GetVarNameForStackIndex(std::uint32_t a_index, BSFixedString& a_variableName) const override  // 12
+				{
+					if (a_index < descTable.totalEntries) {
+						assert(descTable.entries != nullptr);
+						a_variableName = descTable.entries[a_index].first;
+						return true;
+					} else {
+						a_variableName = "";
+						return false;
+					}
+				}
+
+				bool CanBeCalledFromTasklets() const override { return isCallableFromTasklet; }                               // 13
+				void SetCallableFromTasklets(bool a_taskletCallable) override { isCallableFromTasklet = a_taskletCallable; }  // 14
+
 				// add
 				virtual bool HasStub() const = 0;                                                                                                                                           // 15
 				virtual bool MarshallAndDispatch(Variable& a_self, Internal::VirtualMachine& a_vm, std::uint32_t a_stackID, Variable& a_retVal, const StackFrame& a_stackFrame) const = 0;  // 16
 
 				// members
-				BSFixedString name;              // 10
-				BSFixedString objName;           // 18
-				BSFixedString stateName;         // 20
-				TypeInfo retType;                // 28
-				Internal::VDescTable descTable;  // 30
-				bool isStatic;                   // 40
-				bool isCallableFromTasklet;      // 41
-				bool isLatent;                   // 42
-				std::uint32_t userFlags;         // 44
-				BSFixedString docString;         // 48
+				BSFixedString name;                   // 10
+				BSFixedString objName;                // 18
+				BSFixedString stateName{ "" };        // 20
+				TypeInfo retType;                     // 28
+				Internal::VDescTable descTable;       // 30
+				bool isStatic;                        // 40
+				bool isCallableFromTasklet{ false };  // 41
+				bool isLatent{ false };               // 42
+				std::uint32_t userFlags{ 0 };         // 44
+				BSFixedString docString;              // 48
 			};
 			static_assert(sizeof(NativeFunctionBase) == 0x50);
 		}

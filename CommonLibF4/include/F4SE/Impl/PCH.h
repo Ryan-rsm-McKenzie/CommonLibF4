@@ -4,6 +4,7 @@
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <concepts>
 #include <cstdarg>
 #include <cstddef>
 #include <cstdint>
@@ -23,8 +24,10 @@
 #include <stack>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
 static_assert(

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "RE/Bethesda/MemoryManager.h"
+
 namespace RE
 {
 	template <class T1, class T2>
@@ -195,6 +197,8 @@ namespace RE
 			second = std::move(a_rhs.second);
 			return *this;
 		}
+
+		F4_HEAP_REDEFINE_NEW(BSTTuple<T1, T2>);
 
 		void swap(BSTTuple& a_rhs)
 		{
