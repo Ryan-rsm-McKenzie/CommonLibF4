@@ -257,6 +257,7 @@ namespace F4SE
 				}
 			}();
 
+			spdlog::critical(body);
 			WinAPI::MessageBox(nullptr, body.c_str(), (caption.empty() ? nullptr : caption.c_str()), 0);
 			WinAPI::TerminateProcess(WinAPI::GetCurrentProcess(), EXIT_FAILURE);
 		}

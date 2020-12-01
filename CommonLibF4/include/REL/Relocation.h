@@ -393,9 +393,9 @@ namespace REL
 		}
 
 		[[nodiscard]] constexpr std::uintptr_t base() const noexcept { return _base; }
-		[[nodiscard]] constexpr Version version() const noexcept { return _version; }
-
+		[[nodiscard]] stl::zwstring filename() const noexcept { return _filename; }
 		[[nodiscard]] constexpr Segment segment(Segment::Name a_segment) const noexcept { return _segments[a_segment]; }
+		[[nodiscard]] constexpr Version version() const noexcept { return _version; }
 
 		[[nodiscard]] void* pointer() const noexcept { return reinterpret_cast<void*>(base()); }
 

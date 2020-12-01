@@ -42,6 +42,8 @@ source_group(
 
 # ---- Create library ----
 
+include(GNUInstallDirs)
+
 add_library(
 	${PROJECT_NAME}
 	STATIC
@@ -56,9 +58,7 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 if (MSVC)
 	target_compile_options(
 		${PROJECT_NAME}
-		PRIVATE
-			/TP	# Specify Source File Type (C++)
-			
+		PRIVATE			
 			/permissive-	# Standards conformance
 			
 			/Zc:alignedNew	# C++17 over-aligned allocation
@@ -135,7 +135,7 @@ target_include_directories(
 	${PROJECT_NAME}
 	PUBLIC 
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-		$<INSTALL_INTERFACE:include>
+		$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(
@@ -157,15 +157,13 @@ target_precompile_headers(
 
 # ---- Create an installable target ----
 
-include(GNUInstallDirs)
-
 install(
 	TARGETS ${PROJECT_NAME}
 	EXPORT ${PROJECT_NAME}-targets
 )
 
 install(
-	DIRECTORY include/
+	FILES ${headers}
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
