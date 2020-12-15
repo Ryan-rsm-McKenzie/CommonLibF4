@@ -257,7 +257,13 @@ namespace F4SE
 				}
 			}();
 
-			spdlog::critical(body);
+			spdlog::log(
+				spdlog::source_loc{
+					a_loc.file_name(),
+					static_cast<int>(a_loc.line()),
+					a_loc.function_name() },
+				spdlog::level::critical,
+				a_msg);
 			WinAPI::MessageBox(nullptr, body.c_str(), (caption.empty() ? nullptr : caption.c_str()), 0);
 			WinAPI::TerminateProcess(WinAPI::GetCurrentProcess(), EXIT_FAILURE);
 		}
