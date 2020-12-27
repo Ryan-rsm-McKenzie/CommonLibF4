@@ -1,7 +1,6 @@
 #pragma once
 
 #include "RE/Bethesda/BSGraphics.h"
-#include "RE/Bethesda/BSTHashMap.h"
 #include "RE/NetImmerse/NiRefObject.h"
 
 namespace RE
@@ -41,13 +40,13 @@ namespace RE
 		virtual std::uint32_t GetBonesVertexConstant() const { return 0; }                                       // 0C
 
 		// members
-		std::int32_t shaderType;                            // 018
-		BSTSet<BSGraphics::VertexShader*> vertexShaders;    // 020 - TODO: custom hash/comparator
-		BSTSet<BSGraphics::HullShader*> hullShaders;        // 050 - TODO: custom hash/comparator
-		BSTSet<BSGraphics::DomainShader*> domainShaders;    // 080 - TODO: custom hash/comparator
-		BSTSet<BSGraphics::PixelShader*> pixelShaders;      // 0B0 - TODO: custom hash/comparator
-		BSTSet<BSGraphics::ComputeShader*> computeShaders;  // 0E0 - TODO: custom hash/comparator
-		const char* fxpFilename;                            // 110
+		std::int32_t shaderType;                                                     // 018
+		BSShaderTechniqueIDMap::MapType<BSGraphics::VertexShader*> vertexShaders;    // 020
+		BSShaderTechniqueIDMap::MapType<BSGraphics::HullShader*> hullShaders;        // 050
+		BSShaderTechniqueIDMap::MapType<BSGraphics::DomainShader*> domainShaders;    // 080
+		BSShaderTechniqueIDMap::MapType<BSGraphics::PixelShader*> pixelShaders;      // 0B0
+		BSShaderTechniqueIDMap::MapType<BSGraphics::ComputeShader*> computeShaders;  // 0E0
+		const char* fxpFilename;                                                     // 110
 	};
 	static_assert(sizeof(BSShader) == 0x118);
 

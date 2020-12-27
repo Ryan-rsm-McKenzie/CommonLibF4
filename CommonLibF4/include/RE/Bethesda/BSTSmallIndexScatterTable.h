@@ -2,6 +2,9 @@
 
 namespace RE
 {
+	// maps a key to a uint32_t index
+	// the value of the index is provided externally (typically just some counter)
+	// this index is used to index an array, which is also provided externally
 	template <class T, class Accessor>
 	class BSTSmallIndexScatterTable
 	{
