@@ -9,6 +9,7 @@
 #include "RE/Bethesda/BSTObjectArena.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTTuple.h"
+#include "RE/Bethesda/MemoryManager.h"
 
 namespace RE
 {
@@ -278,92 +279,92 @@ namespace RE
 			Variable& operator=(BSTSmartPointer<Array> a_array);
 
 			template <class T>
-			[[nodiscard]] friend BSTSmartPointer<Object> get(const Variable& a_var)
-				requires std::same_as<T, Object>
+			[[nodiscard]] friend BSTSmartPointer<Object> get(const Variable& a_var)  //
+				requires(std::same_as<T, Object>)
 			{
 				assert(a_var.is<Object>());
 				return a_var.value.o;
 			}
 
 			template <class T>
-			[[nodiscard]] friend BSFixedString get(const Variable& a_var)
-				requires std::same_as<T, BSFixedString>
+			[[nodiscard]] friend BSFixedString get(const Variable& a_var)  //
+				requires(std::same_as<T, BSFixedString>)
 			{
 				assert(a_var.is<BSFixedString>());
 				return a_var.value.s;
 			}
 
 			template <class T>
-			[[nodiscard]] friend std::uint32_t get(const Variable& a_var)
-				requires std::same_as<T, std::uint32_t>
+			[[nodiscard]] friend std::uint32_t get(const Variable& a_var)  //
+				requires(std::same_as<T, std::uint32_t>)
 			{
 				assert(a_var.is<std::uint32_t>());
 				return a_var.value.u;
 			}
 
 			template <class T>
-			[[nodiscard]] friend std::int32_t get(const Variable& a_var)
-				requires std::same_as<T, std::int32_t>
+			[[nodiscard]] friend std::int32_t get(const Variable& a_var)  //
+				requires(std::same_as<T, std::int32_t>)
 			{
 				assert(a_var.is<std::int32_t>());
 				return a_var.value.i;
 			}
 
 			template <class T>
-			[[nodiscard]] friend float get(const Variable& a_var)
-				requires std::same_as<T, float>
+			[[nodiscard]] friend float get(const Variable& a_var)  //
+				requires(std::same_as<T, float>)
 			{
 				assert(a_var.is<float>());
 				return a_var.value.f;
 			}
 
 			template <class T>
-			[[nodiscard]] friend bool get(const Variable& a_var)
-				requires std::same_as<T, bool>
+			[[nodiscard]] friend bool get(const Variable& a_var)  //
+				requires(std::same_as<T, bool>)
 			{
 				assert(a_var.is<bool>());
 				return a_var.value.b;
 			}
 
 			template <class T>
-			[[nodiscard]] bool is() const
-				requires std::same_as<T, std::nullptr_t>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, std::nullptr_t>)
 			{
 				return varType.GetRawType() == RawType::kNone;
 			}
 
 			template <class T>
-			[[nodiscard]] bool is() const
-				requires std::same_as<T, Object>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, Object>)
 			{
 				return varType.GetRawType() == RawType::kObject;
 			}
 
 			template <class T>
-			[[nodiscard]] bool is() const
-				requires std::same_as<T, BSFixedString>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, BSFixedString>)
 			{
 				return varType.GetRawType() == RawType::kString;
 			}
 
 			template <class T>
-				[[nodiscard]] bool is() const
-				requires std::same_as<T, std::uint32_t> ||
-				std::same_as<T, std::int32_t>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, std::uint32_t> ||
+						 std::same_as<T, std::int32_t>)
 			{
 				return varType.GetRawType() == RawType::kInt;
 			}
 
 			template <class T>
-			[[nodiscard]] bool is() const
-				requires std::same_as<T, float>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, float>)
 			{
 				return varType.GetRawType() == RawType::kFloat;
 			}
 
 			template <class T>
-			[[nodiscard]] bool is() const
-				requires std::same_as<T, bool>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, bool>)
 			{
 				return varType.GetRawType() == RawType::kBool;
 			}
@@ -633,6 +634,9 @@ namespace RE
 			virtual void UnregisterForStatsEvent(BSTEventSink<StatsEvent>* a_sink) = 0;                                                                                                                                                                                                                                 // 3B
 			virtual void PostCachedErrorToLogger(const ICachedErrorMessage& a_errorFunctor, ErrorLogger::Severity a_severity) const = 0;                                                                                                                                                                                // 3D
 			virtual void PostCachedErrorToLogger(const ICachedErrorMessage& a_errorFunctor, std::uint32_t aStackID, ErrorLogger::Severity a_severity) const = 0;                                                                                                                                                        // 3C
+
+			template <class F>
+			void BindNativeMethod(stl::zstring a_object, stl::zstring a_function, F a_func, std::optional<bool> a_taskletCallable = std::nullopt);
 		};
 		static_assert(sizeof(IVirtualMachine) == 0x10);
 
@@ -1073,6 +1077,8 @@ namespace RE
 			virtual bool GetVarNameForStackIndex(std::uint32_t a_index, BSFixedString& a_variableName) const = 0;                                                          // 12
 			virtual bool CanBeCalledFromTasklets() const = 0;                                                                                                              // 13
 			virtual void SetCallableFromTasklets(bool a_taskletCallable) = 0;                                                                                              // 14
+
+			F4_HEAP_REDEFINE_NEW(IFunction);
 		};
 		static_assert(sizeof(IFunction) == 0x10);
 

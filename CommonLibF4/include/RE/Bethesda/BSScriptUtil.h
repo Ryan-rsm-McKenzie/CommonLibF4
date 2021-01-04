@@ -1,10 +1,11 @@
 #pragma once
 
-#include "F4SE/Logger.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSScript.h"
 #include "RE/Bethesda/GameScript.h"
 #include "RE/Bethesda/TESForms.h"
+
+#include "F4SE/Logger.h"
 
 namespace RE::BSScript
 {
@@ -24,17 +25,14 @@ namespace RE::BSScript
 		// clang-format off
 		template <class T>
 		concept object =
-			std::is_pointer_v<T> &&
-			std::derived_from<std::remove_pointer_t<T>, TESForm> &&
+			std::derived_from<T, TESForm> &&
 			requires { T::FORM_ID; };
 		// clang-format on
 
-		// clang-format off
 		template <class T>
 		concept string =
 			std::convertible_to<T, std::string_view> &&
 			std::constructible_from<T, std::string_view>;
-		// clang-format on
 
 		template <class T>
 		concept integral =
@@ -54,17 +52,19 @@ namespace RE::BSScript
 		template <class T>
 		concept floating_point = std::floating_point<T>;
 
+		// clang-format off
 		template <class T>
 		concept boolean = std::same_as<std::remove_cv_t<T>, bool>;
+		// clang-format on
 
 		template <class T>
 		concept valid_self =
 			static_tag<T> ||
-			object<T>;
+			(std::is_reference_v<T>&& object<std::remove_reference_t<T>>);
 
 		template <class T>
 		concept valid_parameter =
-			object<T> ||
+			(std::is_pointer_v<T> && object<std::remove_pointer_t<T>>) ||
 			string<T> ||
 			integral<T> ||
 			floating_point<T> ||
@@ -77,46 +77,46 @@ namespace RE::BSScript
 	}
 
 	template <class T>
-	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
-		requires std::same_as<T, void>
+	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
+		requires(std::same_as<T, void>)
 	{
-		return static_cast<std::uint32_t>(TypeInfo::RawType::kNone);
+		return TypeInfo::RawType::kNone;
 	}
 
 	template <detail::static_tag T>
-	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
+	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
 	{
-		return static_cast<std::uint32_t>(TypeInfo::RawType::kNone);
+		return TypeInfo::RawType::kNone;
 	}
 
 	template <detail::object T>
-	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
+	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
 	{
-		return static_cast<std::uint32_t>(T::FORM_ID);
+		return static_cast<TypeInfo::RawType>(T::FORM_ID);
 	}
 
 	template <detail::string T>
-	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
+	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
 	{
-		return static_cast<std::uint32_t>(TypeInfo::RawType::kString);
+		return TypeInfo::RawType::kString;
 	}
 
 	template <detail::integral T>
-	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
+	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
 	{
-		return static_cast<std::uint32_t>(TypeInfo::RawType::kInt);
+		return TypeInfo::RawType::kInt;
 	}
 
 	template <detail::floating_point T>
-	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
+	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
 	{
-		return static_cast<std::uint32_t>(TypeInfo::RawType::kFloat);
+		return TypeInfo::RawType::kFloat;
 	}
 
 	template <detail::boolean T>
-	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
+	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
 	{
-		return static_cast<std::uint32_t>(TypeInfo::RawType::kBool);
+		return TypeInfo::RawType::kBool;
 	}
 
 	template <detail::object T>
@@ -126,13 +126,17 @@ namespace RE::BSScript
 			const auto game = GameVM::GetSingleton();
 			const auto vm = game ? game->GetVM() : nullptr;
 			BSTSmartPointer<ObjectTypeInfo> typeInfo;
-			if (!vm || !vm->GetScriptObjectType(GetVMTypeID<T>(), typeInfo) || !typeInfo) {
+			if (!vm ||
+				!vm->GetScriptObjectType(
+					static_cast<std::uint32_t>(GetVMTypeID<T>()),
+					typeInfo) ||
+				!typeInfo) {
 				return false;
 			}
 
 			const auto& handles = vm->GetObjectHandlePolicy();
 			const auto handle = handles.GetHandleForObject(
-				GetVMTypeID<T>(),
+				static_cast<std::uint32_t>(GetVMTypeID<T>()),
 				const_cast<const void*>(
 					static_cast<const volatile void*>(a_val)));
 			if (handle == handles.EmptyHandle()) {
@@ -216,7 +220,7 @@ namespace RE::BSScript
 				return nullptr;
 			}
 
-			return handles.GetObjectForHandle(GetVMTypeID<T>(), handle);
+			return handles.GetObjectForHandle(static_cast<std::uint32_t>(GetVMTypeID<T>()), handle);
 		}();
 
 		if (!result) {
@@ -257,27 +261,25 @@ namespace RE::BSScript
 		return static_cast<T>(get<bool>(a_var));
 	}
 
-	template <class>
-	class NativeFunction;
-
 	template <
+		class F,
+		bool LONG,
 		detail::valid_return R,
 		detail::valid_self S,
 		detail::valid_parameter... Args>
-	class NativeFunction<R(S, Args...)> :
+	class NativeFunction :
 		public NF_util::NativeFunctionBase
 	{
 	private:
 		using super = NF_util::NativeFunctionBase;
 
 	public:
-		// clang-format off
-		template <class F>
-			requires detail::invocable_r<F, R, S, Args...>
-		NativeFunction(std::string_view a_object, std::string_view a_function, F a_func) :
+		template <class Fn>
+		NativeFunction(std::string_view a_object, std::string_view a_function, Fn a_func)  //
+			requires(detail::invocable_r<Fn, R, S, Args...> ||
+					 detail::invocable_r<Fn, R, IVirtualMachine&, std::uint32_t, S, Args...>) :
 			super(a_object, a_function, sizeof...(Args), detail::static_tag<S>),
 			_stub(std::move(a_func))
-		// clang-format on
 		{
 			assert(super::descTable.paramCount == sizeof...(Args));
 			std::size_t i = 0;
@@ -288,7 +290,7 @@ namespace RE::BSScript
 		// override (NF_util::NativeFunctionBase)
 		bool HasStub() const override { return static_cast<bool>(_stub); }  // 15
 
-		bool MarshallAndDispatch(Variable& a_self, Internal::VirtualMachine&, std::uint32_t, Variable& a_retVal, const StackFrame& a_stackFrame) const override  // 16
+		bool MarshallAndDispatch(Variable& a_self, Internal::VirtualMachine& a_vm, std::uint32_t a_stackID, Variable& a_retVal, const StackFrame& a_stackFrame) const override  // 16
 		{
 			a_retVal = nullptr;
 
@@ -300,12 +302,37 @@ namespace RE::BSScript
 			}
 
 			const auto invoke = [&]() {
-				const auto pframe = std::addressof(a_stackFrame);
-				const auto page = stack->GetPageForFrame(pframe);
-				std::uint32_t i = 0;
-				return _stub(
-					UnpackVariable<S>(a_self),
-					(UnpackVariable<Args>(stack->GetStackFrameVariable(pframe, i++, page)), ...));
+				return [&]<std::size_t... I>(std::index_sequence<I...>)
+				{
+					const auto self = [&]() -> S {
+						if constexpr (detail::static_tag<S>) {
+							return std::monostate{};
+						} else {
+							auto* const ret = UnpackVariable<std::remove_reference_t<S>>(a_self);
+							assert(ret != nullptr);  // super::Call should guarantee this
+							return *ret;
+						}
+					};
+
+					const auto pframe = std::addressof(a_stackFrame);
+					const auto page = stack->GetPageForFrame(pframe);
+					const auto args = [&]<class T>(std::in_place_type_t<T>, std::size_t a_index) {
+						return UnpackVariable<std::remove_pointer_t<T>>(stack->GetStackFrameVariable(pframe, a_index, page));
+					};
+
+					if constexpr (LONG) {
+						return _stub(
+							reinterpret_cast<IVirtualMachine&>(a_vm),  // TODO: static_cast
+							a_stackID,
+							self(),
+							args(std::in_place_type_t<Args>{}, I)...);
+					} else {
+						return _stub(
+							self(),
+							args(std::in_place_type_t<Args>{}, I)...);
+					}
+				}
+				(std::index_sequence_for<Args...>{});
 			};
 
 			if constexpr (!std::same_as<R, void>) {
@@ -318,12 +345,43 @@ namespace RE::BSScript
 		}
 
 	private:
-		std::function<R(S, Args...)> _stub;
+		std::function<F> _stub;
 	};
 
 	template <
 		detail::valid_return R,
 		detail::valid_self S,
 		detail::valid_parameter... Args>
-	NativeFunction(std::string_view, std::string_view, R (*)(S, Args...)) -> NativeFunction<R(S, Args...)>;
+	NativeFunction(std::string_view, std::string_view, R (*)(S, Args...))
+		-> NativeFunction<
+			R(S, Args...),
+			false,
+			R,
+			S,
+			Args...>;
+
+	template <
+		detail::valid_return R,
+		detail::valid_self S,
+		detail::valid_parameter... Args>
+	NativeFunction(std::string_view, std::string_view, R (*)(IVirtualMachine&, std::uint32_t, S, Args...))
+		-> NativeFunction<
+			R(IVirtualMachine&, std::uint32_t, S, Args...),
+			true,
+			R,
+			S,
+			Args...>;
+
+	template <class F>
+	void IVirtualMachine::BindNativeMethod(stl::zstring a_object, stl::zstring a_function, F a_func, std::optional<bool> a_taskletCallable)
+	{
+		const auto success = BindNativeMethod(new NativeFunction(a_object, a_function, std::move(a_func)));
+		if (!success) {
+			F4SE::log::warn("failed to register method \"{}\" on object \"{}\""sv, a_function, a_object);
+		}
+
+		if (success && a_taskletCallable) {
+			SetCallableFromTasklets(a_object.data(), a_function.data(), *a_taskletCallable);
+		}
+	}
 }

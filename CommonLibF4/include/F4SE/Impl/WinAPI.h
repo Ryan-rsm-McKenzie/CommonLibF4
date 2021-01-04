@@ -66,14 +66,11 @@ namespace F4SE::WinAPI
 		wchar_t* a_filename,
 		std::uint32_t a_size) noexcept;
 
-	[[nodiscard]] void*(GetModuleHandle)(
-		const char* a_moduleName) noexcept;
+	[[nodiscard]] void*(GetModuleHandle)(const char* a_moduleName) noexcept;
 
-	[[nodiscard]] void*(GetModuleHandle)(
-		const wchar_t* a_moduleName) noexcept;
+	[[nodiscard]] void*(GetModuleHandle)(const wchar_t* a_moduleName) noexcept;
 
-	[[nodiscard]] void*(GetProcAddress)(
-		void* a_module,
+	[[nodiscard]] void*(GetProcAddress)(void* a_module,
 		const char* a_procName) noexcept;
 
 	std::int32_t(MessageBox)(
@@ -88,12 +85,17 @@ namespace F4SE::WinAPI
 		const wchar_t* a_caption,
 		unsigned int a_type) noexcept;
 
+	void(OutputDebugString)(
+		const char* a_outputString) noexcept;
+
+	void(OutputDebugString)(
+		const wchar_t* a_outputString) noexcept;
+
 	[[noreturn]] void(TerminateProcess)(
 		void* a_process,
 		unsigned int a_exitCode) noexcept;
 
-	[[nodiscard]] void*(TlsGetValue)(
-		std::uint32_t a_tlsIndex) noexcept;
+	[[nodiscard]] void*(TlsGetValue)(std::uint32_t a_tlsIndex) noexcept;
 
 	bool(TlsSetValue)(
 		std::uint32_t a_tlsIndex,
