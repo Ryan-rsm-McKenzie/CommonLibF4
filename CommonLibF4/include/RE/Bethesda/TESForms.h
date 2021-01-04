@@ -598,9 +598,9 @@ namespace RE
 		}
 
 		template <class T>
-		[[nodiscard]] static T* GetFormByEditorID(const BSFixedString& a_formID)
+		[[nodiscard]] static T* GetFormByEditorID(const BSFixedString& a_editorID)
 		{
-			const auto form = GetFormByEditorID(a_formID);
+			const auto form = GetFormByEditorID(a_editorID);
 			return form ? form->As<T>() : nullptr;
 		}
 
