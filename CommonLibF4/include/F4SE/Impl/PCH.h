@@ -4,6 +4,7 @@
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <compare>
 #include <concepts>
 #include <cstdarg>
 #include <cstddef>
@@ -35,6 +36,7 @@ static_assert(
 		sizeof(std::time_t) == sizeof(std::size_t),
 	"wrap std::time_t instead");
 
+#pragma warning(push)
 #include <boost/atomic.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/iterator/function_input_iterator.hpp>
@@ -44,6 +46,7 @@ static_assert(
 #include <boost/stl_interfaces/sequence_container_interface.hpp>
 #include <nonstd/span.hpp>
 #include <spdlog/spdlog.h>
+#pragma warning(pop)
 
 #if BOOST_COMP_CLANG
 // offsetof is required to evaluate to a constant expression, but msvc's cstddef does not

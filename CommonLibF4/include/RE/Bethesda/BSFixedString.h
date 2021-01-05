@@ -2,6 +2,7 @@
 
 #include "RE/Bethesda/BSStringPool.h"
 #include "RE/Bethesda/CRC.h"
+#include "RE/Bethesda/MemoryManager.h"
 
 namespace RE
 {
@@ -39,15 +40,10 @@ namespace RE
 				}
 			}
 
-			template <
-				class T,
-				std::enable_if_t<
-					std::conjunction_v<
-						std::is_convertible<const T&, std::basic_string_view<value_type>>,
-						std::negation<
-							std::is_convertible<const T&, const_pointer>>>,
-					int> = 0>
-			BSFixedString(const T& a_string)
+			template <class T>
+			BSFixedString(const T& a_string)  //
+				requires(std::is_convertible_v<const T&, std::basic_string_view<value_type>> &&
+						 !std::is_convertible_v<const T&, const_pointer>)
 			{
 				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
 				if (!view.empty()) {
@@ -85,15 +81,10 @@ namespace RE
 				return *this;
 			}
 
-			template <
-				class T,
-				std::enable_if_t<
-					std::conjunction_v<
-						std::is_convertible<const T&, std::basic_string_view<value_type>>,
-						std::negation<
-							std::is_convertible<const T&, const_pointer>>>,
-					int> = 0>
-			BSFixedString& operator=(const T& a_string)
+			template <class T>
+			BSFixedString& operator=(const T& a_string)  //
+				requires(std::is_convertible_v<const T&, std::basic_string_view<value_type>> &&
+						 !std::is_convertible_v<const T&, const_pointer>)
 			{
 				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
 				try_release();
@@ -121,7 +112,9 @@ namespace RE
 			[[nodiscard]] size_type size() const noexcept { return _data ? _data->size() : 0; }
 			[[nodiscard]] size_type length() const noexcept { return _data ? _data->length() : 0; }
 
-			[[nodiscard]] friend bool operator==(const BSFixedString& a_lhs, const BSFixedString& a_rhs) noexcept
+			template <class T>
+			[[nodiscard]] friend bool operator==(const T& a_lhs, const T& a_rhs) noexcept
+				requires(std::same_as<T, BSFixedString>)
 			{
 				const auto leaf = [](const BSFixedString& a_elem) { return a_elem._data ? a_elem._data->leaf() : nullptr; };
 				const auto lLeaf = leaf(a_lhs);
@@ -135,8 +128,6 @@ namespace RE
 				}
 			}
 
-			[[nodiscard]] friend bool operator!=(const BSFixedString& a_lhs, const BSFixedString& a_rhs) noexcept { return !(a_lhs == a_rhs); }
-
 			[[nodiscard]] friend bool operator==(const BSFixedString& a_lhs, std::basic_string_view<value_type> a_rhs)
 			{
 				if (a_lhs.empty() && a_rhs.empty()) {
@@ -147,15 +138,6 @@ namespace RE
 					return strncmp(a_lhs.c_str(), a_rhs.data(), length) == 0;
 				}
 			}
-
-			[[nodiscard]] friend bool operator!=(const BSFixedString& a_lhs, std::basic_string_view<value_type> a_rhs) { return !(a_lhs == a_rhs); }
-			[[nodiscard]] friend bool operator==(std::basic_string_view<value_type> a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
-			[[nodiscard]] friend bool operator!=(std::basic_string_view<value_type> a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
-
-			[[nodiscard]] friend bool operator==(const BSFixedString& a_lhs, const_pointer a_rhs) { return a_lhs == std::basic_string_view<value_type>(a_rhs ? a_rhs : EMPTY); }
-			[[nodiscard]] friend bool operator!=(const BSFixedString& a_lhs, const_pointer a_rhs) { return !(a_lhs == a_rhs); }
-			[[nodiscard]] friend bool operator==(const_pointer a_lhs, const BSFixedString& a_rhs) { return a_rhs == a_lhs; }
-			[[nodiscard]] friend bool operator!=(const_pointer a_lhs, const BSFixedString& a_rhs) { return !(a_lhs == a_rhs); }
 
 		protected:
 			template <class>
@@ -208,6 +190,24 @@ namespace RE
 	using BSFixedStringW = detail::BSFixedString<wchar_t, false>;
 	using BSFixedStringWCS = detail::BSFixedString<wchar_t, true>;
 
+	namespace BSScript
+	{
+		template <class>
+		struct script_traits;
+
+		template <>
+		struct script_traits<RE::BSFixedString> final
+		{
+			using is_string = std::true_type;
+		};
+
+		template <>
+		struct script_traits<RE::BSFixedStringCS> final
+		{
+			using is_string = std::true_type;
+		};
+	}
+
 	template <class CharT, bool CS>
 	struct BSCRC32<detail::BSFixedString<CharT, CS>>
 	{
@@ -233,6 +233,22 @@ namespace RE
 		using reference = typename BSFixedStringCS::reference;
 		using const_reference = typename BSFixedStringCS::const_reference;
 
+		BGSLocalizedString& operator=(std::basic_string_view<value_type> a_rhs)
+		{
+			const auto self = static_cast<std::basic_string_view<value_type>>(_data);
+			if (self.starts_with("<ID=")) {
+				assert(self.length() >= PREFIX_LENGTH);
+				std::vector<char> buf(PREFIX_LENGTH + a_rhs.length() + 1, '\0');
+				strncpy_s(buf.data(), buf.size(), self.data(), PREFIX_LENGTH);
+				strcpy_s(buf.data() + PREFIX_LENGTH, buf.size() - PREFIX_LENGTH, (a_rhs.empty() ? "" : a_rhs.data()));
+				_data = std::string_view{ buf.data(), buf.size() };
+			} else {
+				_data = a_rhs;
+			}
+
+			return *this;
+		}
+
 		[[nodiscard]] const_pointer data() const noexcept { return _data.data(); }
 		[[nodiscard]] const_pointer c_str() const noexcept { return _data.c_str(); }
 
@@ -250,6 +266,8 @@ namespace RE
 		[[nodiscard]] const BSFixedStringCS& hash_accessor() const noexcept { return _data; }
 
 	private:
+		static constexpr std::size_t PREFIX_LENGTH = 13;
+
 		// members
 		BSFixedStringCS _data;  // 0
 	};
@@ -264,4 +282,19 @@ namespace RE
 			return BSCRC32<BSFixedStringCS>()(a_key.hash_accessor());
 		}
 	};
+
+	struct BGSLocalizedStrings
+	{
+		struct ScrapStringBuffer
+		{
+		public:
+			[[nodiscard]] const char* GetString() const noexcept { return static_cast<const char*>(buffer.GetPtr()) + offset; }
+
+			// members
+			MemoryManager::AutoScrapBuffer buffer;  // 00
+			std::size_t offset;                     // 08
+		};
+		static_assert(sizeof(ScrapStringBuffer) == 0x10);
+	};
+	static_assert(std::is_empty_v<BGSLocalizedStrings>);
 }

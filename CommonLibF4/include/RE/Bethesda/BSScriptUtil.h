@@ -9,6 +9,34 @@
 
 namespace RE::BSScript
 {
+	template <class>
+	struct script_traits final
+	{
+		using is_array = std::false_type;
+		using is_string = std::false_type;
+		using is_structure = std::false_type;
+	};
+
+	template <
+		class T,
+		class Allocator>
+	struct script_traits<
+		std::vector<T, Allocator>>
+		final
+	{
+		using is_array = std::true_type;
+	};
+
+	template <
+		class Traits,
+		class Allocator>
+	struct script_traits<
+		std::basic_string<char, Traits, Allocator>>
+		final
+	{
+		using is_string = std::true_type;
+	};
+
 	namespace detail
 	{
 		// clang-format off
@@ -31,6 +59,9 @@ namespace RE::BSScript
 
 		template <class T>
 		concept string =
+			std::same_as<
+				typename script_traits<T>::is_string,
+				std::true_type> &&
 			std::convertible_to<T, std::string_view> &&
 			std::constructible_from<T, std::string_view>;
 
@@ -57,6 +88,22 @@ namespace RE::BSScript
 		concept boolean = std::same_as<std::remove_cv_t<T>, bool>;
 		// clang-format on
 
+		// clang-format off
+		template <class T>
+		concept array =
+			std::same_as<
+				typename script_traits<T>::is_array,
+				std::true_type> &&
+			std::is_default_constructible_v<T> &&
+			requires(T a_array, typename T::value_type a_value)
+		{
+			{ a_array.begin() } -> std::same_as<typename T::iterator>;
+			{ a_array.end() } -> std::same_as<typename T::iterator>;
+			{ a_array.size() } -> std::same_as<typename T::size_type>;
+			a_array.push_back(std::move(a_value));
+		};
+		// clang-format on
+
 		template <class T>
 		concept valid_self =
 			static_tag<T> ||
@@ -68,7 +115,8 @@ namespace RE::BSScript
 			string<T> ||
 			integral<T> ||
 			floating_point<T> ||
-			boolean<T>;
+			boolean<T> ||
+			array<T>;
 
 		template <class T>
 		concept valid_return =
@@ -76,47 +124,80 @@ namespace RE::BSScript
 			std::same_as<T, void>;
 	}
 
+	template <detail::object T>
+	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
+	{
+		return static_cast<std::uint32_t>(T::FORM_ID);
+	}
+
 	template <class T>
-	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
 		requires(std::same_as<T, void>)
 	{
 		return TypeInfo::RawType::kNone;
 	}
 
 	template <detail::static_tag T>
-	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
 	{
 		return TypeInfo::RawType::kNone;
 	}
 
 	template <detail::object T>
-	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
 	{
-		return static_cast<TypeInfo::RawType>(T::FORM_ID);
+		const auto game = GameVM::GetSingleton();
+		const auto vm = game ? game->GetVM() : nullptr;
+		BSTSmartPointer<ObjectTypeInfo> typeInfo;
+		if (!vm ||
+			!vm->GetScriptObjectType(GetVMTypeID<T>(), typeInfo) ||
+			!typeInfo) {
+			assert(false);
+			F4SE::log::error("failed to get type info for object"sv);
+			return std::nullopt;
+		} else {
+			return typeInfo.get();
+		}
 	}
 
 	template <detail::string T>
-	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
 	{
 		return TypeInfo::RawType::kString;
 	}
 
 	template <detail::integral T>
-	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
 	{
 		return TypeInfo::RawType::kInt;
 	}
 
 	template <detail::floating_point T>
-	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
 	{
 		return TypeInfo::RawType::kFloat;
 	}
 
 	template <detail::boolean T>
-	[[nodiscard]] constexpr TypeInfo::RawType GetVMTypeID() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
 	{
 		return TypeInfo::RawType::kBool;
+	}
+
+	template <detail::array T>
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	{
+		using value_type =
+			std::remove_cv_t<
+				std::remove_pointer_t<
+					typename T::value_type>>;
+
+		auto typeInfo = GetTypeInfo<value_type>();
+		if (typeInfo) {
+			typeInfo->SetArray(true);
+		}
+
+		return typeInfo;
 	}
 
 	template <detail::object T>
@@ -127,16 +208,14 @@ namespace RE::BSScript
 			const auto vm = game ? game->GetVM() : nullptr;
 			BSTSmartPointer<ObjectTypeInfo> typeInfo;
 			if (!vm ||
-				!vm->GetScriptObjectType(
-					static_cast<std::uint32_t>(GetVMTypeID<T>()),
-					typeInfo) ||
+				!vm->GetScriptObjectType(GetVMTypeID<T>(), typeInfo) ||
 				!typeInfo) {
 				return false;
 			}
 
 			const auto& handles = vm->GetObjectHandlePolicy();
 			const auto handle = handles.GetHandleForObject(
-				static_cast<std::uint32_t>(GetVMTypeID<T>()),
+				GetVMTypeID<T>(),
 				const_cast<const void*>(
 					static_cast<const volatile void*>(a_val)));
 			if (handle == handles.EmptyHandle()) {
@@ -196,6 +275,44 @@ namespace RE::BSScript
 		a_var = static_cast<bool>(a_val);
 	}
 
+	template <detail::array T>
+	void PackVariable(Variable& a_var, T&& a_val)
+	{
+		using size_type = typename T::size_type;
+		using value_type =
+			std::remove_cv_t<
+				std::remove_pointer_t<
+					typename T::value_type>>;
+
+		const auto success = [&]() {
+			const auto game = GameVM::GetSingleton();
+			const auto vm = game ? game->GetVM() : nullptr;
+			const auto typeInfo = GetTypeInfo<T>();
+			const auto size = a_val.size();
+			BSTSmartPointer<Array> out;
+			if (!typeInfo ||
+				!vm ||
+				!vm->CreateArray(*typeInfo, static_cast<std::uint32_t>(size), out) ||
+				!out) {
+				return false;
+			}
+
+			size_type i = 0;
+			for (auto&& elem : std::move(a_val)) {
+				PackVariable<value_type>(out->elements[i++], std::move(elem));
+			}
+
+			a_var = std::move(out);
+			return true;
+		}();
+
+		if (!success) {
+			assert(false);
+			F4SE::log::error("failed to pack array"sv);
+			a_var = nullptr;
+		}
+	}
+
 	template <detail::static_tag T>
 	[[nodiscard]] std::monostate UnpackVariable([[maybe_unused]] const Variable& a_var)
 	{
@@ -220,7 +337,7 @@ namespace RE::BSScript
 				return nullptr;
 			}
 
-			return handles.GetObjectForHandle(static_cast<std::uint32_t>(GetVMTypeID<T>()), handle);
+			return handles.GetObjectForHandle(GetVMTypeID<T>(), handle);
 		}();
 
 		if (!result) {
@@ -261,6 +378,71 @@ namespace RE::BSScript
 		return static_cast<T>(get<bool>(a_var));
 	}
 
+	template <detail::array T>
+	[[nodiscard]] T UnpackVariable(const Variable& a_var)
+	{
+		using value_type =
+			std::remove_cv_t<
+				std::remove_pointer_t<
+					typename T::value_type>>;
+
+		T out;
+		const auto in = get<Array>(a_var);
+		for (const auto& var : in) {
+			out.push_back(UnpackVariable<value_type>(var));
+		}
+
+		return out;
+	}
+
+	namespace detail
+	{
+		template <
+			bool LONG,
+			valid_self S,
+			valid_parameter... Args,
+			class F,
+			std::size_t... I>
+		decltype(auto) DispatchHelper(
+			Variable& a_self,
+			Internal::VirtualMachine& a_vm,
+			std::uint32_t a_stackID,
+			const StackFrame& a_stackFrame,
+			Stack& a_stack,
+			const std::function<F>& a_callback,
+			std::index_sequence<I...>)
+		{
+			const auto self = [&]() -> S {
+				if constexpr (detail::static_tag<S>) {
+					return std::monostate{};
+				} else {
+					auto* const ptr = UnpackVariable<std::decay_t<S>>(a_self);
+					assert(ptr != nullptr);  // super::Call should guarantee this
+					return *ptr;
+				}
+			};
+
+			const auto pframe = std::addressof(a_stackFrame);
+			const auto page = a_stack.GetPageForFrame(pframe);
+			const auto args = [&]<class T>(std::in_place_type_t<T>, std::size_t a_index) {
+				using decay_t = std::remove_cv_t<std::remove_pointer_t<T>>;
+				return UnpackVariable<decay_t>(a_stack.GetStackFrameVariable(pframe, a_index, page));
+			};
+
+			if constexpr (LONG) {
+				return a_callback(
+					reinterpret_cast<IVirtualMachine&>(a_vm),  // TODO: static_cast
+					a_stackID,
+					self(),
+					args(std::in_place_type_t<Args>{}, I)...);
+			} else {
+				return a_callback(
+					self(),
+					args(std::in_place_type_t<Args>{}, I)...);
+			}
+		}
+	}
+
 	template <
 		class F,
 		bool LONG,
@@ -283,8 +465,8 @@ namespace RE::BSScript
 		{
 			assert(super::descTable.paramCount == sizeof...(Args));
 			std::size_t i = 0;
-			((super::descTable.entries[i++].second = GetVMTypeID<Args>()), ...);
-			super::retType = GetVMTypeID<R>();
+			((super::descTable.entries[i++].second = GetTypeInfo<Args>().value_or(nullptr)), ...);
+			super::retType = GetTypeInfo<R>().value_or(nullptr);
 		}
 
 		// override (NF_util::NativeFunctionBase)
@@ -302,37 +484,14 @@ namespace RE::BSScript
 			}
 
 			const auto invoke = [&]() {
-				return [&]<std::size_t... I>(std::index_sequence<I...>)
-				{
-					const auto self = [&]() -> S {
-						if constexpr (detail::static_tag<S>) {
-							return std::monostate{};
-						} else {
-							auto* const ret = UnpackVariable<std::remove_reference_t<S>>(a_self);
-							assert(ret != nullptr);  // super::Call should guarantee this
-							return *ret;
-						}
-					};
-
-					const auto pframe = std::addressof(a_stackFrame);
-					const auto page = stack->GetPageForFrame(pframe);
-					const auto args = [&]<class T>(std::in_place_type_t<T>, std::size_t a_index) {
-						return UnpackVariable<std::remove_pointer_t<T>>(stack->GetStackFrameVariable(pframe, a_index, page));
-					};
-
-					if constexpr (LONG) {
-						return _stub(
-							reinterpret_cast<IVirtualMachine&>(a_vm),  // TODO: static_cast
-							a_stackID,
-							self(),
-							args(std::in_place_type_t<Args>{}, I)...);
-					} else {
-						return _stub(
-							self(),
-							args(std::in_place_type_t<Args>{}, I)...);
-					}
-				}
-				(std::index_sequence_for<Args...>{});
+				return detail::DispatchHelper<LONG, S, Args...>(
+					a_self,
+					a_vm,
+					a_stackID,
+					a_stackFrame,
+					*stack,
+					_stub,
+					std::index_sequence_for<Args...>{});
 			};
 
 			if constexpr (!std::same_as<R, void>) {

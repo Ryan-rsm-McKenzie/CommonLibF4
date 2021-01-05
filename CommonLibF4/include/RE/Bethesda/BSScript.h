@@ -127,18 +127,22 @@ namespace RE
 				kVar,
 				kStruct,
 
-				kArrayObject = 11,
+				kArrayStart = 10,
+				kArrayObject,
 				kArrayString,
 				kArrayInt,
 				kArrayFloat,
 				kArrayBool,
 				kArrayVar,
-				kArrayStruct
+				kArrayStruct,
+				kArrayEnd
 			};
 
 			TypeInfo() noexcept = default;
 			TypeInfo(const TypeInfo& a_rhs) noexcept { data.complexTypeInfo = a_rhs.data.complexTypeInfo; }
 			TypeInfo(TypeInfo&& a_rhs) noexcept { data.complexTypeInfo = std::exchange(a_rhs.data.complexTypeInfo, nullptr); }
+			TypeInfo(RawType a_type) noexcept { data.rawType = a_type; }
+			TypeInfo(IComplexType* a_type) noexcept { data.complexTypeInfo = a_type; }
 
 			TypeInfo& operator=(const TypeInfo& a_rhs) noexcept
 			{
@@ -169,14 +173,36 @@ namespace RE
 			}
 
 			[[nodiscard]] RawType GetRawType() const;
-			[[nodiscard]] bool IsComplex() const noexcept { return data.rawType > RawType::kArrayStruct; }
+
+			[[nodiscard]] bool IsArray() const noexcept
+			{
+				if (IsComplex()) {
+					return data.rawType.all(static_cast<RawType>(1u));
+				} else {
+					return RawType::kArrayStart < data.rawType && data.rawType < RawType::kArrayEnd;
+				}
+			}
+
+			[[nodiscard]] bool IsComplex() const noexcept { return data.rawType >= RawType::kArrayEnd; }
 
 			void SetArray(bool a_set) noexcept
 			{
-				if (a_set) {
-					data.rawType.set(static_cast<RawType>(1));
+				if (IsComplex()) {
+					if (a_set) {
+						assert(!IsArray());
+						data.rawType.set(static_cast<RawType>(1u));
+					} else {
+						assert(IsArray());
+						data.rawType.reset(static_cast<RawType>(1u));
+					}
 				} else {
-					data.rawType.reset(static_cast<RawType>(1));
+					if (a_set) {
+						assert(!IsArray());
+						data.rawType += RawType::kArrayStart;
+					} else {
+						assert(IsArray());
+						data.rawType -= RawType::kArrayEnd;
+					}
 				}
 			}
 
@@ -327,6 +353,22 @@ namespace RE
 			}
 
 			template <class T>
+			[[nodiscard]] friend BSTSmartPointer<Struct> get(const Variable& a_var)  //
+				requires(std::same_as<T, Struct>)
+			{
+				assert(a_var.is<Struct>());
+				return a_var.value.t;
+			}
+
+			template <class T>
+			[[nodiscard]] friend BSTSmartPointer<Array> get(const Variable& a_var)  //
+				requires(std::same_as<T, Array>)
+			{
+				assert(a_var.is<Array>());
+				return a_var.value.a;
+			}
+
+			template <class T>
 			[[nodiscard]] bool is() const  //
 				requires(std::same_as<T, std::nullptr_t>)
 			{
@@ -367,6 +409,20 @@ namespace RE
 				requires(std::same_as<T, bool>)
 			{
 				return varType.GetRawType() == RawType::kBool;
+			}
+
+			template <class T>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, Struct>)
+			{
+				return varType.GetRawType() == RawType::kStruct;
+			}
+
+			template <class T>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, Array>)
+			{
+				return varType.IsArray();
 			}
 
 			void reset();

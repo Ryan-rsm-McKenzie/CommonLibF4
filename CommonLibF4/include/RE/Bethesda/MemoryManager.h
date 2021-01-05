@@ -143,7 +143,7 @@ namespace RE
 		std::byte* endAddress{ nullptr };         // 50
 		std::byte* commitEnd{ nullptr };          // 58
 		std::size_t reserveSize;                  // 60
-		std::size_t minCommit{ 1 << 17 };         // 68
+		std::size_t minCommit{ 1u << 17 };        // 68
 		std::size_t totalAllocated{ 0 };          // 70
 		std::uint32_t keepPagesRequest{ 0 };      // 78
 		std::uint32_t totalFreeBlocks{ 0 };       // 7C
@@ -156,6 +156,34 @@ namespace RE
 	class MemoryManager
 	{
 	public:
+		struct AutoScrapBuffer
+		{
+		public:
+			AutoScrapBuffer() { Ctor(); }
+			~AutoScrapBuffer() { Dtor(); }
+
+			[[nodiscard]] void* GetPtr() const noexcept { return ptr; }
+
+			// members
+			void* ptr{ nullptr };  // 0
+
+		private:
+			AutoScrapBuffer* Ctor()
+			{
+				using func_t = decltype(&AutoScrapBuffer::Ctor);
+				REL::Relocation<func_t> func{ REL::ID(1571567) };
+				return func(this);
+			}
+
+			void Dtor()
+			{
+				using func_t = decltype(&AutoScrapBuffer::Dtor);
+				REL::Relocation<func_t> func{ REL::ID(68625) };
+				return func(this);
+			}
+		};
+		static_assert(sizeof(AutoScrapBuffer) == 0x8);
+
 		struct ThreadScrapHeap
 		{
 		public:
