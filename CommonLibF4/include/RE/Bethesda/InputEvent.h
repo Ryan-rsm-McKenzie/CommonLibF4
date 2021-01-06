@@ -57,17 +57,10 @@ namespace RE
 		virtual bool HasIDCode() const { return false; }  // 02
 		virtual const BSFixedString& QUserEvent() const;  // 03
 
-		template <
-			class T,
-			std::enable_if_t<
-				std::conjunction_v<
-					std::is_base_of<InputEvent, T>,
-					std::negation<
-						std::is_same<
-							stl::remove_cvref_t<T>,
-							IDEvent>>>,
-				int> = 0>
-		[[nodiscard]] T* As() noexcept
+		template <class T>
+		[[nodiscard]] T* As() noexcept  //
+			requires(std::derived_from<T, InputEvent> &&
+					 !std::same_as<std::decay_t<T>, IDEvent>)
 		{
 			if (*eventType == T::TYPE) {
 				return static_cast<T*>(this);
@@ -76,17 +69,10 @@ namespace RE
 			}
 		}
 
-		template <
-			class T,
-			std::enable_if_t<
-				std::conjunction_v<
-					std::is_base_of<InputEvent, T>,
-					std::negation<
-						std::is_same<
-							stl::remove_cvref_t<T>,
-							IDEvent>>>,
-				int> = 0>
-		[[nodiscard]] const T* As() const noexcept
+		template <class T>
+		[[nodiscard]] const T* As() const noexcept  //
+			requires(std::derived_from<T, InputEvent> &&
+					 !std::same_as<std::decay_t<T>, IDEvent>)
 		{
 			if (*eventType == T::TYPE) {
 				return static_cast<const T*>(this);
@@ -95,14 +81,9 @@ namespace RE
 			}
 		}
 
-		template <
-			class T,
-			std::enable_if_t<
-				std::is_same_v<
-					stl::remove_cvref_t<T>,
-					IDEvent>,
-				int> = 0>
-		[[nodiscard]] T* As()
+		template <class T>
+		[[nodiscard]] T* As()  //
+			requires(std::same_as<std::decay_t<T>, IDEvent>)
 		{
 			if (HasIDCode()) {
 				return static_cast<T*>(this);
@@ -111,14 +92,9 @@ namespace RE
 			}
 		}
 
-		template <
-			class T,
-			std::enable_if_t<
-				std::is_same_v<
-					stl::remove_cvref_t<T>,
-					IDEvent>,
-				int> = 0>
-		[[nodiscard]] const T* As() const
+		template <class T>
+		[[nodiscard]] const T* As() const  //
+			requires(std::same_as<std::decay_t<T>, IDEvent>)
 		{
 			if (HasIDCode()) {
 				return static_cast<const T*>(this);

@@ -156,7 +156,7 @@ namespace REL
 			std::aligned_storage_t<sizeof(result_t), alignof(result_t)> result;
 
 			using func_t = member_function_non_pod_type_t<F>;
-			auto func = unrestricted_cast<func_t*>(std::forward<F>(a_func));
+			auto func = stl::unrestricted_cast<func_t*>(std::forward<F>(a_func));
 
 			return func(std::forward<First>(a_first), std::addressof(result), std::forward<Rest>(a_rest)...);
 		}
@@ -178,7 +178,7 @@ namespace REL
 		if constexpr (std::is_member_function_pointer_v<std::decay_t<F>>) {
 			if constexpr (detail::is_x64_pod_v<std::invoke_result_t<F, Args...>>) {  // member functions == free functions in x64
 				using func_t = detail::member_function_pod_type_t<std::decay_t<F>>;
-				auto func = unrestricted_cast<func_t*>(std::forward<F>(a_func));
+				auto func = stl::unrestricted_cast<func_t*>(std::forward<F>(a_func));
 				return func(std::forward<Args>(a_args)...);
 			} else {  // shift args to insert result
 				return detail::invoke_member_function_non_pod(std::forward<F>(a_func), std::forward<Args>(a_args)...);
@@ -497,13 +497,9 @@ namespace REL
 			using const_iterator = typename container_type::const_iterator;
 			using const_reverse_iterator = typename container_type::const_reverse_iterator;
 
-			template <
-				class ExecutionPolicy,
-				std::enable_if_t<
-					std::is_execution_policy_v<
-						stl::remove_cvref_t<ExecutionPolicy>>,
-					int> = 0>
+			template <class ExecutionPolicy>
 			explicit Offset2ID(ExecutionPolicy&& a_policy)  // NOLINT(bugprone-forwarding-reference-overload)
+				requires(std::is_execution_policy_v<std::decay_t<ExecutionPolicy>>)
 			{
 				const auto id2offset = IDDatabase::get().get_id2offset();
 				_offset2id.reserve(id2offset.size());
@@ -753,7 +749,7 @@ namespace REL
 		[[nodiscard]] value_type get() const noexcept(std::is_nothrow_copy_constructible_v<value_type>)
 		{
 			assert(_impl != 0);
-			return unrestricted_cast<value_type>(_impl);
+			return stl::unrestricted_cast<value_type>(_impl);
 		}
 
 		template <
@@ -781,7 +777,7 @@ namespace REL
 				int> = 0>
 		std::uintptr_t write_vfunc(std::size_t a_idx, F a_newFunc)
 		{
-			return write_vfunc(a_idx, unrestricted_cast<std::uintptr_t>(a_newFunc));
+			return write_vfunc(a_idx, stl::unrestricted_cast<std::uintptr_t>(a_newFunc));
 		}
 
 	private:

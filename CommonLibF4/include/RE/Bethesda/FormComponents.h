@@ -651,6 +651,8 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::BGSBipedObjectForm };
 		static constexpr auto VTABLE{ VTABLE::BGSBipedObjectForm };
 
+		[[nodiscard]] std::uint32_t GetFilledSlots() const noexcept { return bipedModelData.bipedObjectSlots; }
+
 		// members
 		BIPED_MODEL bipedModelData;  // 08
 	};
@@ -729,6 +731,10 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::BGSEquipType };
 		static constexpr auto VTABLE{ VTABLE::BGSEquipType };
+
+		// add
+		[[nodiscard]] virtual BGSEquipSlot* GetEquipSlot([[maybe_unused]] const TBO_InstanceData* a_data) const { return equipSlot; }  // 06
+		virtual void SetEquipSlot(BGSEquipSlot* a_slot) { equipSlot = a_slot; }                                                        // 07
 
 		// members
 		BGSEquipSlot* equipSlot;  // 08
@@ -850,6 +856,9 @@ namespace RE
 		void InitializeDataComponent() override;          // 02
 		void ClearDataComponent() override;               // 03
 		void CopyComponent(BaseFormComponent*) override;  // 06
+
+		[[nodiscard]] const BSFixedString& GetMessageIconTextureName() const noexcept { return icon.textureName; }
+		void SetMessageIconTextureName(BSFixedString a_texture) { icon.textureName = std::move(a_texture); }
 
 		// members
 		TESIcon icon;  // 08
@@ -1086,10 +1095,15 @@ namespace RE
 
 		virtual MagicSystem::CastingType GetCastingType() const { return *castingType; }  // 07
 
+		[[nodiscard]] std::uint16_t GetBaseCharge() const noexcept { return amountOfEnchantment; }
+		[[nodiscard]] EnchantmentItem* GetBaseEnchanting() const noexcept { return formEnchanting; }
+		void SetBaseCharge(std::uint16_t a_amount) noexcept { amountOfEnchantment = a_amount; }
+		void SetBaseEnchanting(EnchantmentItem* a_ench) noexcept { formEnchanting = a_ench; }
+
 		// members
 		EnchantmentItem* formEnchanting;                                        // 08
 		stl::enumeration<MagicSystem::CastingType, std::uint16_t> castingType;  // 10
-		std::uint16_t amountofEnchantment;                                      // 12
+		std::uint16_t amountOfEnchantment;                                      // 12
 	};
 	static_assert(sizeof(TESEnchantableForm) == 0x18);
 
@@ -1104,7 +1118,7 @@ namespace RE
 		virtual std::uint32_t GetFullNameLength() const { return fullName.length(); }  // 07
 		virtual const char* GetFullName() const { return fullName.c_str(); }           // 08
 
-		[[nodiscard]] static std::string_view GetFullName(const TESForm& a_obj, bool a_strict = false);
+		[[nodiscard]] static std::string_view GetFullName(const TESForm& a_form, bool a_strict = false);
 
 		[[nodiscard]] static auto GetSparseFullNameMap()
 			-> BSTHashMap<const TESForm*, BGSLocalizedString>&
@@ -1112,6 +1126,8 @@ namespace RE
 			REL::Relocation<BSTHashMap<const TESForm*, BGSLocalizedString>*> sparseFullNameMap{ REL::ID(226372), -0x8 };
 			return *sparseFullNameMap;
 		}
+
+		static void SetFullName(TESForm& a_form, std::string_view a_fullName);
 
 		// members
 		BGSLocalizedString fullName;  // 08
@@ -1131,7 +1147,7 @@ namespace RE
 		void CopyComponent(BaseFormComponent*) override;  // 06
 
 		// add
-		virtual const char* GetModel() { return model.c_str(); }                    // 07
+		virtual const char* GetModel() const { return model.c_str(); }              // 07
 		virtual void SetModel(const char* a_model) { model = a_model; }             // 08
 		virtual BGSModelMaterialSwap* GetAsModelMaterialSwap() { return nullptr; }  // 09
 
@@ -1377,6 +1393,9 @@ namespace RE
 			return true;
 		}
 
+		[[nodiscard]] TESRace* GetFormRace() const noexcept { return formRace; }
+		void SetFormRace(TESRace* a_race) noexcept { formRace = a_race; }
+
 		// members
 		TESRace* formRace;  // 08
 	};
@@ -1449,6 +1468,8 @@ namespace RE
 		static constexpr auto RTTI{ RTTI::TESValueForm };
 		static constexpr auto VTABLE{ VTABLE::TESValueForm };
 
+		static void SetFormValue(TESForm& a_form, std::int32_t a_value);
+
 		// members
 		std::int32_t value;  // 08
 	};
@@ -1460,6 +1481,9 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::TESWeightForm };
 		static constexpr auto VTABLE{ VTABLE::TESWeightForm };
+
+		[[nodiscard]] float GetFormWeight() const noexcept { return weight; }
+		void SetFormWeight(float a_weight) noexcept { weight = a_weight; }
 
 		// members
 		float weight;  // 08

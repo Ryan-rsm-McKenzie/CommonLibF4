@@ -40,33 +40,33 @@ namespace RE
 		[[nodiscard]] BSTArray<T*>& GetFormArray() noexcept
 		{
 			assert(T::FORM_ID < ENUM_FORM_ID::kTotal);
-			return reinterpret_cast<BSTArray<T*>&>(formArrays[to_underlying(T::FORM_ID)]);
+			return reinterpret_cast<BSTArray<T*>&>(formArrays[stl::to_underlying(T::FORM_ID)]);
 		}
 
 		// members
-		TESObjectList* objectList;                                           // 0060
-		BSTArray<TESForm*> formArrays[to_underlying(ENUM_FORM_ID::kTotal)];  // 0068
-		TESRegionList* regionList;                                           // 0F50
-		NiTPrimitiveArray<TESObjectCELL*> interiorCells;                     // 0F58
-		NiTPrimitiveArray<BGSAddonNode*> addonNodes;                         // 0F70
-		NiTList<TESForm*> badForms;                                          // 0F88
-		std::uint32_t nextID;                                                // 0FA0
-		TESFile* activeFile;                                                 // 0FA8
-		BSSimpleList<TESFile*> files;                                        // 0FB0
-		TESFileCollection compiledFileCollection;                            // 0FC0
-		BSTArray<std::uint32_t> releasedFormIDArray;                         // 0FF0
-		bool masterSave;                                                     // 1008
-		bool blockSave;                                                      // 1009
-		bool saveLoadGame;                                                   // 100A
-		bool autoSaving;                                                     // 100B
-		bool exportingPlugin;                                                // 100C
-		bool clearingData;                                                   // 100D
-		bool hasDesiredFiles;                                                // 100E
-		bool checkingModels;                                                 // 100F
-		bool loadingFiles;                                                   // 1010
-		bool dontRemoveIDs;                                                  // 1011
-		char gameSettingsLoadState;                                          // 1012
-		TESRegionDataManager* regionDataManager;                             // 1018
+		TESObjectList* objectList;                                                // 0060
+		BSTArray<TESForm*> formArrays[stl::to_underlying(ENUM_FORM_ID::kTotal)];  // 0068
+		TESRegionList* regionList;                                                // 0F50
+		NiTPrimitiveArray<TESObjectCELL*> interiorCells;                          // 0F58
+		NiTPrimitiveArray<BGSAddonNode*> addonNodes;                              // 0F70
+		NiTList<TESForm*> badForms;                                               // 0F88
+		std::uint32_t nextID;                                                     // 0FA0
+		TESFile* activeFile;                                                      // 0FA8
+		BSSimpleList<TESFile*> files;                                             // 0FB0
+		TESFileCollection compiledFileCollection;                                 // 0FC0
+		BSTArray<std::uint32_t> releasedFormIDArray;                              // 0FF0
+		bool masterSave;                                                          // 1008
+		bool blockSave;                                                           // 1009
+		bool saveLoadGame;                                                        // 100A
+		bool autoSaving;                                                          // 100B
+		bool exportingPlugin;                                                     // 100C
+		bool clearingData;                                                        // 100D
+		bool hasDesiredFiles;                                                     // 100E
+		bool checkingModels;                                                      // 100F
+		bool loadingFiles;                                                        // 1010
+		bool dontRemoveIDs;                                                       // 1011
+		char gameSettingsLoadState;                                               // 1012
+		TESRegionDataManager* regionDataManager;                                  // 1018
 	};
 	static_assert(sizeof(TESDataHandler) == 0x1020);
 }

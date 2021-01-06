@@ -364,7 +364,7 @@ namespace RE
 				_size += 1;
 			}
 
-			stl::construct_at(data() + pos, std::forward<Args>(a_args)...);
+			std::construct_at(data() + pos, std::forward<Args>(a_args)...);
 			return begin() + pos;
 		}
 
@@ -446,7 +446,7 @@ namespace RE
 						range.begin(),
 						range.end(),
 						[=](auto& a_elem) {
-							stl::construct_at(std::addressof(a_elem), *a_value);
+							std::construct_at(std::addressof(a_elem), *a_value);
 						});
 				} else {
 					std::uninitialized_default_construct(

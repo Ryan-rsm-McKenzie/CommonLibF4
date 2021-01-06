@@ -41,7 +41,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::NiObject };
 		static constexpr auto Ni_RTTI{ Ni_RTTI::NiObject };
 
-		NiObject() { emplace_vtable(this); }
+		NiObject() { stl::emplace_vtable(this); }
 		virtual ~NiObject() = default;  // NOLINT(modernize-use-override) 00
 
 		// add

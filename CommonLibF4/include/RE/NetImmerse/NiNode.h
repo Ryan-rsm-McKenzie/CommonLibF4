@@ -23,7 +23,7 @@ namespace RE
 		explicit NiNode(std::uint32_t a_numChildren) :
 			children(a_numChildren)
 		{
-			emplace_vtable(this);
+			stl::emplace_vtable(this);
 			REL::Relocation<std::uintptr_t> childrenVTable{ REL::ID(390064) };
 			reinterpret_cast<std::uintptr_t&>(children) = childrenVTable.address();
 		}

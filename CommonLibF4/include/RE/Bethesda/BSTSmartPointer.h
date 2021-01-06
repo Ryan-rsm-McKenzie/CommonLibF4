@@ -32,9 +32,9 @@ namespace RE
 	struct BSTSmartPointerIntrusiveRefCount
 	{
 	public:
-		static void Acquire(not_null<T*> a_ptr) { a_ptr->IncRef(); }
+		static void Acquire(stl::not_null<T*> a_ptr) { a_ptr->IncRef(); }
 
-		static void Release(not_null<T*> a_ptr)
+		static void Release(stl::not_null<T*> a_ptr)
 		{
 			if (a_ptr->DecRef() == 0) {
 				delete a_ptr;
@@ -46,16 +46,16 @@ namespace RE
 	struct BSTSmartPointerAutoPtr
 	{
 	public:
-		constexpr static void Acquire(not_null<T*> a_ptr) { return; }
-		static void Release(not_null<T*> a_ptr) { delete a_ptr; }
+		constexpr static void Acquire(stl::not_null<T*> a_ptr) { return; }
+		static void Release(stl::not_null<T*> a_ptr) { delete a_ptr; }
 	};
 
 	template <class T>
 	struct BSTSmartPointerGamebryoRefCount
 	{
 	public:
-		constexpr static void Acquire(not_null<T*> a_ptr) { a_ptr->IncRefCount(); }
-		static void Release(not_null<T*> a_ptr) { a_ptr->DecRefCount(); }
+		constexpr static void Acquire(stl::not_null<T*> a_ptr) { a_ptr->IncRefCount(); }
+		static void Release(stl::not_null<T*> a_ptr) { a_ptr->DecRefCount(); }
 	};
 
 	template <class T, template <class> class RefManager = BSTSmartPointerIntrusiveRefCount>

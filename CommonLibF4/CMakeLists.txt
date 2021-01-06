@@ -24,7 +24,6 @@ find_package(Boost
 		atomic
 		iostreams
 )
-find_package(span-lite REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
 
 # ---- Add source files ----
@@ -144,7 +143,6 @@ target_link_libraries(
 		Boost::atomic
 		Boost::headers
 		Boost::iostreams
-		nonstd::span-lite
 		spdlog::spdlog
 		Version.lib
 )

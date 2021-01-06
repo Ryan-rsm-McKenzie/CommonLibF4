@@ -711,6 +711,7 @@ namespace RE
 		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
 		[[nodiscard]] bool IsCreated() const noexcept { return (formID >> (8 * 3)) == 0xFF; }
 		[[nodiscard]] bool IsInitialized() const noexcept { return (formFlags & (1 << 3)) != 0; }
+		[[nodiscard]] bool IsPlayerRef() const noexcept { return GetFormID() == 0x00000014; }
 
 		template <
 			class T,

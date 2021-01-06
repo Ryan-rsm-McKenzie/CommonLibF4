@@ -205,10 +205,10 @@ namespace RE
 				if (tail) {
 					tail->next = const_cast<entry_type*>(_sentinel);
 				}
-				stl::destroy_at(std::addressof(entry->value));
+				std::destroy_at(std::addressof(entry->value));
 				entry->next = nullptr;
 			} else {  // else move next entry into current
-				stl::construct_at(entry, std::move(*entry->next));
+				std::construct_at(entry, std::move(*entry->next));
 			}
 
 			++_freeCount;
@@ -292,7 +292,7 @@ namespace RE
 
 			const auto idealEntry = calc_pos(get_key(a_value));
 			if (!idealEntry->next) {  // if slot empty
-				stl::construct_at(std::addressof(idealEntry->value), std::forward<Arg>(a_value));
+				std::construct_at(std::addressof(idealEntry->value), std::forward<Arg>(a_value));
 				idealEntry->next = const_cast<entry_type*>(_sentinel);
 				--_freeCount;
 				return { make_iterator(idealEntry), true };
@@ -313,7 +313,7 @@ namespace RE
 			if (takenIdealEntry == idealEntry) {  // if entry occupying our slot would've hashed here anyway
 				freeEntry->next = idealEntry->next;
 				idealEntry->next = freeEntry;
-				stl::construct_at(std::addressof(freeEntry->value), std::forward<Arg>(a_value));
+				std::construct_at(std::addressof(freeEntry->value), std::forward<Arg>(a_value));
 				return { make_iterator(freeEntry), true };
 			}
 
@@ -322,7 +322,7 @@ namespace RE
 			}
 
 			// move taken slot out, so we can move in
-			stl::construct_at(std::addressof(freeEntry->value), std::move(idealEntry->value));
+			std::construct_at(std::addressof(freeEntry->value), std::move(idealEntry->value));
 			freeEntry->next = idealEntry->next;
 			takenIdealEntry->next = freeEntry;
 			idealEntry->value = std::forward<Arg>(a_value);
@@ -353,7 +353,7 @@ namespace RE
 		[[nodiscard]] entry_type* calc_pos(const key_type& a_key) const { return const_cast<entry_type*>(get_entries() + calc_idx(a_key)); }
 
 		// assumes not empty
-		[[nodiscard]] not_null<entry_type*> get_free_entry() noexcept
+		[[nodiscard]] stl::not_null<entry_type*> get_free_entry() noexcept
 		{
 			assert(!empty());
 			entry_type* entry = nullptr;

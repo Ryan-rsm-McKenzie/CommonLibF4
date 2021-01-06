@@ -21,6 +21,7 @@
 #include <memory>
 #include <new>
 #include <optional>
+#include <span>
 #include <sstream>
 #include <stack>
 #include <string>
@@ -44,7 +45,6 @@ static_assert(
 #include <boost/predef.h>
 #include <boost/stl_interfaces/iterator_interface.hpp>
 #include <boost/stl_interfaces/sequence_container_interface.hpp>
-#include <nonstd/span.hpp>
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
 
@@ -66,7 +66,7 @@ namespace F4SE
 
 	namespace stl
 	{
-		using nonstd::span;
+		using std::span;
 
 		template <class CharT>
 		using basic_zstring = std::basic_string_view<CharT>;
@@ -74,96 +74,63 @@ namespace F4SE
 		using zstring = basic_zstring<char>;
 		using zwstring = basic_zstring<wchar_t>;
 
-		namespace detail
-		{
-			template <class, class, class...>
-			struct _can_construct_at :
-				std::false_type
-			{};
-
-			template <class T, class... Args>
-			struct _can_construct_at<
-				std::void_t<
-					decltype(::new (std::declval<void*>()) T(std::declval<Args>()...))>,
-				T,
-				Args...> :
-				std::true_type
-			{};
-
-			template <class T, class... Args>
-			struct can_construct_at :
-				_can_construct_at<void, T, Args...>
-			{};
-
-			template <class T, class... Args>
-			inline constexpr bool can_construct_at_v = can_construct_at<T, Args...>::value;
-		}
-
-		template <class T>
-		struct is_bounded_array :
-			std::false_type
-		{};
-
-		template <class T, std::size_t N>
-		struct is_bounded_array<T[N]> :
-			std::true_type
-		{};
-
-		template <class T>
-		inline constexpr bool is_bounded_array_v = is_bounded_array<T>::value;
-
-		template <class T>
-		struct is_unbounded_array :
-			std::false_type
-		{};
-
-		template <class T>
-		struct is_unbounded_array<T[]> :
-			std::true_type
-		{};
-
-		template <class T>
-		inline constexpr bool is_unbounded_array_v = is_unbounded_array<T>::value;
-
-		template <class T>
-		struct remove_cvref
-		{
-			using type =
-				std::remove_cv_t<
-					std::remove_reference_t<T>>;
-		};
-
-		template <class T>
-		using remove_cvref_t = typename remove_cvref<T>::type;
-
+		// owning pointer
 		template <
 			class T,
-			class... Args,
-			std::enable_if_t<
-				std::conjunction_v<
-					detail::can_construct_at<T, Args...>,
-					std::is_constructible<T, Args...>>,  // more strict
-				int> = 0>
-		T* construct_at(T* a_ptr, Args&&... a_args)
-		{
-			return ::new (
-				const_cast<void*>(
-					static_cast<const volatile void*>(a_ptr)))
-				T(std::forward<Args>(a_args)...);
-		}
+			class = std::enable_if_t<
+				std::is_pointer_v<T>>>
+		using owner = T;
 
-		template <class T>
-		void destroy_at(T* a_ptr)
+		// non-owning pointer
+		template <
+			class T,
+			class = std::enable_if_t<
+				std::is_pointer_v<T>>>
+		using observer = T;
+
+		// non-null pointer
+		template <
+			class T,
+			class = std::enable_if_t<
+				std::is_pointer_v<T>>>
+		using not_null = T;
+
+		namespace nttp
 		{
-			if constexpr (std::is_array_v<T>) {
-				for (auto& elem : *a_ptr) {
-					destroy_at(std::addressof(elem));
+			template <class CharT, std::size_t N>
+			struct string
+			{
+				using char_type = CharT;
+				using pointer = char_type*;
+				using const_pointer = const char_type*;
+				using reference = char_type&;
+				using const_reference = const char_type&;
+				using size_type = std::size_t;
+
+				consteval string(const_pointer a_string) noexcept
+				{
+					for (size_type i = 0; i < N; ++i) {
+						c[i] = a_string[i];
+					}
 				}
-			} else {
-				if (!std::is_trivially_destructible_v<T>) {
-					a_ptr->~T();
+
+				[[nodiscard]] consteval const_reference operator[](size_type a_pos) const noexcept
+				{
+					assert(a_pos < N);
+					return c[a_pos];
 				}
-			}
+
+				[[nodiscard]] consteval const_reference back() const noexcept { return (*this)[size() - 1]; }
+				[[nodiscard]] consteval const_pointer data() const noexcept { return c; }
+				[[nodiscard]] consteval const_reference front() const noexcept { return (*this)[0]; }
+				[[nodiscard]] consteval size_type length() const noexcept { return N; }
+				[[nodiscard]] consteval size_type size() const noexcept { return length(); }
+
+				char_type c[N]{ static_cast<char_type>('\0') };
+			};
+
+			template <class CharT, std::size_t N>
+			string(const CharT (&)[N]) -> string<CharT, N - 1>;
 		}
 
 		struct source_location
@@ -207,69 +174,6 @@ namespace F4SE
 			const char* _fileName{ "" };
 			const char* _functionName{ "" };
 		};
-
-		[[noreturn]] inline void report_and_fail(std::string_view a_msg, source_location a_loc = source_location::current())
-		{
-			const auto body = [&]() {
-				constexpr std::array directories{
-					"include/"sv,
-					"src/"sv,
-				};
-
-				const std::filesystem::path p = a_loc.file_name();
-				const auto filename = p.generic_string();
-				std::string_view fileview = filename;
-
-				constexpr auto npos = std::string::npos;
-				std::size_t pos = npos;
-				std::size_t off = 0;
-				for (const auto& dir : directories) {
-					pos = fileview.find(dir);
-					if (pos != npos) {
-						off = dir.length();
-						break;
-					}
-				}
-
-				if (pos != npos) {
-					fileview = fileview.substr(pos + off);
-				}
-
-				return fmt::format(FMT_STRING("{}({}): {}"), fileview, a_loc.line(), a_msg);
-			}();
-
-			const auto caption = []() -> std::string {
-				const auto maxPath = WinAPI::GetMaxPath();
-				std::vector<char> buf;
-				buf.reserve(maxPath);
-				buf.resize(maxPath / 2);
-				std::uint32_t result = 0;
-				do {
-					buf.resize(buf.size() * 2);
-					result = WinAPI::GetModuleFileName(
-						WinAPI::GetCurrentModule(),
-						buf.data(),
-						static_cast<std::uint32_t>(buf.size()));
-				} while (result && result == buf.size() && buf.size() <= std::numeric_limits<std::uint32_t>::max());
-
-				if (result && result != buf.size()) {
-					std::filesystem::path p(buf.begin(), buf.begin() + result);
-					return p.filename().string();
-				} else {
-					return {};
-				}
-			}();
-
-			spdlog::log(
-				spdlog::source_loc{
-					a_loc.file_name(),
-					static_cast<int>(a_loc.line()),
-					a_loc.function_name() },
-				spdlog::level::critical,
-				a_msg);
-			WinAPI::MessageBox(nullptr, body.c_str(), (caption.empty() ? nullptr : caption.c_str()), 0);
-			WinAPI::TerminateProcess(WinAPI::GetCurrentProcess(), EXIT_FAILURE);
-		}
 
 		template <
 			class Enum,
@@ -604,30 +508,98 @@ namespace F4SE
 		static_assert(atomic_ref<std::uint32_t>::is_always_lock_free);
 		static_assert(atomic_ref<std::int64_t>::is_always_lock_free);
 		static_assert(atomic_ref<std::uint64_t>::is_always_lock_free);
-	}
 
-	inline namespace util
-	{
-		// owning pointer
-		template <
-			class T,
-			class = std::enable_if_t<
-				std::is_pointer_v<T>>>
-		using owner = T;
+		template <class T, class U>
+		[[nodiscard]] auto adjust_pointer(U* a_ptr, std::ptrdiff_t a_adjust) noexcept
+		{
+			auto addr = a_ptr ? reinterpret_cast<std::uintptr_t>(a_ptr) + a_adjust : 0;
+			if constexpr (std::is_const_v<U> && std::is_volatile_v<U>) {
+				return reinterpret_cast<std::add_cv_t<T>*>(addr);
+			} else if constexpr (std::is_const_v<U>) {
+				return reinterpret_cast<std::add_const_t<T>*>(addr);
+			} else if constexpr (std::is_volatile_v<U>) {
+				return reinterpret_cast<std::add_volatile_t<T>*>(addr);
+			} else {
+				return reinterpret_cast<T*>(addr);
+			}
+		}
 
-		// non-owning pointer
-		template <
-			class T,
-			class = std::enable_if_t<
-				std::is_pointer_v<T>>>
-		using observer = T;
+		template <class T>
+		void emplace_vtable(T* a_ptr)
+		{
+			reinterpret_cast<std::uintptr_t*>(a_ptr)[0] = T::VTABLE[0].address();
+		}
 
-		// non-null pointer
-		template <
-			class T,
-			class = std::enable_if_t<
-				std::is_pointer_v<T>>>
-		using not_null = T;
+		template <class T>
+		void memzero(volatile T* a_ptr, std::size_t a_size = sizeof(T))
+		{
+			const auto begin = reinterpret_cast<volatile char*>(a_ptr);
+			constexpr char val{ 0 };
+			std::fill_n(begin, a_size, val);
+		}
+
+		[[noreturn]] inline void report_and_fail(std::string_view a_msg, source_location a_loc = source_location::current())
+		{
+			const auto body = [&]() {
+				constexpr std::array directories{
+					"include/"sv,
+					"src/"sv,
+				};
+
+				const std::filesystem::path p = a_loc.file_name();
+				const auto filename = p.generic_string();
+				std::string_view fileview = filename;
+
+				constexpr auto npos = std::string::npos;
+				std::size_t pos = npos;
+				std::size_t off = 0;
+				for (const auto& dir : directories) {
+					pos = fileview.find(dir);
+					if (pos != npos) {
+						off = dir.length();
+						break;
+					}
+				}
+
+				if (pos != npos) {
+					fileview = fileview.substr(pos + off);
+				}
+
+				return fmt::format(FMT_STRING("{}({}): {}"), fileview, a_loc.line(), a_msg);
+			}();
+
+			const auto caption = []() -> std::string {
+				const auto maxPath = WinAPI::GetMaxPath();
+				std::vector<char> buf;
+				buf.reserve(maxPath);
+				buf.resize(maxPath / 2);
+				std::uint32_t result = 0;
+				do {
+					buf.resize(buf.size() * 2);
+					result = WinAPI::GetModuleFileName(
+						WinAPI::GetCurrentModule(),
+						buf.data(),
+						static_cast<std::uint32_t>(buf.size()));
+				} while (result && result == buf.size() && buf.size() <= std::numeric_limits<std::uint32_t>::max());
+
+				if (result && result != buf.size()) {
+					std::filesystem::path p(buf.begin(), buf.begin() + result);
+					return p.filename().string();
+				} else {
+					return {};
+				}
+			}();
+
+			spdlog::log(
+				spdlog::source_loc{
+					a_loc.file_name(),
+					static_cast<int>(a_loc.line()),
+					a_loc.function_name() },
+				spdlog::level::critical,
+				a_msg);
+			WinAPI::MessageBox(nullptr, body.c_str(), (caption.empty() ? nullptr : caption.c_str()), 0);
+			WinAPI::TerminateProcess(WinAPI::GetCurrentProcess(), EXIT_FAILURE);
+		}
 
 		template <
 			class Enum,
@@ -679,27 +651,6 @@ namespace F4SE
 				return to;
 			}
 		}
-
-		template <class T, class U>
-		[[nodiscard]] auto adjust_pointer(U* a_ptr, std::ptrdiff_t a_adjust) noexcept
-		{
-			auto addr = a_ptr ? reinterpret_cast<std::uintptr_t>(a_ptr) + a_adjust : 0;
-			if constexpr (std::is_const_v<U> && std::is_volatile_v<U>) {
-				return reinterpret_cast<std::add_cv_t<T>*>(addr);
-			} else if constexpr (std::is_const_v<U>) {
-				return reinterpret_cast<std::add_const_t<T>*>(addr);
-			} else if constexpr (std::is_volatile_v<U>) {
-				return reinterpret_cast<std::add_volatile_t<T>*>(addr);
-			} else {
-				return reinterpret_cast<T*>(addr);
-			}
-		}
-
-		template <class T>
-		void emplace_vtable(T* a_ptr)
-		{
-			reinterpret_cast<std::uintptr_t*>(a_ptr)[0] = T::VTABLE[0].address();
-		}
 	}
 }
 
@@ -710,18 +661,16 @@ namespace F4SE
 
 namespace RE
 {
-	using namespace ::std::literals;
-	using namespace ::F4SE::util;
-	namespace stl = ::F4SE::stl;
-	namespace WinAPI = ::F4SE::WinAPI;
+	using namespace std::literals;
+	namespace stl = F4SE::stl;
+	namespace WinAPI = F4SE::WinAPI;
 }
 
 namespace REL
 {
-	using namespace ::std::literals;
-	using namespace ::F4SE::util;
-	namespace stl = ::F4SE::stl;
-	namespace WinAPI = ::F4SE::WinAPI;
+	using namespace std::literals;
+	namespace stl = F4SE::stl;
+	namespace WinAPI = F4SE::WinAPI;
 }
 
 #include "REL/Relocation.h"

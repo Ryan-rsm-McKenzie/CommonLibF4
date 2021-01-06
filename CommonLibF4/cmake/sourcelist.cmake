@@ -19,6 +19,7 @@ set(sources ${sources}
 	include/RE/Bethesda/FormComponents.cpp
 	include/RE/Bethesda/InputEvent.cpp
 	include/RE/Bethesda/Settings.cpp
+	include/RE/Bethesda/TESObjectREFRs.cpp
 	include/RE/NetImmerse/NiAVObject.cpp
 	include/RE/NetImmerse/NiObjectNET.cpp
 	include/RE/NetImmerse/NiRect.cpp

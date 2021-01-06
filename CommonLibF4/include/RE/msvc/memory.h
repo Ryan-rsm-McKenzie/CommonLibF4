@@ -1,12 +1,5 @@
 #pragma once
 
-#include <cassert>
-#include <cstdint>
-#include <functional>
-#include <memory>
-#include <type_traits>
-#include <utility>
-
 namespace RE::msvc
 {
 	template <class T>
@@ -42,32 +35,6 @@ namespace RE::msvc
 
 		template <class T, class Deleter>
 		using deleter_pointer_type_t = typename deleter_pointer_type<T, Deleter>::type;
-
-		template <class T>
-		struct is_bounded_array :
-			std::false_type
-		{};
-
-		template <class T, std::size_t N>
-		struct is_bounded_array<T[N]> :
-			std::true_type
-		{};
-
-		template <class T>
-		inline constexpr bool is_bounded_array_v = is_bounded_array<T>::value;
-
-		template <class T>
-		struct is_unbounded_array :
-			std::false_type
-		{};
-
-		template <class T>
-		struct is_unbounded_array<T[]> :
-			std::true_type
-		{};
-
-		template <class T>
-		inline constexpr bool is_unbounded_array_v = is_unbounded_array<T>::value;
 
 		// std::_Unique_ptr_base
 
@@ -1031,7 +998,7 @@ namespace RE::msvc
 	template <
 		class T,
 		std::enable_if_t<
-			detail::is_unbounded_array_v<
+			std::is_unbounded_array_v<
 				T>,
 			int> = 0>
 	[[nodiscard]] unique_ptr<T> make_unique(std::size_t a_size)
@@ -1044,7 +1011,7 @@ namespace RE::msvc
 		class T,
 		class... Args,
 		std::enable_if_t<
-			detail::is_bounded_array_v<
+			std::is_bounded_array_v<
 				T>,
 			int> = 0>
 	void make_unique(Args&&...) = delete;
@@ -1067,7 +1034,7 @@ namespace RE::msvc
 	template <
 		class T,
 		std::enable_if_t<
-			detail::is_unbounded_array_v<
+			std::is_unbounded_array_v<
 				T>,
 			int> = 0>
 	[[nodiscard]] unique_ptr<T> make_unique_for_overwrite(std::size_t a_size)
@@ -1080,7 +1047,7 @@ namespace RE::msvc
 		class T,
 		class... Args,
 		std::enable_if_t<
-			detail::is_bounded_array_v<
+			std::is_bounded_array_v<
 				T>,
 			int> = 0>
 	void make_unique_for_overwrite(Args&&...) = delete;

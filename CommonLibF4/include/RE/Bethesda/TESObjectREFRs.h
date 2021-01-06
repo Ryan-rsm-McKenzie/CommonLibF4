@@ -35,7 +35,7 @@ namespace RE
 	class BGSDecalGroup;
 	class BGSInventoryList;
 	class BGSObjectInstance;
-	class BipedAnim;
+	class BGSObjectInstanceExtra;
 	class BSAnimationGraphChannel;
 	class BSAnimationGraphManager;
 	class BSFaceGenNiNode;
@@ -44,6 +44,7 @@ namespace RE
 	class hkVector4f;
 	class MagicCaster;
 	class MagicTarget;
+	class ModelReferenceEffect;
 	class NiAVObject;
 	class NiLight;
 	class NiNode;
@@ -53,6 +54,7 @@ namespace RE
 	class TBO_InstanceData;
 	class TrapData;
 	class TrapEntry;
+	class WeaponAnimationGraphManagerHolder;
 
 	struct BSActiveGraphIfInactiveEvent;
 	struct BSAnimationGraphEvent;
@@ -267,6 +269,75 @@ namespace RE
 		BSReadWriteLock rwLock;           // 78
 	};
 	static_assert(sizeof(BGSInventoryList) == 0x80);
+
+	enum class BIPED_OBJECT
+	{
+		kNone = static_cast<std::underlying_type_t<BIPED_OBJECT>>(-1),
+
+		kEditorCount = 32,
+
+		kWeaponHand = kEditorCount,
+		kWeaponSword,
+		kWeaponDagger,
+		kWeaponAxe,
+		kWeaponMace,
+		kWeaponTwoHandMelee,
+		kWeaponBow,
+		kWeaponStaff,
+		kQuiver,
+		kWeaponGun,
+		kWeaponGrenade,
+		kWeaponMine,
+
+		kTotal
+	};
+
+	struct BIPOBJECT
+	{
+	public:
+		~BIPOBJECT();
+
+		// members
+		BGSObjectInstance parent;          // 00
+		BGSObjectInstanceExtra* modExtra;  // 10
+		TESObjectARMA* armorAddon;         // 18
+		TESModel* part;                    // 20
+		BGSTextureSet* skinTexture;        // 28
+		NiPointer<NiAVObject> partClone;   // 30
+		void* handleList;                  // 38 - TODO: BSModelDB::HandleListHead
+		union
+		{
+			std::byte spare40;
+			BSTSmartPointer<WeaponAnimationGraphManagerHolder> objectGraphManager;
+		};  // 40 - TODO
+		union
+		{
+			std::byte spare48;
+			NiPointer<ModelReferenceEffect> hitEffect;
+		};             // 48 - TODO
+		bool skinned;  // 50
+
+	private:
+		void Dtor()
+		{
+			using func_t = decltype(&BIPOBJECT::Dtor);
+			REL::Relocation<func_t> func{ REL::ID(765242) };
+			return func(this);
+		}
+	};
+	static_assert(sizeof(BIPOBJECT) == 0x58);
+
+	class BipedAnim :
+		public BSIntrusiveRefCounted  // 0000
+	{
+	public:
+		// members
+		NiNode* root;                                                         // 0008
+		BIPOBJECT object[stl::to_underlying(BIPED_OBJECT::kTotal)];           // 0010
+		BIPOBJECT bufferedObjects[stl::to_underlying(BIPED_OBJECT::kTotal)];  // 0F30
+		ObjectRefHandle actorRef;                                             // 1E50
+	};
+	static_assert(sizeof(BipedAnim) == 0x1E58);
 
 	class __declspec(novtable) TESObjectREFR :
 		public TESForm,                                                  // 000

@@ -24,7 +24,7 @@ namespace RE
 			std::is_nothrow_copy_constructible_v<value_type>)
 		{
 			if (a_rhs.has_value()) {
-				stl::construct_at(std::addressof(_value), a_rhs.value());
+				std::construct_at(std::addressof(_value), a_rhs.value());
 				_hasValue = true;
 			}
 		}
@@ -39,7 +39,7 @@ namespace RE
 			std::is_nothrow_move_constructible_v<value_type>)
 		{
 			if (a_rhs.has_value()) {
-				stl::construct_at(std::addressof(_value), std::move(a_rhs).value());
+				std::construct_at(std::addressof(_value), std::move(a_rhs).value());
 				_hasValue = true;
 			}
 		}
@@ -65,7 +65,7 @@ namespace RE
 			std::is_nothrow_constructible_v<value_type, const U&>)
 		{
 			if (a_rhs.has_value()) {
-				stl::construct_at(std::addressof(_value), a_rhs.value());
+				std::construct_at(std::addressof(_value), a_rhs.value());
 				_hasValue = true;
 			}
 		}
@@ -91,7 +91,7 @@ namespace RE
 			std::is_nothrow_constructible_v<value_type, U&&>)
 		{
 			if (a_rhs.has_value()) {
-				stl::construct_at(std::addressof(_value), std::move(a_rhs).value());
+				std::construct_at(std::addressof(_value), std::move(a_rhs).value());
 				_hasValue = true;
 			}
 		}
@@ -105,7 +105,7 @@ namespace RE
 		constexpr explicit BSTOptional(std::in_place_t, Args&&... a_args) noexcept(
 			std::is_nothrow_constructible_v<value_type, Args...>)
 		{
-			stl::construct_at(std::addressof(_value), std::forward<Args>(a_args)...);
+			std::construct_at(std::addressof(_value), std::forward<Args>(a_args)...);
 			_hasValue = true;
 		}
 
@@ -119,7 +119,7 @@ namespace RE
 		constexpr explicit BSTOptional(std::in_place_t, std::initializer_list<U> a_ilist, Args&&... a_args) noexcept(
 			std::is_nothrow_constructible_v<value_type, std::initializer_list<U>&, Args&&...>)
 		{
-			stl::construct_at(std::addressof(_value), a_ilist, std::forward<Args>(a_args)...);
+			std::construct_at(std::addressof(_value), a_ilist, std::forward<Args>(a_args)...);
 			_hasValue = true;
 		}
 
@@ -131,13 +131,13 @@ namespace RE
 					std::is_constructible<value_type, U&&>,
 					std::negation<
 						std::disjunction<
-							std::is_same<stl::remove_cvref_t<U>, std::in_place_t>,
-							std::is_same<stl::remove_cvref_t<U>, BSTOptional<value_type>>>>>,
+							std::is_same<std::decay_t<U>, std::in_place_t>,
+							std::is_same<std::decay_t<U>, BSTOptional<value_type>>>>>,
 				int> = 0>
 		constexpr BSTOptional(U&& a_value) noexcept(
 			std::is_nothrow_constructible_v<value_type, U&&>)
 		{
-			stl::construct_at(std::addressof(_value), std::forward<U>(a_value));
+			std::construct_at(std::addressof(_value), std::forward<U>(a_value));
 			_hasValue = true;
 		}
 
@@ -164,7 +164,7 @@ namespace RE
 			if (this != std::addressof(a_rhs)) {
 				reset();
 				if (a_rhs.has_value()) {
-					stl::construct_at(std::addressof(_value), a_rhs.value());
+					std::construct_at(std::addressof(_value), a_rhs.value());
 					_hasValue = true;
 				}
 			}
@@ -180,7 +180,7 @@ namespace RE
 			if (this != std::addressof(a_rhs)) {
 				reset();
 				if (a_rhs.has_value()) {
-					stl::construct_at(std::addressof(_value), std::move(a_rhs).value());
+					std::construct_at(std::addressof(_value), std::move(a_rhs).value());
 					_hasValue = true;
 				}
 			}
@@ -194,7 +194,7 @@ namespace RE
 				std::conjunction_v<
 					std::is_constructible<value_type, U&&>,
 					std::negation<
-						std::is_same<stl::remove_cvref_t<U>, std::in_place_t>>>,
+						std::is_same<std::decay_t<U>, std::in_place_t>>>,
 				int> = 0>
 		BSTOptional& operator=(U&& a_value) noexcept(
 			std::conjunction_v<
@@ -202,7 +202,7 @@ namespace RE
 				std::is_nothrow_constructible<value_type, U&&>>)
 		{
 			reset();
-			stl::construct_at(std::addressof(_value), std::forward<U>(a_value));
+			std::construct_at(std::addressof(_value), std::forward<U>(a_value));
 			_hasValue = true;
 			return *this;
 		}
@@ -231,7 +231,7 @@ namespace RE
 		{
 			reset();
 			if (a_rhs.has_value()) {
-				stl::construct_at(std::addressof(_value), a_rhs.value());
+				std::construct_at(std::addressof(_value), a_rhs.value());
 				_hasValue = true;
 			}
 			return *this;
@@ -261,7 +261,7 @@ namespace RE
 		{
 			reset();
 			if (a_rhs.has_value()) {
-				stl::construct_at(std::addressof(_value), std::move(a_rhs).value());
+				std::construct_at(std::addressof(_value), std::move(a_rhs).value());
 				_hasValue = true;
 			}
 			return *this;
@@ -332,7 +332,7 @@ namespace RE
 		{
 			if (has_value()) {
 				if constexpr (!std::is_trivially_destructible_v<value_type>) {
-					stl::destroy_at(std::addressof(_value));
+					std::destroy_at(std::addressof(_value));
 				}
 				_hasValue = false;
 			}

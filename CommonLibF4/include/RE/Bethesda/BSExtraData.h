@@ -327,10 +327,10 @@ namespace RE
 
 		[[nodiscard]] bool HasType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
-			const auto idx = to_underlying(a_type) / 8;
+			const auto idx = stl::to_underlying(a_type) / 8;
 			const auto flags = GetFlags();
 			if (!flags.empty() && idx < flags.size()) {
-				const auto pos = 1 << (to_underlying(a_type) % 8);
+				const auto pos = 1 << (stl::to_underlying(a_type) % 8);
 				return (flags[idx] & pos) != 0;
 			} else {
 				return false;
@@ -338,7 +338,7 @@ namespace RE
 		}
 
 	private:
-		static constexpr std::size_t N = (to_underlying(EXTRA_DATA_TYPE::kTotal) / 8) + 1;
+		static constexpr std::size_t N = (stl::to_underlying(EXTRA_DATA_TYPE::kTotal) / 8) + 1;
 
 		void CreateFlags() { _flags = calloc<std::uint8_t>(N); }
 

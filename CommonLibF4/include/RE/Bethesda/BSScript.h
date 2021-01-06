@@ -290,7 +290,7 @@ namespace RE
 				return *this;
 			}
 
-			Variable& operator=(owner<Variable*> a_variable)
+			Variable& operator=(stl::owner<Variable*> a_variable)
 			{
 				assert(a_variable != nullptr);
 				assert(a_variable->varType.GetRawType() != RawType::kVar);
@@ -462,7 +462,7 @@ namespace RE
 				std::int32_t i;
 				float f;
 				bool b;
-				owner<Variable*> v;
+				stl::owner<Variable*> v;
 				BSTSmartPointer<Struct> t;
 				BSTSmartPointer<Array> a;
 			} value;  // 08

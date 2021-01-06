@@ -2,6 +2,7 @@
 
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSScript.h"
+#include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/GameScript.h"
 #include "RE/Bethesda/TESForms.h"
 
@@ -9,12 +10,105 @@
 
 namespace RE::BSScript
 {
+	namespace detail
+	{
+		struct wrapper_accessor;
+
+		template <class T>
+		void PackVariable(Variable& a_var, T&& a_val);
+
+		template <class T>
+		[[nodiscard]] T UnpackVariable(const Variable& a_var);
+	}
+
+	template <stl::nttp::string N>
+	class structure_wrapper
+	{
+	public:
+		static constexpr std::string_view name{ N.data(), N.length() };
+
+		structure_wrapper() { initialize(); }
+		structure_wrapper(std::nullptr_t) {}
+
+		structure_wrapper& operator=(std::nullptr_t)
+		{
+			_proxy = nullptr;
+			return *this;
+		}
+
+		[[nodiscard]] explicit operator bool() const noexcept { return !is_none(); }
+
+		void initialize()
+		{
+			if (!_proxy) {
+				const auto game = GameVM::GetSingleton();
+				const auto vm = game ? game->GetVM() : nullptr;
+				if (!vm || !vm->CreateStruct(name, _proxy)) {
+					F4SE::log::warn(
+						FMT_STRING("failed to create structure of type \"{}\""),
+						name);
+				}
+			}
+
+			assert(!is_none());
+		}
+
+		template <class T>
+		bool insert(std::string_view a_name, T&& a_val)
+		{
+			if (_proxy && _proxy->type) {
+				auto& mappings = _proxy->type->varNameIndexMap;
+				const auto it = mappings.find(a_name);
+				if (it != mappings.end()) {
+					auto& var = _proxy->variables[it->second];
+					detail::PackVariable(var, std::forward<T>(a_val));
+					return true;
+				}
+			}
+
+			F4SE::log::warn(
+				FMT_STRING("failed to pack var \"{}\" on structure \"{}\""),
+				a_name,
+				name);
+			return false;
+		}
+
+		[[nodiscard]] bool is_none() const noexcept { return _proxy == nullptr; }
+
+		template <class T>
+		std::optional<T> find(std::string_view a_name) const
+		{
+			if (_proxy && _proxy->type) {
+				const auto& mappings = _proxy->type->varNameIndexMap;
+				const auto it = mappings.find(a_name);
+				if (it != mappings.end()) {
+					const auto& var = _proxy->variables[it->second];
+					return detail::UnpackVariable<T>(var);
+				}
+			}
+
+			return std::nullopt;
+		}
+
+	protected:
+		friend struct detail::wrapper_accessor;
+
+		explicit structure_wrapper(BSTSmartPointer<Struct> a_proxy) noexcept :
+			_proxy(std::move(a_proxy))
+		{}
+
+		[[nodiscard]] BSTSmartPointer<Struct> get_proxy() const& { return _proxy; }
+		[[nodiscard]] BSTSmartPointer<Struct> get_proxy() && { return std::move(_proxy); }
+
+	private:
+		BSTSmartPointer<Struct> _proxy;
+	};
+
 	template <class>
 	struct script_traits final
 	{
 		using is_array = std::false_type;
 		using is_string = std::false_type;
-		using is_structure = std::false_type;
 	};
 
 	template <
@@ -25,6 +119,14 @@ namespace RE::BSScript
 		final
 	{
 		using is_array = std::true_type;
+	};
+
+	template <class Traits>
+	struct script_traits<
+		std::basic_string_view<char, Traits>>
+		final
+	{
+		using is_string = std::true_type;
 	};
 
 	template <
@@ -39,6 +141,23 @@ namespace RE::BSScript
 
 	namespace detail
 	{
+		template <class T>
+		struct is_structure_wrapper :
+			std::false_type
+		{};
+
+		template <stl::nttp::string N>
+		struct is_structure_wrapper<structure_wrapper<N>> :
+			std::true_type
+		{};
+
+		template <class T>
+		using decay_t =
+			std::conditional_t<
+				std::is_pointer_v<T>,
+				std::remove_cv_t<std::remove_pointer_t<T>>,
+				std::decay_t<T>>;
+
 		// clang-format off
 		template <class F, class R, class... Args>
 		concept invocable_r = requires(F&& a_func, Args&&... a_args)
@@ -88,6 +207,9 @@ namespace RE::BSScript
 		concept boolean = std::same_as<std::remove_cv_t<T>, bool>;
 		// clang-format on
 
+		template <class T>
+		concept structure = is_structure_wrapper<T>::value;
+
 		// clang-format off
 		template <class T>
 		concept array =
@@ -107,21 +229,37 @@ namespace RE::BSScript
 		template <class T>
 		concept valid_self =
 			static_tag<T> ||
-			(std::is_reference_v<T>&& object<std::remove_reference_t<T>>);
+			(std::is_reference_v<T>&& object<decay_t<T>>);
 
 		template <class T>
 		concept valid_parameter =
-			(std::is_pointer_v<T> && object<std::remove_pointer_t<T>>) ||
+			(std::is_pointer_v<T> && object<decay_t<T>>) ||
 			string<T> ||
 			integral<T> ||
 			floating_point<T> ||
 			boolean<T> ||
+			structure<T> ||
 			array<T>;
 
 		template <class T>
 		concept valid_return =
 			valid_parameter<T> ||
 			std::same_as<T, void>;
+
+		struct wrapper_accessor
+		{
+			template <structure T>
+			[[nodiscard]] static T construct(BSTSmartPointer<Struct> a_structure)
+			{
+				return T(std::move(a_structure));
+			}
+
+			template <structure T>
+			[[nodiscard]] static BSTSmartPointer<Struct> get_proxy(T&& a_structure)
+			{
+				return std::forward<T>(a_structure).get_proxy();
+			}
+		};
 	}
 
 	template <detail::object T>
@@ -184,13 +322,27 @@ namespace RE::BSScript
 		return TypeInfo::RawType::kBool;
 	}
 
+	template <detail::structure T>
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	{
+		const auto game = GameVM::GetSingleton();
+		const auto vm = game ? game->GetVM() : nullptr;
+		BSTSmartPointer<StructTypeInfo> typeInfo;
+		if (!vm ||
+			!vm->GetScriptStructType(T::name, typeInfo) ||
+			!typeInfo) {
+			assert(false);
+			F4SE::log::error("failed to get type info for structure"sv);
+			return std::nullopt;
+		} else {
+			return typeInfo.get();
+		}
+	}
+
 	template <detail::array T>
 	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
 	{
-		using value_type =
-			std::remove_cv_t<
-				std::remove_pointer_t<
-					typename T::value_type>>;
+		using value_type = detail::decay_t<typename T::value_type>;
 
 		auto typeInfo = GetTypeInfo<value_type>();
 		if (typeInfo) {
@@ -203,6 +355,11 @@ namespace RE::BSScript
 	template <detail::object T>
 	void PackVariable(Variable& a_var, const T* a_val)
 	{
+		if (!a_val) {
+			a_var = nullptr;
+			return;
+		}
+
 		const auto success = [&]() {
 			const auto game = GameVM::GetSingleton();
 			const auto vm = game ? game->GetVM() : nullptr;
@@ -275,14 +432,22 @@ namespace RE::BSScript
 		a_var = static_cast<bool>(a_val);
 	}
 
+	template <detail::structure T>
+	void PackVariable(Variable& a_var, T&& a_val)
+	{
+		auto proxy = detail::wrapper_accessor::get_proxy(std::forward<T>(a_val));
+		if (proxy) {
+			a_var = std::move(proxy);
+		} else {
+			a_var = nullptr;
+		}
+	}
+
 	template <detail::array T>
 	void PackVariable(Variable& a_var, T&& a_val)
 	{
 		using size_type = typename T::size_type;
-		using value_type =
-			std::remove_cv_t<
-				std::remove_pointer_t<
-					typename T::value_type>>;
+		using value_type = detail::decay_t<typename T::value_type>;
 
 		const auto success = [&]() {
 			const auto game = GameVM::GetSingleton();
@@ -310,6 +475,15 @@ namespace RE::BSScript
 			assert(false);
 			F4SE::log::error("failed to pack array"sv);
 			a_var = nullptr;
+		}
+	}
+
+	namespace detail
+	{
+		template <class T>
+		__forceinline void PackVariable(Variable& a_var, T&& a_val)
+		{
+			BSScript::PackVariable(a_var, std::forward<T>(a_val));
 		}
 	}
 
@@ -378,13 +552,16 @@ namespace RE::BSScript
 		return static_cast<T>(get<bool>(a_var));
 	}
 
+	template <detail::structure T>
+	[[nodiscard]] T UnpackVariable(const Variable& a_var)
+	{
+		return detail::wrapper_accessor::construct<T>(get<Struct>(a_var));
+	}
+
 	template <detail::array T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
-		using value_type =
-			std::remove_cv_t<
-				std::remove_pointer_t<
-					typename T::value_type>>;
+		using value_type = detail::decay_t<typename T::value_type>;
 
 		T out;
 		const auto in = get<Array>(a_var);
@@ -397,6 +574,12 @@ namespace RE::BSScript
 
 	namespace detail
 	{
+		template <class T>
+		[[nodiscard]] __forceinline T UnpackVariable(const Variable& a_var)
+		{
+			return BSScript::UnpackVariable<T>(a_var);
+		}
+
 		template <
 			bool LONG,
 			valid_self S,
@@ -425,8 +608,7 @@ namespace RE::BSScript
 			const auto pframe = std::addressof(a_stackFrame);
 			const auto page = a_stack.GetPageForFrame(pframe);
 			const auto args = [&]<class T>(std::in_place_type_t<T>, std::size_t a_index) {
-				using decay_t = std::remove_cv_t<std::remove_pointer_t<T>>;
-				return UnpackVariable<decay_t>(a_stack.GetStackFrameVariable(pframe, a_index, page));
+				return UnpackVariable<detail::decay_t<T>>(a_stack.GetStackFrameVariable(pframe, a_index, page));
 			};
 
 			if constexpr (LONG) {
@@ -465,8 +647,8 @@ namespace RE::BSScript
 		{
 			assert(super::descTable.paramCount == sizeof...(Args));
 			std::size_t i = 0;
-			((super::descTable.entries[i++].second = GetTypeInfo<Args>().value_or(nullptr)), ...);
-			super::retType = GetTypeInfo<R>().value_or(nullptr);
+			((super::descTable.entries[i++].second = GetTypeInfo<detail::decay_t<Args>>().value_or(nullptr)), ...);
+			super::retType = GetTypeInfo<detail::decay_t<R>>().value_or(nullptr);
 		}
 
 		// override (NF_util::NativeFunctionBase)
@@ -536,7 +718,10 @@ namespace RE::BSScript
 	{
 		const auto success = BindNativeMethod(new NativeFunction(a_object, a_function, std::move(a_func)));
 		if (!success) {
-			F4SE::log::warn("failed to register method \"{}\" on object \"{}\""sv, a_function, a_object);
+			F4SE::log::warn(
+				FMT_STRING("failed to register method \"{}\" on object \"{}\""),
+				a_function,
+				a_object);
 		}
 
 		if (success && a_taskletCallable) {
