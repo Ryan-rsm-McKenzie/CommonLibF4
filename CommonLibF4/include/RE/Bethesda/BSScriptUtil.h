@@ -19,38 +19,46 @@ namespace RE::BSScript
 
 		template <class T>
 		[[nodiscard]] T UnpackVariable(const Variable& a_var);
+
+		template <class CharT, std::size_t N1, std::size_t N2>
+		[[nodiscard]] consteval auto make_structure_tag(
+			stl::nttp::string<CharT, N1> a_lhs,
+			stl::nttp::string<CharT, N2> a_rhs) noexcept
+			-> stl::nttp::string<CharT, N1 + 1 + N2>
+		{
+			char buf[a_lhs.length() + 1 + a_rhs.length() + 1]{ '\0' };
+			std::copy_n(a_lhs.data(), a_lhs.length(), buf);
+			buf[a_lhs.length()] = '#';
+			std::copy_n(a_rhs.data(), a_rhs.length(), buf + a_lhs.length() + 1);
+			return { static_cast<const char(&)[N1 + 1 + N2 + 1]>(buf) };
+		}
 	}
 
-	template <stl::nttp::string N>
+	template <
+		stl::nttp::string O,
+		stl::nttp::string S>
 	class structure_wrapper
 	{
+	private:
+		static constexpr stl::nttp::string _full = detail::make_structure_tag(O, S);
+
 	public:
-		static constexpr std::string_view name{ N.data(), N.length() };
+		static constexpr std::string_view name{ _full.data(), _full.length() };
 
-		structure_wrapper() { initialize(); }
-		structure_wrapper(std::nullptr_t) {}
-
-		structure_wrapper& operator=(std::nullptr_t)
-		{
-			_proxy = nullptr;
-			return *this;
-		}
-
-		[[nodiscard]] explicit operator bool() const noexcept { return !is_none(); }
-
-		void initialize()
+		structure_wrapper()
 		{
 			if (!_proxy) {
 				const auto game = GameVM::GetSingleton();
 				const auto vm = game ? game->GetVM() : nullptr;
-				if (!vm || !vm->CreateStruct(name, _proxy)) {
-					F4SE::log::warn(
+				if (!vm ||
+					!vm->CreateStruct(name, _proxy) ||
+					!_proxy) {
+					F4SE::log::error(
 						FMT_STRING("failed to create structure of type \"{}\""),
 						name);
+					assert(false);
 				}
 			}
-
-			assert(!is_none());
 		}
 
 		template <class T>
@@ -95,7 +103,9 @@ namespace RE::BSScript
 
 		explicit structure_wrapper(BSTSmartPointer<Struct> a_proxy) noexcept :
 			_proxy(std::move(a_proxy))
-		{}
+		{
+			assert(_proxy != nullptr);
+		}
 
 		[[nodiscard]] BSTSmartPointer<Struct> get_proxy() const& { return _proxy; }
 		[[nodiscard]] BSTSmartPointer<Struct> get_proxy() && { return std::move(_proxy); }
@@ -109,6 +119,7 @@ namespace RE::BSScript
 	{
 		using is_array = std::false_type;
 		using is_string = std::false_type;
+		using is_nullable = std::false_type;
 	};
 
 	template <
@@ -139,17 +150,31 @@ namespace RE::BSScript
 		using is_string = std::true_type;
 	};
 
+	template <class T>
+	struct script_traits<
+		std::optional<T>>
+		final
+	{
+		using is_nullable = std::true_type;
+	};
+
 	namespace detail
 	{
-		template <class T>
-		struct is_structure_wrapper :
+		template <class>
+		struct _is_structure_wrapper :
 			std::false_type
 		{};
 
-		template <stl::nttp::string N>
-		struct is_structure_wrapper<structure_wrapper<N>> :
+		template <stl::nttp::string O, stl::nttp::string S>
+		struct _is_structure_wrapper<structure_wrapper<O, S>> :
 			std::true_type
 		{};
+
+		template <class T>
+		using is_structure_wrapper = _is_structure_wrapper<std::decay_t<T>>;
+
+		template <class T>
+		inline constexpr bool is_structure_wrapper_v = is_structure_wrapper<T>::value;
 
 		template <class T>
 		using decay_t =
@@ -177,12 +202,15 @@ namespace RE::BSScript
 		// clang-format on
 
 		template <class T>
-		concept string =
+		concept _string =
 			std::same_as<
 				typename script_traits<T>::is_string,
 				std::true_type> &&
 			std::convertible_to<T, std::string_view> &&
 			std::constructible_from<T, std::string_view>;
+
+		template <class T>
+		concept string = _string<std::decay_t<T>>;
 
 		template <class T>
 		concept integral =
@@ -207,12 +235,9 @@ namespace RE::BSScript
 		concept boolean = std::same_as<std::remove_cv_t<T>, bool>;
 		// clang-format on
 
-		template <class T>
-		concept structure = is_structure_wrapper<T>::value;
-
 		// clang-format off
 		template <class T>
-		concept array =
+		concept _array =
 			std::same_as<
 				typename script_traits<T>::is_array,
 				std::true_type> &&
@@ -227,6 +252,23 @@ namespace RE::BSScript
 		// clang-format on
 
 		template <class T>
+		concept array = _array<std::decay_t<T>>;
+
+		template <class T>
+		concept wrapper = is_structure_wrapper_v<T>;
+
+		template <class T>
+		concept _nullable =
+			std::same_as<
+				typename script_traits<T>::is_nullable,
+				std::true_type> &&
+			(array<typename T::value_type> ||
+				wrapper<typename T::value_type>);
+
+		template <class T>
+		concept nullable = _nullable<std::decay_t<T>>;
+
+		template <class T>
 		concept valid_self =
 			static_tag<T> ||
 			(std::is_reference_v<T>&& object<decay_t<T>>);
@@ -234,12 +276,14 @@ namespace RE::BSScript
 		template <class T>
 		concept valid_parameter =
 			(std::is_pointer_v<T> && object<decay_t<T>>) ||
-			string<T> ||
-			integral<T> ||
-			floating_point<T> ||
-			boolean<T> ||
-			structure<T> ||
-			array<T>;
+			(!std::is_reference_v<T> &&
+				(string<T> ||
+					integral<T> ||
+					floating_point<T> ||
+					boolean<T> ||
+					array<T> ||
+					wrapper<T> ||
+					nullable<T>));
 
 		template <class T>
 		concept valid_return =
@@ -248,16 +292,17 @@ namespace RE::BSScript
 
 		struct wrapper_accessor
 		{
-			template <structure T>
-			[[nodiscard]] static T construct(BSTSmartPointer<Struct> a_structure)
+			template <class T>
+			[[nodiscard]] static T construct(const Variable& a_var)  //
+				requires(is_structure_wrapper_v<T>)
 			{
-				return T(std::move(a_structure));
+				return T(get<Struct>(a_var));
 			}
 
-			template <structure T>
-			[[nodiscard]] static BSTSmartPointer<Struct> get_proxy(T&& a_structure)
+			template <wrapper T>
+			[[nodiscard]] static auto get_proxy(T&& a_wrapper)
 			{
-				return std::forward<T>(a_structure).get_proxy();
+				return std::forward<T>(a_wrapper).get_proxy();
 			}
 		};
 	}
@@ -269,20 +314,20 @@ namespace RE::BSScript
 	}
 
 	template <class T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()  //
 		requires(std::same_as<T, void>)
 	{
 		return TypeInfo::RawType::kNone;
 	}
 
 	template <detail::static_tag T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		return TypeInfo::RawType::kNone;
 	}
 
 	template <detail::object T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		const auto game = GameVM::GetSingleton();
 		const auto vm = game ? game->GetVM() : nullptr;
@@ -299,50 +344,33 @@ namespace RE::BSScript
 	}
 
 	template <detail::string T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		return TypeInfo::RawType::kString;
 	}
 
 	template <detail::integral T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		return TypeInfo::RawType::kInt;
 	}
 
 	template <detail::floating_point T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		return TypeInfo::RawType::kFloat;
 	}
 
 	template <detail::boolean T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		return TypeInfo::RawType::kBool;
 	}
 
-	template <detail::structure T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
-	{
-		const auto game = GameVM::GetSingleton();
-		const auto vm = game ? game->GetVM() : nullptr;
-		BSTSmartPointer<StructTypeInfo> typeInfo;
-		if (!vm ||
-			!vm->GetScriptStructType(T::name, typeInfo) ||
-			!typeInfo) {
-			assert(false);
-			F4SE::log::error("failed to get type info for structure"sv);
-			return std::nullopt;
-		} else {
-			return typeInfo.get();
-		}
-	}
-
 	template <detail::array T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo() noexcept
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
-		using value_type = detail::decay_t<typename T::value_type>;
+		using value_type = detail::decay_t<typename std::decay_t<T>::value_type>;
 
 		auto typeInfo = GetTypeInfo<value_type>();
 		if (typeInfo) {
@@ -350,6 +378,34 @@ namespace RE::BSScript
 		}
 
 		return typeInfo;
+	}
+
+	template <detail::wrapper T>
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
+	{
+		const auto game = GameVM::GetSingleton();
+		const auto vm = game ? game->GetVM() : nullptr;
+		if constexpr (detail::is_structure_wrapper_v<T>) {
+			BSTSmartPointer<StructTypeInfo> typeInfo;
+			if (!vm ||
+				!vm->GetScriptStructType(T::name, typeInfo) ||
+				!typeInfo) {
+				assert(false);
+				F4SE::log::error("failed to get type info for structure"sv);
+				return std::nullopt;
+			} else {
+				return typeInfo.get();
+			}
+		} else {
+			static_assert(false && sizeof(T));
+		}
+	}
+
+	template <detail::nullable T>
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
+	{
+		using value_type = typename std::decay_t<T>::value_type;
+		return GetTypeInfo<value_type>();
 	}
 
 	template <detail::object T>
@@ -409,45 +465,34 @@ namespace RE::BSScript
 	}
 
 	template <detail::signed_integral T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	void PackVariable(Variable& a_var, T a_val)
 	{
 		a_var = static_cast<std::int32_t>(a_val);
 	}
 
 	template <detail::unsigned_integral T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	void PackVariable(Variable& a_var, T a_val)
 	{
 		a_var = static_cast<std::uint32_t>(a_val);
 	}
 
 	template <detail::floating_point T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	void PackVariable(Variable& a_var, T a_val)
 	{
 		a_var = static_cast<float>(a_val);
 	}
 
 	template <detail::boolean T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	void PackVariable(Variable& a_var, T a_val)
 	{
 		a_var = static_cast<bool>(a_val);
-	}
-
-	template <detail::structure T>
-	void PackVariable(Variable& a_var, T&& a_val)
-	{
-		auto proxy = detail::wrapper_accessor::get_proxy(std::forward<T>(a_val));
-		if (proxy) {
-			a_var = std::move(proxy);
-		} else {
-			a_var = nullptr;
-		}
 	}
 
 	template <detail::array T>
 	void PackVariable(Variable& a_var, T&& a_val)
 	{
-		using size_type = typename T::size_type;
-		using value_type = detail::decay_t<typename T::value_type>;
+		using size_type = typename detail::decay_t<T>::size_type;
+		using value_type = detail::decay_t<typename std::decay_t<T>::value_type>;
 
 		const auto success = [&]() {
 			const auto game = GameVM::GetSingleton();
@@ -463,8 +508,8 @@ namespace RE::BSScript
 			}
 
 			size_type i = 0;
-			for (auto&& elem : std::move(a_val)) {
-				PackVariable<value_type>(out->elements[i++], std::move(elem));
+			for (auto&& elem : std::forward<T>(a_val)) {
+				PackVariable(out->elements[i++], std::forward<decltype(elem)>(elem));
 			}
 
 			a_var = std::move(out);
@@ -474,6 +519,22 @@ namespace RE::BSScript
 		if (!success) {
 			assert(false);
 			F4SE::log::error("failed to pack array"sv);
+			a_var = nullptr;
+		}
+	}
+
+	template <detail::wrapper T>
+	void PackVariable(Variable& a_var, T&& a_val)
+	{
+		a_var = detail::wrapper_accessor::get_proxy(std::forward<T>(a_val));
+	}
+
+	template <detail::nullable T>
+	void PackVariable(Variable& a_var, T&& a_val)
+	{
+		if (a_val.has_value()) {
+			PackVariable(a_var, std::forward<T>(a_val).value());
+		} else {
 			a_var = nullptr;
 		}
 	}
@@ -552,12 +613,6 @@ namespace RE::BSScript
 		return static_cast<T>(get<bool>(a_var));
 	}
 
-	template <detail::structure T>
-	[[nodiscard]] T UnpackVariable(const Variable& a_var)
-	{
-		return detail::wrapper_accessor::construct<T>(get<Struct>(a_var));
-	}
-
 	template <detail::array T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
@@ -570,6 +625,23 @@ namespace RE::BSScript
 		}
 
 		return out;
+	}
+
+	template <detail::wrapper T>
+	[[nodiscard]] T UnpackVariable(const Variable& a_var)
+	{
+		return detail::wrapper_accessor::construct<T>(a_var);
+	}
+
+	template <detail::nullable T>
+	[[nodiscard]] T UnpackVariable(const Variable& a_var)
+	{
+		if (a_var.is<std::nullptr_t>()) {
+			return {};
+		} else {
+			using value_type = typename std::decay_t<T>::value_type;
+			return UnpackVariable<value_type>(a_var);
+		}
 	}
 
 	namespace detail

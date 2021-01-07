@@ -216,7 +216,7 @@ namespace RE
 
 				~D() noexcept { complexTypeInfo = nullptr; }
 
-				stl::enumeration<RawType, std::size_t> rawType;
+				stl::enumeration<RawType, std::uintptr_t> rawType;
 				IComplexType* complexTypeInfo;
 			} data;  // 0
 		};
@@ -245,6 +245,7 @@ namespace RE
 			Variable& operator=(std::nullptr_t)
 			{
 				reset();
+				assert(is<std::nullptr_t>());
 				return *this;
 			}
 
@@ -255,6 +256,8 @@ namespace RE
 				reset();
 				value.s = std::move(a_string);
 				varType = RawType::kString;
+
+				assert(is<BSFixedString>());
 				return *this;
 			}
 
@@ -263,6 +266,8 @@ namespace RE
 				reset();
 				value.u = a_unsigned;
 				varType = RawType::kInt;
+
+				assert(is<std::uint32_t>());
 				return *this;
 			}
 
@@ -271,6 +276,8 @@ namespace RE
 				reset();
 				value.i = a_signed;
 				varType = RawType::kInt;
+
+				assert(is<std::int32_t>());
 				return *this;
 			}
 
@@ -279,6 +286,8 @@ namespace RE
 				reset();
 				value.f = a_float;
 				varType = RawType::kFloat;
+
+				assert(is<float>());
 				return *this;
 			}
 
@@ -287,6 +296,8 @@ namespace RE
 				reset();
 				value.b = a_boolean;
 				varType = RawType::kBool;
+
+				assert(is<bool>());
 				return *this;
 			}
 

@@ -21,32 +21,44 @@ namespace RE::BSScript
 
 	Variable& Variable::operator=(BSTSmartPointer<Object> a_object)
 	{
-		assert(a_object != nullptr);
-
 		reset();
-		value.o = std::move(a_object);
-		varType = value.o->type.get();
+		if (a_object) {
+			value.o = std::move(a_object);
+			varType = value.o->type.get();
+		} else {
+			assert(false);
+		}
+
+		assert(is<Object>());
 		return *this;
 	}
 
 	Variable& Variable::operator=(BSTSmartPointer<Struct> a_struct)
 	{
-		assert(a_struct != nullptr);
-
 		reset();
-		value.t = std::move(a_struct);
-		varType = value.t->type.get();
+		if (a_struct) {
+			value.t = std::move(a_struct);
+			varType = value.t->type.get();
+		} else {
+			assert(false);
+		}
+
+		assert(is<Struct>());
 		return *this;
 	}
 
 	Variable& Variable::operator=(BSTSmartPointer<Array> a_array)
 	{
-		assert(a_array != nullptr);
-
 		reset();
-		value.a = std::move(a_array);
-		varType = value.a->elementType;
-		varType.SetArray(true);
+		if (a_array) {
+			value.a = std::move(a_array);
+			varType = value.a->elementType;
+			varType.SetArray(true);
+		} else {
+			assert(false);
+		}
+
+		assert(is<Array>());
 		return *this;
 	}
 
@@ -86,6 +98,7 @@ namespace RE::BSScript
 
 		varType = RawType::kNone;
 		value.v = nullptr;
+		assert(is<std::nullptr_t>());
 	}
 
 	// NOLINTNEXTLINE(misc-no-recursion)
