@@ -21,13 +21,15 @@ namespace RE
 
 			BSFixedString() noexcept = default;
 
-			BSFixedString(const BSFixedString& a_rhs) :
+			template <bool B>
+			BSFixedString(const BSFixedString<value_type, B>& a_rhs) :
 				_data(a_rhs._data)
 			{
 				try_acquire();
 			}
 
-			BSFixedString(BSFixedString&& a_rhs) noexcept :
+			template <bool B>
+			BSFixedString(BSFixedString<value_type, B>&& a_rhs) noexcept :
 				_data(a_rhs._data)
 			{
 				a_rhs._data = nullptr;
@@ -53,7 +55,8 @@ namespace RE
 
 			~BSFixedString() { try_release(); }
 
-			BSFixedString& operator=(const BSFixedString& a_rhs)
+			template <bool B>
+			BSFixedString& operator=(const BSFixedString<value_type, B>& a_rhs)
 			{
 				if (this != std::addressof(a_rhs)) {
 					try_release();
@@ -63,7 +66,8 @@ namespace RE
 				return *this;
 			}
 
-			BSFixedString& operator=(BSFixedString&& a_rhs)
+			template <bool B>
+			BSFixedString& operator=(BSFixedString<value_type, B>&& a_rhs)
 			{
 				if (this != std::addressof(a_rhs)) {
 					_data = a_rhs._data;

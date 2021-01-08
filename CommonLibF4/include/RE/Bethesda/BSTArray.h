@@ -468,6 +468,20 @@ namespace RE
 	template <class T>
 	using BSScrapArray = BSTArray<T, BSScrapArrayAllocator>;
 
+	namespace BSScript
+	{
+		template <class>
+		struct script_traits;
+
+		template <class T, class Allocator>
+		struct script_traits<
+			BSTArray<T, Allocator>>
+			final
+		{
+			using is_array = std::true_type;
+		};
+	}
+
 	template <class T>
 	class BSStaticArray
 	{

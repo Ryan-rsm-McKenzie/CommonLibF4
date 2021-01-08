@@ -191,6 +191,9 @@ namespace RE::BSScript
 		};
 		// clang-format on
 
+		template <class From, class To>
+		concept decays_to = std::same_as<std::decay_t<From>, To>;
+
 		template <class T>
 		concept static_tag = std::same_as<T, std::monostate>;
 
@@ -272,7 +275,7 @@ namespace RE::BSScript
 		{
 			// clang-format off
 			static_cast<bool>(a_nullable);
-			{ *static_cast<T&&>(a_nullable) } -> std::convertible_to<typename T::value_type>;
+			{ *static_cast<T&&>(a_nullable) } -> decays_to<typename T::value_type>;
 			// clang-format on
 		};
 
@@ -504,6 +507,11 @@ namespace RE::BSScript
 	{
 		using size_type = typename detail::decay_t<T>::size_type;
 		using value_type = detail::decay_t<typename std::decay_t<T>::value_type>;
+		using reference_type =
+			std::conditional_t<
+				std::is_lvalue_reference_v<T>,
+				typename std::decay_t<T>::value_type&,
+				typename std::decay_t<T>::value_type&&>;
 
 		const auto success = [&]() {
 			const auto game = GameVM::GetSingleton();
@@ -520,7 +528,7 @@ namespace RE::BSScript
 
 			size_type i = 0;
 			for (auto&& elem : std::forward<T>(a_val)) {
-				PackVariable(out->elements[i++], std::forward<decltype(elem)>(elem));
+				PackVariable(out->elements[i++], static_cast<reference_type>(elem));
 			}
 
 			a_var = std::move(out);
@@ -597,7 +605,12 @@ namespace RE::BSScript
 	template <detail::string T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
-		return T(static_cast<std::string_view>(get<BSFixedString>(a_var)));
+		if constexpr (std::same_as<T, BSFixedString> ||
+					  std::same_as<T, BSFixedStringCS>) {
+			return get<BSFixedString>(a_var);
+		} else {
+			return T(static_cast<std::string_view>(get<BSFixedString>(a_var)));
+		}
 	}
 
 	template <detail::signed_integral T>
@@ -690,6 +703,7 @@ namespace RE::BSScript
 			//	* `bool`
 			//	* An array type which is one of:
 			//		* std::vector
+			//		* RE::BSTArray
 			//		* A custom type which implements:
 			//			* A specialization of `RE::BSScript::script_traits` which provides a typedef `is_array` as `std::true_type`
 			// 			* A default constructor
