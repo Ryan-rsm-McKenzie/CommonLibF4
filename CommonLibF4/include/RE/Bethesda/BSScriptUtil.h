@@ -644,7 +644,7 @@ namespace RE::BSScript
 
 		T out;
 		const auto in = get<Array>(a_var);
-		for (const auto& var : in) {
+		for (const auto& var : in->elements) {
 			out.push_back(UnpackVariable<value_type>(var));
 		}
 
