@@ -403,7 +403,6 @@ namespace RE
 	class BGSPreviewTransform;
 	class BGSSaveFormBuffer;
 	class BGSSceneAction;
-	class BGSScenePhase;
 	class BGSSoundDescriptor;
 	class BSGeometry;
 	class BSMultiBoundNode;
@@ -2191,6 +2190,19 @@ namespace RE
 		std::uint32_t packedData;       // 38
 	};
 	static_assert(sizeof(BGSRelationship) == 0x40);
+
+	struct BGSScenePhase
+	{
+	public:
+		// members
+		TESCondition startConditions;       // 00
+		TESCondition completionConditions;  // 08
+		std::uint16_t phaseFlags;           // 10
+		bool active;                        // 12
+		bool scriptEndRun;                  // 13
+		bool runEnd;                        // 14
+	};
+	static_assert(sizeof(BGSScenePhase) == 0x18);
 
 	class __declspec(novtable) BGSScene :
 		public TESForm,          // 00
