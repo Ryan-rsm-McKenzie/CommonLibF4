@@ -4,7 +4,7 @@
 
 namespace RE
 {
-	stl::span<BGSMod::ObjectIndexData> BGSObjectInstanceExtra::GetIndexData() const noexcept
+	std::span<BGSMod::ObjectIndexData> BGSObjectInstanceExtra::GetIndexData() const noexcept
 	{
 		return values->GetBuffer<BGSMod::ObjectIndexData>(0);
 	}

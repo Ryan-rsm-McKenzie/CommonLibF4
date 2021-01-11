@@ -281,7 +281,7 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BGSObjectInstanceExtra };
 		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kObjectInstance };
 
-		[[nodiscard]] stl::span<BGSMod::ObjectIndexData> GetIndexData() const noexcept;
+		[[nodiscard]] std::span<BGSMod::ObjectIndexData> GetIndexData() const noexcept;
 
 		// members
 		const BSTDataBuffer<1>* values;  // 18
@@ -366,7 +366,7 @@ namespace RE
 
 		void CreateFlags() { _flags = calloc<std::uint8_t>(N); }
 
-		[[nodiscard]] stl::span<std::uint8_t> GetFlags() const noexcept
+		[[nodiscard]] std::span<std::uint8_t> GetFlags() const noexcept
 		{
 			if (_flags) {
 				return { _flags, N };
@@ -375,13 +375,13 @@ namespace RE
 			}
 		}
 
-		[[nodiscard]] stl::span<std::uint8_t, N> GetOrCreateFlags()
+		[[nodiscard]] std::span<std::uint8_t, N> GetOrCreateFlags()
 		{
 			if (!_flags) {
 				CreateFlags();
 			}
 
-			return stl::span{ reinterpret_cast<std::uint8_t(&)[N]>(*_flags) };
+			return std::span{ reinterpret_cast<std::uint8_t(&)[N]>(*_flags) };
 		}
 
 		// members

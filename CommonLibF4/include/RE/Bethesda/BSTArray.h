@@ -440,7 +440,7 @@ namespace RE
 				erase(begin() + a_count, end());
 			} else if (a_count > size()) {
 				reserve_auto(a_count);
-				stl::span<value_type> range{ data() + _size, a_count - _size };
+				std::span<value_type> range{ data() + _size, a_count - _size };
 				if (a_value) {
 					std::for_each(
 						range.begin(),
@@ -628,7 +628,7 @@ namespace RE
 		}
 
 		template <class T>
-		[[nodiscard]] stl::span<T> GetBuffer(std::uint8_t a_id) const noexcept
+		[[nodiscard]] std::span<T> GetBuffer(std::uint8_t a_id) const noexcept
 		{
 			const auto [block, offset] = GetBlock(a_id);
 			if (block) {

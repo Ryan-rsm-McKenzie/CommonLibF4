@@ -66,8 +66,6 @@ namespace F4SE
 
 	namespace stl
 	{
-		using std::span;
-
 		template <class CharT>
 		using basic_zstring = std::basic_string_view<CharT>;
 

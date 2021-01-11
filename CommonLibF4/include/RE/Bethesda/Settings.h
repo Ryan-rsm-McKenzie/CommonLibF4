@@ -79,18 +79,18 @@ namespace RE
 
 		[[nodiscard]] std::string_view GetKey() const noexcept { return _key ? _key : ""sv; }
 
-		[[nodiscard]] stl::span<const std::uint8_t, 3> GetRGB() const noexcept
+		[[nodiscard]] std::span<const std::uint8_t, 3> GetRGB() const noexcept
 		{
 			assert(GetType() == SETTING_TYPE::kRGB);
-			return stl::span<const std::uint8_t, 3>{
+			return std::span<const std::uint8_t, 3>{
 				reinterpret_cast<const std::uint8_t(&)[3]>(*std::addressof(_value.r))
 			};
 		}
 
-		[[nodiscard]] stl::span<const std::uint8_t, 4> GetRGBA() const noexcept
+		[[nodiscard]] std::span<const std::uint8_t, 4> GetRGBA() const noexcept
 		{
 			assert(GetType() == SETTING_TYPE::kRGBA);
-			return stl::span<const std::uint8_t, 4>{
+			return std::span<const std::uint8_t, 4>{
 				reinterpret_cast<const std::uint8_t(&)[4]>(*std::addressof(_value.a))
 			};
 		}

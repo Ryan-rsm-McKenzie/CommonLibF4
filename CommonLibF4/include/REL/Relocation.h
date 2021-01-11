@@ -217,7 +217,7 @@ namespace REL
 	}
 
 	template <class T>
-	void safe_write(std::uintptr_t a_dst, stl::span<T> a_data)
+	void safe_write(std::uintptr_t a_dst, std::span<T> a_data)
 	{
 		safe_write(a_dst, a_data.data(), a_data.size_bytes());
 	}
@@ -586,7 +586,7 @@ namespace REL
 	protected:
 		friend class Offset2ID;
 
-		[[nodiscard]] stl::span<const mapping_t> get_id2offset() const noexcept { return _id2offset; }
+		[[nodiscard]] std::span<const mapping_t> get_id2offset() const noexcept { return _id2offset; }
 
 	private:
 		IDDatabase() { load(); }
@@ -600,14 +600,14 @@ namespace REL
 			path += ".bin"sv;
 
 			_mmap.open(path);
-			_id2offset = stl::span{
+			_id2offset = std::span{
 				reinterpret_cast<const mapping_t*>(_mmap.data() + sizeof(std::uint64_t)),
 				*reinterpret_cast<const std::uint64_t*>(_mmap.data())
 			};
 		}
 
 		boost::iostreams::mapped_file_source _mmap;
-		stl::span<const mapping_t> _id2offset;
+		std::span<const mapping_t> _id2offset;
 	};
 
 	class Offset
