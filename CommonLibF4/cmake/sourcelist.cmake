@@ -7,6 +7,7 @@ set(sources ${sources}
 	include/F4SE/Impl/WinAPI.cpp
 	include/RE/Fallout.cpp
 	include/RE/Bethesda/Atomic.cpp
+	include/RE/Bethesda/BSExtraData.cpp
 	include/RE/Bethesda/BSFixedString.cpp
 	include/RE/Bethesda/BSLock.cpp
 	include/RE/Bethesda/BSPointerHandle.cpp

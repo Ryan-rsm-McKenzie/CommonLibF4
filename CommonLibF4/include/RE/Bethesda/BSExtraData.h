@@ -8,12 +8,14 @@
 
 namespace RE
 {
+	class BGSObjectInstanceExtra;
+	class BSExtraData;
 	class ExtraLocation;
 	class ExtraTextDisplayData;
 
 	enum EXTRA_DATA_TYPE : std::uint32_t
 	{
-		kNone,
+		kNone,  // BSExtraData
 		kHavok,
 		kCell3D,
 		kWaterType,
@@ -66,7 +68,7 @@ namespace RE
 		kMagicTarget,
 		kMasterFileCell,
 		kPlayerCrimeList,
-		kObjectInstance,
+		kObjectInstance,  // BGSObjectInstanceExtra
 		kEnableStateParent,
 		kEnableStateChildren,
 		kItemDropper,
@@ -235,6 +237,12 @@ namespace RE
 	class BGSMessage;
 	class TESBoundObject;
 	class TESForm;
+	class TESQuest;
+
+	namespace BGSMod
+	{
+		struct ObjectIndexData;
+	}
 
 	class __declspec(novtable) BSExtraData
 	{
@@ -273,8 +281,10 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BGSObjectInstanceExtra };
 		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kObjectInstance };
 
+		[[nodiscard]] stl::span<BGSMod::ObjectIndexData> GetIndexData() const noexcept;
+
 		// members
-		const BSTDataBuffer<1>* values;  // 18 - BGSMod::ObjectIndexData
+		const BSTDataBuffer<1>* values;  // 18
 		std::uint16_t itemIndex;         // 20
 	};
 	static_assert(sizeof(BGSObjectInstanceExtra) == 0x28);

@@ -615,20 +615,16 @@ namespace RE
 			}
 
 			std::uint32_t offset = 0;
-			auto block = reinterpret_cast<const Block*>(buffer + size);
-			for (std::uint32_t i = 0;
-				 i < N &&
-				 block->id != a_id &&
-				 block->id != 0xFFu;
-				 ++i, ++block) {
-				offset += block->size;
+			const auto blocks = reinterpret_cast<const Block*>(buffer + size);
+			for (std::uint32_t i = 0; i < N && blocks[i].id != 0xFFu; ++i) {
+				if (blocks[i].id == a_id) {
+					return { blocks + i, offset };
+				} else {
+					offset += blocks[i].size;
+				}
 			}
 
-			if (block->id == a_id) {
-				return { block, offset };
-			} else {
-				return { nullptr, 0 };
-			}
+			return { nullptr, 0 };
 		}
 
 		template <class T>
