@@ -189,6 +189,7 @@ namespace RE
 			virtual ~Stack();  // 00
 
 			[[nodiscard]] std::uint32_t GetCount() const noexcept { return count; }
+			[[nodiscard]] bool IsEquipped() const noexcept { return flags.any(Flag::kSlotMask); }
 
 			// members
 			BSTSmartPointer<Stack> nextStack;             // 10

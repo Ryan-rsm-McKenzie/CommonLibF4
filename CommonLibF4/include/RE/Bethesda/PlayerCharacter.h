@@ -34,7 +34,6 @@ namespace RE
 	class DialoguePackage;
 	class DoorTeleportData;
 	class EffectSetting;
-	class EquippedItemData;
 	class hknpBSMouseSpringAction;
 	class ImageSpaceModifierInstanceDOF;
 	class ImageSpaceModifierInstanceForm;
@@ -129,14 +128,6 @@ namespace RE
 	};
 	static_assert(sizeof(SayOnceTimeStampStruct) == 0x8);
 
-	struct SubgraphHandle
-	{
-	public:
-		// members
-		std::uint64_t handle;  // 0
-	};
-	static_assert(sizeof(SubgraphHandle) == 0x8);
-
 	struct PLAYER_TARGET_LOC
 	{
 	public:
@@ -175,17 +166,6 @@ namespace RE
 	public:
 	};
 	static_assert(sizeof(PlayerAutoAimActorEvent) == 0x8);
-
-	class EquippedItem
-	{
-	public:
-		// members
-		BGSObjectInstance item;            // 00
-		const BGSEquipSlot* equipSlot;     // 10
-		BGSEquipIndex equipIndex;          // 18
-		NiPointer<EquippedItemData> data;  // 20
-	};
-	static_assert(sizeof(EquippedItem) == 0x28);
 
 	struct XPChangeData
 	{

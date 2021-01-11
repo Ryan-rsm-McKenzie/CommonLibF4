@@ -265,6 +265,20 @@ namespace RE
 	};
 	static_assert(sizeof(BSExtraData) == 0x18);
 
+	class __declspec(novtable) BGSObjectInstanceExtra :
+		public BSExtraData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::BGSObjectInstanceExtra };
+		static constexpr auto VTABLE{ VTABLE::BGSObjectInstanceExtra };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kObjectInstance };
+
+		// members
+		const BSTDataBuffer<1>* values;  // 18 - BGSMod::ObjectIndexData
+		std::uint16_t itemIndex;         // 20
+	};
+	static_assert(sizeof(BGSObjectInstanceExtra) == 0x28);
+
 	class __declspec(novtable) ExtraLocation :
 		public BSExtraData  // 00
 	{
@@ -367,21 +381,18 @@ namespace RE
 	};
 	static_assert(sizeof(BaseExtraList) == 0x18);
 
+	namespace detail
+	{
+		template <class T>
+		concept ExtraDataListConstraint =
+			std::derived_from<T, BSExtraData> &&
+			!std::is_pointer_v<T> &&
+			!std::is_reference_v<T>;
+	}
+
 	class ExtraDataList :
 		public BSIntrusiveRefCounted  // 00
 	{
-	private:
-		template <class T>
-		using constraints =
-			std::conjunction<
-				std::is_base_of<
-					BSExtraData,
-					T>,
-				std::negation<
-					std::disjunction<
-						std::is_pointer<T>,
-						std::is_reference<T>>>>;
-
 	public:
 		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
@@ -389,11 +400,7 @@ namespace RE
 			return _extraData.GetByType(a_type);
 		}
 
-		template <
-			class T,
-			std::enable_if_t<
-				constraints<T>::value,
-				int> = 0>
+		template <detail::ExtraDataListConstraint T>
 		[[nodiscard]] T* GetByType() const noexcept
 		{
 			return static_cast<T*>(GetByType(T::TYPE));
@@ -405,11 +412,7 @@ namespace RE
 			return _extraData.HasType(a_type);
 		}
 
-		template <
-			class T,
-			std::enable_if_t<
-				constraints<T>::value,
-				int> = 0>
+		template <detail::ExtraDataListConstraint T>
 		[[nodiscard]] bool HasType() const noexcept
 		{
 			return HasType(T::TYPE);
