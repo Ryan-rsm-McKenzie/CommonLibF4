@@ -657,6 +657,8 @@ namespace RE
 			return func(this, a_actor);
 		}
 
+		[[nodiscard]] TESNPC* GetNPC() const noexcept;
+
 		void Reset3D(bool a_reloadAll, std::uint32_t a_additionalFlags, bool a_queueReset, std::uint32_t a_excludeFlags)
 		{
 			using func_t = decltype(&Actor::Reset3D);

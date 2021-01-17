@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RE/Bethesda/BGSMod.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSLock.h"
 #include "RE/Bethesda/BSStringT.h"

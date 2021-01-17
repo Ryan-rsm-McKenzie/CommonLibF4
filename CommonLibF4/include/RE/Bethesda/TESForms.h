@@ -710,6 +710,7 @@ namespace RE
 		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
 		[[nodiscard]] bool IsCreated() const noexcept { return (formID >> (8 * 3)) == 0xFF; }
 		[[nodiscard]] bool IsInitialized() const noexcept { return (formFlags & (1 << 3)) != 0; }
+		[[nodiscard]] bool IsPlayer() const noexcept { return GetFormID() == 0x00000007; }
 		[[nodiscard]] bool IsPlayerRef() const noexcept { return GetFormID() == 0x00000014; }
 
 		template <
@@ -1242,6 +1243,12 @@ namespace RE
 			kAttached
 		};
 
+		enum class Flag
+		{
+			kInterior = 1u << 0,
+			kHasWater = 1u << 1
+		};
+
 		[[nodiscard]] BGSEncounterZone* GetEncounterZone() const
 		{
 			using func_t = decltype(&TESObjectCELL::GetEncounterZone);
@@ -1249,10 +1256,15 @@ namespace RE
 			return func(this);
 		}
 
+		[[nodiscard]] TESWaterForm* GetWaterType() const noexcept;
+		[[nodiscard]] bool HasWater() const noexcept { return cellFlags.all(Flag::kHasWater); }
+		[[nodiscard]] bool IsExterior() const noexcept { return !IsInterior(); }
+		[[nodiscard]] bool IsInterior() const noexcept { return cellFlags.all(Flag::kInterior); }
+
 		// members
 		BSSpinLock grassCreateLock;                           // 30
 		BSSpinLock grassTaskLock;                             // 38
-		std::uint16_t cellFlags;                              // 40
+		stl::enumeration<Flag, std::uint16_t> cellFlags;      // 40
 		std::uint16_t cellGameFlags;                          // 42
 		stl::enumeration<CELL_STATE, std::int8_t> cellState;  // 44
 		bool autoWaterLoaded;                                 // 45
@@ -1889,13 +1901,21 @@ namespace RE
 	struct ENCOUNTER_ZONE_DATA
 	{
 	public:
+		enum class FLAG
+		{
+			kNeverReset = 1u << 0,
+			kMatchPCBelowMin = 1u << 1,
+			kDisableCombatBoundary = 1u << 2,
+			kWorkshopZone = 1u << 3
+		};
+
 		// members
-		TESForm* zoneOwner;     // 00
-		BGSLocation* location;  // 08
-		std::int8_t ownerRank;  // 10
-		std::int8_t minLevel;   // 11
-		std::int8_t flags;      // 12
-		std::int8_t maxLevel;   // 13
+		TESForm* zoneOwner;                          // 00
+		BGSLocation* location;                       // 08
+		std::int8_t ownerRank;                       // 10
+		std::int8_t minLevel;                        // 11
+		stl::enumeration<FLAG, std::uint8_t> flags;  // 12
+		std::int8_t maxLevel;                        // 13
 	};
 	static_assert(sizeof(ENCOUNTER_ZONE_DATA) == 0x18);
 
@@ -1907,19 +1927,13 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BGSEncounterZone };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kECZN };
 
-		struct ChangeFlags
-		{
-			enum : std::uint32_t
-			{
-				kFlags = 1 << 1,
-				kGameData = std::uint32_t{ 1 } << 31,
-			};
-		};
+		[[nodiscard]] bool NeverResets() const noexcept { return data.flags.all(ENCOUNTER_ZONE_DATA::FLAG::kNeverReset); }
+		[[nodiscard]] bool IsWorkshop() const noexcept { return data.flags.all(ENCOUNTER_ZONE_DATA::FLAG::kWorkshopZone); }
 
 		void SetDetachTime(std::uint32_t a_time)
 		{
 			gameData.detachTime = a_time;
-			AddChange(ChangeFlags::kGameData);
+			AddChange(CHANGE_TYPE::kEncounterZoneGameData);
 		}
 
 		// members

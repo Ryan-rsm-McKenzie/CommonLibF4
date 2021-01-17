@@ -89,8 +89,9 @@ namespace RE
 			iterator_base(const iterator_base&) noexcept = default;
 			iterator_base(iterator_base&&) noexcept = default;
 
-			template <class V>  // NOLINTNEXTLINE(google-explicit-constructor)
-			iterator_base(iterator_base<V> a_rhs) noexcept :
+			template <class V>
+			iterator_base(iterator_base<V> a_rhs) noexcept  //
+				requires(std::convertible_to<V&, const V&>) :
 				_cur(a_rhs._cur),
 				_end(a_rhs._end)
 			{}
@@ -101,16 +102,16 @@ namespace RE
 			iterator_base& operator=(iterator_base&&) noexcept = default;
 
 			template <class V>
-			iterator_base& operator=(iterator_base<V> a_rhs)
+			iterator_base& operator=(iterator_base<V> a_rhs)  //
+				requires(std::convertible_to<V&, const V&>)
 			{
 				_cur = a_rhs._cur;
 				_end = a_rhs._end;
 				return *this;
 			}
 
-		protected:
+		protected :
 			friend class boost::iterator_core_access;
-
 			template <class, std::uint32_t, template <class, std::uint32_t> class, class, class>
 			friend struct BSTScatterTable;
 
@@ -227,31 +228,20 @@ namespace RE
 			return entry ? make_iterator(entry) : end();
 		}
 
-		// TODO: replace with <bit> std::bit_ceil
+		[[nodiscard]] bool contains(const key_type& a_key) const { return find(a_key) != end(); }
+
 		void reserve(size_type a_count)
 		{
 			if (a_count <= _capacity) {
 				return;
 			}
 
-			constexpr auto top = static_cast<std::uint32_t>(1) << 31;
-			std::uint32_t leftShifts = 0;
-			while ((a_count & top) == 0) {
-				a_count <<= 1;
-				++leftShifts;
+			const auto newCount = std::bit_ceil<std::uint64_t>(a_count);
+			if (newCount > 1u << 31) {
+				stl::report_and_fail("reserve failed"sv);
 			}
 
-			const auto bitPos = 31 - leftShifts;
-			auto newCount = static_cast<std::uint32_t>(1) << bitPos;
-			if (newCount < a_count) {
-				if (bitPos == 31) {
-					stl::report_and_fail("reserve failed"sv);
-				} else {
-					newCount <<= 1;
-				}
-			}
-
-			grow(newCount);
+			grow(static_cast<std::uint32_t>(newCount));
 		}
 
 		[[nodiscard]] hasher hash_function() const { return {}; }

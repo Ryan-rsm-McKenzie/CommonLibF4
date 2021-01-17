@@ -700,10 +700,30 @@ namespace RE
 			virtual void RegisterForStatsEvent(BSTEventSink<StatsEvent>* a_sink) = 0;                                                                                                                                                                                                                                   // 3A
 			virtual void UnregisterForStatsEvent(BSTEventSink<StatsEvent>* a_sink) = 0;                                                                                                                                                                                                                                 // 3B
 			virtual void PostCachedErrorToLogger(const ICachedErrorMessage& a_errorFunctor, ErrorLogger::Severity a_severity) const = 0;                                                                                                                                                                                // 3D
-			virtual void PostCachedErrorToLogger(const ICachedErrorMessage& a_errorFunctor, std::uint32_t aStackID, ErrorLogger::Severity a_severity) const = 0;                                                                                                                                                        // 3C
+			virtual void PostCachedErrorToLogger(const ICachedErrorMessage& a_errorFunctor, std::uint32_t a_stackID, ErrorLogger::Severity a_severity) const = 0;                                                                                                                                                       // 3C
 
 			template <class F>
 			void BindNativeMethod(stl::zstring a_object, stl::zstring a_function, F a_func, std::optional<bool> a_taskletCallable = std::nullopt);
+
+			void PostError(std::string_view a_msg, std::uint32_t a_stackID, ErrorLogger::Severity a_severity)
+			{
+				class ErrorImpl :
+					public ICachedErrorMessage
+				{
+				public:
+					ErrorImpl(std::string_view a_message) noexcept :
+						_message(a_message)
+					{}
+
+					void GetErrorMsg(BSFixedString& a_message) const override { a_message = _message; }
+
+				private:
+					std::string_view _message;
+				};
+
+				const ErrorImpl e{ a_msg };
+				PostCachedErrorToLogger(e, a_stackID, a_severity);
+			}
 		};
 		static_assert(sizeof(IVirtualMachine) == 0x10);
 

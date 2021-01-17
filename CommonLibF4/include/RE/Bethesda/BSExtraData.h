@@ -10,6 +10,7 @@ namespace RE
 {
 	class BGSObjectInstanceExtra;
 	class BSExtraData;
+	class ExtraCellWaterType;
 	class ExtraLocation;
 	class ExtraTextDisplayData;
 
@@ -18,7 +19,7 @@ namespace RE
 		kNone,  // BSExtraData
 		kHavok,
 		kCell3D,
-		kWaterType,
+		kWaterType,  // ExtraCellWaterType
 		kRegionList,
 		kSeenData,
 		kEditorID,
@@ -238,6 +239,7 @@ namespace RE
 	class TESBoundObject;
 	class TESForm;
 	class TESQuest;
+	class TESWaterForm;
 
 	namespace BGSMod
 	{
@@ -272,6 +274,19 @@ namespace RE
 		stl::enumeration<EXTRA_DATA_TYPE, std::uint8_t> type;  // 12
 	};
 	static_assert(sizeof(BSExtraData) == 0x18);
+
+	class __declspec(novtable) ExtraCellWaterType :
+		public BSExtraData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraCellWaterType };
+		static constexpr auto VTABLE{ VTABLE::ExtraCellWaterType };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kWaterType };
+
+		// members
+		TESWaterForm* water;  // 18
+	};
+	static_assert(sizeof(ExtraCellWaterType) == 0x20);
 
 	class __declspec(novtable) BGSObjectInstanceExtra :
 		public BSExtraData  // 00

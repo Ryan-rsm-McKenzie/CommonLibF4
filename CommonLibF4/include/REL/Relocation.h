@@ -264,14 +264,14 @@ namespace REL
 		[[nodiscard]] constexpr reference operator[](std::size_t a_idx) noexcept { return _impl[a_idx]; }
 		[[nodiscard]] constexpr const_reference operator[](std::size_t a_idx) const noexcept { return _impl[a_idx]; }
 
-		[[nodiscard]] int constexpr compare(const Version& a_rhs) const noexcept
+		[[nodiscard]] std::strong_ordering constexpr compare(const Version& a_rhs) const noexcept
 		{
 			for (std::size_t i = 0; i < _impl.size(); ++i) {
 				if ((*this)[i] != a_rhs[i]) {
-					return (*this)[i] < a_rhs[i] ? -1 : 1;
+					return (*this)[i] < a_rhs[i] ? std::strong_ordering::less : std::strong_ordering::greater;
 				}
 			}
-			return 0;
+			return std::strong_ordering::equal;
 		}
 
 		[[nodiscard]] std::string string() const
@@ -300,12 +300,7 @@ namespace REL
 		std::array<value_type, 4> _impl{ 0, 0, 0, 0 };
 	};
 
-	[[nodiscard]] constexpr bool operator==(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) == 0; }
-	[[nodiscard]] constexpr bool operator!=(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) != 0; }
-	[[nodiscard]] constexpr bool operator<(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) < 0; }
-	[[nodiscard]] constexpr bool operator<=(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) <= 0; }
-	[[nodiscard]] constexpr bool operator>(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) > 0; }
-	[[nodiscard]] constexpr bool operator>=(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs) >= 0; }
+	[[nodiscard]] constexpr std::strong_ordering operator<=>(const Version& a_lhs, const Version& a_rhs) noexcept { return a_lhs.compare(a_rhs); }
 
 	[[nodiscard]] inline std::optional<Version> get_file_version(stl::zwstring a_filename)
 	{
@@ -708,37 +703,24 @@ namespace REL
 			return *this;
 		}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_pointer_v<U>,
-				int> = 0>
-		[[nodiscard]] decltype(auto) operator*() const noexcept
+		template <class U = value_type>
+		[[nodiscard]] decltype(auto) operator*() const noexcept  //
+			requires(std::is_pointer_v<U>)
 		{
 			return *get();
 		}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::conjunction_v<
-					std::is_pointer<U>,
-					std::disjunction<
-						std::is_class<std::remove_pointer_t<U>>,
-						std::is_enum<std::remove_pointer_t<U>>>>,
-				int> = 0>
-		[[nodiscard]] auto operator->() const noexcept
+		template <class U = value_type>
+		[[nodiscard]] auto operator->() const noexcept  //
+			requires(std::is_pointer_v<U>)
 		{
 			return get();
 		}
 
-		template <
-			class... Args,
-			std::enable_if_t<
-				std::is_invocable_v<const value_type&, Args&&...>,
-				int> = 0>
-		std::invoke_result_t<const value_type&, Args&&...> operator()(Args&&... a_args) const noexcept(
-			std::is_nothrow_invocable_v<const value_type&, Args&&...>)
+		template <class... Args>
+		std::invoke_result_t<const value_type&, Args...> operator()(Args&&... a_args) const  //
+			noexcept(std::is_nothrow_invocable_v<const value_type&, Args...>)                //
+			requires(std::invocable<const value_type&, Args...>)
 		{
 			return REL::invoke(get(), std::forward<Args>(a_args)...);
 		}
@@ -746,20 +728,16 @@ namespace REL
 		[[nodiscard]] constexpr std::uintptr_t address() const noexcept { return _impl; }
 		[[nodiscard]] std::size_t offset() const { return _impl - base(); }
 
-		[[nodiscard]] value_type get() const noexcept(std::is_nothrow_copy_constructible_v<value_type>)
+		[[nodiscard]] value_type get() const  //
+			noexcept(std::is_nothrow_copy_constructible_v<value_type>)
 		{
 			assert(_impl != 0);
 			return stl::unrestricted_cast<value_type>(_impl);
 		}
 
-		template <
-			class U = value_type,
-			std::enable_if_t<
-				std::is_same_v<
-					U,
-					std::uintptr_t>,
-				int> = 0>
-		std::uintptr_t write_vfunc(std::size_t a_idx, std::uintptr_t a_newFunc)
+		template <class U = value_type>
+		std::uintptr_t write_vfunc(std::size_t a_idx, std::uintptr_t a_newFunc)  //
+			requires(std::same_as<U, std::uintptr_t>)
 		{
 			const auto addr = address() + (sizeof(void*) * a_idx);
 			const auto result = *reinterpret_cast<std::uintptr_t*>(addr);
@@ -767,21 +745,17 @@ namespace REL
 			return result;
 		}
 
-		template <
-			class F,
-			class U = value_type,
-			std::enable_if_t<
-				std::is_same_v<
-					U,
-					std::uintptr_t>,
-				int> = 0>
-		std::uintptr_t write_vfunc(std::size_t a_idx, F a_newFunc)
+		template <class F>
+		std::uintptr_t write_vfunc(std::size_t a_idx, F a_newFunc)  //
+			requires(std::same_as<value_type, std::uintptr_t>)
 		{
 			return write_vfunc(a_idx, stl::unrestricted_cast<std::uintptr_t>(a_newFunc));
 		}
 
-	private:
+	private :
+		// clang-format off
 		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
+		// clang-format on
 
 		std::uintptr_t _impl{ 0 };
 	};

@@ -92,14 +92,12 @@ namespace F4SE
 			PersistentObjectStorage&(F4SEAPI* GetPersistentObjectStorage)(void);
 		};
 
-#if 0
 		struct F4SETrampolineInterface
 		{
 			std::uint32_t interfaceVersion;
 			void*(F4SEAPI* AllocateFromBranchPool)(std::uint32_t, std::size_t);
 			void*(F4SEAPI* AllocateFromLocalPool)(std::uint32_t, std::size_t);
 		};
-#endif
 	}
 
 	class QueryInterface
@@ -143,7 +141,7 @@ namespace F4SE
 			kSerialization,
 			kTask,
 			kObject,
-			//kTrampoline
+			kTrampoline
 		};
 
 		[[nodiscard]] void* QueryInterface(std::uint32_t a_id) const { return GetProxy().QueryInterface(a_id); }
@@ -364,7 +362,6 @@ namespace F4SE
 		[[nodiscard]] PersistentObjectStorage& GetPersistentObjectStorage() const { return GetProxy().GetPersistentObjectStorage(); }
 	};
 
-#if 0
 	class TrampolineInterface
 	{
 	private:
@@ -383,7 +380,6 @@ namespace F4SE
 		[[nodiscard]] void* AllocateFromBranchPool(std::size_t a_size) const;
 		[[nodiscard]] void* AllocateFromLocalPool(std::size_t a_size) const;
 	};
-#endif
 
 	struct PluginInfo
 	{

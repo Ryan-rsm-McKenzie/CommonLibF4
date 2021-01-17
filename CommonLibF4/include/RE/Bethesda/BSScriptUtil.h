@@ -15,6 +15,16 @@ namespace RE::BSScript
 		struct wrapper_accessor;
 
 		template <class T>
+		using decay_t =
+			std::conditional_t<
+				std::is_pointer_v<T>,
+				std::remove_cv_t<std::remove_pointer_t<T>>,
+				std::decay_t<T>>;
+
+		template <class T>
+		[[nodiscard]] std::optional<TypeInfo> GetTypeInfo();
+
+		template <class T>
 		void PackVariable(Variable& a_var, T&& a_val);
 
 		template <class T>
@@ -84,7 +94,7 @@ namespace RE::BSScript
 		[[nodiscard]] bool is_none() const noexcept { return _proxy == nullptr; }
 
 		template <class T>
-		std::optional<T> find(std::string_view a_name) const
+		std::optional<T> find(std::string_view a_name, bool a_quiet = false) const
 		{
 			if (_proxy && _proxy->type) {
 				const auto& mappings = _proxy->type->varNameIndexMap;
@@ -93,6 +103,13 @@ namespace RE::BSScript
 					const auto& var = _proxy->variables[it->second];
 					return detail::UnpackVariable<T>(var);
 				}
+			}
+
+			if (!a_quiet) {
+				F4SE::log::warn(
+					FMT_STRING("failed to find var \"{}\" on structure \"{}\""),
+					a_name,
+					name);
 			}
 
 			return std::nullopt;
@@ -175,13 +192,6 @@ namespace RE::BSScript
 
 		template <class T>
 		inline constexpr bool is_structure_wrapper_v = is_structure_wrapper<T>::value;
-
-		template <class T>
-		using decay_t =
-			std::conditional_t<
-				std::is_pointer_v<T>,
-				std::remove_cv_t<std::remove_pointer_t<T>>,
-				std::decay_t<T>>;
 
 		// clang-format off
 		template <class F, class R, class... Args>
@@ -269,8 +279,7 @@ namespace RE::BSScript
 				typename script_traits<std::remove_cv_t<T>>::is_nullable,
 				std::true_type> &&
 			std::is_default_constructible_v<T> &&
-			(array<typename T::value_type> ||
-				wrapper<typename T::value_type>)&&  //
+			(array<typename T::value_type> || wrapper<typename T::value_type>)&&  //
 			requires(T a_nullable)
 		{
 			// clang-format off
@@ -386,7 +395,7 @@ namespace RE::BSScript
 	{
 		using value_type = detail::decay_t<typename std::decay_t<T>::value_type>;
 
-		auto typeInfo = GetTypeInfo<value_type>();
+		auto typeInfo = detail::GetTypeInfo<value_type>();
 		if (typeInfo) {
 			typeInfo->SetArray(true);
 		}
@@ -419,7 +428,16 @@ namespace RE::BSScript
 	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		using value_type = typename std::decay_t<T>::value_type;
-		return GetTypeInfo<value_type>();
+		return detail::GetTypeInfo<value_type>();
+	}
+
+	namespace detail
+	{
+		template <class T>
+		__forceinline std::optional<TypeInfo> GetTypeInfo()
+		{
+			return BSScript::GetTypeInfo<T>();
+		}
 	}
 
 	template <detail::object T>
@@ -528,7 +546,7 @@ namespace RE::BSScript
 
 			size_type i = 0;
 			for (auto&& elem : std::forward<T>(a_val)) {
-				PackVariable(out->elements[i++], static_cast<reference_type>(elem));
+				detail::PackVariable(out->elements[i++], static_cast<reference_type>(elem));
 			}
 
 			a_var = std::move(out);
@@ -552,7 +570,7 @@ namespace RE::BSScript
 	void PackVariable(Variable& a_var, T&& a_val)
 	{
 		if (a_val) {
-			PackVariable(a_var, *std::forward<T>(a_val));
+			detail::PackVariable(a_var, *std::forward<T>(a_val));
 		} else {
 			a_var = nullptr;
 		}
@@ -640,12 +658,12 @@ namespace RE::BSScript
 	template <detail::array T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
-		using value_type = detail::decay_t<typename T::value_type>;
+		using value_type = typename T::value_type;
 
 		T out;
 		const auto in = get<Array>(a_var);
 		for (const auto& var : in->elements) {
-			out.push_back(UnpackVariable<value_type>(var));
+			out.push_back(detail::UnpackVariable<value_type>(var));
 		}
 
 		return out;
@@ -663,8 +681,8 @@ namespace RE::BSScript
 		if (a_var.is<std::nullptr_t>()) {
 			return T();
 		} else {
-			using value_type = typename std::decay_t<T>::value_type;
-			return T(UnpackVariable<value_type>(a_var));
+			using value_type = typename T::value_type;
+			return T(detail::UnpackVariable<value_type>(a_var));
 		}
 	}
 
@@ -673,7 +691,7 @@ namespace RE::BSScript
 		template <class T>
 		[[nodiscard]] __forceinline T UnpackVariable(const Variable& a_var)
 		{
-			return BSScript::UnpackVariable<T>(a_var);
+			return BSScript::UnpackVariable<decay_t<T>>(a_var);
 		}
 
 		template <class T>

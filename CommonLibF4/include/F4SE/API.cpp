@@ -23,6 +23,7 @@ namespace F4SE
 				return singleton;
 			}
 
+			REL::Version f4seVersion;
 			PluginHandle pluginHandle{ static_cast<PluginHandle>(-1) };
 			std::uint32_t releaseIndex{ 0 };
 
@@ -32,7 +33,7 @@ namespace F4SE
 			SerializationInterface* serializationInterface{ nullptr };
 			TaskInterface* taskInterface{ nullptr };
 			ObjectInterface* objectInterface{ nullptr };
-			//TrampolineInterface* trampolineInterface{ nullptr };
+			TrampolineInterface* trampolineInterface{ nullptr };
 
 		private:
 			APIStorage() noexcept = default;
@@ -62,6 +63,7 @@ namespace F4SE
 		auto& storage = detail::APIStorage::get();
 		const auto& intfc = *a_intfc;
 
+		storage.f4seVersion = intfc.F4SEVersion();
 		storage.pluginHandle = intfc.GetPluginHandle();
 		storage.releaseIndex = intfc.GetReleaseIndex();
 
@@ -71,7 +73,12 @@ namespace F4SE
 		storage.serializationInterface = detail::QueryInterface<SerializationInterface>(a_intfc, LoadInterface::kSerialization);
 		storage.taskInterface = detail::QueryInterface<TaskInterface>(a_intfc, LoadInterface::kTask);
 		storage.objectInterface = detail::QueryInterface<ObjectInterface>(a_intfc, LoadInterface::kObject);
-		//storage.trampolineInterface = detail::QueryInterface<TrampolineInterface>(a_intfc, LoadInterface::kTrampoline);
+		storage.trampolineInterface = detail::QueryInterface<TrampolineInterface>(a_intfc, LoadInterface::kTrampoline);
+	}
+
+	REL::Version GetF4SEVersion() noexcept
+	{
+		return detail::APIStorage::get().f4seVersion;
 	}
 
 	PluginHandle GetPluginHandle() noexcept
@@ -114,12 +121,10 @@ namespace F4SE
 		return detail::APIStorage::get().objectInterface;
 	}
 
-#if 0
 	const TrampolineInterface* GetTrampolineInterface() noexcept
 	{
 		return detail::APIStorage::get().trampolineInterface;
 	}
-#endif
 
 	Trampoline& GetTrampoline() noexcept
 	{
@@ -130,7 +135,6 @@ namespace F4SE
 	void AllocTrampoline(std::size_t a_size) noexcept
 	{
 		auto& trampoline = GetTrampoline();
-#if 0
 		const auto interface = GetTrampolineInterface();
 		const auto mem = interface ? interface->AllocateFromBranchPool(a_size) : nullptr;
 		if (mem) {
@@ -138,8 +142,5 @@ namespace F4SE
 		} else {
 			trampoline.create(a_size);
 		}
-#else
-		trampoline.create(a_size);
-#endif
 	}
 }

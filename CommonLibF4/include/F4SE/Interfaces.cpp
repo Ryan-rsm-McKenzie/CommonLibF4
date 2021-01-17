@@ -152,7 +152,6 @@ namespace F4SE
 		return success;
 	}
 
-#if 0
 	void* TrampolineInterface::AllocateFromBranchPool(std::size_t a_size) const
 	{
 		const auto mem =
@@ -176,5 +175,4 @@ namespace F4SE
 		}
 		return mem;
 	}
-#endif
 }

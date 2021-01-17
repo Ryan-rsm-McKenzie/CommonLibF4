@@ -70,6 +70,17 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::TESWorldSpace };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kWRLD };
 
+		enum class PARENT_USE_FLAG
+		{
+			kLand = 1u << 0,
+			kLOD = 1u << 1,
+			kMap = 1u << 2,
+			kWater = 1u << 3,
+			kClimate = 1u << 4,
+
+			kSkyCell = 1u << 6
+		};
+
 		struct ShortPoint
 		{
 		public:
@@ -91,13 +102,33 @@ namespace RE
 		};
 		static_assert(sizeof(OFFSET_DATA) == 0x28);
 
+		[[nodiscard]] TESWorldSpace* GetParentWorld(PARENT_USE_FLAG a_flags) const noexcept
+		{
+			return parentUseFlags.all(a_flags) ? parentWorld : nullptr;
+		}
+
+		[[nodiscard]] TESWaterForm* GetWaterType() const noexcept
+		{
+			auto root = this;
+			for (auto iter = root; iter; iter = iter->GetParentWorld(PARENT_USE_FLAG::kWater)) {
+				root = iter;
+			}
+
+			if (root->worldWater) {
+				return root->worldWater;
+			} else {
+				REL::Relocation<TESWaterForm**> defaultWater{ REL::ID(289864) };
+				return *defaultWater;
+			}
+		}
+
 		// members
 		BSTHashMap<std::int32_t, TESObjectCELL*> cellMap;                                      // 040
 		TESObjectCELL* persistentCell;                                                         // 070
 		BGSTerrainManager* terrainManager;                                                     // 078
 		TESClimate* climate;                                                                   // 080
 		std::int8_t flags;                                                                     // 088
-		std::uint16_t parentUseFlags;                                                          // 08A
+		stl::enumeration<PARENT_USE_FLAG, std::uint16_t> parentUseFlags;                       // 08A
 		std::int8_t worldFlags;                                                                // 08C
 		ShortPoint fixedCenter;                                                                // 08E
 		BSTHashMap<std::uint32_t, BSTArray<NiPointer<TESObjectREFR>>*> fixedPersistentRefMap;  // 098

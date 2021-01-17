@@ -15,6 +15,8 @@ namespace RE
 {
 	enum class CREATURE_SOUND;
 
+	class MenuOpenCloseEvent;
+
 	namespace BGSCharacterTint
 	{
 		class Entries;
@@ -343,6 +345,43 @@ namespace RE
 			BGSTextureSet* faceDetails;     // 10
 		};
 		static_assert(sizeof(HeadRelatedData) == 0x18);
+
+		[[nodiscard]] static BSTHashMap<const TESNPC*, BSTArray<BGSHeadPart*>>& GetAlternateHeadPartListMap()
+		{
+			REL::Relocation<BSTHashMap<const TESNPC*, BSTArray<BGSHeadPart*>>*> map{ REL::ID(1306546), -0x8 };
+			return *map;
+		}
+
+		[[nodiscard]] std::span<BGSHeadPart*> GetHeadParts(bool a_alternate = true) const
+		{
+			if (a_alternate && UsingAlternateHeadPartList()) {
+				auto& map = GetAlternateHeadPartListMap();
+				const auto it = map.find(this);
+				if (it != map.end()) {
+					return { it->second.data(), it->second.size() };
+				} else {
+					return {};
+				}
+			} else {
+				return { headParts, static_cast<std::size_t>(numHeadParts) };
+			}
+		}
+
+		[[nodiscard]] TESNPC* GetRootFaceNPC() noexcept
+		{
+			return const_cast<TESNPC*>(static_cast<const TESNPC*>(this)->GetRootFaceNPC());
+		}
+
+		[[nodiscard]] const TESNPC* GetRootFaceNPC() const noexcept
+		{
+			auto root = this;
+			while (root->faceNPC) {
+				root = root->faceNPC;
+			}
+			return root;
+		}
+
+		[[nodiscard]] bool UsingAlternateHeadPartList() const;
 
 		// members
 		BGSAttachParentArray attachParents;  // 220

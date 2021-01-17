@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <cassert>
 #include <cmath>
 #include <compare>
@@ -21,6 +22,7 @@
 #include <memory>
 #include <new>
 #include <optional>
+#include <ranges>
 #include <span>
 #include <sstream>
 #include <stack>
@@ -196,15 +198,9 @@ namespace F4SE
 				_impl(static_cast<underlying_type>(a_rhs.get()))
 			{}
 
-			template <
-				class... Args,
-				std::enable_if_t<
-					std::conjunction_v<
-						std::is_same<
-							Args,
-							enum_type>...>,
-					int> = 0>  // NOLINTNEXTLINE(google-explicit-constructor)
-			constexpr enumeration(Args... a_values) noexcept :
+			template <class... Args>
+			constexpr enumeration(Args... a_values) noexcept  //
+				requires(std::same_as<Args, enum_type>&&...) :
 				_impl((static_cast<underlying_type>(a_values) | ...))
 			{}
 
@@ -231,74 +227,44 @@ namespace F4SE
 			[[nodiscard]] constexpr enum_type get() const noexcept { return static_cast<enum_type>(_impl); }
 			[[nodiscard]] constexpr underlying_type underlying() const noexcept { return _impl; }
 
-			template <
-				class... Args,
-				std::enable_if_t<
-					std::conjunction_v<
-						std::is_same<
-							Args,
-							enum_type>...>,
-					int> = 0>
-			constexpr enumeration& set(Args... a_args) noexcept
+			template <class... Args>
+			constexpr enumeration& set(Args... a_args) noexcept  //
+				requires(std::same_as<Args, enum_type>&&...)
 			{
 				_impl |= (static_cast<underlying_type>(a_args) | ...);
 				return *this;
 			}
 
-			template <
-				class... Args,
-				std::enable_if_t<
-					std::conjunction_v<
-						std::is_same<
-							Args,
-							enum_type>...>,
-					int> = 0>
-			constexpr enumeration& reset(Args... a_args) noexcept
+			template <class... Args>
+			constexpr enumeration& reset(Args... a_args) noexcept  //
+				requires(std::same_as<Args, enum_type>&&...)
 			{
 				_impl &= ~(static_cast<underlying_type>(a_args) | ...);
 				return *this;
 			}
 
-			template <
-				class... Args,
-				std::enable_if_t<
-					std::conjunction_v<
-						std::is_same<
-							Args,
-							enum_type>...>,
-					int> = 0>
-			[[nodiscard]] constexpr bool any(Args... a_args) const noexcept
+			template <class... Args>
+			[[nodiscard]] constexpr bool any(Args... a_args) const noexcept  //
+				requires(std::same_as<Args, enum_type>&&...)
 			{
 				return (_impl & (static_cast<underlying_type>(a_args) | ...)) != static_cast<underlying_type>(0);
 			}
 
-			template <
-				class... Args,
-				std::enable_if_t<
-					std::conjunction_v<
-						std::is_same<
-							Args,
-							enum_type>...>,
-					int> = 0>
-			[[nodiscard]] constexpr bool all(Args... a_args) const noexcept
+			template <class... Args>
+			[[nodiscard]] constexpr bool all(Args... a_args) const noexcept  //
+				requires(std::same_as<Args, enum_type>&&...)
 			{
 				return (_impl & (static_cast<underlying_type>(a_args) | ...)) == (static_cast<underlying_type>(a_args) | ...);
 			}
 
-			template <
-				class... Args,
-				std::enable_if_t<
-					std::conjunction_v<
-						std::is_same<
-							Args,
-							enum_type>...>,
-					int> = 0>
-			[[nodiscard]] constexpr bool none(Args... a_args) const noexcept
+			template <class... Args>
+			[[nodiscard]] constexpr bool none(Args... a_args) const noexcept  //
+				requires(std::same_as<Args, enum_type>&&...)
 			{
 				return (_impl & (static_cast<underlying_type>(a_args) | ...)) == static_cast<underlying_type>(0);
 			}
 
-		private:
+		private :
 			underlying_type _impl{ 0 };
 		};
 
