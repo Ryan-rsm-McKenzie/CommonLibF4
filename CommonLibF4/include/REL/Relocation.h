@@ -257,7 +257,7 @@ namespace REL
 			_impl(a_version)
 		{}
 
-		constexpr Version(value_type a_v1, value_type a_v2, value_type a_v3, value_type a_v4) noexcept :
+		constexpr Version(value_type a_v1, value_type a_v2 = 0, value_type a_v3 = 0, value_type a_v4 = 0) noexcept :
 			_impl{ a_v1, a_v2, a_v3, a_v4 }
 		{}
 

@@ -6,6 +6,8 @@ namespace F4SE
 
 	class LoadInterface;
 
+	struct PluginInfo;
+
 	class MessagingInterface;
 	class ScaleformInterface;
 	class PapyrusInterface;
@@ -21,6 +23,7 @@ namespace F4SE
 	[[nodiscard]] REL::Version GetF4SEVersion() noexcept;
 	[[nodiscard]] PluginHandle GetPluginHandle() noexcept;
 	[[nodiscard]] std::uint32_t GetReleaseIndex() noexcept;
+	[[nodiscard]] std::optional<PluginInfo> GetPluginInfo(stl::zstring a_plugin) noexcept;
 
 	[[nodiscard]] const MessagingInterface* GetMessagingInterface() noexcept;
 	[[nodiscard]] const ScaleformInterface* GetScaleformInterface() noexcept;

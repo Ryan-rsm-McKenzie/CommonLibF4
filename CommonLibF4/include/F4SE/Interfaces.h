@@ -37,6 +37,7 @@ namespace F4SE
 			void*(F4SEAPI* QueryInterface)(std::uint32_t);
 			std::uint32_t(F4SEAPI* GetPluginHandle)(void);
 			std::uint32_t(F4SEAPI* GetReleaseIndex)(void);
+			const void*(F4SEAPI* GetPluginInfo)(const char*);  // 0.6.22+
 		};
 
 		struct F4SEMessagingInterface

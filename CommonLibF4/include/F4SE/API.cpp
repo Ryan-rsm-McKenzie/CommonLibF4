@@ -26,6 +26,7 @@ namespace F4SE
 			REL::Version f4seVersion;
 			PluginHandle pluginHandle{ static_cast<PluginHandle>(-1) };
 			std::uint32_t releaseIndex{ 0 };
+			std::function<const void*(F4SEAPI)(const char*)> pluginInfoAccessor;
 
 			MessagingInterface* messagingInterface{ nullptr };
 			ScaleformInterface* scaleformInterface{ nullptr };
@@ -66,6 +67,13 @@ namespace F4SE
 		storage.f4seVersion = intfc.F4SEVersion();
 		storage.pluginHandle = intfc.GetPluginHandle();
 		storage.releaseIndex = intfc.GetReleaseIndex();
+		storage.pluginInfoAccessor = [&]() -> decltype(storage.pluginInfoAccessor) {
+			if (storage.f4seVersion >= REL::Version{ 0, 6, 22 }) {
+				return reinterpret_cast<const detail::F4SEInterface&>(intfc).GetPluginInfo;
+			} else {
+				return nullptr;
+			}
+		}();
 
 		storage.messagingInterface = detail::QueryInterface<MessagingInterface>(a_intfc, LoadInterface::kMessaging);
 		storage.scaleformInterface = detail::QueryInterface<ScaleformInterface>(a_intfc, LoadInterface::kScaleform);
@@ -89,6 +97,22 @@ namespace F4SE
 	std::uint32_t GetReleaseIndex() noexcept
 	{
 		return detail::APIStorage::get().releaseIndex;
+	}
+
+	std::optional<PluginInfo> GetPluginInfo(stl::zstring a_plugin) noexcept
+	{
+		const auto& accessor = detail::APIStorage::get().pluginInfoAccessor;
+		if (accessor) {
+			const auto result = accessor(a_plugin.data());
+			if (result) {
+				return *static_cast<const PluginInfo*>(result);
+			}
+		}
+
+		log::warn(
+			FMT_STRING("failed to get plugin info for {}"),
+			a_plugin);
+		return std::nullopt;
 	}
 
 	const MessagingInterface* GetMessagingInterface() noexcept

@@ -148,6 +148,9 @@ namespace RE
 			bool eventReceived;                                 // ??
 		};
 
+		// override (BSTEventSink<T>)
+		BSEventNotifyControl ProcessEvent(const T& a_event, BSTEventSource<T>*) override;  // 01
+
 		// members
 		BSTEventValueData eventDataStruct;  // 08
 		BSSpinLock dataLock;                // ??

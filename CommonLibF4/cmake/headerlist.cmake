@@ -65,6 +65,7 @@ set(headers ${headers}
 	include/RE/Bethesda/Console.h
 	include/RE/Bethesda/CRC.h
 	include/RE/Bethesda/Events.h
+	include/RE/Bethesda/FavoritesManager.h
 	include/RE/Bethesda/FormComponents.h
 	include/RE/Bethesda/FormUtil.h
 	include/RE/Bethesda/GameScript.h

@@ -55,6 +55,7 @@
 #include "RE/Bethesda/Calendar.h"
 #include "RE/Bethesda/Console.h"
 #include "RE/Bethesda/Events.h"
+#include "RE/Bethesda/FavoritesManager.h"
 #include "RE/Bethesda/FormComponents.h"
 #include "RE/Bethesda/FormUtil.h"
 #include "RE/Bethesda/GameScript.h"

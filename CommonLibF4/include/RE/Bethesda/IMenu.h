@@ -3,13 +3,20 @@
 #include "RE/Bethesda/Atomic.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSInputEventUser.h"
+#include "RE/Bethesda/BSPointerHandle.h"
+#include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/BSTOptional.h"
 #include "RE/Bethesda/SWFToCodeFunctionHandler.h"
 #include "RE/Bethesda/UIMessage.h"
 #include "RE/Bethesda/UserEvents.h"
+#include "RE/NetImmerse/NiColor.h"
 #include "RE/NetImmerse/NiRect.h"
 
 namespace RE
 {
+	class BSGFxShaderFXTarget;
+	class ButtonHintBar;
+
 	enum class MENU_RENDER_CONTEXT : std::int32_t
 	{
 		kMenuDelete,
@@ -218,4 +225,98 @@ namespace RE
 		stl::enumeration<UserEvents::INPUT_CONTEXT_ID, std::int32_t> inputContext{ UserEvents::INPUT_CONTEXT_ID::kNone };  // 68
 	};
 	static_assert(sizeof(IMenu) == 0x70);
+
+	struct UIShaderColors
+	{
+	public:
+		enum class Flags
+		{
+			kBackgroundQuad = 1u << 0,
+			kColorMultiplier = 1u << 1,
+			kVerticalGradient = 1u << 2,
+			kUseAlphaForDropshadow = 1u << 3
+		};
+
+		// members
+		NiRect<float> backgroundQuad;                          // 00
+		NiColorA backgroundColor;                              // 10
+		NiColorA colorMultipliers;                             // 20
+		float colorBrightness;                                 // 30
+		stl::enumeration<Flags, std::uint32_t> enabledStates;  // 34
+	};
+	static_assert(sizeof(UIShaderColors) == 0x38);
+
+	struct alignas(0x10) UIShaderFXInfo
+	{
+	public:
+		// members
+		NiRect<float> renderQuad;  // 00
+		UIShaderColors shaderFX;   // 10
+	};
+	static_assert(sizeof(UIShaderFXInfo) == 0x50);
+
+	class HUDModeType
+	{
+	public:
+		// members
+		BSFixedString modeString;  // 0
+	};
+	static_assert(sizeof(HUDModeType) == 0x8);
+
+	// TODO
+	class GameMenuBase :
+		public IMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::GameMenuBase };
+		static constexpr auto VTABLE{ VTABLE::GameMenuBase };
+
+		// add
+		virtual void AppendShaderFXInfos(BSTAlignedArray<UIShaderFXInfo>& a_colorFXInfos, BSTAlignedArray<UIShaderFXInfo>& a_backgroundFXInfos) const  // 13
+		{
+			using func_t = decltype(&GameMenuBase::AppendShaderFXInfos);
+			REL::Relocation<func_t> func{ REL::ID(583584) };
+			return func(this, a_colorFXInfos, a_backgroundFXInfos);
+		}
+
+		// members
+		BSTArray<BSGFxShaderFXTarget*> shaderFXObjects;           // 70
+		msvc::unique_ptr<BSGFxShaderFXTarget> filterHolder;       // 88
+		msvc::unique_ptr<ButtonHintBar> buttonHintBar;            // 90
+		BSTAlignedArray<UIShaderFXInfo> cachedColorFXInfos;       // 98
+		BSTAlignedArray<UIShaderFXInfo> cachedBackgroundFXInfos;  // B0
+		BSReadWriteLock cachedQuadsLock;                          // C8
+		BSTOptional<HUDModeType> menuHUDMode;                     // D0
+	};
+	static_assert(sizeof(GameMenuBase) == 0xE0);
+
+	struct Rumble
+	{
+	public:
+		struct AutoRumblePause
+		{
+		public:
+		};
+		static_assert(std::is_empty_v<AutoRumblePause>);
+	};
+	static_assert(std::is_empty_v<Rumble>);
+
+	struct __declspec(novtable) Console :
+		public GameMenuBase  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::Console };
+		static constexpr auto VTABLE{ VTABLE::Console };
+
+		[[nodiscard]] static ObjectRefHandle& GetPickRef()
+		{
+			REL::Relocation<ObjectRefHandle*> ref{ REL::ID(170742) };
+			return *ref;
+		}
+
+		// members
+		Rumble::AutoRumblePause* rumbleLock;  // E0
+		bool minimized;                       // E8
+	};
+	static_assert(sizeof(Console) == 0xF0);
 }
