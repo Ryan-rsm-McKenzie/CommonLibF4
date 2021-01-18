@@ -42,15 +42,15 @@ private:
 	[[nodiscard]] static const RE::RTTI::TypeDescriptor* type_descriptor(std::string_view a_name)
 	{
 		const auto segment = REL::Module::get().segment(REL::Segment::data);
-		const stl::span haystack{ segment.pointer<const char>(), segment.size() };
+		const std::span haystack{ segment.pointer<const char>(), segment.size() };
 
 		boost::algorithm::knuth_morris_pratt kmp(a_name.cbegin(), a_name.cend());
-		const auto it = kmp(haystack.cbegin(), haystack.cend());
+		const auto it = kmp(haystack.begin(), haystack.end());
 
 		if (it.first == it.second) {
 			throw std::runtime_error("failed to find type descriptor"s);
 		} else {
-			return reinterpret_cast<const RE::RTTI::TypeDescriptor*>(it.first - 0x10);
+			return reinterpret_cast<const RE::RTTI::TypeDescriptor*>(std::to_address(it.first) - 0x10);
 		}
 	}
 
@@ -58,11 +58,11 @@ private:
 	{
 		assert(a_typeDesc != nullptr);
 
-		const auto& module = REL::Module::get();
+		const auto& mod = REL::Module::get();
 		const auto typeDesc = reinterpret_cast<std::uintptr_t>(a_typeDesc);
-		const auto rva = static_cast<std::uint32_t>(typeDesc - module.base());
+		const auto rva = static_cast<std::uint32_t>(typeDesc - mod.base());
 
-		const auto segment = module.segment(REL::Segment::rdata);
+		const auto segment = mod.segment(REL::Segment::rdata);
 		const auto base = segment.pointer<const std::byte>();
 		const auto start = reinterpret_cast<const std::uint32_t*>(base);
 		const auto end = reinterpret_cast<const std::uint32_t*>(base + segment.size());
@@ -86,7 +86,7 @@ private:
 		return results;
 	}
 
-	[[nodiscard]] static container_type virtual_tables(stl::span<const RE::RTTI::CompleteObjectLocator*> a_cols)
+	[[nodiscard]] static container_type virtual_tables(std::span<const RE::RTTI::CompleteObjectLocator*> a_cols)
 	{
 		assert(std::all_of(a_cols.begin(), a_cols.end(), [](auto&& a_elem) noexcept { return a_elem != nullptr; }));
 
@@ -194,9 +194,9 @@ void dump_rtti()
 	std::vector<std::tuple<std::string, std::uint64_t, std::vector<std::uint64_t>>> results;  // [ demangled name, rtti id, vtable ids ]
 
 	VTable typeInfo(".?AVtype_info@@"sv);
-	const auto& module = REL::Module::get();
-	const auto baseAddr = module.base();
-	const auto data = module.segment(REL::Segment::data);
+	const auto& mod = REL::Module::get();
+	const auto baseAddr = mod.base();
+	const auto data = mod.segment(REL::Segment::data);
 	const auto beg = data.pointer<const std::uintptr_t>();
 	const auto end = reinterpret_cast<const std::uintptr_t*>(data.address() + data.size());
 	const auto& iddb = get_iddb();
@@ -234,8 +234,8 @@ void dump_rtti()
 		results.end());
 
 	constexpr std::array toRemove{
-		static_cast<std::uint64_t>(25921),	 // float
-		static_cast<std::uint64_t>(950502),	 // unsigned int
+		static_cast<std::uint64_t>(25921),   // float
+		static_cast<std::uint64_t>(950502),  // unsigned int
 	};
 	results.erase(
 		std::remove_if(
@@ -273,7 +273,7 @@ void dump_rtti()
 	const auto printVID = [&](std::uint64_t a_vid) { file << "REL::ID("sv << a_vid << ")"sv; };
 	for (const auto& [name, rid, vids] : results) {
 		(void)rid;
-		const stl::span svids{ vids.data(), vids.size() };
+		const std::span svids{ vids.data(), vids.size() };
 		if (!svids.empty()) {
 			file << "\t\tinline constexpr std::array<REL::ID, "sv
 				 << vids.size()
@@ -300,20 +300,20 @@ void dump_nirtti()
 	}
 
 	constexpr std::array seeds = {
-		17735,	  // NiObject
+		17735,    // NiObject
 		1352616,  // NiCullingProcess
-		31936,	  // BSFaceGenMorphData
+		31936,    // BSFaceGenMorphData
 		1482971,  // BSTempEffect
 		1123991,  // bhkCharacterProxy
-		858091,	  // bhkCharacterRigidBody
-		933986,	  // bhkNPCollisionObject
-		56458,	  // bhkNPCollisionObjectBase
+		858091,   // bhkCharacterRigidBody
+		933986,   // bhkNPCollisionObject
+		56458,    // bhkNPCollisionObjectBase
 		1372534,  // bhkNPCollisionObjectUnlinked
-		495124,	  // bhkNPCollisionProxyObject
+		495124,   // bhkNPCollisionProxyObject
 		1325961,  // bhkPhysicsSystem
-		182826,	  // bhkRagdollSystem
+		182826,   // bhkRagdollSystem
 		1359461,  // bhkWorld
-		34089,	  // bhkWorldM
+		34089,    // bhkWorldM
 	};
 	robin_hood::unordered_flat_set<std::uintptr_t> results;
 	results.reserve(seeds.size());
@@ -321,9 +321,9 @@ void dump_nirtti()
 		results.insert(REL::ID(seed).address());
 	}
 
-	const auto& module = REL::Module::get();
-	const auto base = module.base();
-	const auto segment = module.segment(REL::Segment::data);
+	const auto& mod = REL::Module::get();
+	const auto base = mod.base();
+	const auto segment = mod.segment(REL::Segment::data);
 	const auto beg = segment.pointer<const std::uintptr_t>();
 	const auto end = reinterpret_cast<const std::uintptr_t*>(segment.address() + segment.size());
 	bool found = false;

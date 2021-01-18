@@ -2,11 +2,15 @@
   "name": "umbrella",
   "version-string": "1",
   "dependencies": [
+    "boost-algorithm",
     "boost-atomic",
     "boost-iostreams",
     "boost-iterator",
     "boost-predef",
+    "boost-regex",
     "boost-stl-interfaces",
+    "fmt",
+    "robin-hood-hashing",
     "spdlog"
   ]
 }

@@ -5,9 +5,7 @@
   "homepage": "https://github.com/Ryan-rsm-McKenzie/CommonLibF4",
   "license": "MIT",
   "dependencies": [
-    "boost-filesystem",
     "boost-iostreams",
-    "fmt",
-    "span-lite"
+    "fmt"
   ]
 }

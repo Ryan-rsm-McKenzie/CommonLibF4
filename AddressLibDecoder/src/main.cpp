@@ -1,17 +1,19 @@
+#pragma warning(push)
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
 
-#include <boost/filesystem.hpp>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <fmt/format.h>
-#include <nonstd/span.hpp>
+#pragma warning(pop)
 
 using namespace std::literals;
 
@@ -28,8 +30,8 @@ int main(int a_argc, char* a_argv[])
 		std::ofstream output;
 
 		for (int i = 1; i < a_argc; ++i) {
-			boost::filesystem::path filename = a_argv[static_cast<std::size_t>(i)];
-			input.open(filename);
+			std::filesystem::path filename = a_argv[static_cast<std::size_t>(i)];
+			input.open(filename.string());
 			if (!input.is_open()) {
 				throw std::runtime_error("failed to open: "s + filename.string());
 			}
@@ -40,7 +42,7 @@ int main(int a_argc, char* a_argv[])
 				throw std::runtime_error("failed to open: "s + filename.string());
 			}
 
-			nonstd::span data(
+			std::span data(
 				reinterpret_cast<const Pair*>(input.data() + sizeof(std::uint64_t)),
 				*reinterpret_cast<const std::uint64_t*>(input.data()));
 			if (!data.empty()) {

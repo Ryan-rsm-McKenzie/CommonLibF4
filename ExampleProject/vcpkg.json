@@ -10,7 +10,6 @@
     "boost-iterator",
     "boost-predef",
     "boost-stl-interfaces",
-    "span-lite",
     "spdlog"
   ]
 }

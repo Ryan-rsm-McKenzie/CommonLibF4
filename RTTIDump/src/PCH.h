@@ -1,25 +1,22 @@
 #pragma once
 
 #pragma warning(push)
-#pragma warning(disable : 4200 4324 5053)
 #include "F4SE/F4SE.h"
 #include "RE/Fallout.h"
-#pragma warning(pop)
 
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstddef>
 #include <fstream>
+#include <memory>
+#include <span>
 #include <tuple>
 #include <utility>
 #include <vector>
 
 #include <boost/algorithm/searching/knuth_morris_pratt.hpp>
 #include <boost/regex.hpp>
-
-#pragma warning(push)
-#pragma warning(disable : 4702)
 #include <robin_hood.h>
 #pragma warning(pop)
 

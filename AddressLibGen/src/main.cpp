@@ -1,3 +1,4 @@
+#pragma warning(push)
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -18,6 +19,7 @@
 
 #include <boost/regex.hpp>
 #include <robin_hood.h>
+#pragma warning(pop)
 
 using namespace std::literals;
 

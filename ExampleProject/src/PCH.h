@@ -1,5 +1,6 @@
 #pragma once
 
+#pragma warning(push)
 #include "F4SE/F4SE.h"
 #include "RE/Fallout.h"
 
@@ -8,6 +9,7 @@
 #else
 #include <spdlog/sinks/msvc_sink.h>
 #endif
+#pragma warning(pop)
 
 #define DLLEXPORT __declspec(dllexport)
 

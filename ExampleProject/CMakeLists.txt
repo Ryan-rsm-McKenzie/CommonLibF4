@@ -16,8 +16,8 @@ project(
 )
 
 configure_file(
-	${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in
-	${CMAKE_CURRENT_BINARY_DIR}/version.rc
+	"${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/version.rc"
 	@ONLY
 )
 
@@ -36,14 +36,14 @@ if (MSVC)
 	add_compile_definitions(
 		_UNICODE
 	)
-	
+
 	add_compile_options(
 		/MP	# Build with Multiple Processes
 		/sdl	# Enable Additional Security Checks
 		/Zi	# Debug Information Format
-		
+
 		/permissive-	# Standards conformance
-		
+
 		/Zc:alignedNew	# C++17 over-aligned allocation
 		/Zc:auto	# Deduce Variable Type
 		/Zc:char8_t
@@ -65,15 +65,15 @@ if (MSVC)
 		/Zc:tlsGuards
 		/Zc:trigraphs	# Trigraphs Substitution
 		/Zc:wchar_t	# wchar_t Is Native Type
-		
+
 		/experimental:external
 		/external:anglebrackets
 		/external:W0
-		
+
 		/W4	# Warning level (all warnings)
 		/WX	# Warning level (warnings are errors)
 	)
-	
+
 	add_link_options(
 		"$<$<CONFIG:DEBUG>:/INCREMENTAL;/OPT:NOREF;/OPT:NOICF>"
 		"$<$<CONFIG:RELEASE>:/INCREMENTAL:NO;/OPT:REF;/OPT:ICF;/DEBUG:FULL>"
@@ -89,9 +89,11 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_DEBUG_RUNTIME ON)
 
-add_subdirectory("$ENV{CommonLibF4Path}" CommonLibF4)
+if(NOT TARGET CommonLibF4)
+	add_subdirectory("$ENV{CommonLibF4Path}" CommonLibF4)
+endif()
 
-find_package(spdlog REQUIRED)
+find_package(spdlog REQUIRED CONFIG)
 
 # ---- Add source files ----
 
@@ -131,7 +133,7 @@ target_compile_features(
 
 target_include_directories(
 	${PROJECT_NAME}
-	PRIVATE 
+	PRIVATE
 		"${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.19)
 
 # ---- Project ----
 
@@ -28,8 +28,8 @@ find_package(spdlog REQUIRED CONFIG)
 
 # ---- Add source files ----
 
-include(cmake/headerlist.cmake)
-include(cmake/sourcelist.cmake)
+include("cmake/headerlist.cmake")
+include("cmake/sourcelist.cmake")
 
 source_group(
 	TREE
@@ -57,9 +57,9 @@ add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 if (MSVC)
 	target_compile_options(
 		${PROJECT_NAME}
-		PRIVATE			
+		PRIVATE
 			/permissive-	# Standards conformance
-			
+
 			/Zc:alignedNew	# C++17 over-aligned allocation
 			/Zc:auto	# Deduce Variable Type
 			/Zc:char8_t
@@ -81,17 +81,17 @@ if (MSVC)
 			/Zc:tlsGuards
 			/Zc:trigraphs	# Trigraphs Substitution
 			/Zc:wchar_t	# wchar_t Is Native Type
-			
+
 			/experimental:external
 			/external:anglebrackets
 			/external:W0
-			
+
 			/W4	# Warning level
 			/WX	# Warning level (warnings are errors)
-			
+
 			# warnings -> errors
 			/we4715	# 'function' : not all control paths return a value
-			
+
 			# disable warnings
 			/wd4061 # enumerator 'identifier' in switch of enum 'enumeration' is not explicitly handled by a case label
 			/wd4200 # nonstandard extension used : zero-sized array in struct/union
@@ -121,7 +121,6 @@ target_compile_definitions(
 	PUBLIC
 		WINVER=0x0601	# windows 7, minimum supported version by fallout 4
 		_WIN32_WINNT=0x0601
-		SPDLOG_COMPILED_LIB	# avoid leaking windows.h
 )
 
 target_compile_features(
@@ -132,9 +131,9 @@ target_compile_features(
 
 target_include_directories(
 	${PROJECT_NAME}
-	PUBLIC 
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-		$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+	PUBLIC
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+		"$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 target_link_libraries(
@@ -150,7 +149,7 @@ target_link_libraries(
 target_precompile_headers(
 	${PROJECT_NAME}
 	PRIVATE
-		include/F4SE/Impl/PCH.h
+		"include/F4SE/Impl/PCH.h"
 )
 
 # ---- Create an installable target ----

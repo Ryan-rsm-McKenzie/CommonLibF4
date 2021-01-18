@@ -9,10 +9,10 @@
     "boost-atomic",
     "boost-iostreams",
     "boost-iterator",
+    "boost-predef",
     "boost-regex",
-	"boost-stl-interfaces",
+    "boost-stl-interfaces",
     "robin-hood-hashing",
-    "span-lite",
     "spdlog"
   ]
 }
