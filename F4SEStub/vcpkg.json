@@ -1,0 +1,12 @@
+{
+  "name": "f4sestub",
+  "version-string": "1",
+  "dependencies": [
+    "boost-atomic",
+    "boost-iostreams",
+    "boost-iterator",
+    "boost-predef",
+    "boost-stl-interfaces",
+    "spdlog"
+  ]
+}

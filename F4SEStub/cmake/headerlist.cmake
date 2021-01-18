@@ -1,0 +1,19 @@
+set(headers ${headers}
+	src/PCH.h
+	src/Papyrus/Actor.h
+	src/Papyrus/ActorBase.h
+	src/Papyrus/Armor.h
+	src/Papyrus/ArmorAddon.h
+	src/Papyrus/Cell.h
+	src/Papyrus/Component.h
+	src/Papyrus/ConstructibleObject.h
+	src/Papyrus/DefaultObject.h
+	src/Papyrus/EncounterZone.h
+	src/Papyrus/EquipSlot.h
+	src/Papyrus/F4SE.h
+	src/Papyrus/Form.h
+	src/Papyrus/Game.h
+	src/Papyrus/HeadPart.h
+	src/Papyrus/Input.h
+	src/Papyrus/Papyrus.h
+)
