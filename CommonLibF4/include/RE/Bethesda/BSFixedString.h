@@ -109,7 +109,7 @@ namespace RE
 
 			[[nodiscard]] const_pointer c_str() const noexcept { return data(); }
 
-			[[nodiscard]] operator std::basic_string_view<value_type>() const { return { c_str(), length() }; }
+			[[nodiscard]] operator std::basic_string_view<value_type>() const noexcept { return { c_str(), length() }; }
 
 			[[nodiscard]] bool empty() const noexcept { return size() == 0; }
 

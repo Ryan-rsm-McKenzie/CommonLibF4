@@ -91,7 +91,7 @@ namespace RE
 
 			template <class V>
 			iterator_base(iterator_base<V> a_rhs) noexcept  //
-				requires(std::convertible_to<V&, const V&>) :
+				requires(std::convertible_to<typename iterator_base<V>::reference, reference>) :
 				_cur(a_rhs._cur),
 				_end(a_rhs._end)
 			{}
@@ -103,7 +103,7 @@ namespace RE
 
 			template <class V>
 			iterator_base& operator=(iterator_base<V> a_rhs)  //
-				requires(std::convertible_to<V&, const V&>)
+				requires(std::convertible_to<typename iterator_base<V>::reference, reference>)
 			{
 				_cur = a_rhs._cur;
 				_end = a_rhs._end;

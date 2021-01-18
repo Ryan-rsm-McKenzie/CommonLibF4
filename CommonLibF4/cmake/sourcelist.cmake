@@ -16,6 +16,7 @@ set(sources ${sources}
 	include/RE/Bethesda/BSScript.cpp
 	include/RE/Bethesda/BSSpring.cpp
 	include/RE/Bethesda/BSTArray.cpp
+	include/RE/Bethesda/BSTPoint.cpp
 	include/RE/Bethesda/Calendar.cpp
 	include/RE/Bethesda/CRC.cpp
 	include/RE/Bethesda/FormComponents.cpp

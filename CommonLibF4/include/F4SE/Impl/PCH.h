@@ -95,6 +95,20 @@ namespace F4SE
 				std::is_pointer_v<T>>>
 		using not_null = T;
 
+		template <class C, class K>
+		concept transparent_comparator =
+			requires(
+				const K& a_transparent,
+				const typename C::key_type& a_key,
+				typename C::key_compare& a_compare)
+		{
+			typename C::key_compare::is_transparent;
+			// clang-format off
+			{ a_compare(a_transparent, a_key) } -> std::convertible_to<bool>;
+			{ a_compare(a_key, a_transparent) } -> std::convertible_to<bool>;
+			// clang-format on
+		};
+
 		namespace nttp
 		{
 			template <class CharT, std::size_t N>
@@ -130,7 +144,7 @@ namespace F4SE
 			};
 
 			template <class CharT, std::size_t N>
-			string(const CharT (&)[N]) -> string<CharT, N - 1>;
+			string(const CharT(&)[N]) -> string<CharT, N - 1>;
 		}
 
 		struct source_location
@@ -565,16 +579,11 @@ namespace F4SE
 			WinAPI::TerminateProcess(WinAPI::GetCurrentProcess(), EXIT_FAILURE);
 		}
 
-		template <
-			class Enum,
-			std::enable_if_t<
-				std::is_enum_v<
-					Enum>,
-				int> = 0>
-		[[nodiscard]] constexpr auto to_underlying(Enum a_val) noexcept
+		template <class Enum>
+		[[nodiscard]] constexpr auto to_underlying(Enum a_val) noexcept  //
+			requires(std::is_enum_v<Enum>)
 		{
-			using underlying_type_t = std::underlying_type_t<Enum>;
-			return static_cast<underlying_type_t>(a_val);
+			return static_cast<std::underlying_type_t<Enum>>(a_val);
 		}
 
 		template <class To, class From>

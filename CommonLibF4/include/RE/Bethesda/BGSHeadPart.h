@@ -18,6 +18,16 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BGSHeadPart };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kHDPT };
 
+		enum class Flag
+		{
+			kPlayable = 1u << 0,
+			kCantBeFemale = 1u << 1,
+			kCantBeMale = 1u << 2,
+			kExtraPart = 1u << 3,
+			kUseSolidTint = 1u << 4,
+			kUseBodyTexture = 1u << 5
+		};
+
 		enum class HeadPartType
 		{
 			kMisc,
@@ -32,8 +42,10 @@ namespace RE
 			kHeadRear
 		};
 
+		[[nodiscard]] bool IsExtraPart() const noexcept { return flags.all(Flag::kExtraPart); }
+
 		// members
-		std::int8_t flags;                                  // 070
+		stl::enumeration<Flag, std::uint8_t> flags;         // 070
 		stl::enumeration<HeadPartType, std::int32_t> type;  // 074
 		BSTArray<BGSHeadPart*> extraParts;                  // 078
 		BGSTextureSet* textureSet;                          // 090

@@ -24,7 +24,6 @@ namespace RE
 	enum class PTYPE;
 	enum class RESET_3D_FLAGS;
 	enum class SIT_SLEEP_STATE;
-	enum class WEAPON_STATE;
 
 	template <class>
 	class BSPointerHandleSmartPointer;
@@ -446,6 +445,16 @@ namespace RE
 	};
 	static_assert(sizeof(MagicTarget) == 0x18);
 
+	enum class WEAPON_STATE : std::uint32_t
+	{
+		kSheathed,
+		kWantToDraw,
+		kDrawing,
+		kDrawn,
+		kWantToSheathe,
+		kSheathing
+	};
+
 	class __declspec(novtable) ActorState :
 		public IMovementState  // 00
 	{
@@ -461,6 +470,8 @@ namespace RE
 		virtual bool SetInIronSightsImpl(bool a_sighted) = 0;          // 25
 		virtual void SetReloadingImpl(bool a_reloading);               // 26
 
+		[[nodiscard]] bool GetWeaponMagicDrawn() const noexcept { return weaponState >= WEAPON_STATE::kDrawn; }
+
 		// members
 		std::uint32_t moveMode: 14;             // 08:00
 		std::uint32_t flyState: 3;              // 08:14
@@ -472,7 +483,7 @@ namespace RE
 		std::uint32_t forceSneak: 1;            // 08:30
 		std::uint32_t headTracking: 1;          // 08:31
 		std::uint32_t reanimating: 1;           // 0C:00
-		std::uint32_t weaponState: 3;           // 0C:01
+		WEAPON_STATE weaponState: 3;            // 0C:01
 		std::uint32_t wantBlocking: 1;          // 0C:04
 		std::uint32_t flightBlocked: 1;         // 0C:05
 		std::uint32_t recoil: 2;                // 0C:06

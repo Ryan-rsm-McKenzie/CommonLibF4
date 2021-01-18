@@ -2,10 +2,9 @@
 
 namespace RE
 {
-	struct UserEvents
+	namespace UserEvents
 	{
-	public:
-		enum class USER_EVENT_FLAG : std::int32_t
+		enum class USER_EVENT_FLAG
 		{
 			kAll = static_cast<std::underlying_type_t<USER_EVENT_FLAG>>(-1),
 
@@ -23,7 +22,7 @@ namespace RE
 			kVATS = 1 << 11
 		};
 
-		enum class INPUT_CONTEXT_ID : std::int32_t
+		enum class INPUT_CONTEXT_ID
 		{
 			kMainGameplay = 0,
 			kBasicMenuNav,
@@ -64,12 +63,12 @@ namespace RE
 			kNone
 		};
 
-		enum class SENDER_ID : std::int32_t
+		enum class SENDER_ID
 		{
 			kNone,
 			kGameplay,
 			kMenu,
 			kScript
 		};
-	};
+	}
 }

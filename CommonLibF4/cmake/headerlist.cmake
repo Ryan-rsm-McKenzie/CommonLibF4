@@ -29,6 +29,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSExtraData.h
 	include/RE/Bethesda/BSFixedString.h
 	include/RE/Bethesda/BSGraphics.h
+	include/RE/Bethesda/BSInputDeviceManager.h
 	include/RE/Bethesda/BSInputEventReceiver.h
 	include/RE/Bethesda/BSInputEventUser.h
 	include/RE/Bethesda/BSLock.h
@@ -56,6 +57,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSTMessageQueue.h
 	include/RE/Bethesda/BSTObjectArena.h
 	include/RE/Bethesda/BSTOptional.h
+	include/RE/Bethesda/BSTPoint.h
 	include/RE/Bethesda/BSTSingleton.h
 	include/RE/Bethesda/BSTSmallIndexScatterTable.h
 	include/RE/Bethesda/BSTSmartPointer.h
@@ -63,6 +65,7 @@ set(headers ${headers}
 	include/RE/Bethesda/Calendar.h
 	include/RE/Bethesda/CELLJobs.h
 	include/RE/Bethesda/Console.h
+	include/RE/Bethesda/ControlMap.h
 	include/RE/Bethesda/CRC.h
 	include/RE/Bethesda/Events.h
 	include/RE/Bethesda/FavoritesManager.h
@@ -71,6 +74,7 @@ set(headers ${headers}
 	include/RE/Bethesda/GameScript.h
 	include/RE/Bethesda/IMenu.h
 	include/RE/Bethesda/IMovementInterface.h
+	include/RE/Bethesda/InputDevice.h
 	include/RE/Bethesda/InputEvent.h
 	include/RE/Bethesda/MagicItems.h
 	include/RE/Bethesda/MemoryManager.h
@@ -86,6 +90,7 @@ set(headers ${headers}
 	include/RE/Bethesda/SWFToCodeFunctionHandler.h
 	include/RE/Bethesda/TESBoundAnimObjects.h
 	include/RE/Bethesda/TESBoundObjects.h
+	include/RE/Bethesda/TESCamera.h
 	include/RE/Bethesda/TESCombatStyle.h
 	include/RE/Bethesda/TESCondition.h
 	include/RE/Bethesda/TESDataHandler.h
@@ -139,6 +144,7 @@ set(headers ${headers}
 	include/RE/NetImmerse/NiPoint3.h
 	include/RE/NetImmerse/NiPoint4.h
 	include/RE/NetImmerse/NiProperty.h
+	include/RE/NetImmerse/NiQuaternion.h
 	include/RE/NetImmerse/NiRect.h
 	include/RE/NetImmerse/NiRefObject.h
 	include/RE/NetImmerse/NiRTTI.h

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/Bethesda/BSFixedString.h"
+#include "RE/Bethesda/InputDevice.h"
 
 namespace RE
 {
@@ -23,17 +24,6 @@ namespace RE
 		kDeviceConnect,
 		kKinect,
 		kNone
-	};
-
-	enum class INPUT_DEVICE : std::int32_t
-	{
-		kNone = static_cast<std::underlying_type_t<INPUT_DEVICE>>(-1),
-
-		kKeyboard = 0,
-		kMouse,
-		kGamepad,
-		kKinect,
-		kVirtualKeyboard
 	};
 
 	class IDEvent;

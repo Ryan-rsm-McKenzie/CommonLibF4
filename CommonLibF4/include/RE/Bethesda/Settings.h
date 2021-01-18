@@ -137,10 +137,71 @@ namespace RE
 			assert(GetType() == SETTING_TYPE::kUChar);
 			return _value.h;
 		}
+
 		[[nodiscard]] std::uint32_t GetUInt() const noexcept
 		{
 			assert(GetType() == SETTING_TYPE::kUInt);
 			return _value.u;
+		}
+
+		void SetBinary(bool a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kBinary);
+			_value.b = a_value;
+		}
+
+		void SetChar(char a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kChar);
+			_value.c = a_value;
+		}
+
+		void SetFloat(float a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kFloat);
+			_value.f = a_value;
+		}
+
+		void SetInt(std::int32_t a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kInt);
+			_value.i = a_value;
+		}
+
+		void SetRGB(std::span<const std::uint8_t, 3> a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kRGB);
+			std::copy(
+				a_value.begin(),
+				a_value.end(),
+				std::addressof(_value.r));
+		}
+
+		void SetRGBA(std::span<const std::uint8_t, 4> a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kRGBA);
+			std::copy(
+				a_value.begin(),
+				a_value.end(),
+				std::addressof(_value.r));
+		}
+
+		void SetString(char* a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kString);
+			_value.s = a_value;
+		}
+
+		void SetUChar(std::uint8_t a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kUChar);
+			_value.h = a_value;
+		}
+
+		void SetUInt(std::uint32_t a_value) noexcept
+		{
+			assert(GetType() == SETTING_TYPE::kUInt);
+			_value.u = a_value;
 		}
 
 	private:
@@ -193,13 +254,24 @@ namespace RE
 
 	extern template class SettingCollection<Setting>;
 
+	namespace detail
+	{
+		struct SettingCollectionMapCompare
+		{
+			[[nodiscard]] bool operator()(const RE::BSFixedString& a_lhs, const RE::BSFixedString& a_rhs) const noexcept
+			{
+				return a_lhs.c_str() < a_rhs.c_str();
+			}
+		};
+	}
+
 	template <class T>
 	class __declspec(novtable) SettingCollectionMap :
 		public SettingCollection<T>  // 000
 	{
 	public:
 		// members
-		BSTBTree<BSFixedString, T*> settings;  // 118
+		BSTBTree<BSFixedString, T*, detail::SettingCollectionMapCompare> settings;  // 118
 	};
 
 	extern template class SettingCollectionMap<Setting>;
