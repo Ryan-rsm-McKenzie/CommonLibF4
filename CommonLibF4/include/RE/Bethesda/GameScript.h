@@ -19,13 +19,17 @@ namespace RE
 		class IStore;
 		class IVMDebugInterface;
 		class IVMSaveLoadInterface;
+		class Object;
 
 		struct StatsEvent;
 	}
 
+	enum class ENUM_FORM_ID;
+
 	class BSLog;
 	class InputEnableLayerDestroyedEvent;
 	class TESForm;
+	class TESObjectREFR;
 
 	struct PositionPlayerEvent;
 	struct TESFormDeleteEvent;
@@ -91,6 +95,20 @@ namespace RE
 			void PersistHandle(std::size_t a_handle) override;                                          // 0D
 			void ReleaseHandle(std::size_t a_handle) override;                                          // 0E
 			void ConvertHandleToString(std::size_t a_handle, BSFixedString& a_string) const override;   // 0F
+
+			[[nodiscard]] static std::uint64_t GetHandleForInventoryID(std::uint16_t a_uniqueID, ENUM_FORM_ID a_containerFormID) noexcept
+			{
+				return static_cast<std::uint64_t>(static_cast<std::uint32_t>(a_containerFormID)) |
+				       (static_cast<std::uint64_t>(a_uniqueID) << 32ull) |
+				       (1ull << (32ull + 16ull));
+			}
+
+			void GetInventoryObjFromHandle(std::uint64_t a_cobj, TESObjectREFR*& a_container, std::uint16_t& a_uniqueID, TESObjectREFR*& a_inWorldREFR)
+			{
+				using func_t = decltype(&HandlePolicy::GetInventoryObjFromHandle);
+				REL::Relocation<func_t> func{ REL::ID(66597) };
+				return func(this, a_cobj, a_container, a_uniqueID, a_inWorldREFR);
+			}
 
 			// members
 			BSSpinLock persistLock;                                   // 08
@@ -353,4 +371,37 @@ namespace RE
 		std::uint32_t overflowFlags;                                                                    // 87A0
 	};
 	static_assert(sizeof(GameVM) == 0x87A8);
+
+	namespace GameScript
+	{
+		class RefrOrInventoryObj
+		{
+		public:
+			RefrOrInventoryObj() = default;
+
+			explicit RefrOrInventoryObj(std::uint64_t a_cobj)
+			{
+				const auto vm = GameVM::GetSingleton();
+				vm->handlePolicy.GetInventoryObjFromHandle(a_cobj, _container, _uniqueID, _ref);
+			}
+
+			[[nodiscard]] TESObjectREFR* Container() const noexcept { return _container; }
+			[[nodiscard]] TESObjectREFR* Reference() const noexcept { return _ref; }
+			[[nodiscard]] std::uint16_t UniqueID() const noexcept { return _uniqueID; }
+
+		private:
+			// members
+			TESObjectREFR* _ref{ nullptr };        // 00
+			TESObjectREFR* _container{ nullptr };  // 08
+			std::uint16_t _uniqueID{ 0 };          // 10
+		};
+		static_assert(sizeof(RefrOrInventoryObj) == 0x18);
+
+		inline void BindCObject(const BSTSmartPointer<BSScript::Object>& a_scriptObj, const RefrOrInventoryObj& a_cobj, BSScript::IVirtualMachine& a_vm)
+		{
+			using func_t = decltype(&BindCObject);
+			REL::Relocation<func_t> func{ REL::ID() };
+			return func(a_scriptObj, a_cobj, a_vm);
+		}
+	}
 }

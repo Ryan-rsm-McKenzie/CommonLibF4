@@ -20,7 +20,7 @@ namespace Papyrus
 
 			namespace Gamepad
 			{
-				struct Old
+				struct Mask
 				{
 					// XINPUT_GAMEPAD
 					enum
@@ -45,7 +45,7 @@ namespace Papyrus
 					};
 				};
 
-				struct New
+				struct Key
 				{
 					enum
 					{
@@ -71,8 +71,8 @@ namespace Papyrus
 				[[nodiscard]] inline std::optional<std::int32_t> Key2Mask(std::int32_t a_key) noexcept
 				{
 #define GAMEPAD_CASE(a_case) \
-	case New::a_case:        \
-		return Old::a_case
+	case Key::a_case:        \
+		return Mask::a_case
 
 					switch (a_key) {
 						GAMEPAD_CASE(kUp);
@@ -101,8 +101,8 @@ namespace Papyrus
 				[[nodiscard]] inline std::optional<std::int32_t> Mask2Key(std::int32_t a_mask) noexcept
 				{
 #define GAMEPAD_CASE(a_case) \
-	case Old::a_case:        \
-		return New::a_case
+	case Mask::a_case:       \
+		return Key::a_case
 
 					switch (a_mask) {
 						GAMEPAD_CASE(kUp);

@@ -149,8 +149,8 @@ namespace REL
 			class F,
 			class First,
 			class... Rest>
-		decltype(auto) invoke_member_function_non_pod(F&& a_func, First&& a_first, Rest&&... a_rest) noexcept(
-			std::is_nothrow_invocable_v<F, First, Rest...>)
+		decltype(auto) invoke_member_function_non_pod(F&& a_func, First&& a_first, Rest&&... a_rest)  //
+			noexcept(std::is_nothrow_invocable_v<F, First, Rest...>)
 		{
 			using result_t = std::invoke_result_t<F, First, Rest...>;
 			std::aligned_storage_t<sizeof(result_t), alignof(result_t)> result;
@@ -166,14 +166,10 @@ namespace REL
 	inline constexpr std::uint8_t RET = 0xC3;
 	inline constexpr std::uint8_t INT3 = 0xCC;
 
-	template <
-		class F,
-		class... Args,
-		std::enable_if_t<
-			std::is_invocable_v<F, Args...>,
-			int> = 0>
-	std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args) noexcept(
-		std::is_nothrow_invocable_v<F, Args...>)
+	template <class F, class... Args>
+	std::invoke_result_t<F, Args...> invoke(F&& a_func, Args&&... a_args)  //
+		noexcept(std::is_nothrow_invocable_v<F, Args...>)                  //
+		requires(std::invocable<F, Args...>)
 	{
 		if constexpr (std::is_member_function_pointer_v<std::decay_t<F>>) {
 			if constexpr (detail::is_x64_pod_v<std::invoke_result_t<F, Args...>>) {  // member functions == free functions in x64

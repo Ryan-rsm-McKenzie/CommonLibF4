@@ -184,6 +184,7 @@ namespace RE
 			}
 
 			[[nodiscard]] bool IsComplex() const noexcept { return data.rawType >= RawType::kArrayEnd; }
+			[[nodiscard]] bool IsObject() const { return GetRawType() == RawType::kObject; }
 
 			void SetArray(bool a_set) noexcept
 			{
@@ -678,7 +679,7 @@ namespace RE
 			virtual bool GetPropertyValue(const BSTSmartPointer<Object>& a_self, const char* a_propName, const BSTSmartPointer<IStackCallbackFunctor>& a_callback) = 0;                                                                                                                                                 // 24
 			virtual bool GetVariableValue(std::uint64_t a_objHandle, const BSFixedString& a_scriptName, std::uint32_t a_varIndex, Variable& a_var) const = 0;                                                                                                                                                           // 26
 			virtual bool GetVariableValue(const BSTSmartPointer<Object>& a_obj, std::uint32_t a_varIndex, Variable& a_var) const = 0;                                                                                                                                                                                   // 25
-			virtual bool HandleImplementsEvent(std::uint64_t ahObject, const BSFixedString& a_eventName) const = 0;                                                                                                                                                                                                     // 27
+			virtual bool HandleImplementsEvent(std::uint64_t a_object, const BSFixedString& a_eventName) const = 0;                                                                                                                                                                                                     // 27
 			virtual bool AddEventRelay(std::uint64_t a_sourceObject, const BSFixedString& a_eventName, const BSTSmartPointer<Object>& a_destObj) = 0;                                                                                                                                                                   // 28
 			virtual void RemoveEventRelay(std::uint64_t a_sourceObject, const BSFixedString& a_eventName, const BSTSmartPointer<Object>& a_destObj) = 0;                                                                                                                                                                // 29
 			virtual void RemoveAllEventRelays(const BSTSmartPointer<Object>& a_destObj) = 0;                                                                                                                                                                                                                            // 2A
@@ -766,6 +767,8 @@ namespace RE
 
 			// add
 			virtual TypeInfo::RawType GetRawType() const = 0;  // 01
+
+			[[nodiscard]] bool IsObject() const { return GetRawType() == TypeInfo::RawType::kObject; }
 		};
 		static_assert(sizeof(IComplexType) == 0x10);
 

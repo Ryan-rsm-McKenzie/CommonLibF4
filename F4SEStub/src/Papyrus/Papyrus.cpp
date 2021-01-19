@@ -23,6 +23,10 @@ namespace Papyrus
 #include "Papyrus/Game.h"
 #include "Papyrus/HeadPart.h"
 #include "Papyrus/Input.h"
+#include "Papyrus/InstanceData.h"
+#include "Papyrus/Location.h"
+#include "Papyrus/MatSwap.h"
+#include "Papyrus/Math.h"
 
 #undef BIND
 
@@ -49,6 +53,10 @@ namespace Papyrus
 		Game::Bind(*a_vm);
 		HeadPart::Bind(*a_vm);
 		Input::Bind(*a_vm);
+		//InstanceData::Bind(*a_vm);
+		Location::Bind(*a_vm);
+		Math::Bind(*a_vm);
+		MatSwap::Bind(*a_vm);
 
 		logger::info("bound all scripts"sv);
 		return true;

@@ -15,5 +15,9 @@ set(headers ${headers}
 	src/Papyrus/Game.h
 	src/Papyrus/HeadPart.h
 	src/Papyrus/Input.h
+	src/Papyrus/InstanceData.h
+	src/Papyrus/Location.h
+	src/Papyrus/Math.h
+	src/Papyrus/MatSwap.h
 	src/Papyrus/Papyrus.h
 )

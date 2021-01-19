@@ -35,9 +35,11 @@ namespace RE
 			{}
 
 			BSTScatterTableEntry(BSTScatterTableEntry&& a_rhs) noexcept :
-				value(std::exchange(a_rhs.value, nullptr)),
-				next(a_rhs.next)
+				value(std::move(a_rhs.value)),
+				next(std::exchange(a_rhs.next, nullptr))
 			{}
+
+			~BSTScatterTableEntry() noexcept {}
 
 			BSTScatterTableEntry& operator=(const BSTScatterTableEntry& a_rhs)
 			{
@@ -57,7 +59,11 @@ namespace RE
 				return *this;
 			}
 
-			value_type value{};                     // 00
+			union
+			{
+				value_type value;
+				std::byte buf[sizeof(value_type)]{ static_cast<std::byte>(0) };
+			};                                      // 00
 			BSTScatterTableEntry* next{ nullptr };  // ??
 		};
 
@@ -160,6 +166,12 @@ namespace RE
 
 		BSTScatterTable() = default;
 
+		~BSTScatterTable()
+		{
+			clear();
+			deallocate(get_entries());
+		}
+
 		F4_HEAP_REDEFINE_NEW(BSTScatterTable);
 
 		[[nodiscard]] iterator begin() noexcept { return get_entries() ? make_iterator(get_entries()) : iterator{}; }
@@ -176,11 +188,20 @@ namespace RE
 
 		[[nodiscard]] size_type max_size() const noexcept { return _allocator.max_size(); }
 
-		std::pair<iterator, bool> insert(const value_type& a_value) { return insert_impl(false, a_value); }
-		std::pair<iterator, bool> insert(value_type&& a_value) { return insert_impl(false, std::move(a_value)); }
+		void clear()
+		{
+			for (auto& entry : *this) {
+				std::destroy_at(std::addressof(entry));
+			}
 
-		std::pair<iterator, bool> insert_or_assign(const value_type& a_value) { return insert_impl(true, a_value); }
-		std::pair<iterator, bool> insert_or_assign(value_type&& a_value) { return insert_impl(true, std::move(a_value)); }
+			std::memset(get_entries(), 0, _capacity * sizeof(entry_type));
+		}
+
+		std::pair<iterator, bool> insert(const value_type& a_value) { return do_insert<false>(a_value); }
+		std::pair<iterator, bool> insert(value_type&& a_value) { return do_insert<false>(std::move(a_value)); }
+
+		std::pair<iterator, bool> insert_or_assign(const value_type& a_value) { return do_insert<true>(a_value); }
+		std::pair<iterator, bool> insert_or_assign(value_type&& a_value) { return do_insert<true>(std::move(a_value)); }
 
 		size_type erase(const key_type& a_key)
 		{
@@ -209,7 +230,9 @@ namespace RE
 				std::destroy_at(std::addressof(entry->value));
 				entry->next = nullptr;
 			} else {  // else move next entry into current
-				std::construct_at(entry, std::move(*entry->next));
+				const auto next = entry->next;
+				*entry = std::move(*next);
+				std::destroy_at(std::addressof(next->value));
 			}
 
 			++_freeCount;
@@ -218,13 +241,13 @@ namespace RE
 
 		[[nodiscard]] iterator find(const key_type& a_key)
 		{
-			const auto entry = find_impl(a_key);
+			const auto entry = do_find(a_key);
 			return entry ? make_iterator(entry) : end();
 		}
 
 		[[nodiscard]] const_iterator find(const key_type& a_key) const
 		{
-			const auto entry = find_impl(a_key);
+			const auto entry = do_find(a_key);
 			return entry ? make_iterator(entry) : end();
 		}
 
@@ -249,7 +272,7 @@ namespace RE
 		[[nodiscard]] key_equal key_eq() const { return {}; }
 
 	private:
-		[[nodiscard]] entry_type* find_impl(const key_type& a_key) const
+		[[nodiscard]] entry_type* do_find(const key_type& a_key) const
 		{
 			if (!get_entries()) {
 				return nullptr;
@@ -271,8 +294,8 @@ namespace RE
 			return nullptr;
 		}
 
-		template <class Arg>
-		[[nodiscard]] std::pair<iterator, bool> insert_impl(bool a_overwrite, Arg&& a_value)
+		template <bool OVERWRITE, class Arg>
+		[[nodiscard]] std::pair<iterator, bool> do_insert(Arg&& a_value)
 		{
 			if (!get_entries() || !_freeCount) {
 				if (!grow()) {
@@ -290,7 +313,7 @@ namespace RE
 
 			for (auto iter = idealEntry; iter != _sentinel; iter = iter->next) {
 				if (comp_key(get_key(iter->value), get_key(a_value))) {  // if entry already in table
-					if (a_overwrite) {
+					if constexpr (OVERWRITE) {
 						iter->value = std::forward<Arg>(a_value);
 					}
 					return { make_iterator(iter), false };
@@ -313,9 +336,10 @@ namespace RE
 
 			// move taken slot out, so we can move in
 			std::construct_at(std::addressof(freeEntry->value), std::move(idealEntry->value));
+			std::destroy_at(std::addressof(idealEntry->value));
 			freeEntry->next = idealEntry->next;
 			takenIdealEntry->next = freeEntry;
-			idealEntry->value = std::forward<Arg>(a_value);
+			std::construct_at(std::addressof(idealEntry->value), std::forward<Arg>(a_value));
 			idealEntry->next = const_cast<entry_type*>(_sentinel);
 			return { make_iterator(idealEntry), true };
 		}
@@ -378,9 +402,16 @@ namespace RE
 			if (!newEntries) {
 				return false;
 			} else if (newEntries == oldEntries) {
+				if (a_newCapacity > _capacity) {
+					std::uninitialized_default_construct_n(
+						newEntries + _capacity,
+						a_newCapacity - _capacity);
+				}
 				_capacity = a_newCapacity;
 				return true;
 			} else {
+				std::uninitialized_default_construct_n(newEntries, a_newCapacity);
+
 				_capacity = a_newCapacity;
 				_freeCount = a_newCapacity;
 				_freeIdx = a_newCapacity;
@@ -450,7 +481,7 @@ namespace RE
 		[[nodiscard]] entry_type* allocate(std::size_t a_num)
 		{
 			auto size = a_num * sizeof(entry_type);
-			auto mem = malloc<entry_type>(size);
+			auto mem = static_cast<entry_type*>(malloc(size * sizeof(entry_type)));
 			std::memset(mem, 0, size);
 			return mem;
 		}

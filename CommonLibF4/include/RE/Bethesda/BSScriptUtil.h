@@ -72,28 +72,6 @@ namespace RE::BSScript
 		}
 
 		template <class T>
-		bool insert(std::string_view a_name, T&& a_val)
-		{
-			if (_proxy && _proxy->type) {
-				auto& mappings = _proxy->type->varNameIndexMap;
-				const auto it = mappings.find(a_name);
-				if (it != mappings.end()) {
-					auto& var = _proxy->variables[it->second];
-					detail::PackVariable(var, std::forward<T>(a_val));
-					return true;
-				}
-			}
-
-			F4SE::log::warn(
-				FMT_STRING("failed to pack var \"{}\" on structure \"{}\""),
-				a_name,
-				name);
-			return false;
-		}
-
-		[[nodiscard]] bool is_none() const noexcept { return _proxy == nullptr; }
-
-		template <class T>
 		std::optional<T> find(std::string_view a_name, bool a_quiet = false) const
 		{
 			if (_proxy && _proxy->type) {
@@ -113,6 +91,26 @@ namespace RE::BSScript
 			}
 
 			return std::nullopt;
+		}
+
+		template <class T>
+		bool insert(std::string_view a_name, T&& a_val)
+		{
+			if (_proxy && _proxy->type) {
+				auto& mappings = _proxy->type->varNameIndexMap;
+				const auto it = mappings.find(a_name);
+				if (it != mappings.end()) {
+					auto& var = _proxy->variables[it->second];
+					detail::PackVariable(var, std::forward<T>(a_val));
+					return true;
+				}
+			}
+
+			F4SE::log::warn(
+				FMT_STRING("failed to pack var \"{}\" on structure \"{}\""),
+				a_name,
+				name);
+			return false;
 		}
 
 	protected:
@@ -248,6 +246,12 @@ namespace RE::BSScript
 		concept boolean = std::same_as<std::remove_cv_t<T>, bool>;
 		// clang-format on
 
+		template <class T>
+		concept cobject = std::same_as<std::remove_cv_t<T>, GameScript::RefrOrInventoryObj>;
+
+		template <class T>
+		concept cobject_ref = cobject<std::decay_t<T>>;
+
 		// clang-format off
 		template <class T>
 		concept array =
@@ -304,6 +308,7 @@ namespace RE::BSScript
 					integral<T> ||
 					floating_point<T> ||
 					boolean<T> ||
+					cobject<T> ||
 					array<T> ||
 					wrapper<T> ||
 					nullable<T>));
@@ -334,6 +339,12 @@ namespace RE::BSScript
 	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
 	{
 		return static_cast<std::uint32_t>(T::FORM_ID);
+	}
+
+	template <detail::cobject T>
+	[[nodiscard]] constexpr std::uint32_t GetVMTypeID() noexcept
+	{
+		return GetVMTypeID<TESObjectREFR>();
 	}
 
 	template <class T>
@@ -388,6 +399,12 @@ namespace RE::BSScript
 	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		return TypeInfo::RawType::kBool;
+	}
+
+	template <detail::cobject T>
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
+	{
+		return GetTypeInfo<TESObjectREFR>();
 	}
 
 	template <detail::array T>
@@ -520,6 +537,53 @@ namespace RE::BSScript
 		a_var = static_cast<bool>(a_val);
 	}
 
+	template <detail::cobject_ref T>
+	void PackVariable(Variable& a_var, T&& a_val)
+	{
+		const auto success = [&]() {
+			if (a_val.Reference()) {
+				detail::PackVariable(a_var, a_val.Reference());
+				return success;
+			} else if (!a_val.Container() || !a_val.UniqueID()) {
+				return false;
+			}
+			const auto& container = *a_val.Container();
+			const auto uniqueID = a_val.UniqueID();
+
+			const auto typeInfo = GetTypeInfo<GameScript::RefrOrInventoryObj>();
+			if (!typeInfo || !typeInfo->IsObject()) {
+				return false;
+			}
+			const auto& objInfo = static_cast<const ObjectTypeInfo&>(*typeInfo);
+
+			const auto game = GameVM::GetSingleton();
+			const auto vm = game ? game->GetVM() : nullptr;
+			if (!vm) {
+				return false;
+			}
+
+			const auto handle = GameScript::HandlePolicy::GetHandleForInventoryID(uniqueID, container.GetFormID());
+			BSTSmartPointer<Object> object;
+			if (!vm->FindBoundObject(handle, objInfo.name.c_str(), false, object, false) &&
+				vm->CreateObject(objInfo.name, object)) {
+				GameScript::BindCObject(object, a_val, *vm);
+			}
+
+			if (!object) {
+				return false;
+			}
+
+			a_var = std::move(object);
+			return true;
+		};
+
+		if (!success) {
+			assert(false);
+			F4SE::log::error("failed to pack cobject"sv);
+			a_var = nullptr;
+		}
+	}
+
 	template <detail::array_ref T>
 	void PackVariable(Variable& a_var, T&& a_val)
 	{
@@ -596,6 +660,11 @@ namespace RE::BSScript
 	[[nodiscard]] T* UnpackVariable(const Variable& a_var)
 	{
 		const auto result = [&]() -> void* {
+			if (!a_var.is<Object>()) {
+				assert(false);
+				return nullptr;
+			}
+
 			const auto game = GameVM::GetSingleton();
 			const auto vm = game ? game->GetVM() : nullptr;
 			const auto object = get<Object>(a_var);
@@ -623,6 +692,11 @@ namespace RE::BSScript
 	template <detail::string T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
+		if (!a_var.is<BSFixedString>()) {
+			assert(false);
+			return T();
+		}
+
 		if constexpr (std::same_as<T, BSFixedString> ||
 					  std::same_as<T, BSFixedStringCS>) {
 			return get<BSFixedString>(a_var);
@@ -634,30 +708,93 @@ namespace RE::BSScript
 	template <detail::signed_integral T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
+		if (!a_var.is<std::int32_t>()) {
+			assert(false);
+			return T();
+		}
+
 		return static_cast<T>(get<std::int32_t>(a_var));
 	}
 
 	template <detail::unsigned_integral T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
+		if (!a_var.is<std::uint32_t>()) {
+			assert(false);
+			return T();
+		}
+
 		return static_cast<T>(get<std::uint32_t>(a_var));
 	}
 
 	template <detail::floating_point T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
+		if (!a_var.is<float>()) {
+			assert(false);
+			return T();
+		}
+
 		return static_cast<T>(get<float>(a_var));
 	}
 
 	template <detail::boolean T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
+		if (!a_var.is<bool>()) {
+			assert(false);
+			return T();
+		}
+
 		return static_cast<T>(get<bool>(a_var));
+	}
+
+	template <detail::cobject T>
+	[[nodiscard]] T UnpackVariable(const Variable& a_var)
+	{
+		const auto result = [&]() -> std::optional<T> {
+			if (!a_var.is<Object>()) {
+				assert(false);
+				return std::nullopt;
+			}
+
+			const auto obj = get<Object>(a_var);
+			if (!obj) {
+				return std::nullopt;
+			}
+
+			const auto game = GameVM::GetSingleton();
+			const auto vm = game ? game->GetVM() : nullptr;
+			if (!vm) {
+				return std::nullopt;
+			}
+
+			auto& policy = vm->GetObjectHandlePolicy();
+			const auto handle = obj->GetHandle();
+			if (!policy.HandleIsType(GetVMTypeID<T>(), handle)) {
+				return std::nullopt;
+			}
+
+			return T(handle);
+		};
+
+		if (!result) {
+			assert(false);
+			F4SE::log::error("failed to get cobject from variable"sv);
+			return T();
+		} else {
+			return *result;
+		}
 	}
 
 	template <detail::array T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
+		if (!a_var.is<Array>()) {
+			assert(false);
+			return T();
+		}
+
 		using value_type = typename T::value_type;
 
 		T out;
