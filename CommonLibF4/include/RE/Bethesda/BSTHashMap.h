@@ -1,88 +1,132 @@
-#pragma once
+#ifndef F4SE_TEST_SUITE
+#	pragma once
 
-#include "RE/Bethesda/BSTTuple.h"
-#include "RE/Bethesda/CRC.h"
-#include "RE/Bethesda/MemoryManager.h"
+#	include "RE/Bethesda/BSTTuple.h"
+#	include "RE/Bethesda/CRC.h"
+#	include "RE/Bethesda/MemoryManager.h"
+#endif
 
 namespace RE
 {
+	namespace detail
+	{
+		static constexpr std::uint8_t BSTScatterTableSentinel[] = { 0xDEu, 0xADu, 0xBEu, 0xEFu };
+	}
+
 	// scatter table with chaining
 	template <
-		class Traits,
-		std::uint32_t N,
-		template <class, std::uint32_t> class Allocator,
 		class Hash,
-		class KeyEqual>
-	struct BSTScatterTable
+		class KeyEqual,
+		class Traits,
+		template <std::size_t, std::size_t> class Allocator>
+	class BSTScatterTable
 	{
 	public:
 		using traits_type = Traits;
-		using key_type = typename traits_type::key_type;
-		using mapped_type = typename traits_type::mapped_type;
-		using value_type = typename traits_type::value_type;
+		using key_type = typename Traits::key_type;
+		using mapped_type = typename Traits::mapped_type;
+		using value_type = typename Traits::value_type;
 		using size_type = std::uint32_t;
+		using difference_type = std::int32_t;
 		using hasher = Hash;
 		using key_equal = KeyEqual;
+		using reference = value_type&;
+		using const_reference = const value_type&;
+		using pointer = value_type*;
+		using const_pointer = const value_type*;
 
-		struct BSTScatterTableEntry
+		static_assert(std::is_invocable_r_v<size_type, const hasher&, const key_type&>);
+		static_assert(std::is_invocable_r_v<bool, const key_equal&, const key_type&, const key_type&>);
+
+	private:
+		struct entry_type
 		{
-		public:
-			BSTScatterTableEntry() = default;
+			entry_type() = default;
+			entry_type(const entry_type&) = delete;
 
-			BSTScatterTableEntry(const BSTScatterTableEntry& a_rhs) :
-				value(a_rhs.value),
-				next(a_rhs.next)
-			{}
+			entry_type(entry_type&& a_rhs)  //
+				noexcept(std::is_nothrow_move_constructible_v<value_type>&&
+						std::is_nothrow_destructible_v<value_type>)
+			{
+				if (a_rhs.has_value()) {
+					const auto rnext = a_rhs.next;
+					emplace(std::move(a_rhs).steal(), rnext);
+				}
+			}
 
-			BSTScatterTableEntry(BSTScatterTableEntry&& a_rhs) noexcept :
-				value(std::move(a_rhs.value)),
-				next(std::exchange(a_rhs.next, nullptr))
-			{}
+			~entry_type() noexcept { destroy(); };
 
-			~BSTScatterTableEntry() noexcept {}
+			entry_type& operator=(const entry_type&) = delete;
 
-			BSTScatterTableEntry& operator=(const BSTScatterTableEntry& a_rhs)
+			entry_type& operator=(entry_type&& a_rhs)  //
+				noexcept(std::is_nothrow_move_constructible_v<value_type>&&
+						std::is_nothrow_destructible_v<value_type>)
 			{
 				if (this != std::addressof(a_rhs)) {
-					value = a_rhs.value;
-					next = a_rhs.next;
+					destroy();
+					if (a_rhs.has_value()) {
+						const auto rnext = a_rhs.next;
+						emplace(std::move(a_rhs).steal(), rnext);
+					}
 				}
 				return *this;
 			}
 
-			BSTScatterTableEntry& operator=(BSTScatterTableEntry&& a_rhs) noexcept
+			[[nodiscard]] bool has_value() const noexcept { return next != nullptr; }
+
+			void destroy()  //
+				noexcept(std::is_nothrow_destructible_v<value_type>)
 			{
-				if (this != std::addressof(a_rhs)) {
-					value = std::move(a_rhs.value);
-					next = std::exchange(a_rhs.next, nullptr);
+				if (has_value()) {
+					std::destroy_at(std::addressof(value));
+					next = nullptr;
 				}
-				return *this;
+				assert(!has_value());
+			}
+
+			template <class Arg>
+			void emplace(Arg&& a_value, const entry_type* a_next)  //
+				noexcept(std::is_nothrow_constructible_v<value_type, Arg>)
+			{
+				static_assert(std::same_as<std::decay_t<Arg>, value_type>);
+				destroy();
+				std::construct_at(std::addressof(value), std::forward<Arg>(a_value));
+				next = const_cast<entry_type*>(a_next);
+				assert(has_value());
+			}
+
+			[[nodiscard]] value_type steal() &&  //
+				noexcept(std::is_nothrow_move_constructible_v<value_type>&&
+						std::is_nothrow_destructible_v<value_type>)
+			{
+				assert(has_value());
+				value_type val = std::move(value);
+				destroy();
+				assert(!has_value());
+				return val;
 			}
 
 			union
 			{
 				value_type value;
-				std::byte buf[sizeof(value_type)]{ static_cast<std::byte>(0) };
-			};                                      // 00
-			BSTScatterTableEntry* next{ nullptr };  // ??
+				std::byte buffer[sizeof(value_type)]{ static_cast<std::byte>(0) };
+			};
+			entry_type* next{ nullptr };
 		};
-
-		using entry_type = BSTScatterTableEntry;
-		using allocator_type = Allocator<entry_type, N>;
 
 		template <class U>
 		class iterator_base :
-			public boost::iterators::iterator_facade<
+			public boost::stl_interfaces::iterator_interface<
 				iterator_base<U>,
-				U,
-				std::forward_iterator_tag>
+				std::forward_iterator_tag,
+				U>
 		{
 		private:
 			using super =
-				boost::iterators::iterator_facade<
+				boost::stl_interfaces::iterator_interface<
 					iterator_base<U>,
-					U,
-					std::forward_iterator_tag>;
+					std::forward_iterator_tag,
+					U>;
 
 		public:
 			using difference_type = typename super::difference_type;
@@ -91,165 +135,189 @@ namespace RE
 			using reference = typename super::reference;
 			using iterator_category = typename super::iterator_category;
 
-			iterator_base() noexcept = default;
-			iterator_base(const iterator_base&) noexcept = default;
-			iterator_base(iterator_base&&) noexcept = default;
+			iterator_base() = default;
 
 			template <class V>
-			iterator_base(iterator_base<V> a_rhs) noexcept  //
+			iterator_base(const iterator_base<V>& a_rhs) noexcept  //
 				requires(std::convertible_to<typename iterator_base<V>::reference, reference>) :
-				_cur(a_rhs._cur),
-				_end(a_rhs._end)
+				_first(a_rhs._first),
+				_last(a_rhs._last)
 			{}
 
-			~iterator_base() noexcept = default;
-
-			iterator_base& operator=(const iterator_base&) noexcept = default;
-			iterator_base& operator=(iterator_base&&) noexcept = default;
+			~iterator_base() = default;
 
 			template <class V>
-			iterator_base& operator=(iterator_base<V> a_rhs)  //
+			iterator_base& operator=(const iterator_base<V>& a_rhs) noexcept  //
 				requires(std::convertible_to<typename iterator_base<V>::reference, reference>)
 			{
-				_cur = a_rhs._cur;
-				_end = a_rhs._end;
+				assert(_last == a_rhs._last);
+				_first = a_rhs._first;
+				_last = a_rhs._last;
 				return *this;
 			}
 
-		protected :
-			friend class boost::iterator_core_access;
-			template <class, std::uint32_t, template <class, std::uint32_t> class, class, class>
-			friend struct BSTScatterTable;
-
-			iterator_base(entry_type* a_at, entry_type* a_end) noexcept :
-				_cur(a_at),
-				_end(a_end)
+			[[nodiscard]] reference operator*() const noexcept
 			{
-				if (!good()) {
-					increment();
-				}
-			}
-
-			[[nodiscard]] reference dereference() const noexcept
-			{
-				assert(_cur);
-				return _cur->value;
+				assert(iterable());
+				assert(_first->has_value());
+				return _first->value;
 			}
 
 			template <class V>
-			[[nodiscard]] bool equal(const iterator_base<V>& a_rhs) const noexcept
+			[[nodiscard]] bool operator==(const iterator_base<V>& a_rhs) const noexcept
 			{
-				assert(_end == a_rhs._end);
-				return _cur == a_rhs._cur;
+				assert(_last == a_rhs._last);
+				return _first == a_rhs._first;
 			}
 
-			void increment() noexcept
+			iterator_base& operator++() noexcept
 			{
-				assert(_cur && _cur != _end);
-				do {
-					++_cur;
-				} while (!good());
+				seek();
+				return *this;
 			}
+
+			using super::operator++;
+
+		protected:
+			friend class BSTScatterTable;
+
+			iterator_base(entry_type* a_first, entry_type* a_last) noexcept :
+				_first(a_first),
+				_last(a_last)
+			{
+				assert(!!_first == !!_last);  // both or neither have values
+				assert(_first <= _last);
+				if (iterable() && !_first->has_value()) {
+					seek();
+				}
+			}
+
+			[[nodiscard]] entry_type* get_entry() const noexcept { return _first; }
 
 		private:
 			template <class>
 			friend class iterator_base;
 
-			[[nodiscard]] bool good() const noexcept { return _cur == _end || _cur->next; }
+			[[nodiscard]] bool iterable() const noexcept { return _first && _last && _first != _last; }
 
-			entry_type* _cur{ nullptr };
-			entry_type* _end{ nullptr };
+			void seek() noexcept
+			{
+				assert(iterable());
+				do {
+					++_first;
+				} while (_first != _last && !_first->has_value());
+			}
+
+			entry_type* _first{ nullptr };
+			entry_type* _last{ nullptr };
 		};
 
+	public:
+		using allocator_type = Allocator<sizeof(entry_type), alignof(entry_type)>;
 		using iterator = iterator_base<value_type>;
 		using const_iterator = iterator_base<const value_type>;
 
 		BSTScatterTable() = default;
 
-		~BSTScatterTable()
+		BSTScatterTable(const BSTScatterTable& a_rhs) { insert(a_rhs.begin(), a_rhs.end()); }
+
+		BSTScatterTable(BSTScatterTable&& a_rhs) noexcept  //
+			requires(std::same_as<typename allocator_type::propagate_on_container_move_assignment, std::true_type>) :
+			_capacity(std::exchange(a_rhs._capacity, 0)),
+			_free(std::exchange(a_rhs._free, 0)),
+			_good(std::exchange(a_rhs._good, 0)),
+			_sentinel(a_rhs._sentinel),
+			_allocator(std::move(a_rhs._allocator))
 		{
-			clear();
-			deallocate(get_entries());
+			assert(a_rhs.empty());
 		}
 
-		F4_HEAP_REDEFINE_NEW(BSTScatterTable);
+		~BSTScatterTable() { free_resources(); }
 
-		[[nodiscard]] iterator begin() noexcept { return get_entries() ? make_iterator(get_entries()) : iterator{}; }
-		[[nodiscard]] const_iterator begin() const noexcept { return get_entries() ? make_iterator(get_entries()) : const_iterator{}; }
-		[[nodiscard]] const_iterator cbegin() const noexcept { return begin(); }
+		BSTScatterTable& operator=(const BSTScatterTable& a_rhs)
+		{
+			if (this != std::addressof(a_rhs)) {
+				clear();
+				insert(a_rhs.begin(), a_rhs.end());
+			}
+			return *this;
+		}
 
-		[[nodiscard]] iterator end() noexcept { return get_entries() ? make_iterator(get_entries() + _capacity) : iterator{}; }
-		[[nodiscard]] const_iterator end() const noexcept { return get_entries() ? make_iterator(get_entries() + _capacity) : const_iterator{}; }
-		[[nodiscard]] const_iterator cend() const noexcept { return end(); }
+		BSTScatterTable& operator=(BSTScatterTable&& a_rhs)  //
+			requires(std::same_as<typename allocator_type::propagate_on_container_move_assignment, std::true_type>)
+		{
+			if (this != std::addressof(a_rhs)) {
+				free_resources();
 
-		[[nodiscard]] bool empty() const noexcept { return !get_entries() || _freeCount == 0; }
+				_capacity = std::exchange(a_rhs._capacity, 0);
+				_free = std::exchange(a_rhs._free, 0);
+				_good = std::exchange(a_rhs._good, 0);
+				_sentinel = a_rhs._sentinel;
+				_allocator = std::move(a_rhs._allocator);
 
-		[[nodiscard]] size_type size() const noexcept { return _capacity - _freeCount; }
+				assert(a_rhs.empty());
+			}
+			return *this;
+		}
 
-		[[nodiscard]] size_type max_size() const noexcept { return _allocator.max_size(); }
+		[[nodiscard]] iterator begin() noexcept { return make_iterator<iterator>(get_entries()); }
+		[[nodiscard]] const_iterator begin() const noexcept { return make_iterator<const_iterator>(get_entries()); }
+		[[nodiscard]] const_iterator cbegin() const noexcept { return make_iterator<const_iterator>(get_entries()); }
+
+		[[nodiscard]] iterator end() noexcept { return make_iterator<iterator>(); }
+		[[nodiscard]] const_iterator end() const noexcept { return make_iterator<const_iterator>(); }
+		[[nodiscard]] const_iterator cend() const noexcept { return make_iterator<const_iterator>(); }
+
+		[[nodiscard]] bool empty() const noexcept { return size() == 0; }
+		[[nodiscard]] size_type size() const noexcept { return _capacity - _free; }
 
 		void clear()
 		{
-			for (auto& entry : *this) {
-				std::destroy_at(std::addressof(entry));
+			if (size() > 0) {
+				const auto entries = get_entries();
+				assert(entries != nullptr);
+				for (size_type i = 0; i < _capacity; ++i) {
+					entries[i].destroy();
+				}
+				_free = _capacity;
+				_good = 0;
 			}
 
-			std::memset(get_entries(), 0, _capacity * sizeof(entry_type));
+			assert(empty());
 		}
 
-		std::pair<iterator, bool> insert(const value_type& a_value) { return do_insert<false>(a_value); }
-		std::pair<iterator, bool> insert(value_type&& a_value) { return do_insert<false>(std::move(a_value)); }
+		std::pair<iterator, bool> insert(const value_type& a_value) { return do_insert(a_value); }
+		std::pair<iterator, bool> insert(value_type&& a_value) { return do_insert(std::move(a_value)); }
 
-		std::pair<iterator, bool> insert_or_assign(const value_type& a_value) { return do_insert<true>(a_value); }
-		std::pair<iterator, bool> insert_or_assign(value_type&& a_value) { return do_insert<true>(std::move(a_value)); }
+		template <std::input_iterator InputIt>
+		void insert(InputIt a_first, InputIt a_last)  //
+			requires(std::convertible_to<std::iter_reference_t<InputIt>, const_reference>)
+		{
+			reserve(size() + static_cast<size_type>(std::distance(a_first, a_last)));
+			for (; a_first != a_last; ++a_first) {
+				insert(*std::move(a_first));
+			}
+		}
+
+		template <class... Args>
+		std::pair<iterator, bool> emplace(Args&&... a_args)  //
+			requires(std::constructible_from<value_type, Args...>)
+		{
+			return insert(value_type(std::forward<Args>(a_args)...));
+		}
+
+		iterator erase(const_iterator a_pos) { return do_erase(a_pos); }
+		iterator erase(iterator a_pos) { return do_erase(a_pos); }
 
 		size_type erase(const key_type& a_key)
 		{
-			if (!get_entries()) {  // no entries
-				return 0;
-			}
-
-			const auto entry = calc_pos(a_key);
-			if (!entry->next) {  // key not in table
-				return 0;
-			}
-
-			entry_type* tail = nullptr;
-			while (!comp_key(get_key(entry->value), a_key)) {  // find key in table
-				tail = entry;
-				entry = entry->next;
-				if (entry == _sentinel) {
-					return 0;
-				}
-			}
-
-			if (entry->next == _sentinel) {  // if no chain
-				if (tail) {
-					tail->next = const_cast<entry_type*>(_sentinel);
-				}
-				std::destroy_at(std::addressof(entry->value));
-				entry->next = nullptr;
-			} else {  // else move next entry into current
-				const auto next = entry->next;
-				*entry = std::move(*next);
-				std::destroy_at(std::addressof(next->value));
-			}
-
-			++_freeCount;
-			return 1;
+			const auto pos = find(a_key);
+			const auto result = pos != end() ? erase(pos) : pos;
+			return result != end() ? 1 : 0;
 		}
 
-		[[nodiscard]] iterator find(const key_type& a_key)
-		{
-			const auto entry = do_find(a_key);
-			return entry ? make_iterator(entry) : end();
-		}
-
-		[[nodiscard]] const_iterator find(const key_type& a_key) const
-		{
-			const auto entry = do_find(a_key);
-			return entry ? make_iterator(entry) : end();
-		}
+		[[nodiscard]] iterator find(const key_type& a_key) { return do_find<iterator>(a_key); }
+		[[nodiscard]] const_iterator find(const key_type& a_key) const { return do_find<const_iterator>(a_key); }
 
 		[[nodiscard]] bool contains(const key_type& a_key) const { return find(a_key) != end(); }
 
@@ -259,377 +327,449 @@ namespace RE
 				return;
 			}
 
-			const auto newCount = std::bit_ceil<std::uint64_t>(a_count);
-			if (newCount > 1u << 31) {
-				stl::report_and_fail("reserve failed"sv);
-			}
-
-			grow(static_cast<std::uint32_t>(newCount));
-		}
-
-		[[nodiscard]] hasher hash_function() const { return {}; }
-
-		[[nodiscard]] key_equal key_eq() const { return {}; }
-
-	private:
-		[[nodiscard]] entry_type* do_find(const key_type& a_key) const
-		{
-			if (!get_entries()) {
-				return nullptr;
-			}
-
-			auto probe = calc_pos(a_key);  // try ideal pos
-			if (!probe->next) {
-				return nullptr;  // nothing there
-			}
-
-			do {
-				if (comp_key(get_key(probe->value), a_key)) {
-					return probe;
-				} else {
-					probe = probe->next;
-				}
-			} while (probe != _sentinel);  // follow chain
-
-			return nullptr;
-		}
-
-		template <bool OVERWRITE, class Arg>
-		[[nodiscard]] std::pair<iterator, bool> do_insert(Arg&& a_value)
-		{
-			if (!get_entries() || !_freeCount) {
-				if (!grow()) {
-					return { end(), false };
-				}
-			}
-
-			const auto idealEntry = calc_pos(get_key(a_value));
-			if (!idealEntry->next) {  // if slot empty
-				std::construct_at(std::addressof(idealEntry->value), std::forward<Arg>(a_value));
-				idealEntry->next = const_cast<entry_type*>(_sentinel);
-				--_freeCount;
-				return { make_iterator(idealEntry), true };
-			}
-
-			for (auto iter = idealEntry; iter != _sentinel; iter = iter->next) {
-				if (comp_key(get_key(iter->value), get_key(a_value))) {  // if entry already in table
-					if constexpr (OVERWRITE) {
-						iter->value = std::forward<Arg>(a_value);
-					}
-					return { make_iterator(iter), false };
-				}
-			}
-
-			const auto freeEntry = get_free_entry();
-
-			auto takenIdealEntry = calc_pos(get_key(idealEntry->value));
-			if (takenIdealEntry == idealEntry) {  // if entry occupying our slot would've hashed here anyway
-				freeEntry->next = idealEntry->next;
-				idealEntry->next = freeEntry;
-				std::construct_at(std::addressof(freeEntry->value), std::forward<Arg>(a_value));
-				return { make_iterator(freeEntry), true };
-			}
-
-			while (takenIdealEntry->next != idealEntry) {  // find entry that links here
-				takenIdealEntry = takenIdealEntry->next;
-			}
-
-			// move taken slot out, so we can move in
-			std::construct_at(std::addressof(freeEntry->value), std::move(idealEntry->value));
-			std::destroy_at(std::addressof(idealEntry->value));
-			freeEntry->next = idealEntry->next;
-			takenIdealEntry->next = freeEntry;
-			std::construct_at(std::addressof(idealEntry->value), std::forward<Arg>(a_value));
-			idealEntry->next = const_cast<entry_type*>(_sentinel);
-			return { make_iterator(idealEntry), true };
-		}
-
-		[[nodiscard]] iterator make_iterator(entry_type* a_entry) noexcept
-		{
-			assert(get_entries() != nullptr);
-			return { a_entry, get_entries() + _capacity };
-		}
-
-		[[nodiscard]] const_iterator make_iterator(entry_type* a_entry) const noexcept
-		{
-			assert(get_entries() != nullptr);
-			return { a_entry, get_entries() + _capacity };
-		}
-
-		[[nodiscard]] std::uint32_t calc_hash(const key_type& a_key) const { return hash_function()(a_key); }
-
-		[[nodiscard]] std::uint32_t calc_idx(const key_type& a_key) const
-		{
-			// capacity is always a factor of 2, so this is a faster modulo
-			return calc_hash(a_key) & (_capacity - 1);
-		}
-
-		[[nodiscard]] entry_type* calc_pos(const key_type& a_key) const { return const_cast<entry_type*>(get_entries() + calc_idx(a_key)); }
-
-		// assumes not empty
-		[[nodiscard]] stl::not_null<entry_type*> get_free_entry() noexcept
-		{
-			assert(!empty());
-			entry_type* entry = nullptr;
-			do {
-				_freeIdx = (_capacity - 1) & (_freeIdx - 1);
-				entry = get_entries() + _freeIdx;
-			} while (entry->next);
-
-			--_freeCount;
-			return entry;
-		}
-
-		[[nodiscard]] bool comp_key(const key_type& a_lhs, const key_type& a_rhs) const { return key_eq()(a_lhs, a_rhs); }
-
-		bool grow()
-		{
-			if (_capacity == (std::uint32_t)1 << 31) {
-				return false;
-			}
-
-			std::uint32_t newCapacity = _capacity ? _capacity << 1 : min_size();
-			return grow(newCapacity);
-		}
-
-		bool grow(std::uint32_t a_newCapacity)
-		{
+			const auto oldCap = _capacity;
 			const auto oldEntries = get_entries();
-			auto iter = begin();
-			const auto last = end();
 
-			const auto newEntries = allocate(a_newCapacity);
-			if (!newEntries) {
-				return false;
-			} else if (newEntries == oldEntries) {
-				if (a_newCapacity > _capacity) {
-					std::uninitialized_default_construct_n(
-						newEntries + _capacity,
-						a_newCapacity - _capacity);
+			const auto [newCap, newEntries] = [&]() {
+				constexpr std::uint64_t min = allocator_type::min_size();
+				static_assert(min > 0 && std::has_single_bit(min));
+				const auto cap = std::max(std::bit_ceil<std::uint64_t>(a_count), min);
+				assert(cap >= min);
+				if (cap > 1u << 31) {
+					stl::report_and_fail("a buffer grew too large"sv);
 				}
-				_capacity = a_newCapacity;
-				return true;
-			} else {
-				std::uninitialized_default_construct_n(newEntries, a_newCapacity);
 
-				_capacity = a_newCapacity;
-				_freeCount = a_newCapacity;
-				_freeIdx = a_newCapacity;
+				const auto entries = allocate(static_cast<size_type>(cap));
+				if (!entries) {
+					stl::report_and_fail("failed to handle an allocation"sv);
+				}
+
+				return std::make_pair(static_cast<size_type>(cap), entries);
+			}();
+
+			const auto setCap = [&](size_type a_newCap) {
+				_capacity = a_newCap;
+				_free = _capacity;
+				_good = 0;
+			};
+
+			if (newEntries == oldEntries) {
+				std::uninitialized_default_construct_n(oldEntries + oldCap, newCap - oldCap);
+				std::vector<value_type> todo;
+				todo.reserve(size());
+				for (size_type i = 0; i < oldCap; ++i) {
+					auto& entry = oldEntries[i];
+					if (entry.has_value()) {
+						todo.emplace_back(std::move(entry).steal());
+					}
+				}
+				setCap(newCap);
+				insert(
+					std::make_move_iterator(todo.begin()),
+					std::make_move_iterator(todo.end()));
+			} else {
+				// in with the new
+				std::uninitialized_default_construct_n(newEntries, newCap);
+				setCap(newCap);
 				set_entries(newEntries);
 
-				while (iter != last) {
-					insert(std::move(*iter));
-					++iter;
+				if (oldEntries) {  // out with the old
+					for (size_type i = 0; i < oldCap; ++i) {
+						auto& entry = oldEntries[i];
+						if (entry.has_value()) {
+							insert(std::move(entry).steal());
+						}
+					}
+					std::destroy_n(oldEntries, oldCap);
+					deallocate(oldEntries);
 				}
-
-				deallocate(oldEntries);
-				return true;
 			}
 		}
 
-		[[nodiscard]] const key_type& get_key(const value_type& a_value) const
+	private:
+		[[nodiscard]] static const key_type& unwrap_key(const value_type& a_value) noexcept
 		{
-			traits_type traits{};
-			return traits(a_value);
+			return traits_type::unwrap_key(a_value);
 		}
 
-		[[nodiscard]] entry_type* allocate(std::size_t a_num) { return _allocator.allocate(a_num); }
+		[[nodiscard]] entry_type* allocate(size_type a_count)
+		{
+			return static_cast<entry_type*>(_allocator.allocate_bytes(sizeof(entry_type) * a_count));
+		}
 
-		void deallocate(entry_type* a_ptr) { _allocator.deallocate(a_ptr); }
+		void deallocate(entry_type* a_entry) { _allocator.deallocate_bytes(a_entry); }
 
-		[[nodiscard]] entry_type* get_entries() const noexcept { return _allocator.get_entries(); }
+		[[nodiscard]] iterator do_erase(const_iterator a_pos)
+		{
+			assert(a_pos != end());
+			const auto entry = a_pos.get_entry();
+			assert(entry != nullptr);
+			assert(entry->has_value());
+
+			if (entry->next == _sentinel) {  // end of chain
+				if (auto prev = &get_entry_for(unwrap_key(entry->value)); prev != entry) {
+					while (prev->next != entry) {
+						prev = prev->next;
+					}
+					prev->next = const_cast<entry_type*>(_sentinel);  // detach from chain
+				}
+
+				entry->destroy();
+			} else {  // move next into current
+				*entry = std::move(*entry->next);
+			}
+
+			++_free;
+			return make_iterator<iterator>(entry + 1);
+		}
+
+		template <class Iter>
+		[[nodiscard]] Iter do_find(const key_type& a_key) const  //
+			noexcept(noexcept(hash_function(a_key)) && noexcept(key_eq(a_key, a_key)))
+		{
+			if (empty()) {
+				return make_iterator<Iter>();
+			}
+
+			auto entry = &get_entry_for(a_key);
+			if (entry->has_value()) {
+				do {  // follow chain
+					if (key_eq(unwrap_key(entry->value), a_key)) {
+						return make_iterator<Iter>(entry);
+					} else {
+						entry = entry->next;
+					}
+				} while (entry != _sentinel);
+			}
+
+			return make_iterator<Iter>();
+		}
+
+		template <class P>
+		[[nodiscard]] std::pair<iterator, bool> do_insert(P&& a_value)  //
+			requires(std::same_as<std::decay_t<P>, value_type>)
+		{
+			if (const auto it = find(unwrap_key(a_value)); it != end()) {  // already exists
+				return std::make_pair(it, false);
+			}
+
+			if (_free == 0) {  // no free entries
+				reserve(_capacity + 1);
+				assert(_free > 0);
+			}
+
+			const stl::scope_exit decrement{ [&]() noexcept { --_free; } };
+			const auto entry = &get_entry_for(unwrap_key(a_value));
+			if (entry->has_value()) {  // slot is taken, resolve conflict
+				const auto free = &get_free_entry();
+				const auto wouldve = &get_entry_for(unwrap_key(entry->value));
+				if (wouldve == entry) {  // hash collision
+					free->emplace(std::forward<P>(a_value), std::exchange(entry->next, free));
+					return std::make_pair(make_iterator<iterator>(free), true);
+				} else {  // how did we get here?
+					auto prev = wouldve;
+					while (prev->next != entry) {
+						prev = prev->next;
+					}
+
+					// evict current value and detach from chain
+					*free = std::move(*entry);
+					prev->next = free;
+					entry->emplace(std::forward<P>(a_value), _sentinel);
+
+					return std::make_pair(make_iterator<iterator>(entry), true);
+				}
+			} else {  // its free realestate
+				entry->emplace(std::forward<P>(a_value), _sentinel);
+				return std::make_pair(make_iterator<iterator>(entry), true);
+			}
+		}
+
+		void free_resources()
+		{
+			if (_capacity > 0) {
+				assert(get_entries() != nullptr);
+				std::destroy_n(get_entries(), _capacity);
+				deallocate(get_entries());
+				set_entries(nullptr);
+				_capacity = 0;
+				_free = 0;
+				_good = 0;
+			}
+
+			assert(get_entries() == nullptr);
+			assert(_capacity == 0);
+			assert(_free == 0);
+		}
+
+		[[nodiscard]] entry_type& get_entry_for(const key_type& a_key) const  //
+			noexcept(noexcept(hash_function(a_key)))
+		{
+			assert(get_entries() != nullptr);
+			assert(std::has_single_bit(_capacity));
+
+			const auto hash = hash_function(a_key);
+			const auto idx = hash & (_capacity - 1);  // quick modulo
+			return get_entries()[idx];
+		}
+
+		[[nodiscard]] entry_type* get_entries() const noexcept { return static_cast<entry_type*>(_allocator.get_entries()); }
+
+		[[nodiscard]] entry_type& get_free_entry() noexcept
+		{
+			assert(_free > 0);
+			assert(get_entries() != nullptr);
+			assert(std::has_single_bit(_capacity));
+			assert([&]() noexcept {
+				const auto begin = get_entries();
+				const auto end = get_entries() + _capacity;
+				return std::find_if(
+						   begin,
+						   end,
+						   [](const auto& a_entry) noexcept {
+							   return !a_entry.has_value();
+						   }) != end;
+			}());
+
+			const auto entries = get_entries();
+			while (entries[_good].has_value()) {
+				_good = (_good + 1) & (_capacity - 1);  // wrap around w/ quick modulo
+			}
+			return entries[_good];
+		}
+
+		[[nodiscard]] size_type hash_function(const key_type& a_key) const  //
+			noexcept(std::is_nothrow_constructible_v<hasher>&&
+					std::is_nothrow_invocable_v<const hasher&, const key_type&>)
+		{
+			return static_cast<size_type>(hasher()(a_key));
+		}
+
+		[[nodiscard]] bool key_eq(const key_type& a_lhs, const key_type& a_rhs) const  //
+			noexcept(std::is_nothrow_constructible_v<key_equal>&&
+					std::is_nothrow_invocable_v<const key_equal&, const key_type&, const key_type&>)
+		{
+			return static_cast<bool>(key_equal()(a_lhs, a_rhs));
+		}
+
+		template <class Iter>
+		[[nodiscard]] Iter make_iterator() const noexcept
+		{
+			return Iter(get_entries() + _capacity, get_entries() + _capacity);
+		}
+
+		template <class Iter>
+		[[nodiscard]] Iter make_iterator(entry_type* a_first) const noexcept
+		{
+			return Iter(a_first, get_entries() + _capacity);
+		}
 
 		void set_entries(entry_type* a_entries) noexcept { _allocator.set_entries(a_entries); }
 
-		[[nodiscard]] size_type min_size() const noexcept { return _allocator.min_size(); }
-
-		static constexpr std::uint8_t SENTINEL[] = { (std::uint8_t)0xDE, (std::uint8_t)0xAD, (std::uint8_t)0xBE, (std::uint8_t)0xEF };
-
 		// members
-		std::uint64_t _pad00{ 0 };                                                     // 00
-		std::uint32_t _pad08{ 0 };                                                     // 08
-		std::uint32_t _capacity{ 0 };                                                  // 0C - this must be 2^n, or else terrible things will happen
-		std::uint32_t _freeCount{ 0 };                                                 // 10
-		std::uint32_t _freeIdx{ 0 };                                                   // 14
-		const entry_type* _sentinel{ reinterpret_cast<const entry_type*>(SENTINEL) };  // 18
-		allocator_type _allocator;                                                     // 20
+		std::uint64_t _pad00{ 0 };                                                                            // 00
+		std::uint32_t _pad08{ 0 };                                                                            // 08
+		size_type _capacity{ 0 };                                                                             // 0C - total # of slots, always a power of 2
+		size_type _free{ 0 };                                                                                 // 10 - # of free slots
+		size_type _good{ 0 };                                                                                 // 14 - last free index
+		const entry_type* _sentinel{ reinterpret_cast<const entry_type*>(detail::BSTScatterTableSentinel) };  // 18 - signals end of chain
+		allocator_type _allocator;                                                                            // 20
 	};
 
 	template <class Key, class T>
-	struct BSTScatterTableTraits
+	class BSTScatterTableTraits
 	{
 	public:
 		using key_type = Key;
 		using mapped_type = T;
-		using value_type = BSTTuple<const Key, T>;
+		using value_type = std::pair<const key_type, mapped_type>;
 
-		[[nodiscard]] const key_type& operator()(const value_type& a_value) const noexcept
-		{
-			return a_value.first;
-		}
+		[[nodiscard]] static const key_type& unwrap_key(const value_type& a_value) noexcept { return a_value.first; }
 	};
 
-	template <class T, std::uint32_t N = 8>
+	template <class Key>
+	class BSTSetTraits
+	{
+	public:
+		using key_type = Key;
+		using mapped_type = void;
+		using value_type = key_type;
+
+		[[nodiscard]] static const key_type& unwrap_key(const value_type& a_value) noexcept { return a_value; }
+	};
+
+	template <std::size_t S, std::size_t A>
 	struct BSTScatterTableHeapAllocator
 	{
 	public:
-		using entry_type = T;
 		using size_type = std::uint32_t;
+		using propagate_on_container_move_assignment = std::true_type;
 
-		BSTScatterTableHeapAllocator() noexcept = default;
+		BSTScatterTableHeapAllocator() = default;
+		BSTScatterTableHeapAllocator(const BSTScatterTableHeapAllocator&) = delete;
 
-		[[nodiscard]] entry_type* allocate(std::size_t a_num)
+		BSTScatterTableHeapAllocator(BSTScatterTableHeapAllocator&& a_rhs) noexcept :
+			_entries(std::exchange(a_rhs._entries, nullptr))
+		{}
+
+		~BSTScatterTableHeapAllocator() = default;
+		BSTScatterTableHeapAllocator& operator=(const BSTScatterTableHeapAllocator&) = delete;
+
+		BSTScatterTableHeapAllocator& operator=(BSTScatterTableHeapAllocator&& a_rhs) noexcept
 		{
-			auto size = a_num * sizeof(entry_type);
-			auto mem = static_cast<entry_type*>(malloc(size * sizeof(entry_type)));
-			std::memset(mem, 0, size);
-			return mem;
+			if (this != std::addressof(a_rhs)) {
+				assert(_entries == nullptr);
+				_entries = std::exchange(a_rhs._entries, nullptr);
+			}
+			return *this;
 		}
 
-		void deallocate(entry_type* a_ptr) { free(a_ptr); }
+		[[nodiscard]] static constexpr size_type min_size() noexcept { return 1u << 3; }
 
-		[[nodiscard]] entry_type* get_entries() const noexcept { return _entries; }
+		[[nodiscard]] void* allocate_bytes(std::size_t a_bytes)
+		{
+			assert(a_bytes % S == 0);
+			return malloc(a_bytes);
+		}
 
-		void set_entries(entry_type* a_entries) noexcept { _entries = a_entries; }
+		void deallocate_bytes(void* a_ptr) { free(a_ptr); }
 
-		[[nodiscard]] size_type min_size() const noexcept { return static_cast<size_type>(1) << 3; }
-
-		[[nodiscard]] size_type max_size() const noexcept { return static_cast<size_type>(1) << 31; }
+		[[nodiscard]] void* get_entries() const noexcept { return _entries; }
+		void set_entries(void* a_entries) noexcept { _entries = static_cast<std::byte*>(a_entries); }
 
 	private:
 		// members
-		std::uint64_t _pad00{ 0 };        // 00 (20)
-		entry_type* _entries{ nullptr };  // 08 (28)
+		std::uint64_t _pad00{ 0 };       // 00 (20)
+		std::byte* _entries{ nullptr };  // 08 (28)
 	};
-	static_assert(sizeof(BSTScatterTableHeapAllocator<void*, 8>) == 0x10);
+
+	template <std::uint32_t N>
+	struct BSTStaticHashMapBase
+	{
+	public:
+		static_assert(N > 0 && std::has_single_bit(N));
+
+		template <std::size_t S, std::size_t A>
+		struct Allocator
+		{
+		public:
+			using size_type = std::uint32_t;
+			using propagate_on_container_move_assignment = std::false_type;
+
+			Allocator() = default;
+			Allocator(const Allocator&) = delete;
+			Allocator(Allocator&&) = delete;
+			~Allocator() = default;
+			Allocator& operator=(const Allocator&) = delete;
+			Allocator& operator=(Allocator&&) = delete;
+
+			[[nodiscard]] static constexpr size_type min_size() noexcept { return N; }
+
+			[[nodiscard]] void* allocate_bytes(std::size_t a_bytes)
+			{
+				assert(a_bytes % S == 0);
+				return a_bytes <= N * S ? _buffer : nullptr;
+			}
+
+			void deallocate_bytes([[maybe_unused]] void* a_ptr) { assert(a_ptr == _buffer); }
+
+			[[nodiscard]] void* get_entries() const noexcept { return _entries; }
+
+			void set_entries(void* a_entries) noexcept
+			{
+				assert(a_entries == _buffer || a_entries == nullptr);
+				_entries = static_cast<std::byte*>(a_entries);
+			}
+
+		private:
+			alignas(A) std::byte _buffer[N * S]{ static_cast<std::byte>(0) };  // 00 (20)
+			std::byte* _entries{ nullptr };                                    // ??
+		};
+	};
+
+	template <std::size_t S, std::size_t A>
+	class BSTScatterTableScrapAllocator
+	{
+	public:
+		using size_type = std::uint32_t;
+		using propagate_on_container_move_assignment = std::false_type;
+
+		BSTScatterTableScrapAllocator() = default;
+		BSTScatterTableScrapAllocator(const BSTScatterTableScrapAllocator&) = delete;
+		BSTScatterTableScrapAllocator(BSTScatterTableScrapAllocator&&) = delete;
+		~BSTScatterTableScrapAllocator() = default;
+		BSTScatterTableScrapAllocator& operator=(const BSTScatterTableScrapAllocator&) = delete;
+		BSTScatterTableScrapAllocator& operator=(BSTScatterTableScrapAllocator&&) = delete;
+
+		[[nodiscard]] static constexpr size_type min_size() noexcept { return 1u << 3; }
+
+		[[nodiscard]] void* allocate_bytes(std::size_t a_bytes)
+		{
+			assert(_allocator != nullptr);
+			assert(a_bytes % S == 0);
+			return _allocator->Allocate(a_bytes, 0x10);
+		}
+
+		void deallocate_bytes(void* a_ptr)
+		{
+			assert(_allocator != nullptr);
+			_allocator->Deallocate(a_ptr);
+		}
+
+		[[nodiscard]] void* get_entries() const noexcept { return _entries; }
+		void set_entries(void* a_entries) noexcept { _entries = static_cast<std::byte*>(a_entries); }
+
+	private:
+		// members
+		ScrapHeap* _allocator{ MemoryManager::GetSingleton().GetThreadScrapHeap() };  // 00 (20)
+		std::byte* _entries{ nullptr };                                               // 08 (28)
+	};
 
 	template <
 		class Key,
 		class T,
 		class Hash = BSCRC32<Key>,
-		class KeyEqual = std::equal_to<Key>>
+		class KeyEq = std::equal_to<Key>>
 	using BSTHashMap =
 		BSTScatterTable<
-			BSTScatterTableTraits<Key, T>,
-			8,
-			BSTScatterTableHeapAllocator,
 			Hash,
-			KeyEqual>;
-
-	template <class Key>
-	struct BSTSetTraits
-	{
-	public:
-		using key_type = Key;
-		using mapped_type = void;
-		using value_type = Key;
-
-		[[nodiscard]] const key_type& operator()(const value_type& a_value) const noexcept
-		{
-			return a_value;
-		}
-	};
+			KeyEq,
+			BSTScatterTableTraits<Key, T>,
+			BSTScatterTableHeapAllocator>;
 
 	template <
 		class Key,
 		class Hash = BSCRC32<Key>,
-		class KeyEqual = std::equal_to<Key>>
+		class KeyEq = std::equal_to<Key>>
 	using BSTSet =
 		BSTScatterTable<
-			BSTSetTraits<Key>,
-			8,
-			BSTScatterTableHeapAllocator,
 			Hash,
-			KeyEqual>;
-
-	struct BSTStaticHashMapBase
-	{
-	public:
-		template <class T, std::uint32_t N>
-		struct Allocator
-		{
-		public:
-			using entry_type = T;
-			using size_type = std::uint32_t;
-
-			Allocator() = default;
-
-			[[nodiscard]] entry_type* allocate(std::size_t a_num) noexcept { return a_num <= N ? _data : 0; }
-
-			void deallocate(entry_type* a_ptr) noexcept { return; }
-
-			[[nodiscard]] entry_type* get_entries() const noexcept { return _entries; }
-
-			void set_entries(entry_type* a_entries) noexcept { _entries = a_entries; }
-
-			[[nodiscard]] size_type min_size() const noexcept { return 1; }
-
-			[[nodiscard]] size_type max_size() const noexcept { return N; }
-
-		private:
-			// members
-			entry_type _data[N]{};          // 00
-			entry_type* _entries{ _data };  // ??
-		};
-	};
+			KeyEq,
+			BSTSetTraits<Key>,
+			BSTScatterTableHeapAllocator>;
 
 	template <
 		class Key,
 		class T,
 		std::uint32_t N,
 		class Hash = BSCRC32<Key>,
-		class KeyEqual = std::equal_to<Key>>
+		class KeyEq = std::equal_to<Key>>
 	using BSTStaticHashMap =
 		BSTScatterTable<
-			BSTScatterTableTraits<Key, T>,
-			N,
-			BSTStaticHashMapBase::Allocator,
 			Hash,
-			KeyEqual>;
-
-	template <class T, std::uint32_t N>
-	class BSTScatterTableScrapAllocator
-	{
-	public:
-		using entry_type = T;
-		using size_type = std::uint32_t;
-
-		BSTScatterTableScrapAllocator() = default;
-
-		[[nodiscard]] entry_type* allocate(std::size_t a_num)
-		{
-			auto size = a_num * sizeof(entry_type);
-			auto mem = static_cast<entry_type*>(_allocator->Allocate(size, 0x10));
-			std::memset(mem, 0, size);
-			return mem;
-		}
-
-		void deallocate(entry_type* a_ptr) { _allocator->Deallocate(a_ptr); }
-
-		[[nodiscard]] entry_type* get_entries() const noexcept { return _entries; }
-
-		void set_entries(entry_type* a_entries) noexcept { _entries = a_entries; }
-
-		[[nodiscard]] size_type min_size() const noexcept { return static_cast<size_type>(1) << 3; }
-
-		[[nodiscard]] size_type max_size() const noexcept { return static_cast<size_type>(1) << 31; }
-
-	private:
-		// members
-		ScrapHeap* _allocator{ MemoryManager::GetSingleton().GetThreadScrapHeap() };  // 00
-		entry_type* _entries{ nullptr };                                              // 08
-	};
+			KeyEq,
+			BSTScatterTableTraits<Key, T>,
+			typename BSTStaticHashMapBase<N>::Allocator>;
 
 	template <
 		class Key,
 		class T,
 		class Hash = BSCRC32<Key>,
-		class KeyEqual = std::equal_to<Key>>
+		class KeyEq = std::equal_to<Key>>
 	using BSTScrapHashMap =
 		BSTScatterTable<
-			BSTScatterTableTraits<Key, T>,
-			8,
-			BSTScatterTableScrapAllocator,
 			Hash,
-			KeyEqual>;
+			KeyEq,
+			BSTScatterTableTraits<Key, T>,
+			BSTScatterTableScrapAllocator>;
 }

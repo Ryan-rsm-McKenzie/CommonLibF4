@@ -63,7 +63,7 @@ IndentCaseBlocks: 'true'
 IndentCaseLabels: 'false'
 IndentExternBlock: Indent
 IndentGotoLabels: 'false'
-IndentPPDirectives: None
+IndentPPDirectives: AfterHash
 IndentWidth: 4
 IndentWrappedFunctionNames: 'true'
 KeepEmptyLinesAtTheStartOfBlocks: 'false'

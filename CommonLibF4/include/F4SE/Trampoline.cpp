@@ -47,7 +47,7 @@
 #include <Windows.h>
 
 #ifdef F4SE_SUPPORT_XBYAK
-#include <xbyak/xbyak.h>
+#	include <xbyak/xbyak.h>
 #endif
 
 namespace F4SE

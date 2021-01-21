@@ -99,7 +99,7 @@ if(NOT TARGET CommonLibF4)
 	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../CommonLibF4" CommonLibF4)
 endif()
 
-find_package(spdlog REQUIRED)
+find_package(spdlog REQUIRED CONFIG)
 
 # ---- Add source files ----
 
