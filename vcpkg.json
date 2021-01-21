@@ -9,6 +9,7 @@
     "boost-predef",
     "boost-regex",
     "boost-stl-interfaces",
+    "boost-test",
     "fmt",
     "robin-hood-hashing",
     "spdlog"

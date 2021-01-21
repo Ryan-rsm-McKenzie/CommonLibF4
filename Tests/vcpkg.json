@@ -1,0 +1,8 @@
+{
+  "name": "commonlibf4tests",
+  "version-string": "1",
+  "dependencies": [
+    "boost-stl-interfaces",
+    "boost-test"
+  ]
+}
