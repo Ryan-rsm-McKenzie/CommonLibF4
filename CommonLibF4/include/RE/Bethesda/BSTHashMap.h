@@ -1,6 +1,6 @@
-#ifndef F4SE_TEST_SUITE
-#	pragma once
+#pragma once
 
+#ifndef F4SE_TEST_SUITE
 #	include "RE/Bethesda/BSTTuple.h"
 #	include "RE/Bethesda/CRC.h"
 #	include "RE/Bethesda/MemoryManager.h"
