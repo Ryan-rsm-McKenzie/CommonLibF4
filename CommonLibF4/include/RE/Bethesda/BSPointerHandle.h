@@ -30,24 +30,24 @@ namespace RE
 			kAgeShift = AGE_SHIFT,
 		};
 
-		constexpr BSUntypedPointerHandle() noexcept = default;
-		constexpr BSUntypedPointerHandle(const BSUntypedPointerHandle&) noexcept = default;
+		BSUntypedPointerHandle() noexcept = default;
+		BSUntypedPointerHandle(const BSUntypedPointerHandle&) noexcept = default;
 
-		constexpr BSUntypedPointerHandle(BSUntypedPointerHandle&& a_rhs) noexcept :
+		BSUntypedPointerHandle(BSUntypedPointerHandle&& a_rhs) noexcept :
 			_handle(a_rhs._handle)
 		{
 			a_rhs.reset();
 		}
 
-		explicit constexpr BSUntypedPointerHandle(value_type a_handle) noexcept :
+		explicit BSUntypedPointerHandle(value_type a_handle) noexcept :
 			_handle(a_handle)
 		{}
 
 		~BSUntypedPointerHandle() noexcept { reset(); }
 
-		constexpr BSUntypedPointerHandle& operator=(const BSUntypedPointerHandle&) noexcept = default;
+		BSUntypedPointerHandle& operator=(const BSUntypedPointerHandle&) noexcept = default;
 
-		constexpr BSUntypedPointerHandle& operator=(BSUntypedPointerHandle&& a_rhs) noexcept
+		BSUntypedPointerHandle& operator=(BSUntypedPointerHandle&& a_rhs) noexcept
 		{
 			if (this != std::addressof(a_rhs)) {
 				_handle = a_rhs._handle;
@@ -56,25 +56,25 @@ namespace RE
 			return *this;
 		}
 
-		constexpr BSUntypedPointerHandle& operator=(value_type a_rhs) noexcept
+		BSUntypedPointerHandle& operator=(value_type a_rhs) noexcept
 		{
 			_handle = a_rhs;
 			return *this;
 		}
 
-		[[nodiscard]] explicit constexpr operator bool() const noexcept { return has_value(); }
-		[[nodiscard]] constexpr bool has_value() const noexcept { return _handle != 0; }
+		[[nodiscard]] explicit operator bool() const noexcept { return has_value(); }
+		[[nodiscard]] bool has_value() const noexcept { return _handle != 0; }
 
-		[[nodiscard]] constexpr value_type value() const noexcept { return _handle; }
+		[[nodiscard]] value_type value() const noexcept { return _handle; }
 
-		constexpr void reset() noexcept { _handle = 0; }
+		void reset() noexcept { _handle = 0; }
 
-		[[nodiscard]] friend constexpr bool operator==(const BSUntypedPointerHandle& a_lhs, const BSUntypedPointerHandle& a_rhs) noexcept
+		[[nodiscard]] friend bool operator==(const BSUntypedPointerHandle& a_lhs, const BSUntypedPointerHandle& a_rhs) noexcept
 		{
 			return a_lhs.value() == a_rhs.value();
 		}
 
-		[[nodiscard]] friend constexpr bool operator!=(const BSUntypedPointerHandle& a_lhs, const BSUntypedPointerHandle& a_rhs) noexcept
+		[[nodiscard]] friend bool operator!=(const BSUntypedPointerHandle& a_lhs, const BSUntypedPointerHandle& a_rhs) noexcept
 		{
 			return !(a_lhs == a_rhs);
 		}
@@ -93,9 +93,9 @@ namespace RE
 	public:
 		using native_handle_type = typename Handle::value_type;
 
-		constexpr BSPointerHandle() noexcept = default;
-		constexpr BSPointerHandle(const BSPointerHandle&) noexcept = default;
-		constexpr BSPointerHandle(BSPointerHandle&&) noexcept = default;
+		BSPointerHandle() noexcept = default;
+		BSPointerHandle(const BSPointerHandle&) noexcept = default;
+		BSPointerHandle(BSPointerHandle&&) noexcept = default;
 
 		template <
 			class Y,
@@ -116,7 +116,7 @@ namespace RE
 					Y*,
 					T*>,
 				int> = 0>
-		constexpr BSPointerHandle(const BSPointerHandle<Y, Handle>& a_rhs) noexcept :
+		BSPointerHandle(const BSPointerHandle<Y, Handle>& a_rhs) noexcept :
 			Handle(a_rhs)
 		{}
 
@@ -127,12 +127,12 @@ namespace RE
 					Y*,
 					T*>,
 				int> = 0>
-		constexpr BSPointerHandle(BSPointerHandle<Y, Handle>&& a_rhs) noexcept :
+		BSPointerHandle(BSPointerHandle<Y, Handle>&& a_rhs) noexcept :
 			Handle(std::move(a_rhs))
 		{}
 
-		constexpr BSPointerHandle& operator=(const BSPointerHandle&) noexcept = default;
-		constexpr BSPointerHandle& operator=(BSPointerHandle&&) noexcept = default;
+		BSPointerHandle& operator=(const BSPointerHandle&) noexcept = default;
+		BSPointerHandle& operator=(BSPointerHandle&&) noexcept = default;
 
 		template <
 			class Y,
@@ -154,7 +154,7 @@ namespace RE
 					Y*,
 					T*>,
 				int> = 0>
-		constexpr BSPointerHandle& operator=(const BSPointerHandle<Y, Handle>& a_rhs) noexcept
+		BSPointerHandle& operator=(const BSPointerHandle<Y, Handle>& a_rhs) noexcept
 		{
 			Handle::operator=(a_rhs);
 			return *this;
@@ -171,19 +171,19 @@ namespace RE
 			return ptr;
 		}
 
-		[[nodiscard]] constexpr native_handle_type native_handle() noexcept
+		[[nodiscard]] native_handle_type native_handle() noexcept
 		{
 			return Handle::value();
 		}
 
-		[[nodiscard]] explicit constexpr operator bool() const noexcept { return Handle::has_value(); }
+		[[nodiscard]] explicit operator bool() const noexcept { return Handle::has_value(); }
 
-		[[nodiscard]] friend constexpr bool operator==(const BSPointerHandle& a_lhs, const BSPointerHandle& a_rhs) noexcept
+		[[nodiscard]] friend bool operator==(const BSPointerHandle& a_lhs, const BSPointerHandle& a_rhs) noexcept
 		{
 			return static_cast<const Handle&>(a_lhs) == static_cast<const Handle&>(a_rhs);
 		}
 
-		[[nodiscard]] friend constexpr bool operator!=(const BSPointerHandle& a_lhs, const BSPointerHandle& a_rhs) noexcept
+		[[nodiscard]] friend bool operator!=(const BSPointerHandle& a_lhs, const BSPointerHandle& a_rhs) noexcept
 		{
 			return !(a_lhs == a_rhs);
 		}
@@ -200,6 +200,16 @@ namespace RE
 	using ActorHandle = BSPointerHandle<Actor>;
 	using ProjectileHandle = BSPointerHandle<Projectile>;
 	using ObjectRefHandle = BSPointerHandle<TESObjectREFR>;
+
+	template <class T>
+	struct BSCRC32<BSPointerHandle<T>>
+	{
+	public:
+		[[nodiscard]] std::uint32_t operator()(const BSPointerHandle<T>& a_handle) const noexcept
+		{
+			return BSCRC32<typename BSPointerHandle<T>::native_handle_type>()(a_handle.native_handle());
+		}
+	};
 
 	template <class T, class Manager>
 	class BSPointerHandleManagerInterface

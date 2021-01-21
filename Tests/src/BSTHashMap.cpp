@@ -103,6 +103,9 @@ namespace RE
 
 	template <class T>
 	using BSCRC32 = std::hash<T>;
+
+	template <class T1, class T2>
+	using BSTTuple = std::pair<T1, T2>;
 }
 
 #include "RE/Bethesda/BSTHashMap.h"
@@ -282,7 +285,7 @@ BOOST_TEST_GLOBAL_CONFIGURATION(LogCfg);
 BOOST_AUTO_TEST_SUITE(test_scatter_table)
 
 [[nodiscard]] const key_type& get1(const key_type& a_value) { return a_value; }
-[[nodiscard]] const key_type& get2(const std::pair<const key_type, mapped_type>& a_value) { return a_value.first; }
+[[nodiscard]] const key_type& get2(const RE::BSTTuple<const key_type, mapped_type>& a_value) { return a_value.first; }
 [[nodiscard]] auto make1(key_type a_key, mapped_type) { return a_key; };
 [[nodiscard]] auto make2(key_type a_key, mapped_type a_idx) { return std::make_pair(std::move(a_key), a_idx); };
 

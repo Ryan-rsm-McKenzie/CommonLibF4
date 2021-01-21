@@ -600,6 +600,8 @@ namespace RE
 		using iterator = pointer;
 		using const_iterator = const_pointer;
 
+		~BSTSmallSharedArray() { stl::report_and_fail("unimplemented"sv); }
+
 		[[nodiscard]] reference operator[](size_type a_pos) noexcept
 		{
 			assert(a_pos < _size);
@@ -614,12 +616,12 @@ namespace RE
 
 		[[nodiscard]] pointer data() noexcept
 		{
-			return size() > 1 ? _data.heap : std::addressof(_data.local);
+			return size() > 1 ? heap : std::addressof(local);
 		}
 
 		[[nodiscard]] const_pointer data() const noexcept
 		{
-			return size() > 1 ? _data.heap : std::addressof(_data.local);
+			return size() > 1 ? heap : std::addressof(local);
 		}
 
 		[[nodiscard]] iterator begin() noexcept { return data(); }
@@ -635,15 +637,13 @@ namespace RE
 		[[nodiscard]] size_type size() const noexcept { return _size; }
 
 	private:
-		union Data
+		// members
+		std::uint32_t _size{ 0 };  // 00
+		union
 		{
 			pointer heap{ 0 };
 			value_type local;
-		};
-
-		// members
-		std::uint32_t _size{ 0 };  // 00
-		Data _data;                // 08
+		};  // 08
 	};
 
 	class BSDataBufferHeapAllocator;

@@ -247,40 +247,16 @@ namespace RE
 		return BSTSmartPointer<T>{ new T(std::forward<Args>(a_args)...) };
 	}
 
-	template <class T1, class T2>
-	[[nodiscard]] constexpr bool operator==(const BSTSmartPointer<T1>& a_lhs, const BSTSmartPointer<T2>& a_rhs)
+	template <class T1, class T2, template <class> class R>
+	[[nodiscard]] constexpr bool operator==(const BSTSmartPointer<T1, R>& a_lhs, const BSTSmartPointer<T2, R>& a_rhs)
 	{
 		return a_lhs.get() == a_rhs.get();
 	}
 
-	template <class T1, class T2>
-	[[nodiscard]] constexpr bool operator!=(const BSTSmartPointer<T1>& a_lhs, const BSTSmartPointer<T2>& a_rhs)
-	{
-		return !(a_lhs == a_rhs);
-	}
-
-	template <class T>
-	[[nodiscard]] constexpr bool operator==(const BSTSmartPointer<T>& a_lhs, std::nullptr_t) noexcept
+	template <class T, template <class> class R>
+	[[nodiscard]] constexpr bool operator==(const BSTSmartPointer<T, R>& a_lhs, std::nullptr_t) noexcept
 	{
 		return !a_lhs;
-	}
-
-	template <class T>
-	[[nodiscard]] constexpr bool operator==(std::nullptr_t, const BSTSmartPointer<T>& a_rhs) noexcept
-	{
-		return !a_rhs;
-	}
-
-	template <class T>
-	[[nodiscard]] constexpr bool operator!=(const BSTSmartPointer<T>& a_lhs, std::nullptr_t) noexcept
-	{
-		return static_cast<bool>(a_lhs);
-	}
-
-	template <class T>
-	[[nodiscard]] constexpr bool operator!=(std::nullptr_t, const BSTSmartPointer<T>& a_rhs) noexcept
-	{
-		return static_cast<bool>(a_rhs);
 	}
 
 	template <class T>
@@ -289,4 +265,14 @@ namespace RE
 	template <class T>
 	using BSTAutoPointer = BSTSmartPointer<T, BSTSmartPointerAutoPtr>;
 	static_assert(sizeof(BSTAutoPointer<void*>) == 0x8);
+
+	template <class T, template <class> class R>
+	struct BSCRC32<BSTSmartPointer<T, R>>
+	{
+	public:
+		[[nodiscard]] std::uint32_t operator()(const BSTSmartPointer<T, R>& a_ptr) const noexcept
+		{
+			return BSCRC32<const void*>()(a_ptr.get());
+		}
+	};
 }
