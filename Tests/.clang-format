@@ -69,6 +69,8 @@ IndentWrappedFunctionNames: 'true'
 KeepEmptyLinesAtTheStartOfBlocks: 'false'
 Language: Cpp
 MaxEmptyLinesToKeep: 1
+MacroBlockBegin: '^BOOST_AUTO_TEST_SUITE$'
+MacroBlockEnd: '^BOOST_AUTO_TEST_SUITE_END$'
 NamespaceIndentation: All
 PointerAlignment: Left
 ReflowComments : 'false'
