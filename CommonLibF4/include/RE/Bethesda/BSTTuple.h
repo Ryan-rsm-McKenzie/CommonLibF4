@@ -12,29 +12,23 @@ namespace RE
 		using second_type = T2;
 
 		// 1)
-		template <
-			class U1 = first_type,
-			class U2 = second_type>
 		BSTTuple()  //
-			noexcept(std::is_nothrow_default_constructible_v<U1>&&
-					std::is_nothrow_default_constructible_v<U2>)  //
-			requires(std::is_default_constructible_v<U1>&&
-					std::is_default_constructible_v<U2>) :
+			noexcept(std::is_nothrow_default_constructible_v<first_type>&&
+					std::is_nothrow_default_constructible_v<second_type>)  //
+			requires(std::is_default_constructible_v<first_type>&&
+					std::is_default_constructible_v<second_type>) :
 			first(),
 			second()
 		{}
 
 		// 2)
-		template <
-			class U1 = first_type,
-			class U2 = second_type>
-		explicit(!std::is_convertible_v<const U1&, U1> ||
-				 !std::is_convertible_v<const U2&, U2>)                       //
+		explicit(!std::is_convertible_v<const first_type&, first_type> ||
+				 !std::is_convertible_v<const second_type&, second_type>)     //
 			BSTTuple(const first_type& a_first, const second_type& a_second)  //
-			noexcept(std::is_nothrow_copy_constructible_v<U1>&&
-					std::is_nothrow_copy_constructible_v<U2>)  //
-			requires(std::is_copy_constructible_v<U1>&&
-					std::is_copy_constructible_v<U2>) :
+			noexcept(std::is_nothrow_copy_constructible_v<first_type>&&
+					std::is_nothrow_copy_constructible_v<second_type>)  //
+			requires(std::is_copy_constructible_v<first_type>&&
+					std::is_copy_constructible_v<second_type>) :
 			first(a_first),
 			second(a_second)
 		{}
@@ -87,7 +81,7 @@ namespace RE
 		{}
 
 	private:
-		// 6-impl
+		// 6) impl
 		template <
 			class Tuple1,
 			class Tuple2,
@@ -108,14 +102,11 @@ namespace RE
 		~BSTTuple() = default;
 
 		// 1)
-		template <
-			class U1 = first_type,
-			class U2 = second_type>
 		BSTTuple& operator=(const BSTTuple& a_rhs)  //
-			noexcept(std::is_nothrow_copy_assignable_v<U1>&&
-					std::is_nothrow_copy_assignable_v<U2>)  //
-			requires(std::is_copy_assignable_v<U1>&&
-					std::is_copy_assignable_v<U2>)
+			noexcept(std::is_nothrow_copy_assignable_v<first_type>&&
+					std::is_nothrow_copy_assignable_v<second_type>)  //
+			requires(std::is_copy_assignable_v<first_type>&&
+					std::is_copy_assignable_v<second_type>)
 		{
 			if (this != std::addressof(a_rhs)) {
 				first = a_rhs.first;
@@ -138,14 +129,11 @@ namespace RE
 		}
 
 		// 3)
-		template <
-			class U1 = first_type,
-			class U2 = second_type>
 		BSTTuple& operator=(BSTTuple&& a_rhs)  //
-			noexcept(std::is_nothrow_move_assignable_v<U1>&&
-					std::is_nothrow_move_assignable_v<U2>)  //
-			requires(std::is_move_assignable_v<U1>&&
-					std::is_move_assignable_v<U2>)
+			noexcept(std::is_nothrow_move_assignable_v<first_type>&&
+					std::is_nothrow_move_assignable_v<second_type>)  //
+			requires(std::is_move_assignable_v<first_type>&&
+					std::is_move_assignable_v<second_type>)
 		{
 			if (this != std::addressof(a_rhs)) {
 				first = std::move(a_rhs.first);
