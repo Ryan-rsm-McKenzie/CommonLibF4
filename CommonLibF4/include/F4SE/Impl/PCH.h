@@ -93,6 +93,15 @@ namespace F4SE
 				std::is_pointer_v<T>>>
 		using not_null = T;
 
+		template <class T>
+		struct remove_cvptr
+		{
+			using type = std::remove_cv_t<std::remove_pointer_t<T>>;
+		};
+
+		template <class T>
+		using remove_cvptr_t = typename remove_cvptr<T>::type;
+
 		template <class C, class K>
 		concept transparent_comparator =
 			requires(

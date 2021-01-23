@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/FormComponents.h"
 #include "RE/Bethesda/TESForms.h"
 
@@ -26,6 +27,12 @@ namespace RE::BGSMod
 
 	namespace Attachment
 	{
+		[[nodiscard]] inline BSTHashMap<const Mod*, TESObjectMISC*>& GetAllLooseMods()
+		{
+			REL::Relocation<BSTHashMap<const Mod*, TESObjectMISC*>*> mods{ REL::ID(1108112), -0x8 };
+			return *mods;
+		}
+
 		class __declspec(novtable) Mod :
 			public TESForm,               // 00
 			public TESFullName,           // 20

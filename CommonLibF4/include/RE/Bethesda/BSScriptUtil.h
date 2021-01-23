@@ -18,8 +18,8 @@ namespace RE::BSScript
 		using decay_t =
 			std::conditional_t<
 				std::is_pointer_v<T>,
-				std::remove_cv_t<std::remove_pointer_t<T>>,
-				std::decay_t<T>>;
+				stl::remove_cvptr_t<T>,
+				std::remove_cvref_t<T>>;
 
 		template <class T>
 		[[nodiscard]] std::optional<TypeInfo> GetTypeInfo();
@@ -208,8 +208,8 @@ namespace RE::BSScript
 		// clang-format off
 		template <class T>
 		concept object =
-			std::derived_from<T, TESForm> &&
-			requires { T::FORM_ID; };
+			std::derived_from<std::remove_cv_t<T>, TESForm> &&
+			requires { std::remove_cv_t<T>::FORM_ID; };
 		// clang-format on
 
 		template <class T>
@@ -221,7 +221,7 @@ namespace RE::BSScript
 			std::constructible_from<T, std::string_view>;
 
 		template <class T>
-		concept string_ref = string<std::decay_t<T>>;
+		concept string_ref = string<std::remove_reference_t<T>>;
 
 		template <class T>
 		concept integral =
@@ -249,9 +249,6 @@ namespace RE::BSScript
 		template <class T>
 		concept cobject = std::same_as<std::remove_cv_t<T>, GameScript::RefrOrInventoryObj>;
 
-		template <class T>
-		concept cobject_ref = cobject<std::decay_t<T>>;
-
 		// clang-format off
 		template <class T>
 		concept array =
@@ -269,13 +266,13 @@ namespace RE::BSScript
 		// clang-format on
 
 		template <class T>
-		concept array_ref = array<std::decay_t<T>>;
+		concept array_ref = array<std::remove_reference_t<T>>;
 
 		template <class T>
 		concept wrapper = is_structure_wrapper_v<T>;
 
 		template <class T>
-		concept wrapper_ref = wrapper<std::decay_t<T>>;
+		concept wrapper_ref = wrapper<std::remove_reference_t<T>>;
 
 		template <class T>
 		concept nullable =
@@ -283,7 +280,7 @@ namespace RE::BSScript
 				typename script_traits<std::remove_cv_t<T>>::is_nullable,
 				std::true_type> &&
 			std::is_default_constructible_v<T> &&
-			(array<typename T::value_type> || wrapper<typename T::value_type>)&&  //
+			((array<typename T::value_type> || wrapper<typename T::value_type>)) &&  //
 			requires(T a_nullable)
 		{
 			// clang-format off
@@ -293,16 +290,17 @@ namespace RE::BSScript
 		};
 
 		template <class T>
-		concept nullable_ref = nullable<std::decay_t<T>>;
+		concept nullable_ref = nullable<std::remove_reference_t<T>>;
 
 		template <class T>
 		concept valid_self =
 			static_tag<T> ||
-			(std::is_lvalue_reference_v<T>&& object<decay_t<T>>);
+			((std::is_lvalue_reference_v<T> && object<std::remove_reference_t<T>>)) ||
+			cobject<T>;
 
 		template <class T>
 		concept valid_parameter =
-			(std::is_pointer_v<T> && object<decay_t<T>>) ||
+			(std::is_pointer_v<T> && object<std::remove_pointer_t<T>>) ||
 			(!std::is_reference_v<T> &&
 				(string<T> ||
 					integral<T> ||
@@ -410,7 +408,7 @@ namespace RE::BSScript
 	template <detail::array T>
 	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
-		using value_type = detail::decay_t<typename std::decay_t<T>::value_type>;
+		using value_type = detail::decay_t<typename std::remove_cv_t<T>::value_type>;
 
 		auto typeInfo = detail::GetTypeInfo<value_type>();
 		if (typeInfo) {
@@ -444,7 +442,7 @@ namespace RE::BSScript
 	template <detail::nullable T>
 	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
-		using value_type = typename std::decay_t<T>::value_type;
+		using value_type = typename std::remove_cv_t<T>::value_type;
 		return detail::GetTypeInfo<value_type>();
 	}
 
@@ -537,8 +535,8 @@ namespace RE::BSScript
 		a_var = static_cast<bool>(a_val);
 	}
 
-	template <detail::cobject_ref T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	template <detail::cobject T>
+	void PackVariable(Variable& a_var, T a_val)
 	{
 		const auto success = [&]() {
 			if (a_val.Reference()) {
@@ -575,7 +573,7 @@ namespace RE::BSScript
 
 			a_var = std::move(object);
 			return true;
-		};
+		}();
 
 		if (!success) {
 			assert(false);
@@ -587,18 +585,18 @@ namespace RE::BSScript
 	template <detail::array_ref T>
 	void PackVariable(Variable& a_var, T&& a_val)
 	{
-		using size_type = typename detail::decay_t<T>::size_type;
-		using value_type = detail::decay_t<typename std::decay_t<T>::value_type>;
+		using size_type = typename std::remove_cvref_t<T>::size_type;
+		using value_type = detail::decay_t<typename std::remove_cvref_t<T>::value_type>;
 		using reference_type =
 			std::conditional_t<
 				std::is_lvalue_reference_v<T>,
-				typename std::decay_t<T>::value_type&,
-				typename std::decay_t<T>::value_type&&>;
+				typename std::remove_cvref_t<T>::value_type&,
+				typename std::remove_cvref_t<T>::value_type&&>;
 
 		const auto success = [&]() {
 			const auto game = GameVM::GetSingleton();
 			const auto vm = game ? game->GetVM() : nullptr;
-			const auto typeInfo = GetTypeInfo<std::decay_t<T>>();
+			const auto typeInfo = GetTypeInfo<std::remove_cvref_t<T>>();
 			const auto size = a_val.size();
 			BSTSmartPointer<Array> out;
 			if (!typeInfo ||
@@ -776,7 +774,7 @@ namespace RE::BSScript
 			}
 
 			return T(handle);
-		};
+		}();
 
 		if (!result) {
 			assert(false);
@@ -915,10 +913,14 @@ namespace RE::BSScript
 			const auto self = [&]() -> S {
 				if constexpr (detail::static_tag<S>) {
 					return std::monostate{};
-				} else {
-					auto* const ptr = UnpackVariable<std::decay_t<S>>(a_self);
+				} else if constexpr (detail::object<std::remove_cvref_t<S>>) {
+					auto* const ptr = BSScript::UnpackVariable<std::remove_cvref_t<S>>(a_self);
 					assert(ptr != nullptr);  // super::Call should guarantee this
 					return *ptr;
+				} else if constexpr (detail::cobject<std::remove_cv_t<S>>) {
+					return BSScript::UnpackVariable<std::remove_cv_t<S>>(a_self);
+				} else {
+					static_assert(false && sizeof(S), "unhandled case");
 				}
 			};
 
@@ -960,8 +962,9 @@ namespace RE::BSScript
 		//	* `void`
 		static_assert(detail::valid_return<R>, "invalid return type");
 
-		// A function which takes a self parameter must be one of:
-		//	* An lvalue reference to (optionally cv-qualified) (optionally derived from) `RE::TESForm`
+		// A function which takes a self parameter must be one of (optionally cv-qualified):
+		//	* An lvalue reference to `RE::TESForm` or any subclass thereof
+		//	* `RE::GameScript::RefrOrInventoryObj`
 		// A function which does not take a self parameter (a global function) must tag the self slot with `std::monostate`
 		static_assert(detail::valid_self<S>, "invalid self type");
 

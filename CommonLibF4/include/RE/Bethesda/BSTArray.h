@@ -282,14 +282,9 @@ namespace RE
 		explicit BSTArray(size_type a_count) { resize(a_count); }
 
 		// 5)
-		template <
-			class InputIt,
-			std::enable_if_t<
-				std::is_convertible_v<
-					typename std::iterator_traits<InputIt>::iterator_category,
-					std::input_iterator_tag>,
-				int> = 0>
-		BSTArray(InputIt a_first, InputIt a_last)
+		template <std::input_iterator InputIt>
+		BSTArray(InputIt a_first, InputIt a_last)  //
+			requires(std::convertible_to<typename std::iter_reference_t<InputIt>, reference>)
 		{
 			assign(a_first, a_last);
 		}
@@ -380,14 +375,9 @@ namespace RE
 
 		void shrink_to_fit() { reserve_exact(size()); }
 
-		template <
-			class ForwardIt,
-			std::enable_if_t<
-				std::is_convertible_v<
-					typename std::iterator_traits<ForwardIt>::iterator_category,
-					std::forward_iterator_tag>,
-				int> = 0>
-		iterator insert(const_iterator a_pos, ForwardIt a_first, ForwardIt a_last)
+		template <std::forward_iterator ForwardIt>
+		iterator insert(const_iterator a_pos, ForwardIt a_first, ForwardIt a_last)  //
+			requires(std::convertible_to<typename std::iter_reference_t<ForwardIt>, reference>)
 		{
 			const auto distance = static_cast<size_type>(std::distance(a_first, a_last));
 			if (distance == 0) {
@@ -403,7 +393,8 @@ namespace RE
 		}
 
 		template <class... Args>
-		iterator emplace(const_iterator a_pos, Args&&... a_args)
+		iterator emplace(const_iterator a_pos, Args&&... a_args)  //
+			requires(std::constructible_from<value_type, Args&&...>)
 		{
 			const auto pos = static_cast<size_type>(std::distance(cbegin(), a_pos));
 			if (pos < size()) {
@@ -435,7 +426,8 @@ namespace RE
 		}
 
 		template <class... Args>
-		reference emplace_back(Args&&... a_args)
+		reference emplace_back(Args&&... a_args)  //
+			requires(std::constructible_from<value_type, Args&&...>)
 		{
 			return *emplace(end(), std::forward<Args>(a_args)...);
 		}

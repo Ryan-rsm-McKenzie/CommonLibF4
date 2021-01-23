@@ -30,10 +30,8 @@ namespace RE
 
 			template <bool B>
 			BSFixedString(BSFixedString<value_type, B>&& a_rhs) noexcept :
-				_data(a_rhs._data)
-			{
-				a_rhs._data = nullptr;
-			}
+				_data(std::exchange(a_rhs._data, nullptr))
+			{}
 
 			BSFixedString(const_pointer a_string)  // NOLINT(google-explicit-constructor)
 			{
@@ -44,8 +42,10 @@ namespace RE
 
 			template <class T>
 			BSFixedString(const T& a_string)  //
-				requires(std::is_convertible_v<const T&, std::basic_string_view<value_type>> &&
-						 !std::is_convertible_v<const T&, const_pointer>)
+				requires(std::convertible_to<const T&, std::basic_string_view<value_type>> &&
+						 !std::convertible_to<const T&, const_pointer> &&
+						 !std::same_as<T, BSFixedString<value_type, true>> &&
+						 !std::same_as<T, BSFixedString<value_type, false>>)
 			{
 				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
 				if (!view.empty()) {
@@ -70,8 +70,7 @@ namespace RE
 			BSFixedString& operator=(BSFixedString<value_type, B>&& a_rhs)
 			{
 				if (this != std::addressof(a_rhs)) {
-					_data = a_rhs._data;
-					a_rhs._data = nullptr;
+					_data = std::exchange(a_rhs._data, nullptr);
 				}
 				return *this;
 			}
@@ -87,8 +86,10 @@ namespace RE
 
 			template <class T>
 			BSFixedString& operator=(const T& a_string)  //
-				requires(std::is_convertible_v<const T&, std::basic_string_view<value_type>> &&
-						 !std::is_convertible_v<const T&, const_pointer>)
+				requires(std::convertible_to<const T&, std::basic_string_view<value_type>> &&
+						 !std::convertible_to<const T&, const_pointer> &&
+						 !std::same_as<T, BSFixedString<value_type, true>> &&
+						 !std::same_as<T, BSFixedString<value_type, false>>)
 			{
 				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
 				try_release();
@@ -150,6 +151,9 @@ namespace RE
 			[[nodiscard]] const void* hash_accessor() const noexcept { return _data; }
 
 		private:
+			template <class, bool>
+			friend class BSFixedString;
+
 			[[nodiscard]] static int strncmp(const char* a_lhs, const char* a_rhs, std::size_t a_length)
 			{
 				if constexpr (CS) {

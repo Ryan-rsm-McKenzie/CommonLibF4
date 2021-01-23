@@ -12,7 +12,9 @@ namespace RE
 	class BSExtraData;
 	class ExtraCellWaterType;
 	class ExtraLocation;
+	class ExtraPowerLinks;
 	class ExtraTextDisplayData;
+	class ExtraUniqueID;
 
 	enum EXTRA_DATA_TYPE : std::uint32_t
 	{
@@ -175,7 +177,7 @@ namespace RE
 		kSoul,
 		kForcedTarget,
 		kSoundOutput,
-		kUniqueID,
+		kUniqueID,  // ExtraUniqueID
 		kFlags,
 		kRefrPath,
 		kDecalGroup,
@@ -224,7 +226,7 @@ namespace RE
 		kPowerArmorPreload,
 		kAnimGraphPreload,
 		kAnimSounds,
-		kPowerLinks,
+		kPowerLinks,  // ExtraPowerLinks
 		kSavedUnrecoverableSubgraphs,
 		kRefWeaponSounds,
 		kRefInvestedGold,
@@ -347,6 +349,42 @@ namespace RE
 		std::uint16_t customNameLength;                                 // 40
 	};
 	static_assert(sizeof(ExtraTextDisplayData) == 0x48);
+
+	class __declspec(novtable) ExtraUniqueID :
+		public BSExtraData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraUniqueID };
+		static constexpr auto VTABLE{ VTABLE::ExtraUniqueID };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kUniqueID };
+
+		// members
+		std::uint16_t uniqueID;  // 18
+		std::uint32_t baseID;    // 1C
+	};
+	static_assert(sizeof(ExtraUniqueID) == 0x20);
+
+	class __declspec(novtable) ExtraPowerLinks :
+		public BSExtraData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraPowerLinks };
+		static constexpr auto VTABLE{ VTABLE::ExtraPowerLinks };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kPowerLinks };
+
+		struct Element
+		{
+		public:
+			// members
+			std::uint32_t formID;    // 0
+			std::uint32_t linkType;  // 4
+		};
+		static_assert(sizeof(Element) == 0x8);
+
+		// members
+		BSTArray<Element> powerLinks;  // 18
+	};
+	static_assert(sizeof(ExtraPowerLinks) == 0x30);
 
 	class BaseExtraList
 	{
