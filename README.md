@@ -2,7 +2,6 @@
 
 ## Build Dependencies
 * [Boost](https://www.boost.org/)
-	* Atomic
 	* Iostreams
 	* Iterator
 	* Predef

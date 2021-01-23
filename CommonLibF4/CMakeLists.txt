@@ -21,7 +21,6 @@ endif()
 find_package(Boost
 	REQUIRED
 	COMPONENTS
-		atomic
 		iostreams
 )
 find_package(spdlog REQUIRED CONFIG)
@@ -139,7 +138,6 @@ target_include_directories(
 target_link_libraries(
 	${PROJECT_NAME}
 	PUBLIC
-		Boost::atomic
 		Boost::headers
 		Boost::iostreams
 		spdlog::spdlog

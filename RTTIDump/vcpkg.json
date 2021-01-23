@@ -6,7 +6,6 @@
   "license": "MIT",
   "dependencies": [
     "boost-algorithm",
-    "boost-atomic",
     "boost-iostreams",
     "boost-iterator",
     "boost-predef",

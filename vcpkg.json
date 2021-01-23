@@ -3,7 +3,6 @@
   "version-string": "1",
   "dependencies": [
     "boost-algorithm",
-    "boost-atomic",
     "boost-iostreams",
     "boost-iterator",
     "boost-predef",
