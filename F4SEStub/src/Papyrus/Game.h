@@ -146,7 +146,7 @@ namespace Papyrus
 		{
 			const auto obj = "Game"sv;
 
-			BIND(GetCameraState);
+			BIND(GetCameraState, true);
 			BIND(GetCurrentConsoleRef);
 			BIND(GetInstalledLightPlugins);
 			BIND(GetInstalledPlugins);

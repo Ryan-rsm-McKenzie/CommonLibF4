@@ -30,19 +30,17 @@ namespace Papyrus
 				return;
 			}
 
-			a_self.swapMap.clear();
-			a_self.swapMap.reserve(static_cast<std::uint32_t>(a_data.size()));
+			decltype(a_self.swapMap) map;
+			map.reserve(static_cast<std::uint32_t>(a_data.size() / 0.7));
 			for (const auto& data : a_data) {
-				auto source = data.find<RE::BSFixedString>("source"sv);
-				auto target = data.find<RE::BSFixedString>("target"sv);
-				auto colorIndex = data.find<float>("colorIndex"sv);
-				a_self.swapMap.insert(
-					RE::make_pair(
-						std::move(source).value_or(""sv),
-						RE::BGSMaterialSwap::Entry{
-							std::move(target).value_or(""sv),
-							colorIndex.value_or(0.0f) }));
+				map.emplace(
+					data.find<RE::BSFixedString>("source"sv).value_or(""sv),
+					RE::BGSMaterialSwap::Entry{
+						data.find<RE::BSFixedString>("target"sv).value_or(""sv),
+						data.find<float>("colorIndex"sv).value_or(0.0f) });
 			}
+
+			std::swap(map, a_self.swapMap);
 		}
 
 		inline void Bind(RE::BSScript::IVirtualMachine& a_vm)

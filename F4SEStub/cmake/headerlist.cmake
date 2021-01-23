@@ -19,5 +19,14 @@ set(headers ${headers}
 	src/Papyrus/Location.h
 	src/Papyrus/Math.h
 	src/Papyrus/MatSwap.h
+	src/Papyrus/MiscObject.h
+	src/Papyrus/ObjectMod.h
+	src/Papyrus/ObjectReference.h
 	src/Papyrus/Papyrus.h
+	src/Papyrus/Perk.h
+	src/Papyrus/ScriptObject.h
+	src/Papyrus/UI.h
+	src/Papyrus/Utility.h
+	src/Papyrus/WaterType.h
+	src/Papyrus/Weapon.h
 )

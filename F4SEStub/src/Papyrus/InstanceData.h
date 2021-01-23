@@ -22,11 +22,11 @@ namespace Papyrus
 			const auto index = a_owner->find<RE::BIPED_OBJECT>("slotIndex"sv);
 		}
 
-		inline void Bind(RE::BSScript::IVirtualMachine& a_vm)
+		inline void Bind(RE::BSScript::IVirtualMachine&)
 		{
 			const auto obj = "InstanceData"sv;
 
-			BIND(GetAttackDamage);
+			//BIND(GetAttackDamage); TODO
 
 			logger::info("bound {} script"sv, obj);
 		}

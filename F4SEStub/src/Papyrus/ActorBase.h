@@ -81,7 +81,7 @@ namespace Papyrus
 			BIND(GetBodyWeight);
 			BIND(GetHeadParts);
 			BIND(GetOutfit);
-			BIND(GetTemplate);
+			BIND(GetTemplate, true);
 			BIND(HasHeadPartOverlays);
 			BIND(SetBodyWeight);
 
