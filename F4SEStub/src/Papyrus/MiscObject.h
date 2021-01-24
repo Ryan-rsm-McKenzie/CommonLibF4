@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace MiscObject
@@ -22,10 +24,12 @@ namespace Papyrus
 			return result;
 		}
 
-		inline void SetMiscComponents(RE::TESObjectMISC& a_self, std::vector<MiscComponent> a_components)
+		inline void SetMiscComponents(
+			RE::TESObjectMISC& a_self,
+			std::vector<MiscComponent> a_components)
 		{
 			if (!a_self.componentData) {
-				a_self.componentData = new RE::BSTArray<RE::BSTTuple<RE::TESForm*, RE::BGSTypedFormValuePair::SharedVal>>;
+				a_self.componentData = new std::remove_pointer_t<decltype(a_self.componentData)>;
 			}
 
 			for (const auto& comp : a_components) {

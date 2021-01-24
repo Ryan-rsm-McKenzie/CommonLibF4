@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace HeadPart
@@ -26,7 +28,9 @@ namespace Papyrus
 			return a_self.validRaces;
 		}
 
-		inline bool HasExtraPart(const RE::BGSHeadPart& a_self, RE::BGSHeadPart* a_part)
+		inline bool HasExtraPart(
+			const RE::BGSHeadPart& a_self,
+			RE::BGSHeadPart* a_part)
 		{
 			const auto it =
 				std::find(
@@ -41,7 +45,9 @@ namespace Papyrus
 			return a_self.IsExtraPart();
 		}
 
-		inline void SetValidRaces(RE::BGSHeadPart& a_self, RE::BGSListForm* a_races)
+		inline void SetValidRaces(
+			RE::BGSHeadPart& a_self,
+			RE::BGSListForm* a_races)
 		{
 			if (a_races) {
 				a_self.validRaces = a_races;

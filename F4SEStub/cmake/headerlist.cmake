@@ -5,6 +5,7 @@ set(headers ${headers}
 	src/Papyrus/Armor.h
 	src/Papyrus/ArmorAddon.h
 	src/Papyrus/Cell.h
+	src/Papyrus/Common.h
 	src/Papyrus/Component.h
 	src/Papyrus/ConstructibleObject.h
 	src/Papyrus/DefaultObject.h

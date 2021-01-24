@@ -1,10 +1,14 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace Location
 	{
-		inline RE::BGSEncounterZone* GetEncounterZone(const RE::BGSLocation& a_self, bool a_recursive)
+		inline RE::BGSEncounterZone* GetEncounterZone(
+			const RE::BGSLocation& a_self,
+			bool a_recursive)
 		{
 			if (a_recursive) {
 				auto loc = std::addressof(a_self);

@@ -1,10 +1,14 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace F4SE
 	{
-		inline std::int32_t GetPluginVersion(std::monostate, std::string_view a_name)
+		inline std::int32_t GetPluginVersion(
+			std::monostate,
+			std::string_view a_name)
 		{
 			const auto plugin = ::F4SE::GetPluginInfo(a_name);
 			return plugin ? static_cast<std::int32_t>(plugin->version) : -1;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace Input

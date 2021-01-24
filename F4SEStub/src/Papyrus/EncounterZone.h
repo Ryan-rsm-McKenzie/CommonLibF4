@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace EncounterZone
@@ -34,22 +36,30 @@ namespace Papyrus
 			return a_self.IsWorkshop();
 		}
 
-		inline void SetLocation(RE::BGSEncounterZone& a_self, RE::BGSLocation* a_loc)
+		inline void SetLocation(
+			RE::BGSEncounterZone& a_self,
+			RE::BGSLocation* a_loc)
 		{
 			a_self.data.location = a_loc;
 		}
 
-		inline void SetMaxLevel(RE::BGSEncounterZone& a_self, std::int8_t a_level)
+		inline void SetMaxLevel(
+			RE::BGSEncounterZone& a_self,
+			std::int8_t a_level)
 		{
 			a_self.data.maxLevel = a_level;
 		}
 
-		inline void SetMinLevel(RE::BGSEncounterZone& a_self, std::int8_t a_level)
+		inline void SetMinLevel(
+			RE::BGSEncounterZone& a_self,
+			std::int8_t a_level)
 		{
 			a_self.data.minLevel = a_level;
 		}
 
-		inline void SetNeverResetable(RE::BGSEncounterZone& a_self, bool a_set)
+		inline void SetNeverResetable(
+			RE::BGSEncounterZone& a_self,
+			bool a_set)
 		{
 			if (a_set) {
 				a_self.data.flags.set(RE::ENCOUNTER_ZONE_DATA::FLAG::kNeverReset);
@@ -60,12 +70,16 @@ namespace Papyrus
 			a_self.AddChange(RE::CHANGE_TYPE::kEncounterZoneFlags);  // divergent
 		}
 
-		inline void SetRank(RE::BGSEncounterZone& a_self, std::int8_t a_rank)
+		inline void SetRank(
+			RE::BGSEncounterZone& a_self,
+			std::int8_t a_rank)
 		{
 			a_self.data.ownerRank = a_rank;
 		}
 
-		inline void SetWorkshop(RE::BGSEncounterZone& a_self, bool a_set)
+		inline void SetWorkshop(
+			RE::BGSEncounterZone& a_self,
+			bool a_set)
 		{
 			if (a_set) {
 				a_self.data.flags.set(RE::ENCOUNTER_ZONE_DATA::FLAG::kWorkshopZone);

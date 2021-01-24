@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace ObjectMod
@@ -23,18 +25,23 @@ namespace Papyrus
 			return a_self.priority;
 		}
 
-		inline std::vector<PropertyModifier> GetPropertyModifiers(const RE::BGSMod::Attachment::Mod&)
+		inline std::vector<PropertyModifier> GetPropertyModifiers(
+			[[maybe_unused]] const RE::BGSMod::Attachment::Mod& a_self)
 		{
 			std::vector<PropertyModifier> result;
 			return result;
 		}
 
-		inline void SetMaxRank(RE::BGSMod::Attachment::Mod& a_self, std::int8_t a_rank)
+		inline void SetMaxRank(
+			RE::BGSMod::Attachment::Mod& a_self,
+			std::int8_t a_rank)
 		{
 			a_self.maxRank = a_rank;
 		}
 
-		inline void SetPriority(RE::BGSMod::Attachment::Mod& a_self, std::int8_t a_priority)
+		inline void SetPriority(
+			RE::BGSMod::Attachment::Mod& a_self,
+			std::int8_t a_priority)
 		{
 			a_self.priority = a_priority;
 		}
@@ -43,10 +50,11 @@ namespace Papyrus
 		{
 			const auto obj = "ObjectMod"sv;
 
+			// TODO
 			BIND(GetLooseMod);
 			BIND(GetMaxRank);
 			BIND(GetPriority);
-			//BIND(GetPropertyModifiers); TODO
+			//BIND(GetPropertyModifiers);
 			BIND(SetMaxRank);
 			BIND(SetPriority);
 

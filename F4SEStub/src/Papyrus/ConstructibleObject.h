@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace ConstructibleObject
@@ -41,11 +43,13 @@ namespace Papyrus
 			return a_self.benchKeyword;
 		}
 
-		inline void SetConstructibleComponents(RE::BGSConstructibleObject& a_self, std::vector<ConstructibleComponent> a_components)
+		inline void SetConstructibleComponents(
+			RE::BGSConstructibleObject& a_self,
+			std::vector<ConstructibleComponent> a_components)
 		{
 			auto& items = a_self.requiredItems;
 			if (!items) {
-				items = new RE::BSTArray<RE::BSTTuple<RE::TESForm*, RE::BGSTypedFormValuePair::SharedVal>>;
+				items = new std::remove_pointer_t<decltype(a_self.requiredItems)>;
 			}
 
 			items->clear();
@@ -57,7 +61,9 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetCreatedCount(RE::BGSConstructibleObject& a_self, std::uint16_t a_count)
+		inline void SetCreatedCount(
+			RE::BGSConstructibleObject& a_self,
+			std::uint16_t a_count)
 		{
 			a_self.data.numConstructed = a_count;
 		}

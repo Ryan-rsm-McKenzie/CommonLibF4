@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace Actor
@@ -106,7 +108,10 @@ namespace Papyrus
 			return std::nullopt;
 		}
 
-		inline void QueueUpdate(RE::Actor& a_self, bool a_doEquipment, std::uint32_t a_flags)
+		inline void QueueUpdate(
+			RE::Actor& a_self,
+			bool a_doEquipment,
+			std::uint32_t a_flags)
 		{
 			a_self.Reset3D(a_doEquipment, 0, true, a_flags);
 		}

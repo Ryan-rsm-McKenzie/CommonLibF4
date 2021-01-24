@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace Game
@@ -69,7 +71,9 @@ namespace Papyrus
 			return result;
 		}
 
-		inline std::vector<std::string_view> GetPluginDependencies(std::monostate, RE::BSFixedString a_plugin)
+		inline std::vector<std::string_view> GetPluginDependencies(
+			std::monostate,
+			RE::BSFixedString a_plugin)
 		{
 			std::vector<std::string_view> result;
 			const auto data = RE::TESDataHandler::GetSingleton();
@@ -96,7 +100,10 @@ namespace Papyrus
 			return result;
 		}
 
-		inline void SetGameSettingBool(std::monostate, RE::BSFixedString a_setting, bool a_value)
+		inline void SetGameSettingBool(
+			std::monostate,
+			RE::BSFixedString a_setting,
+			bool a_value)
 		{
 			const auto setting = detail::GetGameSetting(a_setting);
 			if (setting) {
@@ -104,7 +111,10 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetGameSettingFloat(std::monostate, RE::BSFixedString a_setting, float a_value)
+		inline void SetGameSettingFloat(
+			std::monostate,
+			RE::BSFixedString a_setting,
+			float a_value)
 		{
 			const auto setting = detail::GetGameSetting(a_setting);
 			if (setting) {
@@ -112,7 +122,10 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetGameSettingInt(std::monostate, RE::BSFixedString a_setting, std::int32_t a_value)
+		inline void SetGameSettingInt(
+			std::monostate,
+			RE::BSFixedString a_setting,
+			std::int32_t a_value)
 		{
 			const auto setting = detail::GetGameSetting(a_setting);
 			if (setting) {
@@ -120,7 +133,10 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetGameSettingString(std::monostate, RE::BSFixedString a_setting, std::string_view a_value)
+		inline void SetGameSettingString(
+			std::monostate,
+			RE::BSFixedString a_setting,
+			std::string_view a_value)
 		{
 			const auto setting = detail::GetGameSetting(a_setting);
 			if (setting) {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace ActorBase
@@ -22,7 +24,9 @@ namespace Papyrus
 			return result;
 		}
 
-		inline std::vector<RE::BGSHeadPart*> GetHeadParts(const RE::TESNPC& a_self, bool a_overlays)
+		inline std::vector<RE::BGSHeadPart*> GetHeadParts(
+			const RE::TESNPC& a_self,
+			bool a_overlays)
 		{
 			const auto parts = a_self.GetHeadParts(a_overlays);
 			std::vector<RE::BGSHeadPart*> result(parts.size(), nullptr);
@@ -35,12 +39,16 @@ namespace Papyrus
 			return result;
 		}
 
-		inline RE::BGSOutfit* GetOutfit(const RE::TESNPC& a_self, bool a_sleepOutfit)
+		inline RE::BGSOutfit* GetOutfit(
+			const RE::TESNPC& a_self,
+			bool a_sleepOutfit)
 		{
 			return a_sleepOutfit ? a_self.sleepOutfit : a_self.defOutfit;
 		}
 
-		inline RE::TESNPC* GetTemplate(const RE::TESNPC& a_self, bool a_topMost)
+		inline RE::TESNPC* GetTemplate(
+			const RE::TESNPC& a_self,
+			bool a_topMost)
 		{
 			if (a_topMost && a_self.faceNPC) {
 				auto top = a_self.faceNPC;
@@ -58,7 +66,9 @@ namespace Papyrus
 			return a_self.UsingAlternateHeadPartList();
 		}
 
-		inline void SetBodyWeight(RE::TESNPC& a_self, BodyWeight a_weight)
+		inline void SetBodyWeight(
+			RE::TESNPC& a_self,
+			BodyWeight a_weight)
 		{
 			constexpr std::array values = {
 				"thin"sv,

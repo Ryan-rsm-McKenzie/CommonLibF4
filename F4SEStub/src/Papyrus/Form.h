@@ -1,10 +1,14 @@
 #pragma once
 
+#include "Papyrus/Common.h"
+
 namespace Papyrus
 {
 	namespace Form
 	{
-		inline std::uint32_t AddSlotToMask(RE::TESForm& a_self, std::uint32_t a_slotMask)
+		inline std::uint32_t AddSlotToMask(
+			RE::TESForm& a_self,
+			std::uint32_t a_slotMask)
 		{
 			const auto biped = a_self.As<RE::BGSBipedObjectForm>();
 			return biped ? biped->bipedModelData.bipedObjectSlots |= a_slotMask : 0;
@@ -120,13 +124,17 @@ namespace Papyrus
 			return a_self.As<RE::TESModel>() != nullptr;
 		}
 
-		inline std::uint32_t RemoveSlotFromMask(RE::TESForm& a_self, std::uint32_t a_slotMask)
+		inline std::uint32_t RemoveSlotFromMask(
+			RE::TESForm& a_self,
+			std::uint32_t a_slotMask)
 		{
 			const auto biped = a_self.As<RE::BGSBipedObjectForm>();
 			return biped ? biped->bipedModelData.bipedObjectSlots &= ~a_slotMask : 0;
 		}
 
-		inline void SetEnchantment(RE::TESForm& a_self, RE::EnchantmentItem* a_enchantment)
+		inline void SetEnchantment(
+			RE::TESForm& a_self,
+			RE::EnchantmentItem* a_enchantment)
 		{
 			const auto ench = a_self.As<RE::TESEnchantableForm>();
 			if (ench) {
@@ -134,7 +142,9 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetEnchantmentValue(RE::TESForm& a_self, std::uint16_t a_value)
+		inline void SetEnchantmentValue(
+			RE::TESForm& a_self,
+			std::uint16_t a_value)
 		{
 			const auto ench = a_self.As<RE::TESEnchantableForm>();
 			if (ench) {
@@ -142,7 +152,9 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetEquipType(RE::TESForm& a_self, RE::BGSEquipSlot* a_type)
+		inline void SetEquipType(
+			RE::TESForm& a_self,
+			RE::BGSEquipSlot* a_type)
 		{
 			const auto equip = a_self.As<RE::BGSEquipType>();
 			if (equip) {
@@ -150,12 +162,16 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetGoldValue(RE::TESForm& a_self, std::int32_t a_value)
+		inline void SetGoldValue(
+			RE::TESForm& a_self,
+			std::int32_t a_value)
 		{
 			RE::TESValueForm::SetFormValue(a_self, a_value);  // divergent
 		}
 
-		inline void SetIconPath(RE::TESForm& a_self, std::string_view a_path)
+		inline void SetIconPath(
+			RE::TESForm& a_self,
+			std::string_view a_path)
 		{
 			const auto icon = a_self.As<RE::TESIcon>();
 			if (icon) {
@@ -163,7 +179,9 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetMessageIconPath(RE::TESForm& a_self, std::string_view a_name)
+		inline void SetMessageIconPath(
+			RE::TESForm& a_self,
+			std::string_view a_name)
 		{
 			const auto icon = a_self.As<RE::BGSMessageIcon>();
 			if (icon) {
@@ -171,12 +189,16 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetName(RE::TESForm& a_self, std::string_view a_name)
+		inline void SetName(
+			RE::TESForm& a_self,
+			std::string_view a_name)
 		{
 			RE::TESFullName::SetFullName(a_self, a_name);  // divergent
 		}
 
-		inline void SetRaceForm(RE::TESForm& a_self, RE::TESRace* a_newRace)
+		inline void SetRaceForm(
+			RE::TESForm& a_self,
+			RE::TESRace* a_newRace)
 		{
 			const auto race = a_self.As<RE::TESRaceForm>();
 			if (race) {
@@ -184,7 +206,9 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetSlotMask(RE::TESForm& a_self, std::uint32_t a_slotMask)
+		inline void SetSlotMask(
+			RE::TESForm& a_self,
+			std::uint32_t a_slotMask)
 		{
 			const auto biped = a_self.As<RE::BGSBipedObjectForm>();
 			if (biped) {
@@ -192,7 +216,9 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetWeight(RE::TESForm& a_self, float a_weight)
+		inline void SetWeight(
+			RE::TESForm& a_self,
+			float a_weight)
 		{
 			const auto weight = a_self.As<RE::TESWeightForm>();
 			if (weight) {
@@ -200,7 +226,9 @@ namespace Papyrus
 			}
 		}
 
-		inline void SetWorldModelPath(RE::TESForm& a_self, std::string_view a_path)
+		inline void SetWorldModelPath(
+			RE::TESForm& a_self,
+			std::string_view a_path)
 		{
 			const auto model = a_self.As<RE::TESModel>();
 			if (model) {
