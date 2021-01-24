@@ -489,6 +489,13 @@ namespace RE
 		[[nodiscard]] TESBoundObject* GetObjectReference() const noexcept { return data.objectReference; }
 		[[nodiscard]] TESObjectCELL* GetParentCell() const noexcept { return parentCell; }
 
+		[[nodiscard]] float GetWeightInContainer()
+		{
+			using func_t = decltype(&TESObjectREFR::GetWeightInContainer);
+			REL::Relocation<func_t> func{ REL::ID(1377567) };
+			return func(this);
+		}
+
 		// members
 		TESObjectCELL* parentCell;                 // 0B8
 		OBJ_REFR data;                             // 0C0

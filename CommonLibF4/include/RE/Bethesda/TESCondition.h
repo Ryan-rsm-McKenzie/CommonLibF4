@@ -5,6 +5,7 @@
 namespace RE
 {
 	class TESGlobal;
+	class TESObjectREFR;
 
 	enum class SCRIPT_OUTPUT;
 
@@ -76,6 +77,15 @@ namespace RE
 	class TESCondition
 	{
 	public:
+		[[nodiscard]] explicit operator bool() const noexcept { return head != nullptr; }
+
+		[[nodiscard]] bool operator()(TESObjectREFR* a_actionRef, TESObjectREFR* a_targetRef) const
+		{
+			using func_t = decltype(&TESCondition::operator());
+			REL::Relocation<func_t> func{ REL::ID(1275731) };
+			return func(this, a_actionRef, a_targetRef);
+		}
+
 		// members
 		TESConditionItem* head;  // 0
 	};

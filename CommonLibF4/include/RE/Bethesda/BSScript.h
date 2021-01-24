@@ -228,7 +228,7 @@ namespace RE
 		public:
 			Variable() noexcept = default;
 			Variable(const Variable& a_rhs) { copy(a_rhs); }
-			Variable(Variable&& a_rhs) noexcept = default;
+			Variable(Variable&&) noexcept = default;
 
 			~Variable() { reset(); }
 
@@ -316,6 +316,8 @@ namespace RE
 			Variable& operator=(BSTSmartPointer<Struct> a_struct);
 			Variable& operator=(BSTSmartPointer<Array> a_array);
 
+			F4_HEAP_REDEFINE_NEW(Variable);
+
 			template <class T>
 			[[nodiscard]] friend BSTSmartPointer<Object> get(const Variable& a_var)  //
 				requires(std::same_as<T, Object>)
@@ -362,6 +364,14 @@ namespace RE
 			{
 				assert(a_var.is<bool>());
 				return a_var.value.b;
+			}
+
+			template <class T>
+			[[nodiscard]] friend stl::observer<Variable*> get(const Variable& a_var)  //
+				requires(std::same_as<T, Variable>)
+			{
+				assert(a_var.is<Variable>());
+				return a_var.value.v;
 			}
 
 			template <class T>
@@ -421,6 +431,13 @@ namespace RE
 				requires(std::same_as<T, bool>)
 			{
 				return varType.GetRawType() == RawType::kBool;
+			}
+
+			template <class T>
+			[[nodiscard]] bool is() const  //
+				requires(std::same_as<T, Variable>)
+			{
+				return varType.GetRawType() == RawType::kVar;
 			}
 
 			template <class T>

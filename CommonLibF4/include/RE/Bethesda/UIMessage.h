@@ -10,14 +10,14 @@ namespace RE
 		class Event;
 	}
 
-	enum class UI_MESSAGE_RESULTS : std::int32_t
+	enum class UI_MESSAGE_RESULTS
 	{
 		kHandled,
 		kIgnore,
 		kPassOn
 	};
 
-	enum class UI_MESSAGE_TYPE : std::int32_t
+	enum class UI_MESSAGE_TYPE
 	{
 		kUpdate,
 		kShow,

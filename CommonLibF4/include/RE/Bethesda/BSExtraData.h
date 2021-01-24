@@ -5,6 +5,7 @@
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTTuple.h"
+#include "RE/Bethesda/MemoryManager.h"
 
 namespace RE
 {
@@ -12,6 +13,7 @@ namespace RE
 	class BSExtraData;
 	class ExtraCellWaterType;
 	class ExtraLocation;
+	class ExtraMaterialSwap;
 	class ExtraPowerLinks;
 	class ExtraTextDisplayData;
 	class ExtraUniqueID;
@@ -203,7 +205,7 @@ namespace RE
 		kLayer,
 		kMovementController,
 		kReferenceCharacterController,
-		kMaterialSwap,
+		kMaterialSwap,  // ExtraMaterialSwap
 		kInstanceData,
 		kPowerArmor,
 		kAcousticParent,
@@ -237,6 +239,7 @@ namespace RE
 	};
 
 	class BGSLocation;
+	class BGSMaterialSwap;
 	class BGSMessage;
 	class TESBoundObject;
 	class TESForm;
@@ -255,6 +258,16 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BSExtraData };
 		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kNone };
 
+		BSExtraData() :
+			BSExtraData(EXTRA_DATA_TYPE::kNone)
+		{}
+
+		BSExtraData(EXTRA_DATA_TYPE a_type) :
+			type(a_type)
+		{
+			stl::emplace_vtable(this);
+		}
+
 		virtual ~BSExtraData() = default;  // 00
 
 		// add
@@ -268,12 +281,14 @@ namespace RE
 			}
 		}
 
+		F4_HEAP_REDEFINE_NEW(BSExtraData);
+
 		[[nodiscard]] EXTRA_DATA_TYPE GetExtraType() const noexcept { return *type; }
 
 		// members
-		BSExtraData* next;                                     // 08
-		std::uint16_t flags;                                   // 10
-		stl::enumeration<EXTRA_DATA_TYPE, std::uint8_t> type;  // 12
+		BSExtraData* next{ nullptr };                                                    // 08
+		std::uint16_t flags{ 0 };                                                        // 10
+		stl::enumeration<EXTRA_DATA_TYPE, std::uint8_t> type{ EXTRA_DATA_TYPE::kNone };  // 12
 	};
 	static_assert(sizeof(BSExtraData) == 0x18);
 
@@ -318,6 +333,25 @@ namespace RE
 		BGSLocation* location;  // 18
 	};
 	static_assert(sizeof(ExtraLocation) == 0x20);
+
+	class __declspec(novtable) ExtraMaterialSwap :
+		public BSExtraData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraMaterialSwap };
+		static constexpr auto VTABLE{ VTABLE::ExtraMaterialSwap };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kMaterialSwap };
+
+		ExtraMaterialSwap() :
+			BSExtraData(TYPE)
+		{
+			stl::emplace_vtable(this);
+		}
+
+		// members
+		BGSMaterialSwap* swap{ nullptr };  // 18
+	};
+	static_assert(sizeof(ExtraMaterialSwap) == 0x20);
 
 	class __declspec(novtable) ExtraTextDisplayData :
 		public BSExtraData  // 00
@@ -389,6 +423,26 @@ namespace RE
 	class BaseExtraList
 	{
 	public:
+		void AddExtra(BSExtraData* a_extra)
+		{
+			assert(a_extra != nullptr);
+			assert(a_extra->next == nullptr);
+
+			const auto type = a_extra->GetExtraType();
+			assert(!HasType(type));
+
+			if (!_head || !IsHighUseExtra(type)) {
+				assert(_tail != nullptr);
+				*_tail = a_extra;
+				_tail = std::addressof(a_extra->next);
+			} else {
+				a_extra->next = _head;
+				_head = a_extra;
+			}
+
+			MarkType(type, true);
+		}
+
 		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
 			if (HasType(a_type)) {
@@ -404,18 +458,49 @@ namespace RE
 
 		[[nodiscard]] bool HasType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
+			assert(a_type < EXTRA_DATA_TYPE::kTotal);
 			const auto idx = stl::to_underlying(a_type) / 8;
 			const auto flags = GetFlags();
 			if (!flags.empty() && idx < flags.size()) {
-				const auto pos = 1 << (stl::to_underlying(a_type) % 8);
+				const auto pos = static_cast<std::uint8_t>(1u << (stl::to_underlying(a_type) % 8));
 				return (flags[idx] & pos) != 0;
 			} else {
 				return false;
 			}
 		}
 
+		std::unique_ptr<BSExtraData> RemoveExtra(EXTRA_DATA_TYPE a_type)
+		{
+			if (HasType(a_type)) {
+				BSExtraData* prev = nullptr;
+				for (auto iter = _head; iter; prev = iter, iter = iter->next) {
+					if (iter->GetExtraType() == a_type) {
+						if (prev) {
+							prev->next = iter->next;
+						} else {
+							_head = iter->next;
+						}
+
+						if (!_tail || *_tail == iter) {
+							_tail = std::addressof(prev ? prev->next : _head);
+						}
+
+						MarkType(a_type, false);
+						return std::unique_ptr<BSExtraData>{ iter };
+					}
+				}
+			}
+
+			return nullptr;
+		}
+
 	private:
 		static constexpr std::size_t N = (stl::to_underlying(EXTRA_DATA_TYPE::kTotal) / 8) + 1;
+
+		[[nodiscard]] static bool IsHighUseExtra(EXTRA_DATA_TYPE a_type) noexcept
+		{
+			return !((stl::to_underlying(a_type) - 11) & ~0x22u) && a_type != EXTRA_DATA_TYPE::kLeveledCreature;
+		}
 
 		void CreateFlags() { _flags = calloc<std::uint8_t>(N); }
 
@@ -435,6 +520,19 @@ namespace RE
 			}
 
 			return std::span{ reinterpret_cast<std::uint8_t(&)[N]>(*_flags) };
+		}
+
+		void MarkType(EXTRA_DATA_TYPE a_type, bool a_set)
+		{
+			assert(a_type < EXTRA_DATA_TYPE::kTotal);
+			const auto idx = stl::to_underlying(a_type) / 8;
+			const auto pos = static_cast<std::uint8_t>(1u << (stl::to_underlying(a_type) % 8));
+			const auto flags = GetOrCreateFlags();
+			if (a_set) {
+				flags[idx] |= pos;
+			} else {
+				flags[idx] &= ~pos;
+			}
 		}
 
 		// members
@@ -457,9 +555,15 @@ namespace RE
 		public BSIntrusiveRefCounted  // 00
 	{
 	public:
+		void AddExtra(BSExtraData* a_extra)
+		{
+			const BSAutoWriteLock l{ _extraRWLock };
+			_extraData.AddExtra(a_extra);
+		}
+
 		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
-			BSAutoReadLock l{ _extraRWLock };
+			const BSAutoReadLock l{ _extraRWLock };
 			return _extraData.GetByType(a_type);
 		}
 
@@ -471,7 +575,7 @@ namespace RE
 
 		[[nodiscard]] bool HasType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
-			BSAutoReadLock l{ _extraRWLock };
+			const BSAutoReadLock l{ _extraRWLock };
 			return _extraData.HasType(a_type);
 		}
 
@@ -479,6 +583,18 @@ namespace RE
 		[[nodiscard]] bool HasType() const noexcept
 		{
 			return HasType(T::TYPE);
+		}
+
+		std::unique_ptr<BSExtraData> RemoveExtra(EXTRA_DATA_TYPE a_type)
+		{
+			const BSAutoWriteLock l{ _extraRWLock };
+			return _extraData.RemoveExtra(a_type);
+		}
+
+		template <detail::ExtraDataListConstraint T>
+		std::unique_ptr<T> RemoveExtra()
+		{
+			return std::unique_ptr<T>{ static_cast<T*>(RemoveExtra(T::TYPE).release()) };
 		}
 
 	private:

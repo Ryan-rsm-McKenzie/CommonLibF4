@@ -14,10 +14,13 @@
 
 namespace RE
 {
+	enum class UI_MESSAGE_TYPE;
+
 	class MenuModeChangeEvent;
 	class MenuModeCounterChangedEvent;
 	class MenuOpenCloseEvent;
 	class TutorialEvent;
+	class UIMessage;
 
 	struct UIMenuEntry
 	{
@@ -67,6 +70,12 @@ namespace RE
 			BSAutoReadLock l{ GetMenuMapRWLock() };
 			const auto it = menuMap.find(a_name);
 			return it != menuMap.end() ? it->second.menu : nullptr;
+		}
+
+		[[nodiscard]] bool GetMenuOpen(const BSFixedString& a_name) const
+		{
+			const auto menu = GetMenu(a_name);
+			return menu ? menu->OnStack() : false;
 		}
 
 		void RegisterMenu(const char* a_menu, Create_t* a_create, StaticUpdate_t* a_staticUpdate = nullptr)

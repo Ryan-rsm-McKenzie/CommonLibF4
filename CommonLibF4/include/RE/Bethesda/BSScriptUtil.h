@@ -176,6 +176,22 @@ namespace RE::BSScript
 	namespace detail
 	{
 		template <class>
+		struct _is_bstsmartptr :
+			std::false_type
+		{};
+
+		template <class T, template <class> class R>
+		struct _is_bstsmartptr<BSTSmartPointer<T, R>> :
+			std::true_type
+		{};
+
+		template <class T>
+		using is_bstsmartptr = _is_bstsmartptr<std::remove_cv_t<T>>;
+
+		template <class T>
+		inline constexpr bool is_bstsmartptr_v = is_bstsmartptr<T>::value;
+
+		template <class>
 		struct _is_structure_wrapper :
 			std::false_type
 		{};
@@ -213,6 +229,20 @@ namespace RE::BSScript
 		// clang-format on
 
 		template <class T>
+		concept cobject = std::same_as<std::remove_cv_t<T>, GameScript::RefrOrInventoryObj>;
+
+		template <class T>
+		concept vmobject = std::same_as<std::remove_cv_t<T>, Object>;
+
+		template <class T>
+		concept vmobject_ptr =
+			is_bstsmartptr_v<T> &&
+			vmobject<typename std::remove_cv_t<T>::element_type>;
+
+		template <class T>
+		concept vmvariable = std::same_as<std::remove_cv_t<T>, Variable>;
+
+		template <class T>
 		concept string =
 			std::same_as<
 				typename script_traits<std::remove_cv_t<T>>::is_string,
@@ -245,9 +275,6 @@ namespace RE::BSScript
 		template <class T>
 		concept boolean = std::same_as<std::remove_cv_t<T>, bool>;
 		// clang-format on
-
-		template <class T>
-		concept cobject = std::same_as<std::remove_cv_t<T>, GameScript::RefrOrInventoryObj>;
 
 		// clang-format off
 		template <class T>
@@ -295,18 +322,22 @@ namespace RE::BSScript
 		template <class T>
 		concept valid_self =
 			static_tag<T> ||
-			((std::is_lvalue_reference_v<T> && object<std::remove_reference_t<T>>)) ||
+			((std::is_lvalue_reference_v<T> &&
+				(object<std::remove_reference_t<T>> || vmobject<std::remove_reference_t<T>>))) ||
 			cobject<T>;
 
 		template <class T>
 		concept valid_parameter =
-			(std::is_pointer_v<T> && object<std::remove_pointer_t<T>>) ||
+			(std::is_pointer_v<T> &&
+				(object<std::remove_pointer_t<T>> ||
+					(std::is_const_v<std::remove_pointer_t<T>> && vmvariable<std::remove_pointer_t<T>>))) ||
 			(!std::is_reference_v<T> &&
-				(string<T> ||
+				(cobject<T> ||
+					vmobject_ptr<T> ||
+					string<T> ||
 					integral<T> ||
 					floating_point<T> ||
 					boolean<T> ||
-					cobject<T> ||
 					array<T> ||
 					wrapper<T> ||
 					nullable<T>));
@@ -375,6 +406,36 @@ namespace RE::BSScript
 		}
 	}
 
+	template <detail::cobject T>
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
+	{
+		return GetTypeInfo<TESObjectREFR>();
+	}
+
+	template <detail::vmobject T>
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
+	{
+		const auto game = GameVM::GetSingleton();
+		const auto vm = game ? game->GetVM() : nullptr;
+		REL::Relocation<RE::BSFixedString*> baseObjectName{ REL::ID(648543) };
+		BSTSmartPointer<ObjectTypeInfo> typeInfo;
+		if (!vm ||
+			!vm->GetScriptObjectType(*baseObjectName, typeInfo) ||
+			!typeInfo) {
+			assert(false);
+			F4SE::log::error("failed to get type info for vm object"sv);
+			return std::nullopt;
+		} else {
+			return typeInfo.get();
+		}
+	}
+
+	template <detail::vmvariable T>
+	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
+	{
+		return TypeInfo::RawType::kVar;
+	}
+
 	template <detail::string T>
 	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
@@ -397,12 +458,6 @@ namespace RE::BSScript
 	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
 	{
 		return TypeInfo::RawType::kBool;
-	}
-
-	template <detail::cobject T>
-	[[nodiscard]] std::optional<TypeInfo> GetTypeInfo()
-	{
-		return GetTypeInfo<TESObjectREFR>();
 	}
 
 	template <detail::array T>
@@ -456,7 +511,7 @@ namespace RE::BSScript
 	}
 
 	template <detail::object T>
-	void PackVariable(Variable& a_var, const T* a_val)
+	void PackVariable(Variable& a_var, const volatile T* a_val)
 	{
 		if (!a_val) {
 			a_var = nullptr;
@@ -505,36 +560,6 @@ namespace RE::BSScript
 		}
 	}
 
-	template <detail::string_ref T>
-	void PackVariable(Variable& a_var, T&& a_val)
-	{
-		a_var = BSFixedString(std::forward<T>(a_val));
-	}
-
-	template <detail::signed_integral T>
-	void PackVariable(Variable& a_var, T a_val)
-	{
-		a_var = static_cast<std::int32_t>(a_val);
-	}
-
-	template <detail::unsigned_integral T>
-	void PackVariable(Variable& a_var, T a_val)
-	{
-		a_var = static_cast<std::uint32_t>(a_val);
-	}
-
-	template <detail::floating_point T>
-	void PackVariable(Variable& a_var, T a_val)
-	{
-		a_var = static_cast<float>(a_val);
-	}
-
-	template <detail::boolean T>
-	void PackVariable(Variable& a_var, T a_val)
-	{
-		a_var = static_cast<bool>(a_val);
-	}
-
 	template <detail::cobject T>
 	void PackVariable(Variable& a_var, T a_val)
 	{
@@ -580,6 +605,48 @@ namespace RE::BSScript
 			F4SE::log::error("failed to pack cobject"sv);
 			a_var = nullptr;
 		}
+	}
+
+	template <detail::vmobject_ptr T>
+	void PackVariable(Variable& a_var, T a_val)
+	{
+		a_var = a_val ? std::move(a_val) : nullptr;
+	}
+
+	template <detail::vmvariable T>
+	void PackVariable(Variable& a_var, const volatile T* a_val)
+	{
+		a_var = a_val ? const_cast<T*>(a_val) : nullptr;
+	}
+
+	template <detail::string_ref T>
+	void PackVariable(Variable& a_var, T&& a_val)
+	{
+		a_var = BSFixedString(std::forward<T>(a_val));
+	}
+
+	template <detail::signed_integral T>
+	void PackVariable(Variable& a_var, T a_val)
+	{
+		a_var = static_cast<std::int32_t>(a_val);
+	}
+
+	template <detail::unsigned_integral T>
+	void PackVariable(Variable& a_var, T a_val)
+	{
+		a_var = static_cast<std::uint32_t>(a_val);
+	}
+
+	template <detail::floating_point T>
+	void PackVariable(Variable& a_var, T a_val)
+	{
+		a_var = static_cast<float>(a_val);
+	}
+
+	template <detail::boolean T>
+	void PackVariable(Variable& a_var, T a_val)
+	{
+		a_var = static_cast<bool>(a_val);
 	}
 
 	template <detail::array_ref T>
@@ -687,6 +754,56 @@ namespace RE::BSScript
 		return static_cast<T*>(result);
 	}
 
+	template <detail::cobject T>
+	[[nodiscard]] T UnpackVariable(const Variable& a_var)
+	{
+		const auto result = [&]() -> std::optional<T> {
+			if (!a_var.is<Object>()) {
+				assert(false);
+				return std::nullopt;
+			}
+
+			const auto obj = get<Object>(a_var);
+			if (!obj) {
+				return std::nullopt;
+			}
+
+			const auto game = GameVM::GetSingleton();
+			const auto vm = game ? game->GetVM() : nullptr;
+			if (!vm) {
+				return std::nullopt;
+			}
+
+			auto& policy = vm->GetObjectHandlePolicy();
+			const auto handle = obj->GetHandle();
+			if (!policy.HandleIsType(GetVMTypeID<T>(), handle)) {
+				return std::nullopt;
+			}
+
+			return T(handle);
+		}();
+
+		if (!result) {
+			assert(false);
+			F4SE::log::error("failed to get cobject from variable"sv);
+			return T();
+		} else {
+			return *result;
+		}
+	}
+
+	template <detail::vmobject_ptr T>
+	[[nodiscard]] T UnpackVariable(const Variable& a_var)
+	{
+		return get<Object>(a_var);
+	}
+
+	template <detail::vmvariable T>
+	[[nodiscard]] const T* UnpackVariable(const Variable& a_var)
+	{
+		return get<Variable>(a_var);
+	}
+
 	template <detail::string T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
@@ -747,44 +864,6 @@ namespace RE::BSScript
 		return static_cast<T>(get<bool>(a_var));
 	}
 
-	template <detail::cobject T>
-	[[nodiscard]] T UnpackVariable(const Variable& a_var)
-	{
-		const auto result = [&]() -> std::optional<T> {
-			if (!a_var.is<Object>()) {
-				assert(false);
-				return std::nullopt;
-			}
-
-			const auto obj = get<Object>(a_var);
-			if (!obj) {
-				return std::nullopt;
-			}
-
-			const auto game = GameVM::GetSingleton();
-			const auto vm = game ? game->GetVM() : nullptr;
-			if (!vm) {
-				return std::nullopt;
-			}
-
-			auto& policy = vm->GetObjectHandlePolicy();
-			const auto handle = obj->GetHandle();
-			if (!policy.HandleIsType(GetVMTypeID<T>(), handle)) {
-				return std::nullopt;
-			}
-
-			return T(handle);
-		}();
-
-		if (!result) {
-			assert(false);
-			F4SE::log::error("failed to get cobject from variable"sv);
-			return T();
-		} else {
-			return *result;
-		}
-	}
-
 	template <detail::array T>
 	[[nodiscard]] T UnpackVariable(const Variable& a_var)
 	{
@@ -830,10 +909,13 @@ namespace RE::BSScript
 		}
 
 		template <class T>
-		consteval void ValidateParameter() noexcept
+		consteval bool ValidateParameter() noexcept
 		{
 			// Must be one of (optionally cv-qualified):
-			//	* A pointer to (optionally cv-qualified) (optionally derived from) `RE::TESForm`
+			//	* A pointer to one of:
+			//		* (optionally cv-qualified) `RE::TESForm` or any subclass thereof
+			//		* (optionally volatile) `const RE::BSScript::Variable`
+			//	* `RE::BSTSmartPointer<RE::BSScript::Object>`
 			//	* A string type which is one of:
 			//		* std::string
 			//		* std::string_view
@@ -876,6 +958,7 @@ namespace RE::BSScript
 			//					* Returns a type of `size_type`
 			//				* `push_back`
 			//					* Callable with an rvalue reference of type `value_type`
+			//		* Additionally, the array's `value_type` must be a valid parameter type
 			//	* A wrapper type which is one of:
 			//		* `RE::BSScript::structure_wrapper`
 			//	* A nullable type which is one of:
@@ -893,6 +976,24 @@ namespace RE::BSScript
 			//			* An array type
 			//			* A structure type
 			static_assert(detail::valid_parameter<T>, "invalid parameter type");
+			if constexpr (detail::array<T>) {
+				return detail::ValidateParameter<typename std::remove_cv_t<T>::value_type>();
+			} else {
+				return true;
+			}
+		}
+
+		template <class T>
+		consteval bool ValidateReturn() noexcept
+		{
+			// Must be one of:
+			//	* `void`
+			//	* A valid parameter type
+			if constexpr (std::same_as<T, void>) {
+				return true;
+			} else {
+				return ValidateParameter<T>();
+			}
 		}
 
 		template <
@@ -911,14 +1012,19 @@ namespace RE::BSScript
 			std::index_sequence<I...>)
 		{
 			const auto self = [&]() -> S {
+				// super::Call should guarantee the self parameter is not none
 				if constexpr (detail::static_tag<S>) {
 					return std::monostate{};
 				} else if constexpr (detail::object<std::remove_cvref_t<S>>) {
 					auto* const ptr = BSScript::UnpackVariable<std::remove_cvref_t<S>>(a_self);
-					assert(ptr != nullptr);  // super::Call should guarantee this
+					assert(ptr != nullptr);
 					return *ptr;
 				} else if constexpr (detail::cobject<std::remove_cv_t<S>>) {
 					return BSScript::UnpackVariable<std::remove_cv_t<S>>(a_self);
+				} else if constexpr (detail::vmobject<std::remove_cvref_t<S>>) {
+					const auto obj = get<Object>(a_self);
+					assert(obj != nullptr);
+					return *obj;
 				} else {
 					static_assert(false && sizeof(S), "unhandled case");
 				}
@@ -957,17 +1063,15 @@ namespace RE::BSScript
 		using super = NF_util::NativeFunctionBase;
 
 	public:
-		// Must be one of:
-		//	* A valid parameter type
-		//	* `void`
-		static_assert(detail::valid_return<R>, "invalid return type");
-
 		// A function which takes a self parameter must be one of (optionally cv-qualified):
-		//	* An lvalue reference to `RE::TESForm` or any subclass thereof
+		//	* An lvalue reference to one of:
+		//		* `RE::TESForm` or any subclass thereof
+		//		* `RE::BSScript::Object`
 		//	* `RE::GameScript::RefrOrInventoryObj`
 		// A function which does not take a self parameter (a global function) must tag the self slot with `std::monostate`
 		static_assert(detail::valid_self<S>, "invalid self type");
 
+		static_assert(detail::ValidateReturn<R>());
 		static_assert(((detail::ValidateParameter<Args>(), ...), true));
 
 		template <class Fn>
