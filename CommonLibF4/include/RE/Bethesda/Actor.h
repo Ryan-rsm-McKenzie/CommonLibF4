@@ -373,6 +373,20 @@ namespace RE
 	class AIProcess
 	{
 	public:
+		[[nodiscard]] TESAmmo* GetCurrentAmmo(BGSEquipIndex a_equipIndex) const
+		{
+			using func_t = decltype(&AIProcess::GetCurrentAmmo);
+			REL::Relocation<func_t> func{ REL::ID(1154936) };
+			return func(this, a_equipIndex);
+		}
+
+		void SetCurrentAmmo(BGSEquipIndex a_equipIndex, TESAmmo* a_ammo)
+		{
+			using func_t = decltype(&AIProcess::SetCurrentAmmo);
+			REL::Relocation<func_t> func{ REL::ID(795983) };
+			return func(this, a_equipIndex, a_ammo);
+		}
+
 		// members
 		MiddleLowProcessData* middleLow;                    // 00
 		MiddleHighProcessData* middleHigh;                  // 08
@@ -661,6 +675,11 @@ namespace RE
 		virtual float CheckClampDamageModifier(ActorValueInfo& a_info, float a_delta);                                                                                                                   // 131
 		virtual void ValidateNewPath([[maybe_unused]] const MovementMessageNewPath& a_newPathMessage) { return; }                                                                                        // 132
 
+		[[nodiscard]] TESAmmo* GetCurrentAmmo(BGSEquipIndex a_equipIndex) const
+		{
+			return currentProcess ? currentProcess->GetCurrentAmmo(a_equipIndex) : nullptr;
+		}
+
 		[[nodiscard]] bool GetHostileToActor(Actor* a_actor)
 		{
 			using func_t = decltype(&Actor::GetHostileToActor);
@@ -675,6 +694,13 @@ namespace RE
 			using func_t = decltype(&Actor::Reset3D);
 			REL::Relocation<func_t> func{ REL::ID(302888) };
 			return func(this, a_reloadAll, a_additionalFlags, a_queueReset, a_excludeFlags);
+		}
+
+		void SetCurrentAmmo(BGSEquipIndex a_equipIndex, TESAmmo* a_ammo)
+		{
+			if (currentProcess) {
+				currentProcess->SetCurrentAmmo(a_equipIndex, a_ammo);
+			}
 		}
 
 		// members
