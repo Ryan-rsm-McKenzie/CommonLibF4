@@ -4,8 +4,10 @@
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSLock.h"
 #include "RE/Bethesda/BSPointerHandle.h"
+#include "RE/Bethesda/BSSoundHandle.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTEvent.h"
+#include "RE/Bethesda/BSTSingleton.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTTuple.h"
 #include "RE/Bethesda/IMovementInterface.h"
@@ -19,11 +21,15 @@ namespace RE
 	enum class ACTOR_CRITICAL_STAGE;
 	enum class ACTOR_LIFE_STATE;
 	enum class ACTOR_LOS_LOCATION;
+	enum class ATTACK_STATE_ENUM;
 	enum class PACKAGE_OBJECT_TYPE;
 	enum class POWER_ATTACK_TYPE;
 	enum class PTYPE;
 	enum class RESET_3D_FLAGS;
 	enum class SIT_SLEEP_STATE;
+
+	template <class>
+	class AnimationStanceFireLocationData;
 
 	template <class>
 	class BSPointerHandleSmartPointer;
@@ -38,6 +44,7 @@ namespace RE
 	class ActorMagicCaster;
 	class ActorMover;
 	class ActorPackageLoadFormBuffer;
+	class AimModel;
 	class AIProcess;
 	class BGSSaveFormBuffer;
 	class bhkCharacterController;
@@ -47,6 +54,7 @@ namespace RE
 	class bhkNPCollisionObject;
 	class bhkRagdollPenetrationUtil;
 	class BipedAnim;
+	class BSCloneReserver;
 	class BSClothExtraData;
 	class BSFaceGenAnimationData;
 	class BSLightingShaderProperty;
@@ -55,6 +63,7 @@ namespace RE
 	class CombatController;
 	class CombatGroup;
 	class EffectItem;
+	class EquippedItem;
 	class EquippedItemData;
 	class HitData;
 	class IAnimationStanceData;
@@ -63,8 +72,10 @@ namespace RE
 	class MovementMessageActorCollision;
 	class MovementMessageNewPath;
 	class MovementMessageUpdateRequestImmediate;
+	class MuzzleFlash;
 	class PackageLocation;
 	class PerkEntryVisitor;
+	class QueuedFile;
 	class QueuedItem;
 
 	struct ActorCPMEvent;
@@ -80,6 +91,11 @@ namespace RE
 	struct HighProcessData;
 	struct ObjectstoAcquire;
 	struct Perks;
+
+	namespace ActorEquipManagerEvent
+	{
+		struct Event;
+	}
 
 	namespace MagicSystem
 	{
@@ -175,6 +191,48 @@ namespace RE
 		bool forFirstPerson;            // 12
 	};
 	static_assert(sizeof(SubGraphIdleRootData) == 0x18);
+
+	class __declspec(novtable) EquippedItemData :
+		public NiRefObject  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::EquippedItemData };
+		static constexpr auto VTABLE{ VTABLE::EquippedItemData };
+
+		// add
+		virtual void SaveGame(BGSSaveFormBuffer* a_saveGameBuffer, const EquippedItem& a_equippedItem) const = 0;  // 02
+		virtual void LoadGame(BGSLoadFormBuffer* a_loadGameBuffer, const EquippedItem& a_equippedItem) = 0;        // 03
+		virtual std::uint32_t GetObjectType() const = 0;                                                           // 04
+	};
+	static_assert(sizeof(EquippedItemData) == 0x10);
+
+	class __declspec(novtable) EquippedWeaponData :
+		public EquippedItemData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::EquippedWeaponData };
+		static constexpr auto VTABLE{ VTABLE::EquippedWeaponData };
+
+		// members
+		TESAmmo* ammo;                                                                               // 10
+		std::uint32_t ammoCount;                                                                     // 18
+		AimModel* aimModel;                                                                          // 20
+		MuzzleFlash* muzzleFlash;                                                                    // 28
+		NiAVObject* fireNode;                                                                        // 30
+		ATTACK_STATE_ENUM attackState;                                                               // 38
+		BSTArray<BSTTuple<std::uint32_t, AnimationStanceFireLocationData<NiPoint3>>> fireLocations;  // 40
+		NiPointer<QueuedFile> weaponPreload;                                                         // 58
+		NiPointer<QueuedFile> projectilePreload;                                                     // 60
+		NiPointer<BSCloneReserver> reserveProjectileClones;                                          // 68
+		BSSoundHandle idleSound;                                                                     // 70
+		BSSoundHandle attackSound;                                                                   // 78
+		BSSoundHandle reverbSound;                                                                   // 80
+		BSSoundHandle prevAttack;                                                                    // 88
+		BSSoundHandle prevReverb;                                                                    // 90
+		const BGSSoundKeywordMapping* attackSoundData;                                               // 98
+		bool reverbSoundIsTail;                                                                      // A0
+	};
+	static_assert(sizeof(EquippedWeaponData) == 0xA8);
 
 	class EquippedItem
 	{
@@ -759,4 +817,51 @@ namespace RE
 		bool trespassing;                                                    // 48A
 	};
 	static_assert(sizeof(Actor) == 0x490);
+
+	class ActorEquipManager :
+		BSTSingletonSDM<ActorEquipManager>,            // 00
+		BSTEventSource<ActorEquipManagerEvent::Event>  // 08
+	{
+	public:
+		[[nodiscard]] static ActorEquipManager* GetSingleton()
+		{
+			REL::Relocation<ActorEquipManager**> singleton{ REL::ID(1174340) };
+			return *singleton;
+		}
+
+		bool EquipObject(
+			Actor* a_actor,
+			const BGSObjectInstance& a_object,
+			std::uint32_t a_stackID,
+			std::uint32_t a_number,
+			const BGSEquipSlot* a_slot,
+			bool a_queueEquip,
+			bool a_forceEquip,
+			bool a_playSounds,
+			bool a_applyNow,
+			bool a_locked)
+		{
+			using func_t = decltype(&ActorEquipManager::EquipObject);
+			REL::Relocation<func_t> func{ REL::ID(988029) };
+			return func(this, a_actor, a_object, a_stackID, a_number, a_slot, a_queueEquip, a_forceEquip, a_playSounds, a_applyNow, a_locked);
+		}
+
+		bool UnequipObject(
+			Actor* a_actor,
+			const BGSObjectInstance* a_object,
+			std::uint32_t a_number,
+			const BGSEquipSlot* a_slot,
+			std::uint32_t a_stackID,
+			bool a_queueEquip,
+			bool a_forceEquip,
+			bool a_playSounds,
+			bool a_applyNow,
+			const BGSEquipSlot* a_slotBeingReplaced)
+		{
+			using func_t = decltype(&ActorEquipManager::UnequipObject);
+			REL::Relocation<func_t> func{ REL::ID(1292493) };
+			return func(this, a_actor, a_object, a_number, a_slot, a_stackID, a_queueEquip, a_forceEquip, a_playSounds, a_applyNow, a_slotBeingReplaced);
+		}
+	};
+	static_assert(sizeof(ActorEquipManager) == 0x60);
 }

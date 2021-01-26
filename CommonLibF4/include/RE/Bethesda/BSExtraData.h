@@ -12,6 +12,7 @@ namespace RE
 	class BGSObjectInstanceExtra;
 	class BSExtraData;
 	class ExtraCellWaterType;
+	class ExtraInstanceData;
 	class ExtraLocation;
 	class ExtraMaterialSwap;
 	class ExtraPowerLinks;
@@ -206,7 +207,7 @@ namespace RE
 		kMovementController,
 		kReferenceCharacterController,
 		kMaterialSwap,  // ExtraMaterialSwap
-		kInstanceData,
+		kInstanceData,  // ExtraInstanceData
 		kPowerArmor,
 		kAcousticParent,
 		kInputEnableLayer,
@@ -241,6 +242,7 @@ namespace RE
 	class BGSLocation;
 	class BGSMaterialSwap;
 	class BGSMessage;
+	class TBO_InstanceData;
 	class TESBoundObject;
 	class TESForm;
 	class TESQuest;
@@ -249,6 +251,11 @@ namespace RE
 	namespace BGSMod
 	{
 		struct ObjectIndexData;
+
+		namespace Attachment
+		{
+			class Mod;
+		}
 	}
 
 	class __declspec(novtable) BSExtraData
@@ -305,6 +312,20 @@ namespace RE
 	};
 	static_assert(sizeof(ExtraCellWaterType) == 0x20);
 
+	class __declspec(novtable) ExtraInstanceData :
+		public BSExtraData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraInstanceData };
+		static constexpr auto VTABLE{ VTABLE::ExtraInstanceData };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kInstanceData };
+
+		// members
+		const TESBoundObject* base;              // 18
+		BSTSmartPointer<TBO_InstanceData> data;  // 20
+	};
+	static_assert(sizeof(ExtraInstanceData) == 0x28);
+
 	class __declspec(novtable) BGSObjectInstanceExtra :
 		public BSExtraData  // 00
 	{
@@ -313,11 +334,31 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BGSObjectInstanceExtra };
 		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kObjectInstance };
 
+		BGSObjectInstanceExtra() :
+			BSExtraData(TYPE)
+		{
+			stl::emplace_vtable(this);
+		}
+
+		void AddMod(const BGSMod::Attachment::Mod& a_newMod, std::uint8_t a_attachIndex, std::uint8_t a_rank, bool a_removeInvalidMods)
+		{
+			using func_t = decltype(&BGSObjectInstanceExtra::AddMod);
+			REL::Relocation<func_t> func{ REL::ID(1191757) };
+			return func(this, a_newMod, a_attachIndex, a_rank, a_removeInvalidMods);
+		}
+
 		[[nodiscard]] std::span<BGSMod::ObjectIndexData> GetIndexData() const noexcept;
 
+		std::uint32_t RemoveMod(const BGSMod::Attachment::Mod* a_mod, std::uint8_t a_attachIndex)
+		{
+			using func_t = decltype(&BGSObjectInstanceExtra::RemoveMod);
+			REL::Relocation<func_t> func{ REL::ID(1136607) };
+			return func(this, a_mod, a_attachIndex);
+		}
+
 		// members
-		const BSTDataBuffer<1>* values;  // 18
-		std::uint16_t itemIndex;         // 20
+		const BSTDataBuffer<1>* values{ nullptr };  // 18
+		std::uint16_t itemIndex{ 0 };               // 20
 	};
 	static_assert(sizeof(BGSObjectInstanceExtra) == 0x28);
 

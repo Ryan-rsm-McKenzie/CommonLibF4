@@ -23,10 +23,10 @@
 	<Type Name="RE::BSTArray&lt;*,RE::BSTArrayHeapAllocator&gt;">
 		<DisplayString>{{ size={_size} }}</DisplayString>
 		<Expand>
-			<Item Name="[capacity]">_capacity</Item>
+			<Item Name="[capacity]">_allocator._capacity</Item>
 			<ArrayItems>
 				<Size>_size</Size>
-				<ValuePointer>($T1*)_data</ValuePointer>
+				<ValuePointer>($T1*)_allocator._data</ValuePointer>
 			</ArrayItems>
 		</Expand>
 	</Type>
@@ -34,11 +34,11 @@
 	<Type Name="RE::BSTArray&lt;*,RE::BSTSmallArrayHeapAllocator&lt;*&gt;&gt;">
 		<DisplayString>{{ size={_size} }}</DisplayString>
 		<Expand>
-			<Item Name="[capacity]">_capacity &amp; ~kLocalAlloc</Item>
+			<Item Name="[capacity]">_allocator._capacity &amp; ~kLocalAlloc</Item>
 			<ArrayItems>
 				<Size>_size</Size>
-				<ValuePointer Condition="(_capacity &amp; kLocalAlloc) != 0">($T1*)_data.local</ValuePointer>
-				<ValuePointer Condition="(_capacity &amp; kLocalAlloc) == 0">($T1*)_data.heap</ValuePointer>
+				<ValuePointer Condition="(_capacity &amp; kLocalAlloc) != 0">($T1*)_allocator._data.local</ValuePointer>
+				<ValuePointer Condition="(_capacity &amp; kLocalAlloc) == 0">($T1*)_allocator._data.heap</ValuePointer>
 			</ArrayItems>
 		</Expand>
 	</Type>

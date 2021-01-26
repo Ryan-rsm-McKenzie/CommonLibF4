@@ -199,6 +199,84 @@ namespace RE
 		};
 		static_assert(sizeof(Stack) == 0x28);
 
+		class __declspec(novtable) StackDataCompareFunctor
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BGSInventoryItem__StackDataCompareFunctor };
+			static constexpr auto VTABLE{ VTABLE::BGSInventoryItem__StackDataCompareFunctor };
+
+			// add
+			virtual bool CompareData(const BGSInventoryItem::Stack& a_stack) = 0;  // 00
+			virtual bool UseDefaultStackIfNoMatch() const { return false; }        // 01
+		};
+		static_assert(sizeof(StackDataCompareFunctor) == 0x8);
+
+		class CheckStackIDFunctor :
+			public StackDataCompareFunctor  // 00
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BGSInventoryItem__CheckStackIDFunctor };
+			static constexpr auto VTABLE{ VTABLE::BGSInventoryItem__CheckStackIDFunctor };
+
+			CheckStackIDFunctor(std::uint32_t a_targetIndex) noexcept :
+				targetIndex(a_targetIndex)
+			{}
+
+			// override (StackDataCompareFunctor)
+			bool CompareData(const BGSInventoryItem::Stack&) override { return targetIndex-- == 0; }  // 00
+
+			// members
+			std::uint32_t targetIndex;  // 08
+		};
+		static_assert(sizeof(CheckStackIDFunctor) == 0x10);
+
+		class __declspec(novtable) StackDataWriteFunctor
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BGSInventoryItem__StackDataWriteFunctor };
+			static constexpr auto VTABLE{ VTABLE::BGSInventoryItem__StackDataWriteFunctor };
+
+			// add
+			virtual void WriteDataImpl(TESBoundObject& a_baseObj, BGSInventoryItem::Stack& a_stack) = 0;  // 01
+
+			// members
+			bool shouldSplitStacks{ true };              // 08
+			bool transferEquippedToSplitStack{ false };  // 09
+		};
+		static_assert(sizeof(StackDataWriteFunctor) == 0x10);
+
+		class __declspec(novtable) ModifyModDataFunctor :
+			public StackDataWriteFunctor  // 00
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::BGSInventoryItem__ModifyModDataFunctor };
+			static constexpr auto VTABLE{ VTABLE::BGSInventoryItem__ModifyModDataFunctor };
+
+			ModifyModDataFunctor(BGSMod::Attachment::Mod* a_mod, std::int8_t a_slotIndex, bool a_attach, bool* a_success) :
+				mod(a_mod),
+				success(a_success),
+				slotIndex(a_slotIndex),
+				attach(a_attach)
+			{
+				stl::emplace_vtable(this);
+				if (success) {
+					*success = true;
+				}
+			}
+
+			// override (StackDataWriteFunctor)
+			void WriteDataImpl(TESBoundObject&, BGSInventoryItem::Stack&) override;  // 01
+
+			// members
+			BGSMod::Attachment::Mod* mod;         // 10
+			TESBoundObject* foundObj{ nullptr };  // 18
+			bool* success;                        // 20
+			const std::int8_t slotIndex;          // 28
+			const bool attach;                    // 29
+			bool equipLocked{ false };            // 2A
+		};
+		static_assert(sizeof(ModifyModDataFunctor) == 0x30);
+
 		[[nodiscard]] std::uint32_t GetCount() const noexcept
 		{
 			std::uint32_t count = 0;
@@ -237,7 +315,7 @@ namespace RE
 	{
 	public:
 		// members
-		TESForm* object;                                 // 00
+		TESForm* object{ nullptr };                      // 00
 		BSTSmartPointer<TBO_InstanceData> instanceData;  // 08
 	};
 	static_assert(sizeof(BGSObjectInstance) == 0x10);
@@ -263,6 +341,40 @@ namespace RE
 		public BSTEventSource<BGSInventoryListEvent::Event>  // 00
 	{
 	public:
+		[[nodiscard]] static bool StandardObjectCompareCallbackFn(TESBoundObject* a_lhs, TESBoundObject* a_rhs)
+		{
+			return a_lhs == a_rhs;
+		}
+
+		void FindAndWriteStackDataForItem(
+			TESBoundObject* a_object,
+			BGSInventoryItem::StackDataCompareFunctor& a_compareFunc,
+			BGSInventoryItem::StackDataWriteFunctor& a_writeFunc,
+			bool (*a_objCompFn)(TESBoundObject*, TESBoundObject*) = StandardObjectCompareCallbackFn,
+			bool a_alwaysContinue = false)
+		{
+			using func_t = decltype(&BGSInventoryList::FindAndWriteStackDataForItem);
+			REL::Relocation<func_t> func{ REL::ID(1354005) };
+			return func(this, a_object, a_compareFunc, a_writeFunc, a_objCompFn, a_alwaysContinue);
+		}
+
+		// DOES NOT LOCK
+		void ForEachStack(
+			std::function<bool(BGSInventoryItem&)> a_filter,                             // return true to iterate stacks
+			std::function<bool(BGSInventoryItem&, BGSInventoryItem::Stack&)> a_continue  // return false to return control from function
+		)
+		{
+			for (auto& elem : data) {
+				if (a_filter(elem)) {
+					for (auto stack = elem.stackData.get(); stack; stack = stack->nextStack.get()) {
+						if (!a_continue(elem, *stack)) {
+							return;
+						}
+					}
+				}
+			}
+		}
+
 		// members
 		BSTArray<BGSInventoryItem> data;  // 58
 		float cachedWeight;               // 70
@@ -485,6 +597,18 @@ namespace RE
 		virtual BGSDecalGroup* GetDecalGroup() const;                                                                                                                                                                                                 // C3
 		virtual void InitDefaultWornImpl(bool a_weapon, bool a_allowChanges);                                                                                                                                                                         // C4
 		virtual bool HasKeywordHelper(const BGSKeyword* a_keyword, const TBO_InstanceData* a_data) const;                                                                                                                                             // C5
+
+		void FindAndWriteStackDataForInventoryItem(
+			TESBoundObject* a_object,
+			BGSInventoryItem::StackDataCompareFunctor& a_compareFunc,
+			BGSInventoryItem::StackDataWriteFunctor& a_writeFunc,
+			bool (*a_objCompFn)(TESBoundObject*, TESBoundObject*) = BGSInventoryList::StandardObjectCompareCallbackFn,
+			bool a_alwaysContinue = false)
+		{
+			if (inventoryList) {
+				inventoryList->FindAndWriteStackDataForItem(a_object, a_compareFunc, a_writeFunc, a_objCompFn, a_alwaysContinue);
+			}
+		}
 
 		[[nodiscard]] TESBoundObject* GetObjectReference() const noexcept { return data.objectReference; }
 		[[nodiscard]] TESObjectCELL* GetParentCell() const noexcept { return parentCell; }
