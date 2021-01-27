@@ -113,7 +113,7 @@ namespace RE
 	inline void* RTDynamicCast(void* a_inptr, std::int32_t a_vfDelta, void* a_srcType, void* a_targetType, std::int32_t a_isReference)
 	{
 		using func_t = decltype(&RTDynamicCast);
-		REL::Relocation<func_t> func{ REL::ID(1579156) };
+		REL::Relocation<func_t> func{ REL::ID(84112) };
 		return func(a_inptr, a_vfDelta, a_srcType, a_targetType, a_isReference);
 	}
 
@@ -200,15 +200,9 @@ namespace RE
 		inline constexpr bool cast_is_valid_v = cast_is_valid<To, From>::value;
 	}
 
-	template <
-		class To,
-		class From,
-		std::enable_if_t<
-			detail::cast_is_valid_v<
-				To,
-				From*>,
-			int> = 0>
-	To fallout_cast(From* a_from)
+	template <class To, class From>
+	To fallout_cast(From* a_from)  //
+		requires(detail::cast_is_valid_v<To, From*>)
 	{
 		REL::Relocation<void*> from{ detail::remove_cvpr_t<From>::RTTI };
 		REL::Relocation<void*> to{ detail::remove_cvpr_t<To>::RTTI };

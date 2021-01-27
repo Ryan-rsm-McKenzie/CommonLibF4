@@ -712,6 +712,7 @@ namespace RE
 		[[nodiscard]] bool IsInitialized() const noexcept { return (formFlags & (1 << 3)) != 0; }
 		[[nodiscard]] bool IsPlayer() const noexcept { return GetFormID() == 0x00000007; }
 		[[nodiscard]] bool IsPlayerRef() const noexcept { return GetFormID() == 0x00000014; }
+		[[nodiscard]] bool IsWeapon() const noexcept { return GetFormType() == ENUM_FORM_ID::kWEAP; }
 
 		template <
 			class T,

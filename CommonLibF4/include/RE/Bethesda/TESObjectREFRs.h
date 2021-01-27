@@ -18,7 +18,6 @@ namespace RE
 	enum class BIPED_OBJECT;
 	enum class IO_TASK_PRIORITY;
 	enum class ITEM_REMOVE_REASON;
-	enum class RESET_3D_FLAGS;
 
 	namespace MagicSystem
 	{
@@ -90,6 +89,22 @@ namespace RE
 		};
 		static_assert(sizeof(Event) == 0x18);
 	}
+
+	enum class RESET_3D_FLAGS
+	{
+		kModel = 1u << 0,
+		kSkin = 1u << 1,
+		kHead = 1u << 2,
+		kFace = 1u << 3,
+		kScale = 1u << 4,
+		kSkeleton = 1u << 5,
+		kInitDefault = 1u << 6,
+		kSkyCellSkin = 1u << 7,
+		kHavok = 1u << 8,
+		kDontAddOutfit = 1u << 9,
+		kKeepHead = 1u << 10,
+		kDismemberment = 1u << 11
+	};
 
 	class __declspec(novtable) BSHandleRefObject :
 		public NiRefObject  // 00
@@ -508,7 +523,7 @@ namespace RE
 		virtual NiPoint3 GetStartingLocation();                                                                                                                                                                                                       // 6A
 		virtual void SetStartingPosition(const NiPoint3& a_position);                                                                                                                                                                                 // 6B
 		virtual void UpdateRefLight(float a_delta);                                                                                                                                                                                                   // 6C
-		ObjectRefHandle RemoveItem(RemoveItemData& a_data);                                                                                                                                                                                           // 6D
+		virtual ObjectRefHandle RemoveItem(RemoveItemData& a_data);                                                                                                                                                                                   // 6D
 		virtual void AddWornOutfitImpl([[maybe_unused]] BGSOutfit* a_outfit, [[maybe_unused]] bool a_queueItem) { return; }                                                                                                                           // 6E
 		virtual bool AddWornItem(TESBoundObject* a_object, BSTSmartPointer<ExtraDataList> a_extra, std::int32_t a_number, bool a_forceEquip, BGSEquipIndex a_equipIndex);                                                                             // 6F
 		virtual void DoTrap([[maybe_unused]] TrapEntry* a_trap, [[maybe_unused]] TargetEntry* a_target) { return; }                                                                                                                                   // 71

@@ -24,6 +24,7 @@ namespace RE
 	enum class WEAPON_RUMBLE_PATTERN;
 	enum class WEAPONHITBEHAVIOR;
 
+	class BGSObjectInstanceExtra;
 	class NiAVObject;
 
 	struct BaseTreeData;
@@ -97,6 +98,13 @@ namespace RE
 		virtual void OnCheckModels() { return; }                                                                                               // 64
 		virtual void OnCopyReference() { return; }                                                                                             // 65
 		virtual void OnFinishScale() { return; }                                                                                               // 66
+
+		void ApplyMods(BSTSmartPointer<TBO_InstanceData>& a_dest, const BGSObjectInstanceExtra* a_extra) const
+		{
+			using func_t = decltype(&TESBoundObject::ApplyMods);
+			REL::Relocation<func_t> func{ REL::ID(113585) };
+			return func(this, a_dest, a_extra);
+		}
 
 		// members
 		BOUND_DATA boundData;                    // 20

@@ -239,6 +239,7 @@ namespace RE
 		kTotal
 	};
 
+	class BGSAttachParentArray;
 	class BGSLocation;
 	class BGSMaterialSwap;
 	class BGSMessage;
@@ -248,6 +249,8 @@ namespace RE
 	class TESQuest;
 	class TESWaterForm;
 
+	struct INSTANCE_FILTER;
+
 	namespace BGSMod
 	{
 		struct ObjectIndexData;
@@ -255,6 +258,11 @@ namespace RE
 		namespace Attachment
 		{
 			class Mod;
+		}
+
+		namespace Template
+		{
+			class Item;
 		}
 	}
 
@@ -320,8 +328,20 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::ExtraInstanceData };
 		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kInstanceData };
 
+		ExtraInstanceData() :
+			ExtraInstanceData(nullptr, nullptr)
+		{}
+
+		ExtraInstanceData(const TESBoundObject* a_base, BSTSmartPointer<TBO_InstanceData> a_data) :
+			BSExtraData(TYPE),
+			base(a_base),
+			data(std::move(a_data))
+		{
+			stl::emplace_vtable(this);
+		}
+
 		// members
-		const TESBoundObject* base;              // 18
+		const TESBoundObject* base{ nullptr };   // 18
 		BSTSmartPointer<TBO_InstanceData> data;  // 20
 	};
 	static_assert(sizeof(ExtraInstanceData) == 0x28);
@@ -340,6 +360,11 @@ namespace RE
 			stl::emplace_vtable(this);
 		}
 
+		BGSObjectInstanceExtra(const BGSMod::Template::Item* a_item, TESForm* a_parentForm, const INSTANCE_FILTER* a_filter)
+		{
+			ctor(a_item, a_parentForm, a_filter);
+		}
+
 		void AddMod(const BGSMod::Attachment::Mod& a_newMod, std::uint8_t a_attachIndex, std::uint8_t a_rank, bool a_removeInvalidMods)
 		{
 			using func_t = decltype(&BGSObjectInstanceExtra::AddMod);
@@ -347,7 +372,16 @@ namespace RE
 			return func(this, a_newMod, a_attachIndex, a_rank, a_removeInvalidMods);
 		}
 
+		void CreateBaseInstanceData(const TESBoundObject& a_object, BSTSmartPointer<TBO_InstanceData>& a_instanceData) const;
+
 		[[nodiscard]] std::span<BGSMod::ObjectIndexData> GetIndexData() const noexcept;
+
+		std::uint32_t RemoveInvalidMods(const BGSAttachParentArray* a_baseObjectParents)
+		{
+			using func_t = decltype(&BGSObjectInstanceExtra::RemoveInvalidMods);
+			REL::Relocation<func_t> func{ REL::ID(1548060) };
+			return func(this, a_baseObjectParents);
+		}
 
 		std::uint32_t RemoveMod(const BGSMod::Attachment::Mod* a_mod, std::uint8_t a_attachIndex)
 		{
@@ -359,6 +393,14 @@ namespace RE
 		// members
 		const BSTDataBuffer<1>* values{ nullptr };  // 18
 		std::uint16_t itemIndex{ 0 };               // 20
+
+	private:
+		BGSObjectInstanceExtra* ctor(const BGSMod::Template::Item* a_item, TESForm* a_parentForm, const INSTANCE_FILTER* a_filter)
+		{
+			using func_t = decltype(&BGSObjectInstanceExtra::ctor);
+			REL::Relocation<func_t> func{ REL::ID(1222521) };
+			return func(this, a_item, a_parentForm, a_filter);
+		}
 	};
 	static_assert(sizeof(BGSObjectInstanceExtra) == 0x28);
 
@@ -602,6 +644,13 @@ namespace RE
 			_extraData.AddExtra(a_extra);
 		}
 
+		stl::observer<TBO_InstanceData*> CreateInstanceData(TESBoundObject* a_object, bool a_generateName)
+		{
+			using func_t = decltype(&ExtraDataList::CreateInstanceData);
+			REL::Relocation<func_t> func{ REL::ID(1280130) };
+			return func(this, a_object, a_generateName);
+		}
+
 		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
 			const BSAutoReadLock l{ _extraRWLock };
@@ -636,6 +685,13 @@ namespace RE
 		std::unique_ptr<T> RemoveExtra()
 		{
 			return std::unique_ptr<T>{ static_cast<T*>(RemoveExtra(T::TYPE).release()) };
+		}
+
+		void SetDisplayNameFromInstanceData(BGSObjectInstanceExtra* a_instExtra, TESBoundObject* a_object, const BSTSmartPointer<TBO_InstanceData>& a_data)
+		{
+			using func_t = decltype(&ExtraDataList::SetDisplayNameFromInstanceData);
+			REL::Relocation<func_t> func{ REL::ID(457340) };
+			return func(this, a_instExtra, a_object, a_data);
 		}
 
 	private:
