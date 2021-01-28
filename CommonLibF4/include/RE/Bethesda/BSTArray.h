@@ -282,9 +282,9 @@ namespace RE
 		explicit BSTArray(size_type a_count) { resize(a_count); }
 
 		// 5)
-		template <std::input_iterator InputIt>
+		template <class InputIt>
 		BSTArray(InputIt a_first, InputIt a_last)  //
-			requires(std::convertible_to<typename std::iter_reference_t<InputIt>, reference>)
+			requires(std::derived_from<typename std::iterator_traits<InputIt>::iterator_category, std::input_iterator_tag>)
 		{
 			assign(a_first, a_last);
 		}
@@ -375,9 +375,9 @@ namespace RE
 
 		void shrink_to_fit() { reserve_exact(size()); }
 
-		template <std::forward_iterator ForwardIt>
+		template <class ForwardIt>
 		iterator insert(const_iterator a_pos, ForwardIt a_first, ForwardIt a_last)  //
-			requires(std::convertible_to<typename std::iter_reference_t<ForwardIt>, reference>)
+			requires(std::derived_from<typename std::iterator_traits<ForwardIt>::iterator_category, std::forward_iterator_tag>)
 		{
 			const auto distance = static_cast<size_type>(std::distance(a_first, a_last));
 			if (distance == 0) {

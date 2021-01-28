@@ -48,16 +48,6 @@ static_assert(
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
 
-#if BOOST_COMP_CLANG
-// offsetof is required to evaluate to a constant expression, but msvc's cstddef does not
-// define it as a constant expression (it probably uses compiler hooks to evaulate it as
-// one)
-// clang chokes on this, so we redefine the macro to use clang's builtins, just as its defined
-// in libc++
-#	undef offsetof
-#	define offsetof(a_type, a_member) __builtin_offsetof(a_type, a_member)
-#endif
-
 #include "F4SE/Impl/WinAPI.h"
 
 namespace F4SE
