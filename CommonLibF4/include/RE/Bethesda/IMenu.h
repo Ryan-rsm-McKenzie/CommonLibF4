@@ -1,21 +1,43 @@
 #pragma once
 
 #include "RE/Bethesda/Atomic.h"
+#include "RE/Bethesda/BGSCreatedObjectManager.h"
+#include "RE/Bethesda/BGSInventoryItem.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSInputEventUser.h"
 #include "RE/Bethesda/BSPointerHandle.h"
 #include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/BSTHashMap.h"
+#include "RE/Bethesda/BSTInterpolator.h"
 #include "RE/Bethesda/BSTOptional.h"
+#include "RE/Bethesda/BSTSmartPointer.h"
+#include "RE/Bethesda/BSTTuple.h"
 #include "RE/Bethesda/SWFToCodeFunctionHandler.h"
+#include "RE/Bethesda/TESForms.h"
 #include "RE/Bethesda/UIMessage.h"
 #include "RE/Bethesda/UserEvents.h"
+#include "RE/Bethesda/Workshop.h"
 #include "RE/NetImmerse/NiColor.h"
+#include "RE/NetImmerse/NiMatrix3.h"
+#include "RE/NetImmerse/NiPoint2.h"
+#include "RE/NetImmerse/NiPoint3.h"
+#include "RE/NetImmerse/NiQuaternion.h"
 #include "RE/NetImmerse/NiRect.h"
 
 namespace RE
 {
 	class BSGFxShaderFXTarget;
 	class ButtonHintBar;
+	class ExtraDataList;
+	class NiAVObject;
+	class TESBoundObject;
+	class TESForm;
+	class TESObjectREFR;
+	class UserEventEnabledEvent;
+	class WorkshopMenuGeometry;
+
+	struct LoadedInventoryModel;
+	struct PickRefUpdateEvent;
 
 	enum class MENU_RENDER_CONTEXT : std::int32_t
 	{
@@ -321,4 +343,133 @@ namespace RE
 		bool minimized;                       // E8
 	};
 	static_assert(sizeof(Console) == 0xF0);
+
+	struct BaseLoadedInventoryModel
+	{
+	public:
+		// members
+		CreatedObjPtr<TESForm> itemBase;  // 00
+		TESBoundObject* modelObj;         // 08
+		NiPointer<NiAVObject> model;      // 10
+		NiPoint2 panMinima;               // 18
+		NiPoint2 panMaxima;               // 20
+		float initialDistance;            // 28
+		float boundRadius;                // 2C
+		float horizontalBound;            // 30
+		float verticalBound;              // 34
+		float verticalBoundOffset;        // 38
+	};
+	static_assert(sizeof(BaseLoadedInventoryModel) == 0x40);
+
+	struct DisplayItemModel :
+		public BaseLoadedInventoryModel  // 00
+	{
+	public:
+		// members
+		float itemRotation;         // 40
+		std::uint32_t uniqueIndex;  // 44
+		std::uint16_t column;       // 48
+		std::uint16_t index;        // 4A
+		std::uint16_t row;          // 4C
+	};
+	static_assert(sizeof(DisplayItemModel) == 0x50);
+
+	namespace nsInventory3DManager
+	{
+		class NewInventoryMenuItemLoadTask;
+	}
+
+	class __declspec(novtable) Inventory3DManager :
+		public BSInputEventUser  // 000
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::Inventory3DManager };
+		static constexpr auto VTABLE{ VTABLE::Inventory3DManager };
+
+		// members
+		bool useBoundForScale: 1;                                                // 010:0
+		bool startedZoomThisFrame: 1;                                            // 010:1
+		bool useStoredModelPosition: 1;                                          // 010:2
+		bool rotating: 1;                                                        // 010:3
+		bool modelPositionInScreenCoords: 1;                                     // 010:4
+		bool centerOnBoundCenter: 1;                                             // 010:5
+		NiPoint3 modelPosition;                                                  // 014
+		float modelScale;                                                        // 020
+		alignas(0x10) BSTArray<LoadedInventoryModel> loadedModels;               // 030
+		NiPoint3 initialPosition;                                                // 048
+		NiPoint3 storedPostion;                                                  // 054
+		NiMatrix3 initialRotation;                                               // 060
+		NiQuaternion storedRotation;                                             // 090
+		NiPoint2 previousInput;                                                  // 0A0
+		NiPointer<nsInventory3DManager::NewInventoryMenuItemLoadTask> loadTask;  // 0A8
+		TESObjectREFR* tempRef;                                                  // 0B0
+		BSTSmartPointer<ExtraDataList> originalExtra;                            // 0B8
+		BSFixedString str3DRendererName;                                         // 0C0
+		BGSInventoryItem queuedDisplayItem;                                      // 0C8
+		std::uint32_t itemExtraIndex;                                            // 0D8
+		TESForm* itemBase;                                                       // 0E0
+		std::int8_t disableInputUserCount;                                       // 0E8
+		BSTSet<BSFixedString> disableRendererUsers;                              // 0F0
+		float storedXRotation;                                                   // 120
+		float zoomDirection;                                                     // 124
+		float zoomProgress;                                                      // 128
+		float minZoomModifier;                                                   // 12C
+		float maxZoomModifier;                                                   // 130
+		std::uint32_t hightlightedPart;                                          // 134
+		bool queueShowItem;                                                      // 138
+		bool mouseRotation;                                                      // 139
+		bool prevUsesCursorFlag;                                                 // 13A
+		bool prevUpdateUsesCursorFlag;                                           // 13B
+		bool addedLightsToScene;                                                 // 13C
+	};
+	static_assert(sizeof(Inventory3DManager) == 0x140);
+
+	class __declspec(novtable) WorkshopMenu :
+		public GameMenuBase,                                 // 000
+		public BSTEventSink<UserEventEnabledEvent>,          // 0E0
+		public BSTEventSink<Workshop::BuildableAreaEvent>,   // 0E8
+		public BSTEventSink<PickRefUpdateEvent>,             // 0F0
+		public BSTEventSink<Workshop::PlacementStatusEvent>  // 0F8
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::WorkshopMenu };
+		static constexpr auto VTABLE{ VTABLE::WorkshopMenu };
+
+		class FXWorkshopMenu;
+
+		struct IconBG
+		{
+		public:
+			BSTAlignedArray<UIShaderFXInfo> cachedColorFXInfos;       // 00
+			BSTAlignedArray<UIShaderFXInfo> cachedBackgroundFXInfos;  // 18
+			BSReadWriteLock cachedQuadsLock;                          // 30
+		};
+		static_assert(sizeof(IconBG) == 0x38);
+
+		// members
+		BSTArray<NiPoint3> item3DPositions[4];                                                                          // 100
+		BSTArray<BSTTuple<DisplayItemModel, TESObjectREFR*>> displayItemModels;                                         // 160
+		IconBG iconBG;                                                                                                  // 178
+		Inventory3DManager inv3DModelManager;                                                                           // 1B0
+		BSTArray<BSTTuple<NiPointer<nsInventory3DManager::NewInventoryMenuItemLoadTask>, NiPoint3>> loadTasks;          // 2F0
+		BSTInterpolator<float, EaseOutInterpolator, GetCurrentPositionFunctor> upDownGlassAnimationInterpolator;        // 308
+		BSTInterpolator<float, EaseOutInterpolator, GetCurrentPositionFunctor> leftRightGlassAnimationInterpolator[4];  // 320
+		BSTSmartPointer<WorkshopMenuGeometry> displayGeometry;                                                          // 380
+		BSFixedString dpadInput;                                                                                        // 388
+		BGSListForm includeList;                                                                                        // 390
+		BGSListForm excludeList;                                                                                        // 3D8
+		long double lastBudget;                                                                                         // 420
+		std::uint16_t topMenuCount;                                                                                     // 428
+		bool inputAdjustMode;                                                                                           // 42A
+		bool verticalAdjustment;                                                                                        // 42B
+		bool disableAdjustOnThumbEvent;                                                                                 // 42C
+		bool initialized;                                                                                               // 42D
+		bool inEditMode;                                                                                                // 42E
+		bool electricalDevice;                                                                                          // 42F
+		bool useMovementAsDirectional;                                                                                  // 430
+		bool motionBlurActive;                                                                                          // 431
+		bool exitDebounce;                                                                                              // 432
+		msvc::unique_ptr<FXWorkshopMenu> workshopMenuBase;                                                              // 438
+	};
+	static_assert(sizeof(WorkshopMenu) == 0x440);
 }

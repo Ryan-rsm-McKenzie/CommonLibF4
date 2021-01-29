@@ -19,8 +19,10 @@ set(headers ${headers}
 	include/RE/Bethesda/BGSBodyPartDefs.h
 	include/RE/Bethesda/BGSCharacterMorph.h
 	include/RE/Bethesda/BGSCharacterTint.h
+	include/RE/Bethesda/BGSCreatedObjectManager.h
 	include/RE/Bethesda/BGSDefaultObjectManager.h
 	include/RE/Bethesda/BGSHeadPart.h
+	include/RE/Bethesda/BGSInventoryItem.h
 	include/RE/Bethesda/BGSMod.h
 	include/RE/Bethesda/BGSPrimitive.h
 	include/RE/Bethesda/BGSStoryManagerTreeForm.h
@@ -53,6 +55,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSTFreeList.h
 	include/RE/Bethesda/BSTHashMap.h
 	include/RE/Bethesda/BSTimer.h
+	include/RE/Bethesda/BSTInterpolator.h
 	include/RE/Bethesda/BSTList.h
 	include/RE/Bethesda/BSTMessageQueue.h
 	include/RE/Bethesda/BSTObjectArena.h

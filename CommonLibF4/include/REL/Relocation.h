@@ -206,7 +206,7 @@ namespace REL
 		assert(success != 0);
 	}
 
-	template <class T>
+	template <std::integral T>
 	void safe_write(std::uintptr_t a_dst, const T& a_data)
 	{
 		safe_write(a_dst, std::addressof(a_data), sizeof(T));

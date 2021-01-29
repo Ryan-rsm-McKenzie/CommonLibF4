@@ -562,7 +562,10 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::TESForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kNONE };
 
-		using AllFormsByEditorID = BSTHashMap<BSFixedString, TESForm*>;
+		// override (BaseFormComponent)
+		void InitializeDataComponent() override { return; }          // 02
+		void ClearDataComponent() override { SetFormEditorID(""); }  // 03
+		void CopyComponent(BaseFormComponent*) override { return; }  // 06
 
 		// add
 		virtual void InitializeData() { return; }                                                                                                                                                                                     // 07
@@ -652,10 +655,10 @@ namespace RE
 
 		[[nodiscard]] static auto GetAllFormsByEditorID()
 			-> std::pair<
-				AllFormsByEditorID*,
+				BSTHashMap<BSFixedString, TESForm*>*,
 				std::reference_wrapper<BSReadWriteLock>>
 		{
-			REL::Relocation<AllFormsByEditorID**> allFormsByEditorID{ REL::ID(642758) };
+			REL::Relocation<BSTHashMap<BSFixedString, TESForm*>**> allFormsByEditorID{ REL::ID(642758) };
 			REL::Relocation<BSReadWriteLock*> allFormsEditorIDMapLock{ REL::ID(910917) };
 			return { *allFormsByEditorID, *allFormsEditorIDMapLock };
 		}
@@ -708,6 +711,7 @@ namespace RE
 		[[nodiscard]] std::uint32_t GetFormFlags() const noexcept { return formFlags; }
 		[[nodiscard]] std::uint32_t GetFormID() const noexcept { return formID; }
 		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
+		[[nodiscard]] bool IsAlchemyItem() const noexcept { return GetFormType() == ENUM_FORM_ID::kALCH; }
 		[[nodiscard]] bool IsCreated() const noexcept { return (formID >> (8 * 3)) == 0xFF; }
 		[[nodiscard]] bool IsInitialized() const noexcept { return (formFlags & (1 << 3)) != 0; }
 		[[nodiscard]] bool IsPlayer() const noexcept { return GetFormID() == 0x00000007; }

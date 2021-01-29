@@ -328,17 +328,8 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::ExtraInstanceData };
 		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kInstanceData };
 
-		ExtraInstanceData() :
-			ExtraInstanceData(nullptr, nullptr)
-		{}
-
-		ExtraInstanceData(const TESBoundObject* a_base, BSTSmartPointer<TBO_InstanceData> a_data) :
-			BSExtraData(TYPE),
-			base(a_base),
-			data(std::move(a_data))
-		{
-			stl::emplace_vtable(this);
-		}
+		ExtraInstanceData();
+		ExtraInstanceData(const TESBoundObject* a_base, BSTSmartPointer<TBO_InstanceData> a_data);
 
 		// members
 		const TESBoundObject* base{ nullptr };   // 18

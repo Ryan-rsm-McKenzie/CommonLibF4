@@ -7,21 +7,12 @@ set(sources ${sources}
 	include/F4SE/Impl/WinAPI.cpp
 	include/RE/Fallout.cpp
 	include/RE/Bethesda/Actor.cpp
-	include/RE/Bethesda/Atomic.cpp
+	include/RE/Bethesda/BGSInventoryItem.cpp
 	include/RE/Bethesda/BSExtraData.cpp
-	include/RE/Bethesda/BSFixedString.cpp
-	include/RE/Bethesda/BSLock.cpp
-	include/RE/Bethesda/BSPointerHandle.cpp
 	include/RE/Bethesda/BSScaleformManager.cpp
 	include/RE/Bethesda/BSScript.cpp
-	include/RE/Bethesda/BSSpring.cpp
-	include/RE/Bethesda/BSTArray.cpp
-	include/RE/Bethesda/BSTPoint.cpp
 	include/RE/Bethesda/Calendar.cpp
-	include/RE/Bethesda/CRC.cpp
 	include/RE/Bethesda/FormComponents.cpp
-	include/RE/Bethesda/InputEvent.cpp
-	include/RE/Bethesda/Settings.cpp
 	include/RE/Bethesda/TESBoundAnimObjects.cpp
 	include/RE/Bethesda/TESForms.cpp
 	include/RE/Bethesda/TESObjectREFRs.cpp
