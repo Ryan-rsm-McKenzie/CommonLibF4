@@ -53,6 +53,12 @@ namespace RE
 		// add
 		virtual ~UI() = default;  // 01
 
+		template <class T>
+		[[nodiscard]] BSTEventSource<T>* GetEventSource()
+		{
+			return static_cast<RE::BSTEventSource<T>*>(this);
+		}
+
 		[[nodiscard]] static BSReadWriteLock& GetMenuMapRWLock()
 		{
 			REL::Relocation<BSReadWriteLock*> menuMapRWLock{ REL::ID(578487) };
@@ -83,6 +89,18 @@ namespace RE
 			using func_t = decltype(&UI::RegisterMenu);
 			REL::Relocation<func_t> func{ REL::ID(1519575) };
 			return func(this, a_menu, a_create, a_staticUpdate);
+		}
+
+		template <class T>
+		void RegisterSink(BSTEventSink<T>* a_sink)
+		{
+			GetEventSource<T>()->RegisterSink(a_sink);
+		}
+
+		template <class T>
+		void UnregisterSink(BSTEventSink<T>* a_sink)
+		{
+			GetEventSource<T>()->UnregisterSink(a_sink);
 		}
 
 		// members
