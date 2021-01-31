@@ -795,6 +795,7 @@ namespace RE::Scaleform::GFx
 		virtual void MakeAreaVisible(const Render::RectF& a_screenRect, const Render::RectF& a_box, MakeAllVisibleFlags a_flags = MakeAllVisibleFlags::kNone) = 0;       // 42
 		virtual void RestoreViewport() = 0;                                                                                                                              // 43
 
+		void CreateFunction(Value* a_value, FunctionHandler* a_function, void* a_userData = nullptr);
 		bool GetVariable(Value* a_val, const char* a_pathToVar) const;
 
 		void Release()

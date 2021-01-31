@@ -266,7 +266,6 @@ namespace RE
 		using super::erase;
 		using super::front;
 		using super::insert;
-		using super::pop_back;
 		using super::push_back;
 		using super::rbegin;
 		using super::rend;
@@ -431,6 +430,8 @@ namespace RE
 		{
 			return *emplace(end(), std::forward<Args>(a_args)...);
 		}
+
+		void pop_back() { erase(std::prev(end())); }
 
 		void resize(size_type a_count) { resize_impl(a_count, nullptr); }
 		void resize(size_type a_count, const value_type& a_value) { resize_impl(a_count, std::addressof(a_value)); }

@@ -33,12 +33,6 @@ namespace RE
 		BSUntypedPointerHandle() noexcept = default;
 		BSUntypedPointerHandle(const BSUntypedPointerHandle&) noexcept = default;
 
-		BSUntypedPointerHandle(BSUntypedPointerHandle&& a_rhs) noexcept :
-			_handle(a_rhs._handle)
-		{
-			a_rhs.reset();
-		}
-
 		explicit BSUntypedPointerHandle(value_type a_handle) noexcept :
 			_handle(a_handle)
 		{}
@@ -46,15 +40,6 @@ namespace RE
 		~BSUntypedPointerHandle() noexcept { reset(); }
 
 		BSUntypedPointerHandle& operator=(const BSUntypedPointerHandle&) noexcept = default;
-
-		BSUntypedPointerHandle& operator=(BSUntypedPointerHandle&& a_rhs) noexcept
-		{
-			if (this != std::addressof(a_rhs)) {
-				_handle = a_rhs._handle;
-				a_rhs.reset();
-			}
-			return *this;
-		}
 
 		BSUntypedPointerHandle& operator=(value_type a_rhs) noexcept
 		{
@@ -74,11 +59,6 @@ namespace RE
 			return a_lhs.value() == a_rhs.value();
 		}
 
-		[[nodiscard]] friend bool operator!=(const BSUntypedPointerHandle& a_lhs, const BSUntypedPointerHandle& a_rhs) noexcept
-		{
-			return !(a_lhs == a_rhs);
-		}
-
 	private:
 		// members
 		value_type _handle{ 0 };  // 0
@@ -87,82 +67,45 @@ namespace RE
 	extern template class BSUntypedPointerHandle<>;
 
 	template <class T, class Handle>
-	class BSPointerHandle :
-		protected Handle  // 00
+	class BSPointerHandle
 	{
 	public:
 		using native_handle_type = typename Handle::value_type;
 
 		BSPointerHandle() noexcept = default;
-		BSPointerHandle(const BSPointerHandle&) noexcept = default;
-		BSPointerHandle(BSPointerHandle&&) noexcept = default;
 
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					T*>,
-				int> = 0>
-		explicit BSPointerHandle(Y* a_rhs)
-		{
-			get_handle(a_rhs);
-		}
-
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					T*>,
-				int> = 0>
-		BSPointerHandle(const BSPointerHandle<Y, Handle>& a_rhs) noexcept :
-			Handle(a_rhs)
+		template <class Y>
+		BSPointerHandle(BSPointerHandle<Y, Handle> a_rhs) noexcept  //
+			requires(std::convertible_to<Y*, T*>) :
+			_handle(a_rhs._handle)
 		{}
 
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					T*>,
-				int> = 0>
-		BSPointerHandle(BSPointerHandle<Y, Handle>&& a_rhs) noexcept :
-			Handle(std::move(a_rhs))
-		{}
-
-		BSPointerHandle& operator=(const BSPointerHandle&) noexcept = default;
-		BSPointerHandle& operator=(BSPointerHandle&&) noexcept = default;
-
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					T*>,
-				int> = 0>
-		BSPointerHandle& operator=(Y* a_rhs)
+		template <class Y>
+		explicit BSPointerHandle(Y* a_rhs)  //
+			requires(std::convertible_to<Y*, T*>)
 		{
 			get_handle(a_rhs);
-			return *this;
-		}
-
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					T*>,
-				int> = 0>
-		BSPointerHandle& operator=(const BSPointerHandle<Y, Handle>& a_rhs) noexcept
-		{
-			Handle::operator=(a_rhs);
-			return *this;
 		}
 
 		~BSPointerHandle() noexcept = default;
 
-		using Handle::reset;
+		template <class Y>
+		BSPointerHandle& operator=(BSPointerHandle<Y, Handle> a_rhs) noexcept  //
+			requires(std::convertible_to<Y*, T*>)
+		{
+			_handle = a_rhs._handle;
+			return *this;
+		}
+
+		template <class Y>
+		BSPointerHandle& operator=(Y* a_rhs)  //
+			requires(std::convertible_to<Y*, T*>)
+		{
+			get_handle(a_rhs);
+			return *this;
+		}
+
+		void reset() noexcept { _handle.reset(); }
 
 		[[nodiscard]] NiPointer<T> get() const
 		{
@@ -173,24 +116,24 @@ namespace RE
 
 		[[nodiscard]] native_handle_type native_handle() noexcept
 		{
-			return Handle::value();
+			return _handle.value();
 		}
 
-		[[nodiscard]] explicit operator bool() const noexcept { return Handle::has_value(); }
+		[[nodiscard]] explicit operator bool() const noexcept { return _handle.has_value(); }
 
 		[[nodiscard]] friend bool operator==(const BSPointerHandle& a_lhs, const BSPointerHandle& a_rhs) noexcept
 		{
-			return static_cast<const Handle&>(a_lhs) == static_cast<const Handle&>(a_rhs);
-		}
-
-		[[nodiscard]] friend bool operator!=(const BSPointerHandle& a_lhs, const BSPointerHandle& a_rhs) noexcept
-		{
-			return !(a_lhs == a_rhs);
+			return a_lhs._handle == a_rhs._handle;
 		}
 
 	private:
+		template <class, class>
+		friend class BSPointerHandle;
+
 		void get_handle(T* a_ptr);
 		bool get_smartptr(NiPointer<T>& a_smartPointerOut) const;
+
+		Handle _handle;  // 00
 	};
 
 	extern template class BSPointerHandle<Actor>;

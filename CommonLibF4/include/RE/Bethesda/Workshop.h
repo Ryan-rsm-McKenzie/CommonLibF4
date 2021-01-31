@@ -2,6 +2,7 @@
 
 #include "RE/Bethesda/BSExtraData.h"
 #include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/MemoryManager.h"
 
 namespace RE
 {
@@ -51,19 +52,55 @@ namespace RE
 		class WorkshopMenuNode
 		{
 		public:
+			~WorkshopMenuNode() { Clear(); }
+
+			void Clear()
+			{
+				filterKeyword = nullptr;
+				parent = nullptr;
+				recipe = nullptr;
+				row = 0;
+				column = 0;
+				selected = false;
+				children.clear();
+			}
+
+			bool FindAndSetSelectedNode(std::uint16_t a_row, std::uint32_t a_crc, std::uint16_t& a_outRow)
+			{
+				using func_t = decltype(&WorkshopMenuNode::FindAndSetSelectedNode);
+				REL::Relocation<func_t> func{ REL::ID(1309368) };
+				return func(this, a_row, a_crc, a_outRow);
+			}
+
+			F4_HEAP_REDEFINE_NEW(WorkshopMenuNode);
+
 			// members
-			BGSKeyword* filterKeyword;                     // 00
-			WorkshopMenuNode* parent;                      // 08
-			BSTArray<WorkshopMenuNode*> children;          // 10
-			BGSConstructibleObject* recipe;                // 28
-			BGSConstructibleObject* sourceFormListRecipe;  // 30
-			TESForm* form;                                 // 38
-			std::uint32_t uniqueID;                        // 40
-			std::uint16_t row;                             // 44
-			std::uint16_t column;                          // 46
-			bool selected;                                 // 48
+			BGSKeyword* filterKeyword{ nullptr };                      // 00
+			WorkshopMenuNode* parent{ nullptr };                       // 08
+			BSTArray<msvc::unique_ptr<WorkshopMenuNode>> children;     // 10
+			BGSConstructibleObject* recipe{ nullptr };                 // 28
+			BGSConstructibleObject* sourceFormListRecipe{ nullptr };   // 30
+			TESForm* form{ nullptr };                                  // 38
+			std::uint32_t uniqueID{ static_cast<std::uint32_t>(-1) };  // 40
+			std::uint16_t row{ 0 };                                    // 44
+			std::uint16_t column{ 0 };                                 // 46
+			bool selected{ false };                                    // 48
 		};
 		static_assert(sizeof(WorkshopMenuNode) == 0x50);
+
+		[[nodiscard]] static WorkshopMenuNode* GetSelectedWorkshopMenuNode(std::uint32_t a_row, std::uint32_t& a_column)
+		{
+			using func_t = decltype(&Workshop::GetSelectedWorkshopMenuNode);
+			REL::Relocation<func_t> func{ REL::ID(763948) };
+			return func(a_row, a_column);
+		}
+
+		[[nodiscard]] static bool WorkshopCanShowRecipe(BGSConstructibleObject* a_recipe, BGSKeyword* a_filter)
+		{
+			using func_t = decltype(&Workshop::WorkshopCanShowRecipe);
+			REL::Relocation<func_t> func{ REL::ID(239190) };
+			return func(a_recipe, a_filter);
+		}
 	};
 	static_assert(std::is_empty_v<Workshop>);
 }

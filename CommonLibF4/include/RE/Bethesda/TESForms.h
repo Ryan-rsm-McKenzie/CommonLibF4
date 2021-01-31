@@ -711,12 +711,24 @@ namespace RE
 		[[nodiscard]] std::uint32_t GetFormFlags() const noexcept { return formFlags; }
 		[[nodiscard]] std::uint32_t GetFormID() const noexcept { return formID; }
 		[[nodiscard]] ENUM_FORM_ID GetFormType() const noexcept { return *formType; }
-		[[nodiscard]] bool IsAlchemyItem() const noexcept { return GetFormType() == ENUM_FORM_ID::kALCH; }
+		[[nodiscard]] bool Is(ENUM_FORM_ID a_type) const noexcept { return GetFormType() == a_type; }
+
+		template <class T>
+		[[nodiscard]] bool Is() const noexcept  //
+			requires(std::derived_from<T, TESForm> &&
+					 !std::is_pointer_v<T> &&
+					 !std::is_reference_v<T>)
+		{
+			return Is(T::FORM_ID);
+		}
+
+		[[nodiscard]] bool IsAlchemyItem() const noexcept { return Is(ENUM_FORM_ID::kALCH); }
 		[[nodiscard]] bool IsCreated() const noexcept { return (formID >> (8 * 3)) == 0xFF; }
-		[[nodiscard]] bool IsInitialized() const noexcept { return (formFlags & (1 << 3)) != 0; }
+		[[nodiscard]] bool IsDeleted() noexcept { return (formFlags & (1u << 5)) != 0; }
+		[[nodiscard]] bool IsInitialized() const noexcept { return (formFlags & (1u << 3)) != 0; }
 		[[nodiscard]] bool IsPlayer() const noexcept { return GetFormID() == 0x00000007; }
 		[[nodiscard]] bool IsPlayerRef() const noexcept { return GetFormID() == 0x00000014; }
-		[[nodiscard]] bool IsWeapon() const noexcept { return GetFormType() == ENUM_FORM_ID::kWEAP; }
+		[[nodiscard]] bool IsWeapon() const noexcept { return Is(ENUM_FORM_ID::kWEAP); }
 
 		template <
 			class T,
@@ -2517,6 +2529,9 @@ namespace RE
 			std::uint16_t workshopPriority;  // 2
 		};
 		static_assert(sizeof(ConstructibleObjectData) == 0x4);
+
+		[[nodiscard]] RE::TESForm* GetCreatedItem() const noexcept { return createdItem; }
+		[[nodiscard]] std::uint16_t GetWorkshopPriority() const noexcept { return data.workshopPriority; }
 
 		// members
 		BSTArray<BSTTuple<TESForm*, BGSTypedFormValuePair::SharedVal>>* requiredItems;  // 50

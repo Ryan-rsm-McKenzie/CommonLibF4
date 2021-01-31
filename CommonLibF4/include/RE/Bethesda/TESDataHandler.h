@@ -37,7 +37,10 @@ namespace RE
 		}
 
 		template <class T>
-		[[nodiscard]] BSTArray<T*>& GetFormArray() noexcept
+		[[nodiscard]] BSTArray<T*>& GetFormArray() noexcept  //
+			requires(std::derived_from<T, TESForm> &&
+					 !std::is_pointer_v<T> &&
+					 !std::is_reference_v<T>)
 		{
 			assert(T::FORM_ID < ENUM_FORM_ID::kTotal);
 			return reinterpret_cast<BSTArray<T*>&>(formArrays[stl::to_underlying(T::FORM_ID)]);
