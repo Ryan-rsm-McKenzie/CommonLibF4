@@ -769,6 +769,31 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BGSKeyword };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kKYWD };
 
+		using KeywordType = RE::KeywordType;
+
+		[[nodiscard]] static BGSKeyword* GetTypedKeywordByIndex(KeywordType a_type, std::uint16_t a_index)
+		{
+			assert(a_type < KeywordType::kTotal);
+			const auto keywords = GetTypedKeywords();
+			if (keywords) {
+				const auto& arr = (*keywords)[stl::to_underlying(a_type)];
+				return a_index < arr.size() ? arr[a_index] : nullptr;
+			} else {
+				return nullptr;
+			}
+		}
+
+		[[nodiscard]] static auto GetTypedKeywords()
+			-> std::optional<std::span<BSTArray<BGSKeyword*>, stl::to_underlying(KeywordType::kTotal)>>
+		{
+			REL::Relocation<BSTArray<BGSKeyword*>(*)[stl::to_underlying(KeywordType::kTotal)]> keywords{ REL::ID(1095775) };
+			if (*keywords) {
+				return { *keywords };
+			} else {
+				return std::nullopt;
+			}
+		}
+
 		// members
 		BSFixedString formEditorID;  // 20
 	};
@@ -2539,7 +2564,7 @@ namespace RE
 		TESForm* createdItem;                                                           // 60
 		BGSKeyword* benchKeyword;                                                       // 68
 		BGSConstructibleObject::ConstructibleObjectData data;                           // 70
-		BGSTypedKeywordValueArray<9> filterKeywords;                                    // 78
+		BGSTypedKeywordValueArray<KeywordType::kRecipeFilter> filterKeywords;           // 78
 	};
 	static_assert(sizeof(BGSConstructibleObject) == 0x88);
 

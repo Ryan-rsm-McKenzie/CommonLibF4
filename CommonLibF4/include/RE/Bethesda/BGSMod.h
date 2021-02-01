@@ -46,15 +46,15 @@ namespace RE::BGSMod
 			static constexpr auto FORM_ID{ ENUM_FORM_ID::kOMOD };
 
 			// members
-			BGSAttachParentArray attachParents;                           // 98
-			BGSTypedKeywordValueArray<4> filterKeywords;                  // B0
-			BGSTypedKeywordValue<2> attachPoint;                          // C0
-			stl::enumeration<ENUM_FORM_ID, std::uint8_t> targetFormType;  // C2
-			std::int8_t maxRank;                                          // C3
-			std::int8_t lvlsPerTierScaledOffset;                          // C4
-			std::int8_t priority;                                         // C5
-			bool optional: 1;                                             // C6:0
-			bool childrenExclusive: 1;                                    // C6:1
+			BGSAttachParentArray attachParents;                                           // 98
+			BGSTypedKeywordValueArray<KeywordType::kInstantiationFilter> filterKeywords;  // B0
+			BGSTypedKeywordValue<KeywordType::kAttachPoint> attachPoint;                  // C0
+			stl::enumeration<ENUM_FORM_ID, std::uint8_t> targetFormType;                  // C2
+			std::int8_t maxRank;                                                          // C3
+			std::int8_t lvlsPerTierScaledOffset;                                          // C4
+			std::int8_t priority;                                                         // C5
+			bool optional: 1;                                                             // C6:0
+			bool childrenExclusive: 1;                                                    // C6:1
 		};
 		static_assert(sizeof(Mod) == 0xC8);
 	}

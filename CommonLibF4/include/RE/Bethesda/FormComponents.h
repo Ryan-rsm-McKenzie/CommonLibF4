@@ -544,7 +544,32 @@ namespace RE
 	};
 	static_assert(sizeof(TESIcon) == 0x10);
 
-	template <std::uint32_t N>
+	enum class KeywordType
+	{
+		kNone,
+		kComponentTechLevel,
+		kAttachPoint,
+		kComponentProperty,
+		kInstantiationFilter,
+		kModAssociation,
+		kSound,
+		kAnimArchetype,
+		kFunctionCall,
+		kRecipeFilter,
+		kAttractionType,
+		kDialogueSubtype,
+		kQuestTarget,
+		kAnimFlavor,
+		kAnimGender,
+		kAnimFace,
+		kQuestGroup,
+		kAnimInjured,
+		kDispelEffect,
+
+		kTotal
+	};
+
+	template <KeywordType TYPE>
 	class BGSTypedKeywordValue
 	{
 	public:
@@ -552,18 +577,34 @@ namespace RE
 		std::uint16_t keywordIndex;  // 0
 	};
 
-	template <std::uint32_t N>
+	namespace detail
+	{
+		[[nodiscard]] BGSKeyword* BGSKeywordGetTypedKeywordByIndex(KeywordType a_type, std::uint16_t a_index);
+	}
+
+	template <KeywordType TYPE>
 	class BGSTypedKeywordValueArray
 	{
 	public:
+		[[nodiscard]] bool HasKeyword(RE::BGSKeyword* a_keyword)
+		{
+			for (std::uint32_t i = 0; i < size; ++i) {
+				const auto kywd = detail::BGSKeywordGetTypedKeywordByIndex(TYPE, array[i].keywordIndex);
+				if (kywd == a_keyword) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		// members
-		BGSTypedKeywordValue<N>* array;  // 00
-		std::uint32_t size;              // 08
+		BGSTypedKeywordValue<TYPE>* array;  // 00
+		std::uint32_t size;                 // 08
 	};
 
 	class __declspec(novtable) BGSAttachParentArray :
-		public BaseFormComponent,            // 00
-		public BGSTypedKeywordValueArray<2>  // 08
+		public BaseFormComponent,                                    // 00
+		public BGSTypedKeywordValueArray<KeywordType::kAttachPoint>  // 08
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::BGSAttachParentArray };

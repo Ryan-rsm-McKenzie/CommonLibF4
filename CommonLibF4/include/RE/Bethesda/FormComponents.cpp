@@ -7,6 +7,14 @@
 
 namespace RE
 {
+	namespace detail
+	{
+		BGSKeyword* BGSKeywordGetTypedKeywordByIndex(KeywordType a_type, std::uint16_t a_index)
+		{
+			return BGSKeyword::GetTypedKeywordByIndex(a_type, a_index);
+		}
+	}
+
 	std::string_view TESFullName::GetFullName(const TESForm& a_form, bool a_strict)
 	{
 		if (const auto fullName = a_form.As<TESFullName>(); fullName) {
