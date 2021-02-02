@@ -11,6 +11,16 @@
 		<DisplayString Optional="true">{static_cast&lt;$T1&gt;(_impl),en}</DisplayString>
 	</Type>
 
+	<Type Name="RE::msvc::unique_ptr&lt;*&gt;">
+		<Intrinsic Name="empty" Expression="_pointer == nullptr"/>
+		<SmartPointer Usage="Minimal">_pointer</SmartPointer>
+		<DisplayString Condition="empty()">empty</DisplayString>
+		<DisplayString Condition="!empty">unique_ptr {*_pointer}</DisplayString>
+		<Expand>
+			<Item Name="[ptr]" Condition="!empty()">_pointer</Item>
+		</Expand>
+	</Type>
+
 	<Type Name="RE::RTTI::RVA&lt;*&gt;">
 		<Intrinsic Name="good" Expression="_rva != 0"/>
 		<DisplayString Condition="good()">{($T1*)(REL::Module::_natvis + _rva)}</DisplayString>
@@ -77,13 +87,16 @@
 	</Type>
 
 	<Type Name="RE::BSTScatterTable&lt;*&gt;">
-		<DisplayString>{{ size={_capacity - _freeCount} }}</DisplayString>
+		<DisplayString>{{ size={_capacity - _free} }}</DisplayString>
 		<Expand>
+			<Item Name="[capacity]">_capacity</Item>
+			<Item Name="[free]">_free</Item>
+			<Item Name="[allocator]">_allocator</Item>
 			<CustomListItems MaxItemsPerView="1000">
-				<Variable Name="iter" InitialValue="_allocator._entries"/>
+				<Variable Name="iter" InitialValue="(RE::BSTScatterTable&lt;$T1,$T2,$T3,$T4&gt;::entry_type*)_allocator._entries"/>
 				<Variable Name="end" InitialValue="iter + _capacity"/>
 
-				<Size>_capacity - _freeCount</Size>
+				<Size>_capacity - _free</Size>
 				<Loop Condition="iter != end">
 					<If Condition="iter-&gt;next != nullptr">
 						<Item>iter-&gt;value</Item>
@@ -95,10 +108,10 @@
 	</Type>
 
 	<Type Name="RE::BSTScatterTable&lt;*&gt;::iterator_base&lt;*&gt;">
-		<DisplayString Condition="_cur != _end">{_cur->value}</DisplayString>
-		<DisplayString Condition="_cur == _end">end</DisplayString>
+		<DisplayString Condition="_first != _end">{_first->value}</DisplayString>
+		<DisplayString Condition="_first == _last">end</DisplayString>
 		<Expand>
-			<Item Condition="_cur != _end" Name="[value]">_cur->value</Item>
+			<Item Condition="_first != _last" Name="[value]">_first->value</Item>
 		</Expand>
 	</Type>
 

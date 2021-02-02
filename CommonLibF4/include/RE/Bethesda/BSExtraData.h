@@ -212,7 +212,7 @@ namespace RE
 		kAcousticParent,
 		kInputEnableLayer,
 		kProjectedDecalRef,
-		kWorkshop,
+		kWorkshop,  // Workshop::ExtraData
 		kRadioReceiver,
 		kCulledBone,
 		kActorValueStorage,
@@ -631,8 +631,8 @@ namespace RE
 	public:
 		void AddExtra(BSExtraData* a_extra)
 		{
-			const BSAutoWriteLock l{ _extraRWLock };
-			_extraData.AddExtra(a_extra);
+			const BSAutoWriteLock l{ extraRWLock };
+			extraData.AddExtra(a_extra);
 		}
 
 		stl::observer<TBO_InstanceData*> CreateInstanceData(TESBoundObject* a_object, bool a_generateName)
@@ -644,8 +644,8 @@ namespace RE
 
 		[[nodiscard]] BSExtraData* GetByType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
-			const BSAutoReadLock l{ _extraRWLock };
-			return _extraData.GetByType(a_type);
+			const BSAutoReadLock l{ extraRWLock };
+			return extraData.GetByType(a_type);
 		}
 
 		template <detail::ExtraDataListConstraint T>
@@ -656,8 +656,8 @@ namespace RE
 
 		[[nodiscard]] bool HasType(EXTRA_DATA_TYPE a_type) const noexcept
 		{
-			const BSAutoReadLock l{ _extraRWLock };
-			return _extraData.HasType(a_type);
+			const BSAutoReadLock l{ extraRWLock };
+			return extraData.HasType(a_type);
 		}
 
 		template <detail::ExtraDataListConstraint T>
@@ -668,8 +668,8 @@ namespace RE
 
 		std::unique_ptr<BSExtraData> RemoveExtra(EXTRA_DATA_TYPE a_type)
 		{
-			const BSAutoWriteLock l{ _extraRWLock };
-			return _extraData.RemoveExtra(a_type);
+			const BSAutoWriteLock l{ extraRWLock };
+			return extraData.RemoveExtra(a_type);
 		}
 
 		template <detail::ExtraDataListConstraint T>
@@ -685,10 +685,9 @@ namespace RE
 			return func(this, a_instExtra, a_object, a_data);
 		}
 
-	private:
 		// members
-		BaseExtraList _extraData;              // 08
-		mutable BSReadWriteLock _extraRWLock;  // 20
+		BaseExtraList extraData;              // 08
+		mutable BSReadWriteLock extraRWLock;  // 20
 	};
 	static_assert(sizeof(ExtraDataList) == 0x28);
 }
