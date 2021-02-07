@@ -87,6 +87,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_DEBUG_RUNTIME ON)
 
 find_package(Boost
+	MODULE
 	REQUIRED
 	COMPONENTS
 		unit_test_framework

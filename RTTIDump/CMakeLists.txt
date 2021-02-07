@@ -88,6 +88,7 @@ if(NOT TARGET CommonLibF4)
 endif()
 
 find_package(Boost
+	MODULE
 	REQUIRED
 	COMPONENTS
 		regex
