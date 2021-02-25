@@ -349,6 +349,13 @@ namespace RE::Scaleform::GFx
 				return func(this, a_data, a_result, a_name, a_args, a_numArgs, a_isdobj);
 			}
 
+			bool PushBack(void* a_data, const Value& a_value)
+			{
+				using func_t = decltype(&ObjectInterface::PushBack);
+				REL::Relocation<func_t> func{ REL::ID(1330475) };
+				return func(this, a_data, a_value);
+			}
+
 			// members
 			MovieImpl* movieRoot;  // 08
 		};
@@ -539,6 +546,7 @@ namespace RE::Scaleform::GFx
 
 		[[nodiscard]] constexpr bool IsDisplayObject() const noexcept { return GetType() == ValueType::kDisplayObject; }
 		[[nodiscard]] constexpr bool IsNumber() const noexcept { return GetType() == ValueType::kNumber; }
+		[[nodiscard]] constexpr bool IsString() const noexcept { return GetType() == ValueType::kString; }
 
 		[[nodiscard]] constexpr bool IsObject() const noexcept
 		{
@@ -558,6 +566,15 @@ namespace RE::Scaleform::GFx
 		{
 			assert(IsNumber());
 			return _value.number;
+		}
+
+		[[nodiscard]] constexpr const char* GetString() const
+		{
+			assert(IsString());
+			if (IsManagedValue())
+				return *_value.mstring;
+			else
+				return _value.string;
 		}
 
 		bool HasMember(stl::zstring a_name) const
@@ -587,6 +604,12 @@ namespace RE::Scaleform::GFx
 		bool Invoke(const char* a_name, Value* a_result = nullptr)
 		{
 			return Invoke(a_name, a_result, nullptr, 0);
+		}
+
+		bool PushBack(const Value& a_val)
+		{
+			assert(IsArray());
+			return _objectInterface->PushBack(_value.data, a_val);
 		}
 
 	private:
