@@ -544,9 +544,11 @@ namespace RE::Scaleform::GFx
 
 		[[nodiscard]] constexpr ValueType GetType() const noexcept { return *(_type & ValueType::kTypeMask); }
 
+		[[nodiscard]] constexpr bool IsArray() const noexcept { return GetType() == ValueType::kArray; }
+		[[nodiscard]] constexpr bool IsBoolean() const noexcept { return GetType() == ValueType::kBoolean; }
 		[[nodiscard]] constexpr bool IsDisplayObject() const noexcept { return GetType() == ValueType::kDisplayObject; }
+		[[nodiscard]] constexpr bool IsInt() const noexcept { return GetType() == ValueType::kInt; }
 		[[nodiscard]] constexpr bool IsNumber() const noexcept { return GetType() == ValueType::kNumber; }
-		[[nodiscard]] constexpr bool IsString() const noexcept { return GetType() == ValueType::kString; }
 
 		[[nodiscard]] constexpr bool IsObject() const noexcept
 		{
@@ -560,7 +562,9 @@ namespace RE::Scaleform::GFx
 			}
 		}
 
+		[[nodiscard]] constexpr bool IsString() const noexcept { return GetType() == ValueType::kString; }
 		[[nodiscard]] constexpr bool IsUndefined() const noexcept { return GetType() == ValueType::kUndefined; }
+		[[nodiscard]] constexpr bool IsUInt() const noexcept { return GetType() == ValueType::kUInt; }
 
 		[[nodiscard]] constexpr double GetNumber() const
 		{
