@@ -36,6 +36,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSInputEventUser.h
 	include/RE/Bethesda/BSLock.h
 	include/RE/Bethesda/BSPointerHandle.h
+	include/RE/Bethesda/BSPreCulledObjects.h
 	include/RE/Bethesda/BSResource.h
 	include/RE/Bethesda/BSScaleformManager.h
 	include/RE/Bethesda/BSScript.h

@@ -10,71 +10,52 @@ namespace RE
 	public:
 		using element_type = T;
 
-		// 1
-		constexpr NiPointer() noexcept = default;
+		// 1)
+		NiPointer() noexcept = default;
 
-		// 2
-		constexpr NiPointer(std::nullptr_t) noexcept {}
+		// 2)
+		NiPointer(std::nullptr_t) noexcept {}
 
-		// 3
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					element_type*>,
-				int> = 0>
-		explicit NiPointer(Y* a_rhs) :
-			_ptr(a_rhs)
+		// 3)
+		template <class Y>
+		explicit NiPointer(Y* a_rhs)  //
+			requires(std::convertible_to<Y*, element_type*>) :
+			_ptr(static_cast<element_type*>(a_rhs))
 		{
 			TryAttach();
 		}
 
-		// 9a
+		// 9a)
 		NiPointer(const NiPointer& a_rhs) :
 			_ptr(a_rhs._ptr)
 		{
 			TryAttach();
 		}
 
-		// 9b
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					element_type*>,
-				int> = 0>
-		NiPointer(const NiPointer<Y>& a_rhs) :
-			_ptr(a_rhs._ptr)
+		// 9b)
+		template <class Y>
+		NiPointer(const NiPointer<Y>& a_rhs)  //
+			requires(std::convertible_to<Y*, element_type*>) :
+			_ptr(static_cast<element_type*>(a_rhs._ptr))
 		{
 			TryAttach();
 		}
 
-		// 10a
+		// 10a)
 		NiPointer(NiPointer&& a_rhs) noexcept :
-			_ptr(a_rhs._ptr)
-		{
-			a_rhs._ptr = nullptr;
-		}
+			_ptr(std::exchange(a_rhs._ptr, nullptr))
+		{}
 
-		// 10b
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					element_type*>,
-				int> = 0>
-		NiPointer(NiPointer<Y>&& a_rhs) noexcept :
-			_ptr(a_rhs._ptr)
-		{
-			a_rhs._ptr = nullptr;
-		}
+		// 10b)
+		template <class Y>
+		NiPointer(NiPointer<Y>&& a_rhs) noexcept  //
+			requires(std::convertible_to<Y*, element_type*>) :
+			_ptr(static_cast<element_type*>(std::exchange(a_rhs._ptr, nullptr)))
+		{}
 
-		~NiPointer() { TryDetach(); }
+		~NiPointer() noexcept { reset(); }
 
-		// 1a
+		// 1a)
 		NiPointer& operator=(const NiPointer& a_rhs)
 		{
 			if (this != std::addressof(a_rhs)) {
@@ -85,88 +66,67 @@ namespace RE
 			return *this;
 		}
 
-		// 1b
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					element_type*>,
-				int> = 0>
-		NiPointer& operator=(const NiPointer<Y>& a_rhs)
+		// 1b)
+		template <class Y>
+		NiPointer& operator=(const NiPointer<Y>& a_rhs)  //
+			requires(std::convertible_to<Y*, element_type*>)
 		{
 			TryDetach();
-			_ptr = a_rhs._ptr;
+			_ptr = static_cast<element_type*>(a_rhs._ptr);
 			TryAttach();
 			return *this;
 		}
 
-		// 2a
-		NiPointer& operator=(NiPointer&& a_rhs)
+		// 2a)
+		NiPointer& operator=(NiPointer&& a_rhs) noexcept
 		{
 			if (this != std::addressof(a_rhs)) {
 				TryDetach();
-				_ptr = a_rhs._ptr;
-				a_rhs._ptr = nullptr;
+				_ptr = std::exchange(a_rhs._ptr, nullptr);
 			}
 			return *this;
 		}
 
-		// 2b
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					element_type*>,
-				int> = 0>
-		NiPointer& operator=(NiPointer<Y>&& a_rhs)
+		// 2b)
+		template <class Y>
+		NiPointer& operator=(NiPointer<Y>&& a_rhs) noexcept  //
+			requires(std::convertible_to<Y*, element_type*>)
 		{
 			TryDetach();
-			_ptr = a_rhs._ptr;
-			a_rhs._ptr = nullptr;
+			_ptr = std::exchange(a_rhs._ptr, nullptr);
 			return *this;
 		}
 
+		// 1)
 		void reset() { TryDetach(); }
 
-		template <
-			class Y,
-			std::enable_if_t<
-				std::is_convertible_v<
-					Y*,
-					element_type*>,
-				int> = 0>
-		void reset(Y* a_ptr)
+		// 2)
+		template <class Y>
+		void reset(Y* a_ptr)  //
+			requires(std::convertible_to<Y*, element_type*>)
 		{
 			if (_ptr != a_ptr) {
 				TryDetach();
-				_ptr = a_ptr;
+				_ptr = static_cast<element_type*>(a_ptr);
 				TryAttach();
 			}
 		}
 
-		[[nodiscard]] constexpr element_type* get() const noexcept
-		{
-			return _ptr;
-		}
+		[[nodiscard]] element_type* get() const noexcept { return _ptr; }
 
-		[[nodiscard]] explicit constexpr operator bool() const noexcept
-		{
-			return static_cast<bool>(_ptr);
-		}
-
-		[[nodiscard]] constexpr element_type& operator*() const noexcept
+		[[nodiscard]] element_type& operator*() const noexcept
 		{
 			assert(static_cast<bool>(*this));
 			return *_ptr;
 		}
 
-		[[nodiscard]] constexpr element_type* operator->() const noexcept
+		[[nodiscard]] element_type* operator->() const noexcept
 		{
 			assert(static_cast<bool>(*this));
 			return _ptr;
 		}
+
+		[[nodiscard]] explicit operator bool() const noexcept { return _ptr != nullptr; }
 
 	protected:
 		template <class>
@@ -198,44 +158,33 @@ namespace RE
 		return NiPointer<T>{ new T(std::forward<Args>(a_args)...) };
 	}
 
-	template <class T1, class T2>
-	[[nodiscard]] constexpr bool operator==(const NiPointer<T1>& a_lhs, const NiPointer<T2>& a_rhs)
+	// 1)
+	template <class T, class U>
+	[[nodiscard]] bool operator==(const NiPointer<T>& a_lhs, const NiPointer<U>& a_rhs) noexcept
 	{
 		return a_lhs.get() == a_rhs.get();
 	}
 
-	template <class T1, class T2>
-	[[nodiscard]] constexpr bool operator!=(const NiPointer<T1>& a_lhs, const NiPointer<T2>& a_rhs)
+	// 7)
+	template <class T, class U>
+	[[nodiscard]] std::strong_ordering operator<=>(const NiPointer<T>& a_lhs, const NiPointer<U>& a_rhs) noexcept
 	{
-		return !(a_lhs == a_rhs);
+		return std::compare_three_way{}(a_lhs.get(), a_rhs.get());
 	}
 
+	// 8)
 	template <class T>
-	[[nodiscard]] constexpr bool operator==(const NiPointer<T>& a_lhs, std::nullptr_t) noexcept
+	[[nodiscard]] bool operator==(const NiPointer<T>& a_lhs, std::nullptr_t) noexcept
 	{
 		return !a_lhs;
 	}
 
+	// 20)
 	template <class T>
-	[[nodiscard]] constexpr bool operator==(std::nullptr_t, const NiPointer<T>& a_rhs) noexcept
+	[[nodiscard]] std::strong_ordering operator<=>(const NiPointer<T>& a_lhs, std::nullptr_t) noexcept
 	{
-		return !a_rhs;
+		return std::compare_three_way{}(a_lhs.get(), static_cast<typename NiPointer<T>::element_type*>(nullptr));
 	}
-
-	template <class T>
-	[[nodiscard]] constexpr bool operator!=(const NiPointer<T>& a_lhs, std::nullptr_t) noexcept
-	{
-		return static_cast<bool>(a_lhs);
-	}
-
-	template <class T>
-	[[nodiscard]] constexpr bool operator!=(std::nullptr_t, const NiPointer<T>& a_rhs) noexcept
-	{
-		return static_cast<bool>(a_rhs);
-	}
-
-	template <class T>
-	NiPointer(T*) -> NiPointer<T>;
 
 	template <class T>
 	struct BSCRC32<NiPointer<T>>

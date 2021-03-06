@@ -48,6 +48,10 @@ namespace RE
 
 		F4_HEAP_REDEFINE_ALIGNED_NEW(NiAVObject);
 
+		[[nodiscard]] bool GetAppCulled() const noexcept { return flags.flags & 1; }
+		[[nodiscard]] std::uint64_t GetFlags() const noexcept { return flags.flags; }
+		[[nodiscard]] bool ShadowCaster() const noexcept { return ~(flags.flags >> 40) & 1; }
+
 		// members
 		NiNode* parent{ nullptr };                     // 027
 		NiTransform local;                             // 030
