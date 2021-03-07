@@ -40,6 +40,10 @@ namespace RE
 			return value--;
 		}
 
+		[[nodiscard]] value_type& load_unchecked() noexcept { return _value; }
+		[[nodiscard]] const value_type& load_unchecked() const noexcept { return _value; }
+
+	private:
 		// members
 		value_type _value{ 0 };  // 0
 	};
@@ -48,4 +52,12 @@ namespace RE
 	extern template class BSTAtomicValue<std::uint32_t>;
 	extern template class BSTAtomicValue<std::int64_t>;
 	extern template class BSTAtomicValue<std::uint64_t>;
+
+	class BSEventFlag
+	{
+	public:
+		// members
+		void* event{ nullptr };  // 0
+	};
+	static_assert(sizeof(BSEventFlag) == 0x8);
 }
