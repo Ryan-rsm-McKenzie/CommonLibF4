@@ -77,6 +77,7 @@ set(headers ${headers}
 	include/RE/Bethesda/FormComponents.h
 	include/RE/Bethesda/FormUtil.h
 	include/RE/Bethesda/GameScript.h
+	include/RE/Bethesda/Havok.h
 	include/RE/Bethesda/IMenu.h
 	include/RE/Bethesda/IMovementInterface.h
 	include/RE/Bethesda/InputDevice.h
@@ -92,6 +93,7 @@ set(headers ${headers}
 	include/RE/Bethesda/Projectiles.h
 	include/RE/Bethesda/Script.h
 	include/RE/Bethesda/Settings.h
+	include/RE/Bethesda/SplineUtils.h
 	include/RE/Bethesda/SWFToCodeFunctionHandler.h
 	include/RE/Bethesda/TESBoundAnimObjects.h
 	include/RE/Bethesda/TESBoundObjects.h

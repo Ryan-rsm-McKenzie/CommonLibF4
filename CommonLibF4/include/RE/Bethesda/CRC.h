@@ -65,10 +65,9 @@ namespace RE
 	struct BSCRC32 :
 		public detail::BSCRC32<
 			Key,
-			std::disjunction_v<
-				std::is_arithmetic<Key>,
-				std::is_enum<Key>,
-				std::is_pointer<Key>>>
+			std::is_arithmetic_v<Key> ||
+				std::is_enum_v<Key> ||
+				std::is_pointer_v<Key>>
 	{
 	public:
 		[[nodiscard]] std::uint32_t operator()(Key a_data) const noexcept

@@ -398,6 +398,7 @@ namespace RE
 
 	class BGSBodyPart;
 	class BGSLoadFormBuffer;
+	class BGSLoadGameBuffer;
 	class BGSMusicTrack;
 	class BGSPerkEntry;
 	class BGSPreviewTransform;

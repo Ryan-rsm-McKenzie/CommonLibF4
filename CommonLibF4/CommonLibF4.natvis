@@ -108,7 +108,7 @@
 	</Type>
 
 	<Type Name="RE::BSTScatterTable&lt;*&gt;::iterator_base&lt;*&gt;">
-		<DisplayString Condition="_first != _end">{_first->value}</DisplayString>
+		<DisplayString Condition="_first != _last">{_first->value}</DisplayString>
 		<DisplayString Condition="_first == _last">end</DisplayString>
 		<Expand>
 			<Item Condition="_first != _last" Name="[value]">_first->value</Item>
