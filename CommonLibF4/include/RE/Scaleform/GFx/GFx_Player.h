@@ -178,45 +178,45 @@ namespace RE::Scaleform::GFx
 
 		union ValueUnion
 		{
-			constexpr ValueUnion() noexcept :
+			ValueUnion() noexcept :
 				data(nullptr)
 			{}
 
-			constexpr ValueUnion(const ValueUnion& a_rhs) noexcept :
+			ValueUnion(const ValueUnion& a_rhs) noexcept :
 				data(a_rhs.data)
 			{}
 
-			constexpr ValueUnion(ValueUnion&& a_rhs) noexcept :
+			ValueUnion(ValueUnion&& a_rhs) noexcept :
 				data(a_rhs.data)
 			{
 				a_rhs.data = nullptr;
 			}
 
-			explicit constexpr ValueUnion(std::int32_t a_rhs) noexcept :
+			explicit ValueUnion(std::int32_t a_rhs) noexcept :
 				int32(a_rhs)
 			{}
 
-			explicit constexpr ValueUnion(std::uint32_t a_rhs) noexcept :
+			explicit ValueUnion(std::uint32_t a_rhs) noexcept :
 				uint32(a_rhs)
 			{}
 
-			explicit constexpr ValueUnion(double a_rhs) noexcept :
+			explicit ValueUnion(double a_rhs) noexcept :
 				number(a_rhs)
 			{}
 
-			explicit constexpr ValueUnion(bool a_rhs) noexcept :
+			explicit ValueUnion(bool a_rhs) noexcept :
 				boolean(a_rhs)
 			{}
 
-			explicit constexpr ValueUnion(const char* a_rhs) noexcept :
+			explicit ValueUnion(const char* a_rhs) noexcept :
 				string(a_rhs)
 			{}
 
-			explicit constexpr ValueUnion(const wchar_t* a_rhs) noexcept :
+			explicit ValueUnion(const wchar_t* a_rhs) noexcept :
 				wstring(a_rhs)
 			{}
 
-			constexpr ValueUnion& operator=(const ValueUnion& a_rhs) noexcept
+			ValueUnion& operator=(const ValueUnion& a_rhs) noexcept
 			{
 				if (this != std::addressof(a_rhs)) {
 					data = a_rhs.data;
@@ -224,7 +224,7 @@ namespace RE::Scaleform::GFx
 				return *this;
 			}
 
-			constexpr ValueUnion& operator=(ValueUnion&& a_rhs) noexcept
+			ValueUnion& operator=(ValueUnion&& a_rhs) noexcept
 			{
 				if (this != std::addressof(a_rhs)) {
 					data = a_rhs.data;
@@ -233,37 +233,37 @@ namespace RE::Scaleform::GFx
 				return *this;
 			}
 
-			constexpr ValueUnion& operator=(std::int32_t a_rhs) noexcept
+			ValueUnion& operator=(std::int32_t a_rhs) noexcept
 			{
 				int32 = a_rhs;
 				return *this;
 			}
 
-			constexpr ValueUnion& operator=(std::uint32_t a_rhs) noexcept
+			ValueUnion& operator=(std::uint32_t a_rhs) noexcept
 			{
 				uint32 = a_rhs;
 				return *this;
 			}
 
-			constexpr ValueUnion& operator=(double a_rhs) noexcept
+			ValueUnion& operator=(double a_rhs) noexcept
 			{
 				number = a_rhs;
 				return *this;
 			}
 
-			constexpr ValueUnion& operator=(bool a_rhs) noexcept
+			ValueUnion& operator=(bool a_rhs) noexcept
 			{
 				boolean = a_rhs;
 				return *this;
 			}
 
-			constexpr ValueUnion& operator=(const char* a_rhs) noexcept
+			ValueUnion& operator=(const char* a_rhs) noexcept
 			{
 				string = a_rhs;
 				return *this;
 			}
 
-			constexpr ValueUnion& operator=(const wchar_t* a_rhs) noexcept
+			ValueUnion& operator=(const wchar_t* a_rhs) noexcept
 			{
 				wstring = a_rhs;
 				return *this;
@@ -361,7 +361,7 @@ namespace RE::Scaleform::GFx
 		};
 		static_assert(sizeof(ObjectInterface) == 0x10);
 
-		constexpr Value() noexcept = default;
+		Value() noexcept = default;
 
 		Value(const Value& a_rhs) :
 			_type(a_rhs._type),
@@ -373,7 +373,7 @@ namespace RE::Scaleform::GFx
 			}
 		}
 
-		constexpr Value(Value&& a_rhs) noexcept :
+		Value(Value&& a_rhs) noexcept :
 			_objectInterface(a_rhs._objectInterface),
 			_type(a_rhs._type),
 			_value(std::move(a_rhs._value)),
@@ -384,36 +384,36 @@ namespace RE::Scaleform::GFx
 			a_rhs._dataAux = 0;
 		}
 
-		constexpr Value(std::nullptr_t) noexcept :
+		Value(std::nullptr_t) noexcept :
 			_type(ValueType::kNull)
 		{}
 
-		constexpr Value(std::int32_t a_rhs) noexcept :
+		Value(std::int32_t a_rhs) noexcept :
 			_type(ValueType::kInt),
 			_value(a_rhs)
 		{}
 
-		constexpr Value(std::uint32_t a_rhs) noexcept :
+		Value(std::uint32_t a_rhs) noexcept :
 			_type(ValueType::kUInt),
 			_value(a_rhs)
 		{}
 
-		constexpr Value(double a_rhs) noexcept :
+		Value(double a_rhs) noexcept :
 			_type(ValueType::kNumber),
 			_value(a_rhs)
 		{}
 
-		constexpr Value(bool a_rhs) noexcept :
+		Value(bool a_rhs) noexcept :
 			_type(ValueType::kBoolean),
 			_value(a_rhs)
 		{}
 
-		constexpr Value(const char* a_rhs) noexcept :
+		Value(const char* a_rhs) noexcept :
 			_type(ValueType::kString),
 			_value(a_rhs)
 		{}
 
-		constexpr Value(const wchar_t* a_rhs) noexcept :
+		Value(const wchar_t* a_rhs) noexcept :
 			_type(ValueType::kStringW),
 			_value(a_rhs)
 		{}
@@ -466,7 +466,7 @@ namespace RE::Scaleform::GFx
 			return *this;
 		}
 
-		constexpr Value& operator=(std::nullptr_t) noexcept
+		Value& operator=(std::nullptr_t) noexcept
 		{
 			if (IsManagedValue()) {
 				ReleaseManagedValue();
@@ -476,7 +476,7 @@ namespace RE::Scaleform::GFx
 			return *this;
 		}
 
-		constexpr Value& operator=(std::int32_t a_rhs) noexcept
+		Value& operator=(std::int32_t a_rhs) noexcept
 		{
 			if (IsManagedValue()) {
 				ReleaseManagedValue();
@@ -487,7 +487,7 @@ namespace RE::Scaleform::GFx
 			return *this;
 		}
 
-		constexpr Value& operator=(std::uint32_t a_rhs) noexcept
+		Value& operator=(std::uint32_t a_rhs) noexcept
 		{
 			if (IsManagedValue()) {
 				ReleaseManagedValue();
@@ -498,7 +498,7 @@ namespace RE::Scaleform::GFx
 			return *this;
 		}
 
-		constexpr Value& operator=(double a_rhs) noexcept
+		Value& operator=(double a_rhs) noexcept
 		{
 			if (IsManagedValue()) {
 				ReleaseManagedValue();
@@ -509,7 +509,7 @@ namespace RE::Scaleform::GFx
 			return *this;
 		}
 
-		constexpr Value& operator=(bool a_rhs) noexcept
+		Value& operator=(bool a_rhs) noexcept
 		{
 			if (IsManagedValue()) {
 				ReleaseManagedValue();
@@ -520,7 +520,7 @@ namespace RE::Scaleform::GFx
 			return *this;
 		}
 
-		constexpr Value& operator=(const char* a_rhs) noexcept
+		Value& operator=(const char* a_rhs) noexcept
 		{
 			if (IsManagedValue()) {
 				ReleaseManagedValue();
@@ -531,7 +531,7 @@ namespace RE::Scaleform::GFx
 			return *this;
 		}
 
-		constexpr Value& operator=(const wchar_t* a_rhs) noexcept
+		Value& operator=(const wchar_t* a_rhs) noexcept
 		{
 			if (IsManagedValue()) {
 				ReleaseManagedValue();
@@ -542,15 +542,15 @@ namespace RE::Scaleform::GFx
 			return *this;
 		}
 
-		[[nodiscard]] constexpr ValueType GetType() const noexcept { return *(_type & ValueType::kTypeMask); }
+		[[nodiscard]] ValueType GetType() const noexcept { return *(_type & ValueType::kTypeMask); }
 
-		[[nodiscard]] constexpr bool IsArray() const noexcept { return GetType() == ValueType::kArray; }
-		[[nodiscard]] constexpr bool IsBoolean() const noexcept { return GetType() == ValueType::kBoolean; }
-		[[nodiscard]] constexpr bool IsDisplayObject() const noexcept { return GetType() == ValueType::kDisplayObject; }
-		[[nodiscard]] constexpr bool IsInt() const noexcept { return GetType() == ValueType::kInt; }
-		[[nodiscard]] constexpr bool IsNumber() const noexcept { return GetType() == ValueType::kNumber; }
+		[[nodiscard]] bool IsArray() const noexcept { return GetType() == ValueType::kArray; }
+		[[nodiscard]] bool IsBoolean() const noexcept { return GetType() == ValueType::kBoolean; }
+		[[nodiscard]] bool IsDisplayObject() const noexcept { return GetType() == ValueType::kDisplayObject; }
+		[[nodiscard]] bool IsInt() const noexcept { return GetType() == ValueType::kInt; }
+		[[nodiscard]] bool IsNumber() const noexcept { return GetType() == ValueType::kNumber; }
 
-		[[nodiscard]] constexpr bool IsObject() const noexcept
+		[[nodiscard]] bool IsObject() const noexcept
 		{
 			switch (GetType()) {
 			case ValueType::kObject:
@@ -562,23 +562,22 @@ namespace RE::Scaleform::GFx
 			}
 		}
 
-		[[nodiscard]] constexpr bool IsString() const noexcept { return GetType() == ValueType::kString; }
-		[[nodiscard]] constexpr bool IsUndefined() const noexcept { return GetType() == ValueType::kUndefined; }
-		[[nodiscard]] constexpr bool IsUInt() const noexcept { return GetType() == ValueType::kUInt; }
+		[[nodiscard]] bool IsString() const noexcept { return GetType() == ValueType::kString; }
+		[[nodiscard]] bool IsUndefined() const noexcept { return GetType() == ValueType::kUndefined; }
+		[[nodiscard]] bool IsUInt() const noexcept { return GetType() == ValueType::kUInt; }
 
-		[[nodiscard]] constexpr double GetNumber() const
+		[[nodiscard]] double GetNumber() const
 		{
 			assert(IsNumber());
 			return _value.number;
 		}
 
-		[[nodiscard]] constexpr const char* GetString() const
+		[[nodiscard]] std::string_view GetString() const
 		{
 			assert(IsString());
-			if (IsManagedValue())
-				return *_value.mstring;
-			else
-				return _value.string;
+			return IsManagedValue() ?
+                       *_value.mstring :
+                       _value.string;
 		}
 
 		bool HasMember(stl::zstring a_name) const
@@ -624,7 +623,7 @@ namespace RE::Scaleform::GFx
 			_objectInterface->ObjectAddRef(this, _value.data);
 		}
 
-		[[nodiscard]] constexpr bool IsManagedValue() const noexcept
+		[[nodiscard]] bool IsManagedValue() const noexcept
 		{
 			const auto managed = _type.all(ValueType::kManagedBit);
 			assert(managed ? _objectInterface != nullptr : true);
@@ -647,7 +646,7 @@ namespace RE::Scaleform::GFx
 	static_assert(sizeof(Value) == 0x20);
 
 	class __declspec(novtable) FunctionHandler :
-		public RefCountBase<FunctionHandler, 2>
+		public RefCountBase<FunctionHandler, 2>  // 00
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::Scaleform__GFx__FunctionHandler };
