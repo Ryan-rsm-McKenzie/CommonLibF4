@@ -561,7 +561,7 @@ namespace RE
 		kQuestTarget,
 		kAnimFlavor,
 		kAnimGender,
-		kAnimFace,
+		kAnimFaceArchetype,
 		kQuestGroup,
 		kAnimInjured,
 		kDispelEffect,

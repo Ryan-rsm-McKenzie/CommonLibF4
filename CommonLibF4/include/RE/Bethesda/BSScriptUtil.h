@@ -251,9 +251,6 @@ namespace RE::BSScript
 			std::constructible_from<T, std::string_view>;
 
 		template <class T>
-		concept string_ref = string<std::remove_reference_t<T>>;
-
-		template <class T>
 		concept integral =
 			(std::integral<T> && !std::same_as<std::remove_cv_t<T>, bool>) ||
 			std::is_enum_v<T>;
@@ -293,13 +290,7 @@ namespace RE::BSScript
 		// clang-format on
 
 		template <class T>
-		concept array_ref = array<std::remove_reference_t<T>>;
-
-		template <class T>
 		concept wrapper = is_structure_wrapper_v<T>;
-
-		template <class T>
-		concept wrapper_ref = wrapper<std::remove_reference_t<T>>;
 
 		template <class T>
 		concept nullable =
@@ -315,9 +306,6 @@ namespace RE::BSScript
 			{ *static_cast<T&&>(a_nullable) } -> decays_to<typename T::value_type>;
 			// clang-format on
 		};
-
-		template <class T>
-		concept nullable_ref = nullable<std::remove_reference_t<T>>;
 
 		template <class T>
 		concept valid_self =
@@ -356,8 +344,9 @@ namespace RE::BSScript
 				return T(get<Struct>(a_var));
 			}
 
-			template <wrapper_ref T>
-			[[nodiscard]] static auto get_proxy(T&& a_wrapper)
+			template <class T>
+			[[nodiscard]] static auto get_proxy(T&& a_wrapper)  //
+				requires(wrapper<std::remove_reference_t<T>>)
 			{
 				return std::forward<T>(a_wrapper).get_proxy();
 			}
@@ -619,8 +608,9 @@ namespace RE::BSScript
 		a_var = a_val ? const_cast<T*>(a_val) : nullptr;
 	}
 
-	template <detail::string_ref T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	template <class T>
+	void PackVariable(Variable& a_var, T&& a_val)  //
+		requires(detail::string<std::remove_reference_t<T>>)
 	{
 		a_var = BSFixedString(std::forward<T>(a_val));
 	}
@@ -649,8 +639,9 @@ namespace RE::BSScript
 		a_var = static_cast<bool>(a_val);
 	}
 
-	template <detail::array_ref T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	template <class T>
+	void PackVariable(Variable& a_var, T&& a_val)  //
+		requires(detail::array<std::remove_reference_t<T>>)
 	{
 		using size_type = typename std::remove_cvref_t<T>::size_type;
 		using value_type = detail::decay_t<typename std::remove_cvref_t<T>::value_type>;
@@ -689,14 +680,16 @@ namespace RE::BSScript
 		}
 	}
 
-	template <detail::wrapper_ref T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	template <class T>
+	void PackVariable(Variable& a_var, T&& a_val)  //
+		requires(detail::wrapper<std::remove_reference_t<T>>)
 	{
 		a_var = detail::wrapper_accessor::get_proxy(std::forward<T>(a_val));
 	}
 
-	template <detail::nullable_ref T>
-	void PackVariable(Variable& a_var, T&& a_val)
+	template <class T>
+	void PackVariable(Variable& a_var, T&& a_val)  //
+		requires(detail::nullable<std::remove_reference_t<T>>)
 	{
 		if (a_val) {
 			detail::PackVariable(a_var, *std::forward<T>(a_val));
@@ -708,7 +701,7 @@ namespace RE::BSScript
 	namespace detail
 	{
 		template <class T>
-		__forceinline void PackVariable(Variable& a_var, T&& a_val)
+		__forceinline void PackVariable(Variable & a_var, T && a_val)
 		{
 			BSScript::PackVariable(a_var, std::forward<T>(a_val));
 		}
@@ -976,7 +969,7 @@ namespace RE::BSScript
 			//			* An array type
 			//			* A structure type
 			static_assert(detail::valid_parameter<T>, "invalid parameter type");
-			if constexpr (detail::array<T>) {
+			if constexpr (detail::array<T> || detail::nullable<T>) {
 				return detail::ValidateParameter<typename std::remove_cv_t<T>::value_type>();
 			} else {
 				return true;
@@ -998,8 +991,8 @@ namespace RE::BSScript
 
 		template <
 			bool LONG,
-			valid_self S,
-			valid_parameter... Args,
+			class S,
+			class... Args,
 			class F,
 			std::size_t... I>
 		decltype(auto) DispatchHelper(
@@ -1075,10 +1068,10 @@ namespace RE::BSScript
 		static_assert(((detail::ValidateParameter<Args>(), ...), true));
 
 		template <class Fn>
-		NativeFunction(std::string_view a_object, std::string_view a_function, Fn a_func)  //
+		NativeFunction(std::string_view a_object, std::string_view a_function, Fn a_func, bool a_isLatent)  //
 			requires(detail::invocable_r<Fn, R, S, Args...> ||
 					 detail::invocable_r<Fn, R, IVirtualMachine&, std::uint32_t, S, Args...>) :
-			super(a_object, a_function, sizeof...(Args), detail::static_tag<S>),
+			super(a_object, a_function, sizeof...(Args), detail::static_tag<S>, a_isLatent),
 			_stub(std::move(a_func))
 		{
 			assert(super::descTable.paramCount == sizeof...(Args));
@@ -1129,7 +1122,7 @@ namespace RE::BSScript
 		class R,
 		class S,
 		class... Args>
-	NativeFunction(std::string_view, std::string_view, R (*)(S, Args...))
+	NativeFunction(std::string_view, std::string_view, R (*)(S, Args...), bool)
 		-> NativeFunction<
 			R(S, Args...),
 			false,
@@ -1141,7 +1134,7 @@ namespace RE::BSScript
 		class R,
 		class S,
 		class... Args>
-	NativeFunction(std::string_view, std::string_view, R (*)(IVirtualMachine&, std::uint32_t, S, Args...))
+	NativeFunction(std::string_view, std::string_view, R (*)(IVirtualMachine&, std::uint32_t, S, Args...), bool)
 		-> NativeFunction<
 			R(IVirtualMachine&, std::uint32_t, S, Args...),
 			true,
@@ -1150,9 +1143,19 @@ namespace RE::BSScript
 			Args...>;
 
 	template <class F>
-	void IVirtualMachine::BindNativeMethod(stl::zstring a_object, stl::zstring a_function, F a_func, std::optional<bool> a_taskletCallable)
+	void IVirtualMachine::BindNativeMethod(
+		stl::zstring a_object,
+		stl::zstring a_function,
+		F a_func,
+		std::optional<bool> a_taskletCallable,
+		bool a_isLatent)
 	{
-		const auto success = BindNativeMethod(new NativeFunction(a_object, a_function, std::move(a_func)));
+		const auto success =
+			BindNativeMethod(new NativeFunction(
+				a_object,
+				a_function,
+				std::move(a_func),
+				a_isLatent));
 		if (!success) {
 			F4SE::log::warn(
 				FMT_STRING("failed to register method \"{}\" on object \"{}\""),

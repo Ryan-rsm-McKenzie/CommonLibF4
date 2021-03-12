@@ -11,6 +11,7 @@
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTTuple.h"
 #include "RE/Bethesda/BSTimer.h"
+#include "RE/Bethesda/MemoryManager.h"
 
 namespace RE
 {
@@ -27,6 +28,7 @@ namespace RE
 	enum class ENUM_FORM_ID;
 
 	class BSLog;
+	class BSStorage;
 	class InputEnableLayerDestroyedEvent;
 	class TESForm;
 	class TESObjectREFR;
@@ -55,6 +57,65 @@ namespace RE
 			REL::Relocation<func_t> func{ REL::ID(1081933) };
 			return func(a_obj, a_error, a_vm, a_stackID, a_severity);
 		}
+
+		class __declspec(novtable) DelayFunctor :
+			public BSIntrusiveRefCounted  // 08
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::GameScript__DelayFunctor };
+			static constexpr auto VTABLE{ VTABLE::GameScript__DelayFunctor };
+
+			enum class FunctorType
+			{
+				kMoveTo,
+				kMoveToOwnEditorLoc,
+				kDamageObject,
+				kEnable,
+				kDisable,
+				kDelete,
+				kSetPosition,
+				kSetAngle,
+				kSetMotionType,
+				kNonLatentDelete,
+				kMoveToPackLoc,
+				kSetScale,
+				kDropObject,
+				kAttachAshPile,
+				kAddRemoveConstraint,
+				kAddRemoveRagdoll,
+				kApplyHavokImpulse,
+				kResetRefr,
+				kSendPlayerToJail,
+				kAddItem,
+				kResurrect,
+				kCast,
+				kScrollCast,
+				kRemoveItem,
+				kWaitFor3D,
+				kPlayBink,
+				kMoveToNearestNavmesh,
+				kClearDestruction,
+				kWaitForResourceRecalc,
+				kRemoveComponent,
+				kDropRef
+			};
+
+			virtual ~DelayFunctor();  // 00
+
+			// add
+			[[nodiscard]] virtual BSScript::Variable operator()() = 0;                                                    // 01
+			[[nodiscard]] virtual bool IsLatent() const = 0;                                                              // 02
+			[[nodiscard]] virtual bool WantsRequeue() const { return false; }                                             // 03
+			[[nodiscard]] virtual FunctorType GetType() const = 0;                                                        // 04
+			virtual bool SaveImpl(BSStorage& a_storage) const = 0;                                                        // 05
+			virtual bool LoadImpl(const BSStorage& a_storage, std::uint32_t a_scriptSaveVersion, bool& a_dataValid) = 0;  // 06
+
+			F4_HEAP_REDEFINE_NEW(DelayFunctor);
+
+			// members
+			std::uint32_t stackID;  // 0C
+		};
+		static_assert(sizeof(DelayFunctor) == 0x10);
 
 		class __declspec(novtable) Logger :
 			public BSScript::ErrorLogger  // 00
@@ -326,6 +387,13 @@ namespace RE
 
 		[[nodiscard]] BSTSmartPointer<BSScript::IVirtualMachine> GetVM() const noexcept { return impl; }
 
+		bool QueuePostRenderCall(const BSTSmartPointer<GameScript::DelayFunctor>& a_functor)
+		{
+			using func_t = decltype(&GameVM::QueuePostRenderCall);
+			REL::Relocation<func_t> func{ REL::ID(34412) };
+			return func(this, a_functor);
+		}
+
 		// members
 		BSTSmartPointer<BSScript::IVirtualMachine> impl;                                                // 00B0
 		BSScript::IVMSaveLoadInterface* saveLoadInterface;                                              // 00B8
@@ -400,7 +468,7 @@ namespace RE
 		inline void BindCObject(const BSTSmartPointer<BSScript::Object>& a_scriptObj, const RefrOrInventoryObj& a_cobj, BSScript::IVirtualMachine& a_vm)
 		{
 			using func_t = decltype(&BindCObject);
-			REL::Relocation<func_t> func{ REL::ID() };
+			REL::Relocation<func_t> func{ REL::ID(81787) };
 			return func(a_scriptObj, a_cobj, a_vm);
 		}
 	}

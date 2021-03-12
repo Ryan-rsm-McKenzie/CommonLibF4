@@ -161,7 +161,7 @@ namespace Papyrus
 			BIND(GetConnectedObjects);
 			//BIND(GetConnectPoints, true);
 			BIND(GetDisplayName);
-			//BIND(GetInventoryItems, true);
+			BIND(GetInventoryItems, true);
 			BIND(GetInventoryWeight);
 			BIND(GetMaterialSwap);
 			//BIND(Scrap, true);

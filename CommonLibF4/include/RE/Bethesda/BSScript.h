@@ -241,7 +241,7 @@ namespace RE
 				return *this;
 			}
 
-			Variable& operator=(Variable&& a_rhs) noexcept = default;
+			Variable& operator=(Variable&&) noexcept = default;
 
 			Variable& operator=(std::nullptr_t)
 			{
@@ -721,7 +721,12 @@ namespace RE
 			virtual void PostCachedErrorToLogger(const ICachedErrorMessage& a_errorFunctor, std::uint32_t a_stackID, ErrorLogger::Severity a_severity) const = 0;                                                                                                                                                       // 3C
 
 			template <class F>
-			void BindNativeMethod(stl::zstring a_object, stl::zstring a_function, F a_func, std::optional<bool> a_taskletCallable = std::nullopt);
+			void BindNativeMethod(
+				stl::zstring a_object,
+				stl::zstring a_function,
+				F a_func,
+				std::optional<bool> a_taskletCallable = std::nullopt,
+				bool a_isLatent = false);
 
 			void PostError(std::string_view a_msg, std::uint32_t a_stackID, ErrorLogger::Severity a_severity)
 			{
@@ -1198,11 +1203,17 @@ namespace RE
 				static constexpr auto RTTI{ RTTI::BSScript__NF_util__NativeFunctionBase };
 				static constexpr auto VTABLE{ VTABLE::BSScript__NF_util__NativeFunctionBase };
 
-				NativeFunctionBase(std::string_view a_object, std::string_view a_function, std::uint16_t a_paramCount, bool a_isStatic) :
+				NativeFunctionBase(
+					std::string_view a_object,
+					std::string_view a_function,
+					std::uint16_t a_paramCount,
+					bool a_isStatic,
+					bool a_isLatent) :
 					name(a_function),
 					objName(a_object),
 					descTable(a_paramCount, 0),
-					isStatic(a_isStatic)
+					isStatic(a_isStatic),
+					isLatent(a_isLatent)
 				{
 					for (std::size_t i = 0; i < descTable.paramCount; ++i) {
 						descTable.entries[i].first = fmt::format(FMT_STRING("param{}"), i + 1);
@@ -1284,7 +1295,7 @@ namespace RE
 				Internal::VDescTable descTable;       // 30
 				bool isStatic;                        // 40
 				bool isCallableFromTasklet{ false };  // 41
-				bool isLatent{ false };               // 42
+				bool isLatent;                        // 42
 				std::uint32_t userFlags{ 0 };         // 44
 				BSFixedString docString;              // 48
 			};
