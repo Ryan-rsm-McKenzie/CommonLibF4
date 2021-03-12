@@ -31,6 +31,7 @@ set(headers ${headers}
 	include/RE/Bethesda/BSExtraData.h
 	include/RE/Bethesda/BSFixedString.h
 	include/RE/Bethesda/BSGraphics.h
+	include/RE/Bethesda/BSHavok.h
 	include/RE/Bethesda/BSInputDeviceManager.h
 	include/RE/Bethesda/BSInputEventReceiver.h
 	include/RE/Bethesda/BSInputEventUser.h
@@ -77,7 +78,6 @@ set(headers ${headers}
 	include/RE/Bethesda/FormComponents.h
 	include/RE/Bethesda/FormUtil.h
 	include/RE/Bethesda/GameScript.h
-	include/RE/Bethesda/Havok.h
 	include/RE/Bethesda/IMenu.h
 	include/RE/Bethesda/IMovementInterface.h
 	include/RE/Bethesda/InputDevice.h
