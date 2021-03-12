@@ -90,7 +90,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_DEBUG_RUNTIME ON)
 
 if(NOT TARGET CommonLibF4)
-	add_subdirectory("$ENV{CommonLibF4Path}" CommonLibF4)
+	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../CommonLibF4" CommonLibF4)
 endif()
 
 find_package(spdlog REQUIRED CONFIG)
