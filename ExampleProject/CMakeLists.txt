@@ -40,6 +40,7 @@ if (MSVC)
 	add_compile_options(
 		/MP	# Build with Multiple Processes
 		/sdl	# Enable Additional Security Checks
+		/utf-8	# Set Source and Executable character sets to UTF-8
 		/Zi	# Debug Information Format
 
 		/permissive-	# Standards conformance
@@ -70,7 +71,7 @@ if (MSVC)
 		/external:anglebrackets
 		/external:W0
 
-		/W4	# Warning level (all warnings)
+		/W4	# Warning level
 		/WX	# Warning level (warnings are errors)
 	)
 

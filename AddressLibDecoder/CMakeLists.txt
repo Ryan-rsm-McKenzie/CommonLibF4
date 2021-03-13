@@ -1,12 +1,5 @@
 cmake_minimum_required(VERSION 3.19)
 
-# ---- Cache build vars ----
-
-set(Boost_USE_STATIC_RUNTIME OFF CACHE BOOL "")
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL" CACHE STRING "")
-set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-set(VCPKG_TARGET_TRIPLET "x64-windows-static-md" CACHE STRING "")
-
 # ---- Project ----
 
 project(
@@ -34,6 +27,7 @@ if (MSVC)
 	add_compile_options(
 		/MP	# Build with Multiple Processes
 		/sdl	# Enable Additional Security Checks
+		/utf-8	# Set Source and Executable character sets to UTF-8
 		/Zi	# Debug Information Format
 
 		/permissive-	# Standards conformance
@@ -64,7 +58,7 @@ if (MSVC)
 		/external:anglebrackets
 		/external:W0
 
-		/W4	# Warning level (all warnings)
+		/W4	# Warning level
 		/WX	# Warning level (warnings are errors)
 	)
 
