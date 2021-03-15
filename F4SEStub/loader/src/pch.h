@@ -48,6 +48,7 @@
 #include <cassert>
 #include <chrono>
 #include <concepts>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
@@ -59,6 +60,7 @@
 #include <span>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 

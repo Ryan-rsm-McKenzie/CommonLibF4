@@ -1,16 +1,124 @@
-void initialize_log()
+namespace stl
 {
-	spdlog::set_default_logger(
-		std::make_unique<spdlog::logger>(
-			"global"s,
-			std::make_unique<spdlog::sinks::stdout_color_sink_st>()));
-	spdlog::set_pattern("%^%v%$"s);
-	spdlog::set_level(spdlog::level::trace);
+	struct source_location
+	{
+	public:
+		constexpr source_location() noexcept = default;
+		constexpr source_location(const source_location&) noexcept = default;
+		constexpr source_location(source_location&&) noexcept = default;
+
+		~source_location() noexcept = default;
+
+		constexpr source_location& operator=(const source_location&) noexcept = default;
+		constexpr source_location& operator=(source_location&&) noexcept = default;
+
+		[[nodiscard]] static constexpr source_location current(
+			std::uint_least32_t a_line = __builtin_LINE(),
+			std::uint_least32_t a_column = __builtin_COLUMN(),
+			const char* a_fileName = __builtin_FILE(),
+			const char* a_functionName = __builtin_FUNCTION()) noexcept { return { a_line, a_column, a_fileName, a_functionName }; }
+
+		[[nodiscard]] constexpr std::uint_least32_t line() const noexcept { return _line; }
+		[[nodiscard]] constexpr std::uint_least32_t column() const noexcept { return _column; }
+		[[nodiscard]] constexpr const char* file_name() const noexcept { return _fileName; }
+		[[nodiscard]] constexpr const char* function_name() const noexcept { return _functionName; }
+
+	protected:
+		constexpr source_location(
+			std::uint_least32_t a_line,
+			std::uint_least32_t a_column,
+			const char* a_fileName,
+			const char* a_functionName) noexcept :
+			_line(a_line),
+			_column(a_column),
+			_fileName(a_fileName),
+			_functionName(a_functionName)
+		{}
+
+	private:
+		std::uint_least32_t _line{ 0 };
+		std::uint_least32_t _column{ 0 };
+		const char* _fileName{ "" };
+		const char* _functionName{ "" };
+	};
+
+	template <class EF>                                    //
+	requires(std::invocable<std::remove_reference_t<EF>>)  //
+		class scope_exit
+	{
+	public:
+		// 1)
+		template <class Fn>
+		explicit scope_exit(Fn&& a_fn)  //
+			noexcept(std::is_nothrow_constructible_v<EF, Fn> ||
+					 std::is_nothrow_constructible_v<EF, Fn&>)  //
+			requires(!std::is_same_v<std::remove_cvref_t<Fn>, scope_exit> &&
+					 std::is_constructible_v<EF, Fn>)
+		{
+			static_assert(std::invocable<Fn>);
+
+			if constexpr (!std::is_lvalue_reference_v<Fn> &&
+						  std::is_nothrow_constructible_v<EF, Fn>) {
+				_fn.emplace(std::forward<Fn>(a_fn));
+			} else {
+				_fn.emplace(a_fn);
+			}
+		}
+
+		// 2)
+		scope_exit(scope_exit&& a_rhs)  //
+			noexcept(std::is_nothrow_move_constructible_v<EF> ||
+					 std::is_nothrow_copy_constructible_v<EF>)  //
+			requires(std::is_nothrow_move_constructible_v<EF> ||
+					 std::is_copy_constructible_v<EF>)
+		{
+			static_assert(!(std::is_nothrow_move_constructible_v<EF> && !std::is_move_constructible_v<EF>));
+			static_assert(!(!std::is_nothrow_move_constructible_v<EF> && !std::is_copy_constructible_v<EF>));
+
+			if (a_rhs.active()) {
+				if constexpr (std::is_nothrow_move_constructible_v<EF>) {
+					_fn.emplace(std::forward<EF>(*a_rhs._fn));
+				} else {
+					_fn.emplace(a_rhs._fn);
+				}
+				a_rhs.release();
+			}
+		}
+
+		// 3)
+		scope_exit(const scope_exit&) = delete;
+
+		~scope_exit() noexcept
+		{
+			if (_fn.has_value()) {
+				(*_fn)();
+			}
+		}
+
+		void release() noexcept { _fn.reset(); }
+
+	private:
+		[[nodiscard]] bool active() const noexcept { return _fn.has_value(); }
+
+		std::optional<std::remove_reference_t<EF>> _fn;
+	};
+
+	template <class EF>
+	scope_exit(EF) -> scope_exit<EF>;
+
+	template <class Enum>
+	[[nodiscard]] constexpr auto to_underlying(Enum a_val) noexcept  //
+		requires(std::is_enum_v<Enum>)
+	{
+		return static_cast<std::underlying_type_t<Enum>>(a_val);
+	}
 }
 
 namespace win32
 {
-	[[noreturn]] void error(std::string_view a_error)
+	[[noreturn]] void error(
+		std::string_view a_error,
+		[[maybe_unused]] stl::source_location a_loc = stl::source_location::current())  // TODO
 	{
 		throw std::runtime_error{
 			fmt::format(
@@ -162,7 +270,6 @@ namespace cli
 		std::optional<::DWORD> affinity;
 		std::optional<::DWORD> priority;
 
-		bool crconly{ false };
 		bool editor{ false };
 		bool forcesteamloader{ false };
 		bool launchsteam{ false };
@@ -190,7 +297,6 @@ namespace cli
 		args::ValueFlag<::DWORD> affinity{ p, "mask"s, "set the processor affinity mask"s, { "affinity"s } };
 		args::ValueFlag<std::string> altdll{ p, "altdll"s, "set alternate dll path"s, { "altdll"s } };
 		args::ValueFlag<std::string> altexe{ p, "path"s, "set alternate exe path"s, { "altexe"s } };
-		args::Flag crconly{ p, ""s, "just identify the EXE, don't launch anything"s, { "crconly"s } };
 		args::Flag editor{ p, ""s, "launch the creation kit"s, { "editor"s } };
 		args::Flag forcesteamloader{ p, ""s, "override exe type detection and use steam loader"s, { "forcesteamloader"s } };
 		args::Flag launchsteam{ p, ""s, "attempt to launch steam if it is not running"s, { "launchsteam"s } };
@@ -226,7 +332,6 @@ namespace cli
 		SET_IF(affinity);
 		SET_IF(altdll);
 		SET_IF(altexe);
-		SET_IF(crconly);
 		SET_IF(editor);
 		SET_IF(forcesteamloader);
 		SET_IF(launchsteam);
@@ -426,6 +531,21 @@ namespace win32
 		}
 	}
 
+	/*
+	* @pre a_module is NOT null
+	*/
+	void flush_instruction_cache(module_t* a_module)
+	{
+		assert(a_module != nullptr);
+
+		if (::FlushInstructionCache(
+				a_module,
+				nullptr,
+				0) == 0) {
+			win32::error("failed to flush instruction cache"sv);
+		}
+	}
+
 	[[nodiscard]] auto get_file_version(std::string_view a_file)
 		-> std::array<std::string, 4>
 	{
@@ -462,8 +582,8 @@ namespace win32
 			static_cast<std::size_t>(verLen - 1));
 		std::regex pattern{ R"((\d+)\.(\d+)\.(\d+)\.(\d+))"s, std::regex_constants::ECMAScript };
 		std::smatch matches;
-		if (std::regex_match(version, matches, pattern) && matches.size() > 4) {
-			for (std::size_t i = 0; i < 4; ++i) {
+		if (std::regex_match(version, matches, pattern) && matches.size() == result.size() + 1) {
+			for (std::size_t i = 0; i < result.size(); ++i) {
 				const auto& match = matches[i + 1];
 				result[i].assign(match.first, match.second);
 			}
@@ -537,9 +657,25 @@ namespace win32
 	}
 
 	/*
-	* @pre a_module NOT null
+	* @pre a_module is NOT null
+	*/
+	void terminate_process(
+		module_t* a_module,
+		int a_exitCode)
+	{
+		assert(a_module != nullptr);
+
+		if (::TerminateProcess(
+				reinterpret_cast<::HANDLE>(a_module),
+				static_cast<::UINT>(a_exitCode)) == 0) {
+			win32::error("failed to terminate process"sv);
+		}
+	}
+
+	/*
+	* @pre a_module is NOT null
 	* @pre a_size > 0
-	* @post result NOT null
+	* @post result is NOT null
 	*/
 	[[nodiscard]] auto virtual_alloc(
 		module_t* a_module,
@@ -628,45 +764,65 @@ namespace detail
 {
 	struct args_t
 	{
-		::HMODULE (*ll)(::LPCWSTR){ nullptr };  // LoadLibraryW
-		::LPCWSTR ll0{ nullptr };               // LoadLibraryW -> rcx
+		::HMODULE (*loadLibraryW)(::LPCWSTR){ nullptr };  // LoadLibraryW
+		::LPCWSTR libFileName{ nullptr };                 // LoadLibraryW -> rcx
 
-		::FARPROC (*pa)(::HMODULE, ::LPCSTR){ nullptr };  // GetProcAddress
-		::LPCSTR pa1{ nullptr };                          // GetProcAddress -> rdx
+		::FARPROC (*getProcAddress)(::HMODULE, ::LPCSTR){ nullptr };  // GetProcAddress
+		::LPCSTR procName{ nullptr };                                 // GetProcAddress -> rdx
 	};
 
 	struct patch_t :
 		Xbyak::CodeGenerator
 	{
 		// MUST VERIFY ANY CHANGES BY HAND
-		// https://godbolt.org/z/YfP6dj
+		// https://godbolt.org/z/484fqa
 		patch_t()
 		{
+			Xbyak::Label LN3;
+			Xbyak::Label LN6;
+
 			push(rbx);
 			sub(rsp, 0x20);
 			mov(rbx, rcx);  // rcx == args_t*
 
-			mov(rcx, ptr[rcx + offsetof(args_t, ll0)]);
+			mov(rcx, ptr[rcx + offsetof(args_t, libFileName)]);
 			call(ptr[rbx]);
 
-			mov(rdx, ptr[rbx + offsetof(args_t, pa1)]);
+			test(rax, rax);
+			je(LN6);
+
+			mov(rdx, ptr[rbx + offsetof(args_t, procName)]);
+			test(rdx, rdx);
+			je(LN3);
+
 			mov(rcx, rax);
-			call(ptr[rbx + offsetof(args_t, pa)]);
+			call(ptr[rbx + offsetof(args_t, getProcAddress)]);
 
+			test(rax, rax);
+			je(LN6);
+
+			call(rax);
+
+			L(LN3);
 			xor_(eax, eax);
+			add(rsp, 0x20);
+			pop(rbx);
+			ret(0);
 
+			L(LN6);
+			mov(eax, 1);
 			add(rsp, 0x20);
 			pop(rbx);
 			ret(0);
 		}
 	};
 
-	enum class type_t
+	enum class type_t : std::size_t
 	{
 		kCode,
 		kArgs,
-		kLL0,
-		kPA1,
+		kLibFileName,
+		kProcName,
 
 		kTotal
 	};
@@ -678,7 +834,7 @@ namespace detail
 		{
 			return std::accumulate(
 				_impl.begin(),
-				_impl.begin() + static_cast<std::size_t>(a_type),
+				_impl.begin() + stl::to_underlying(a_type),
 				std::size_t{ 0 },
 				[](std::size_t a_current, const value_type& a_val) {
 					return a_current + a_val.rounded;
@@ -687,7 +843,7 @@ namespace detail
 
 		void set(type_t a_type, std::size_t a_size) noexcept
 		{
-			_impl[static_cast<std::size_t>(a_type)] =
+			_impl[stl::to_underlying(a_type)] =
 				value_type{
 					a_size,
 					std::max<std::size_t>(
@@ -698,7 +854,7 @@ namespace detail
 
 		[[nodiscard]] std::size_t size_of(type_t a_type) const noexcept
 		{
-			return _impl[static_cast<std::size_t>(a_type)].real;
+			return _impl[stl::to_underlying(a_type)].real;
 		}
 
 		[[nodiscard]] std::size_t total_size() const noexcept { return offset_of(type_t::kTotal); }
@@ -712,7 +868,7 @@ namespace detail
 
 		std::array<
 			value_type,
-			static_cast<std::size_t>(type_t::kTotal)>
+			stl::to_underlying(type_t::kTotal)>
 			_impl;
 	};
 }
@@ -728,27 +884,34 @@ void augment_environment(
 [[nodiscard]] auto get_runtime_names(const cli::options& a_options)
 	-> std::pair<std::string, std::string>  // exe, dll
 {
-	std::string exe =
+	auto exe =
 		a_options.altexe ?
             *a_options.altexe :
 		a_options.editor ?
             "CreationKit.exe"s :
             "Fallout4.exe"s;
-	std::string dll =
-		a_options.altdll ?
-            *a_options.altdll :
-		a_options.editor ?
-            "f4se_editor"s :
-            "f4se"s;
+	auto dll = [&]() {
+		if (a_options.altdll) {
+			return *a_options.altdll;
+		} else if (a_options.forcesteamloader) {
+			return "f4se_steam_loader.dll"s;
+		} else {
+			auto tmp =
+				a_options.editor ?
+                    "f4se_editor"s :
+                    "f4se"s;
+			const auto version = win32::get_file_version(exe);
+			const auto append = [&](std::size_t a_idx) {
+				tmp += '_';
+				tmp += version[a_idx];
+			};
+			for (std::size_t i = 0; i < 3; ++i) {
+				append(i);
+			}
 
-	const auto version = win32::get_file_version(exe);
-	const auto append = [&](std::size_t a_idx) {
-		dll += '_';
-		dll += version[a_idx];
-	};
-	for (std::size_t i = 0; i < 3; ++i) {
-		append(i);
-	}
+			return tmp;
+		}
+	}();
 
 	const auto error = [](std::string_view a_file) {
 		throw std::runtime_error(
@@ -765,10 +928,20 @@ void augment_environment(
 	return { std::move(exe), std::move(dll) };
 }
 
+void initialize_log()
+{
+	spdlog::set_default_logger(
+		std::make_unique<spdlog::logger>(
+			"global"s,
+			std::make_unique<spdlog::sinks::stdout_color_sink_st>()));
+	spdlog::set_pattern("%^%v%$"s);
+	spdlog::set_level(spdlog::level::trace);
+}
+
 [[nodiscard]] auto prepare_cave(
 	win32::module_t* a_module,
 	std::string_view a_dll,
-	std::string_view a_init)
+	std::string a_init)
 {
 	assert(a_module != nullptr);
 	using type_t = detail::type_t;
@@ -778,9 +951,9 @@ void augment_environment(
 
 	const auto kernel = win32::get_module_handle("Kernel32.dll"sv);
 	detail::args_t args;
-	args.ll = reinterpret_cast<decltype(&::LoadLibraryW)>(
+	args.loadLibraryW = reinterpret_cast<decltype(&::LoadLibraryW)>(
 		win32::get_proc_address(kernel, "LoadLibraryW"sv));
-	args.pa = reinterpret_cast<decltype(&::GetProcAddress)>(
+	args.getProcAddress = reinterpret_cast<decltype(&::GetProcAddress)>(
 		win32::get_proc_address(kernel, "GetProcAddress"sv));
 
 	const auto dll = unicode::widen(a_dll);
@@ -788,8 +961,8 @@ void augment_environment(
 	detail::offset_calculator calc;
 	calc.set(type_t::kCode, code.getSize());
 	calc.set(type_t::kArgs, sizeof(args));
-	calc.set(type_t::kLL0, (dll.size() + 1) * sizeof(decltype(dll)::value_type));
-	calc.set(type_t::kPA1, (a_init.size() + 1) * sizeof(decltype(a_init)::value_type));
+	calc.set(type_t::kLibFileName, (dll.size() + 1) * sizeof(decltype(dll)::value_type));
+	calc.set(type_t::kProcName, (a_init.size() + 1) * sizeof(decltype(a_init)::value_type));
 
 	std::vector<std::byte> patch(
 		calc.total_size(),
@@ -798,8 +971,10 @@ void augment_environment(
 		a_module,
 		patch.size());
 
-	args.ll0 = reinterpret_cast<::LPCWSTR>(mem.get() + calc.offset_of(type_t::kLL0));
-	args.pa1 = reinterpret_cast<::LPCSTR>(mem.get() + calc.offset_of(type_t::kPA1));
+	args.libFileName = reinterpret_cast<::LPCWSTR>(mem.get() + calc.offset_of(type_t::kLibFileName));
+	args.procName = !a_init.empty() ?
+                        reinterpret_cast<::LPCSTR>(mem.get() + calc.offset_of(type_t::kProcName)) :
+                        nullptr;
 
 	const auto write = [&](type_t a_type, const void* a_src) {
 		std::memcpy(
@@ -810,13 +985,14 @@ void augment_environment(
 
 	write(type_t::kCode, code.getCode());
 	write(type_t::kArgs, &args);
-	write(type_t::kLL0, dll.data());
-	write(type_t::kPA1, a_init.data());
+	write(type_t::kLibFileName, dll.c_str());
+	write(type_t::kProcName, a_init.c_str());
 
 	win32::write_process_memory(
 		a_module,
 		mem.get(),
 		std::span{ patch.begin(), patch.end() });
+	win32::flush_instruction_cache(a_module);
 
 	return std::make_pair(
 		std::move(mem),
@@ -830,12 +1006,16 @@ void do_main(int a_argc, wchar_t* a_argv[])
 		return;
 	}
 
-	// TODO: terminate exe on failure
 	const auto [exeName, dllName] = get_runtime_names(*options);
 	augment_environment(exeName, options->waitfordebugger);
 
 	const auto [proc, procThread] = win32::create_process(exeName, options->priority);
-	const auto [cave, context] = prepare_cave(proc.get(), dllName, "StartF4SE"sv);
+	stl::scope_exit terminator([&]() { win32::terminate_process(proc.get(), EXIT_FAILURE); });
+
+	const auto [cave, context] = prepare_cave(
+		proc.get(),
+		dllName,
+		(options->forcesteamloader ? ""s : "StartF4SE"s));
 	const auto proxyThread = win32::create_remote_thread(
 		proc.get(),
 		reinterpret_cast<std::uint32_t (*)(void*)>(cave.get()),
@@ -845,6 +1025,7 @@ void do_main(int a_argc, wchar_t* a_argv[])
 		options->notimeout ? std::chrono::milliseconds::max() : 1min);
 
 	win32::resume_thread(procThread.get());
+	terminator.release();
 	if (options->waitforclose) {
 		win32::wait_for_single_object(
 			procThread.get(),
