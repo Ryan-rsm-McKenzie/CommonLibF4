@@ -87,9 +87,8 @@ find_package(Boost
 	COMPONENTS
 		regex
 )
+find_package(robin_hood REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
-
-find_path(ROBIN_HOOD_HASHING_INCLUDE_DIRS "robin_hood.h" REQUIRED)
 
 # ---- Add source files ----
 
@@ -129,7 +128,6 @@ target_compile_features(
 target_include_directories(
 	${PROJECT_NAME}
 	PRIVATE
-		${ROBIN_HOOD_HASHING_INCLUDE_DIRS}
 		"${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
@@ -140,6 +138,7 @@ target_link_libraries(
 		Boost::regex
 		CommonLibF4::CommonLibF4
 		Dbghelp.lib
+		robin_hood::robin_hood
 		spdlog::spdlog
 )
 
