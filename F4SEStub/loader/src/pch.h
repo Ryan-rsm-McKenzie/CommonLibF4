@@ -50,10 +50,12 @@
 #include <concepts>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <numeric>
 #include <optional>
+#include <regex>
 #include <span>
 #include <stdexcept>
 #include <string>

@@ -136,6 +136,7 @@ target_link_libraries(
 		frozen::frozen
 		spdlog::spdlog
 		taywee::args
+		Version.lib
 		xbyak::xbyak
 )
 

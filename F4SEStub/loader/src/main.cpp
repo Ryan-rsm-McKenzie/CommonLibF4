@@ -8,14 +8,24 @@ void initialize_log()
 	spdlog::set_level(spdlog::level::trace);
 }
 
-template <class... Args>
-[[noreturn]] void runtime_error(Args&&... a_args)
+namespace win32
 {
-	throw std::runtime_error{ fmt::format(std::forward<Args>(a_args)...) };
+	[[noreturn]] void error(std::string_view a_error)
+	{
+		throw std::runtime_error{
+			fmt::format(
+				FMT_STRING("{:08X}: {}"),
+				::GetLastError(),
+				a_error)
+		};
+	}
 }
 
 namespace unicode
 {
+	using boost::nowide::narrow;
+	using boost::nowide::widen;
+
 	[[nodiscard]] std::string narrow(std::wstring_view a_str)
 	{
 		return boost::nowide::narrow(a_str.data(), a_str.size());
@@ -44,18 +54,14 @@ namespace cli
 
 			auto len = invoke(nullptr, 0);
 			if (len <= 0) {
-				runtime_error(
-					FMT_STRING("failed to get utf-16 buffer size: {}"),
-					::GetLastError());
+				win32::error("failed to get normalized string buffer size"sv);
 			}
 
 			std::wstring result;
 			result.resize(static_cast<std::size_t>(len), L'\0');
 			len = invoke(result.data(), result.size() + 1);
 			if (len <= 0) {
-				runtime_error(
-					FMT_STRING("failed to normalize string: {}"),
-					::GetLastError());
+				win32::error("failed to normalize string"sv);
 			}
 
 			result.resize(static_cast<std::size_t>(len), L'\0');
@@ -79,18 +85,14 @@ namespace cli
 
 			auto len = invoke(nullptr, 0);
 			if (len == 0) {
-				runtime_error(
-					FMT_STRING("failed to get mapped buffer size: {}"),
-					::GetLastError());
+				win32::error("failed to get mapped buffer size"sv);
 			}
 
 			std::wstring result;
 			result.resize(static_cast<std::size_t>(len), L'\0');
 			len = invoke(result.data(), result.size() + 1);
 			if (len == 0) {
-				runtime_error(
-					FMT_STRING("failed to convert to lower case: {}"),
-					::GetLastError());
+				win32::error("failed to map string"sv);
 			}
 
 			result.resize(static_cast<std::size_t>(len), L'\0');
@@ -155,7 +157,7 @@ namespace cli
 	struct options
 	{
 		std::optional<std::string> altdll;
-		std::string altexe{ "Fallout4.exe"sv };
+		std::optional<std::string> altexe;
 
 		std::optional<::DWORD> affinity;
 		std::optional<::DWORD> priority;
@@ -167,7 +169,6 @@ namespace cli
 		bool minfo{ false };
 		bool noskiplauncher{ false };
 		bool notimeout{ false };
-		bool skipversioncheck{ false };
 		bool verbose{ false };
 		bool waitforclose{ false };
 		bool waitfordebugger{ false };
@@ -190,13 +191,12 @@ namespace cli
 		args::ValueFlag<std::string> altdll{ p, "altdll"s, "set alternate dll path"s, { "altdll"s } };
 		args::ValueFlag<std::string> altexe{ p, "path"s, "set alternate exe path"s, { "altexe"s } };
 		args::Flag crconly{ p, ""s, "just identify the EXE, don't launch anything"s, { "crconly"s } };
-		args::Flag editor{ p, ""s, "launch the construction set"s, { "editor"s } };
+		args::Flag editor{ p, ""s, "launch the creation kit"s, { "editor"s } };
 		args::Flag forcesteamloader{ p, ""s, "override exe type detection and use steam loader"s, { "forcesteamloader"s } };
 		args::Flag launchsteam{ p, ""s, "attempt to launch steam if it is not running"s, { "launchsteam"s } };
 		args::Flag minfo{ p, ""s, "log information about the DLLs loaded in to the target process"s, { "minfo"s } };
 		args::Flag noskiplauncher{ p, ""s, "does not skip the default Bethesda launcher window (this option may cause compatibility problems)"s, { "noskiplauncher"s } };
 		args::Flag notimeout{ p, ""s, "don't automatically terminate the process if the proxy takes too long"s, { "notimeout"s } };
-		args::Flag skipversioncheck{ p, ""s, "skip the version compatibility check"s, { "skipversioncheck"s } };
 		args::ValueFlag<::DWORD, detail::priority> priority{ p, "level"s, "set the launched program\'s priority"s, { "priority"s } };
 		args::Flag verbose{ p, ""s, "print verbose messages to the console"s, { 'v', "verbose"s } };
 		args::Flag waitforclose{ p, ""s, "wait for the launched program to close"s, { "waitforclose"s } };
@@ -233,7 +233,6 @@ namespace cli
 		SET_IF(minfo);
 		SET_IF(noskiplauncher);
 		SET_IF(notimeout);
-		SET_IF(skipversioncheck);
 		SET_IF(priority);
 		SET_IF(verbose);
 		SET_IF(waitforclose);
@@ -303,9 +302,7 @@ namespace win32
 		void close_handle(::HANDLE a_handle)
 		{
 			if (a_handle && !::CloseHandle(a_handle)) {
-				runtime_error(
-					FMT_STRING("failed to close handle: {}"),
-					::GetLastError());
+				win32::error("failed to close handle"sv);
 			}
 		}
 
@@ -391,9 +388,7 @@ namespace win32
 			pi.get());
 
 		if (!success || !pi->hProcess || !pi->hThread) {
-			runtime_error(
-				FMT_STRING("failed to create process: {}"),
-				::GetLastError());
+			win32::error("failed to create process"sv);
 		} else {
 			unique_module mod{ reinterpret_cast<module_t*>(std::exchange(pi->hProcess, nullptr)) };
 			unique_thread thread{ reinterpret_cast<thread_t*>(std::exchange(pi->hThread, nullptr)) };
@@ -408,7 +403,7 @@ namespace win32
 	*/
 	[[nodiscard]] auto create_remote_thread(
 		module_t* a_module,
-		void (*a_start)(void*),
+		std::uint32_t (*a_start)(void*),
 		void* a_parameter)
 		-> unique_thread
 	{
@@ -425,12 +420,58 @@ namespace win32
 			nullptr);
 
 		if (!thread) {
-			runtime_error(
-				FMT_STRING("failed to create remote thread: {}"),
-				::GetLastError());
+			win32::error("failed to create remote thread"sv);
 		} else {
 			return unique_thread{ reinterpret_cast<thread_t*>(thread) };
 		}
+	}
+
+	[[nodiscard]] auto get_file_version(std::string_view a_file)
+		-> std::array<std::string, 4>
+	{
+		const auto file = unicode::widen(a_file);
+
+		::DWORD handle = 0;
+		const auto bufLen = ::GetFileVersionInfoSizeW(file.c_str(), &handle);
+		if (bufLen == 0) {
+			win32::error("failed to get file version info size"sv);
+		}
+
+		std::vector<std::byte> buf(static_cast<std::size_t>(bufLen), std::byte{ 0 });
+		if (::GetFileVersionInfoW(
+				file.c_str(),
+				handle,
+				static_cast<::DWORD>(buf.size()),
+				buf.data()) == 0) {
+			win32::error("failed to get file version info"sv);
+		}
+
+		void* verBuf = nullptr;
+		::UINT verLen = 0;
+		if (::VerQueryValueW(
+				buf.data(),
+				L"\\StringFileInfo\\040904B0\\ProductVersion",
+				&verBuf,
+				&verLen) == 0) {
+			win32::error("failed to query version value"sv);
+		}
+
+		std::array<std::string, 4> result;
+		const auto version = unicode::narrow(
+			static_cast<const wchar_t*>(verBuf),
+			static_cast<std::size_t>(verLen - 1));
+		std::regex pattern{ R"((\d+)\.(\d+)\.(\d+)\.(\d+))"s, std::regex_constants::ECMAScript };
+		std::smatch matches;
+		if (std::regex_match(version, matches, pattern) && matches.size() > 4) {
+			for (std::size_t i = 0; i < 4; ++i) {
+				const auto& match = matches[i + 1];
+				result[i].assign(match.first, match.second);
+			}
+		} else {
+			assert(false);
+		}
+
+		return result;
 	}
 
 	/*
@@ -442,9 +483,7 @@ namespace win32
 		const auto mod = unicode::widen(a_mod);
 		const auto handle = ::GetModuleHandleW(mod.c_str());
 		if (!handle) {
-			runtime_error(
-				FMT_STRING("failed to get module handle: {}"),
-				::GetLastError());
+			win32::error("failed to get module handle"sv);
 		} else {
 			return reinterpret_cast<module_t*>(handle);
 		}
@@ -464,9 +503,7 @@ namespace win32
 			reinterpret_cast<::HMODULE>(a_module),
 			a_name.data());
 		if (!proc) {
-			runtime_error(
-				FMT_STRING("failed to get proc address: {}"),
-				::GetLastError());
+			win32::error("failed to get proc address"sv);
 		} else {
 			return reinterpret_cast<proc_t*>(proc);
 		}
@@ -482,9 +519,7 @@ namespace win32
 		if (::ResumeThread(
 				reinterpret_cast<::HANDLE>(a_thread)) ==
 			static_cast<::DWORD>(-1)) {
-			runtime_error(
-				FMT_STRING("failed to resume thread: {}"),
-				::GetLastError());
+			win32::error("failed to resume thread"sv);
 		}
 	}
 
@@ -497,9 +532,7 @@ namespace win32
 		if (::SetEnvironmentVariableW(
 				name.c_str(),
 				value.c_str()) == 0) {
-			runtime_error(
-				FMT_STRING("failed to set environment variable: {}"),
-				::GetLastError());
+			win32::error("failed to set environment variable"sv);
 		}
 	}
 
@@ -523,9 +556,7 @@ namespace win32
 			PAGE_EXECUTE_READWRITE);
 
 		if (!mem) {
-			runtime_error(
-				FMT_STRING("failed to virtual allocate: {}"),
-				::GetLastError());
+			win32::error("failed to virtual allocate"sv);
 		} else {
 			const auto free = [=](std::byte* a_memory) {
 				if (a_memory &&
@@ -534,9 +565,7 @@ namespace win32
 						a_memory,
 						0,
 						MEM_RELEASE)) {
-					runtime_error(
-						FMT_STRING("failed to free virtual memory: {}"),
-						::GetLastError());
+					win32::error("failed to free virtual memory"sv);
 				}
 			};
 
@@ -564,9 +593,7 @@ namespace win32
 		if (::WaitForSingleObject(
 				reinterpret_cast<::HANDLE>(a_thread),
 				time) != WAIT_OBJECT_0) {
-			runtime_error(
-				FMT_STRING("failed to wait for single object"),
-				::GetLastError());
+			win32::error("failed to wait for single object"sv);
 		}
 	}
 
@@ -592,9 +619,7 @@ namespace win32
 				a_src.size(),
 				&written) ||
 			written != a_src.size()) {
-			runtime_error(
-				FMT_STRING("failed to write process memory: {}"),
-				::GetLastError());
+			win32::error("failed to write process memory"sv);
 		}
 	}
 }
@@ -694,12 +719,50 @@ namespace detail
 
 void augment_environment(
 	std::string_view a_runtime,
-	bool a_skipVersionCheck,
 	bool a_waitForDebugger)
 {
 	win32::set_environment_variable("F4SE_RUNTIME"sv, a_runtime);
-	win32::set_environment_variable("F4SE_SKIPVERSIONCHECK"sv, a_skipVersionCheck ? "1"sv : "0"sv);
-	win32::set_environment_variable("F4SE_WAITFORDEBUGGER"sv, a_waitForDebugger ? "1"sv : "0"sv);
+	win32::set_environment_variable("F4SE_WAITFORDEBUGGER"sv, (a_waitForDebugger ? "1"sv : "0"sv));
+}
+
+[[nodiscard]] auto get_runtime_names(const cli::options& a_options)
+	-> std::pair<std::string, std::string>  // exe, dll
+{
+	std::string exe =
+		a_options.altexe ?
+            *a_options.altexe :
+		a_options.editor ?
+            "CreationKit.exe"s :
+            "Fallout4.exe"s;
+	std::string dll =
+		a_options.altdll ?
+            *a_options.altdll :
+		a_options.editor ?
+            "f4se_editor"s :
+            "f4se"s;
+
+	const auto version = win32::get_file_version(exe);
+	const auto append = [&](std::size_t a_idx) {
+		dll += '_';
+		dll += version[a_idx];
+	};
+	for (std::size_t i = 0; i < 3; ++i) {
+		append(i);
+	}
+
+	const auto error = [](std::string_view a_file) {
+		throw std::runtime_error(
+			fmt::format(
+				FMT_STRING("file does not exist: {}"),
+				a_file));
+	};
+	if (!std::filesystem::exists(exe)) {
+		error(exe);
+	} else if (!std::filesystem::exists(dll)) {
+		error(dll);
+	}
+
+	return { std::move(exe), std::move(dll) };
 }
 
 [[nodiscard]] auto prepare_cave(
@@ -767,25 +830,16 @@ void do_main(int a_argc, wchar_t* a_argv[])
 		return;
 	}
 
-	augment_environment(
-		options->altexe,
-		options->skipversioncheck,
-		options->waitfordebugger);
+	// TODO: terminate exe on failure
+	const auto [exeName, dllName] = get_runtime_names(*options);
+	augment_environment(exeName, options->waitfordebugger);
 
-	const auto [proc, procThread] = win32::create_process(
-		options->altexe,
-		options->priority);
-
-	const auto [cave, context] = prepare_cave(
-		proc.get(),
-		(options->altdll ? *options->altdll : "f4se_1_10_163.dll"sv),
-		"StartF4SE"sv);
-
+	const auto [proc, procThread] = win32::create_process(exeName, options->priority);
+	const auto [cave, context] = prepare_cave(proc.get(), dllName, "StartF4SE"sv);
 	const auto proxyThread = win32::create_remote_thread(
 		proc.get(),
-		reinterpret_cast<void (*)(void*)>(cave.get()),
+		reinterpret_cast<std::uint32_t (*)(void*)>(cave.get()),
 		context);
-
 	win32::wait_for_single_object(
 		proxyThread.get(),
 		options->notimeout ? std::chrono::milliseconds::max() : 1min);
