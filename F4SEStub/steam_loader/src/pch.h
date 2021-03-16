@@ -4,7 +4,7 @@
 
 #define NOGDICAPMASKS
 #define NOVIRTUALKEYCODES
-#define NOWINMESSAGES
+//#define NOWINMESSAGES
 #define NOWINSTYLES
 #define NOSYSMETRICS
 #define NOMENUS
@@ -17,17 +17,17 @@
 #define NOATOM
 #define NOCLIPBOARD
 #define NOCOLOR
-#define NOCTLMGR
+//#define NOCTLMGR
 #define NODRAWTEXT
 #define NOGDI
 #define NOKERNEL
-#define NOUSER
-//#define NONLS
+//#define NOUSER
+#define NONLS
 #define NOMB
 #define NOMEMMGR
 #define NOMETAFILE
 #define NOMINMAX
-#define NOMSG
+//#define NOMSG
 #define NOOPENFILE
 #define NOSCROLL
 #define NOSERVICE
@@ -42,40 +42,32 @@
 #define NODEFERWINDOWPOS
 #define NOMCX
 
-#include <algorithm>
-#include <array>
-#include <bit>
-#include <cassert>
-#include <chrono>
+#include <atomic>
 #include <concepts>
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
-#include <cstring>
 #include <filesystem>
-#include <map>
 #include <memory>
-#include <numeric>
 #include <optional>
-#include <regex>
 #include <span>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
-#include <vector>
 
 #pragma warning(push)
-#include <args.hxx>
 #include <boost/nowide/convert.hpp>
 #include <boost/nowide/iostream.hpp>
 #include <fmt/format.h>
-#include <frozen/map.h>
 #include <spdlog/spdlog.h>
 
 #include <Windows.h>
 
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <xbyak/xbyak.h>
+#include <ShlObj.h>
+
+#include <spdlog/sinks/basic_file_sink.h>
 #pragma warning(pop)
 
 using namespace std::literals;

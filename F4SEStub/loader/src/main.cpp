@@ -1,47 +1,5 @@
 namespace stl
 {
-	struct source_location
-	{
-	public:
-		constexpr source_location() noexcept = default;
-		constexpr source_location(const source_location&) noexcept = default;
-		constexpr source_location(source_location&&) noexcept = default;
-
-		~source_location() noexcept = default;
-
-		constexpr source_location& operator=(const source_location&) noexcept = default;
-		constexpr source_location& operator=(source_location&&) noexcept = default;
-
-		[[nodiscard]] static constexpr source_location current(
-			std::uint_least32_t a_line = __builtin_LINE(),
-			std::uint_least32_t a_column = __builtin_COLUMN(),
-			const char* a_fileName = __builtin_FILE(),
-			const char* a_functionName = __builtin_FUNCTION()) noexcept { return { a_line, a_column, a_fileName, a_functionName }; }
-
-		[[nodiscard]] constexpr std::uint_least32_t line() const noexcept { return _line; }
-		[[nodiscard]] constexpr std::uint_least32_t column() const noexcept { return _column; }
-		[[nodiscard]] constexpr const char* file_name() const noexcept { return _fileName; }
-		[[nodiscard]] constexpr const char* function_name() const noexcept { return _functionName; }
-
-	protected:
-		constexpr source_location(
-			std::uint_least32_t a_line,
-			std::uint_least32_t a_column,
-			const char* a_fileName,
-			const char* a_functionName) noexcept :
-			_line(a_line),
-			_column(a_column),
-			_fileName(a_fileName),
-			_functionName(a_functionName)
-		{}
-
-	private:
-		std::uint_least32_t _line{ 0 };
-		std::uint_least32_t _column{ 0 };
-		const char* _fileName{ "" };
-		const char* _functionName{ "" };
-	};
-
 	template <class EF>                                    //
 	requires(std::invocable<std::remove_reference_t<EF>>)  //
 		class scope_exit
@@ -116,9 +74,7 @@ namespace stl
 
 namespace win32
 {
-	[[noreturn]] void error(
-		std::string_view a_error,
-		[[maybe_unused]] stl::source_location a_loc = stl::source_location::current())  // TODO
+	[[noreturn]] void error(std::string_view a_error)
 	{
 		throw std::runtime_error{
 			fmt::format(
@@ -875,9 +831,11 @@ namespace detail
 
 void augment_environment(
 	std::string_view a_runtime,
+	std::string_view a_dll,
 	bool a_waitForDebugger)
 {
 	win32::set_environment_variable("F4SE_RUNTIME"sv, a_runtime);
+	win32::set_environment_variable("F4SE_DLL"sv, a_dll);
 	win32::set_environment_variable("F4SE_WAITFORDEBUGGER"sv, (a_waitForDebugger ? "1"sv : "0"sv));
 }
 
@@ -893,20 +851,15 @@ void augment_environment(
 	auto dll = [&]() {
 		if (a_options.altdll) {
 			return *a_options.altdll;
-		} else if (a_options.forcesteamloader) {
-			return "f4se_steam_loader.dll"s;
 		} else {
 			auto tmp =
 				a_options.editor ?
                     "f4se_editor"s :
                     "f4se"s;
 			const auto version = win32::get_file_version(exe);
-			const auto append = [&](std::size_t a_idx) {
-				tmp += '_';
-				tmp += version[a_idx];
-			};
 			for (std::size_t i = 0; i < 3; ++i) {
-				append(i);
+				tmp += '_';
+				tmp += version[i];
 			}
 
 			return tmp;
@@ -999,6 +952,7 @@ void initialize_log()
 		mem.get() + calc.offset_of(type_t::kArgs));
 }
 
+// TODO: check thread/proc exit codes
 void do_main(int a_argc, wchar_t* a_argv[])
 {
 	const auto options = cli::parse(a_argc, a_argv);
@@ -1007,14 +961,14 @@ void do_main(int a_argc, wchar_t* a_argv[])
 	}
 
 	const auto [exeName, dllName] = get_runtime_names(*options);
-	augment_environment(exeName, options->waitfordebugger);
+	augment_environment(exeName, dllName, options->waitfordebugger);
 
 	const auto [proc, procThread] = win32::create_process(exeName, options->priority);
 	stl::scope_exit terminator([&]() { win32::terminate_process(proc.get(), EXIT_FAILURE); });
 
 	const auto [cave, context] = prepare_cave(
 		proc.get(),
-		dllName,
+		(options->forcesteamloader ? "f4se_steam_loader.dll"sv : dllName),
 		(options->forcesteamloader ? ""s : "StartF4SE"s));
 	const auto proxyThread = win32::create_remote_thread(
 		proc.get(),
