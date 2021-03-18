@@ -148,6 +148,16 @@ namespace RE
 	};
 	static_assert(sizeof(TESFurnitureEvent) == 0x18);
 
+	struct TESMagicEffectApplyEvent
+	{
+	public:
+		// members
+		NiPointer<TESObjectREFR> target;  // 00
+		NiPointer<TESObjectREFR> caster;  // 08
+		std::uint32_t magicEffectFormID;  // 10
+	};
+	static_assert(sizeof(TESMagicEffectApplyEvent) == 0x18);
+
 	class TutorialEvent
 	{
 	public:

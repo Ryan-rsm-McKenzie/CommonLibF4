@@ -1,5 +1,6 @@
 #pragma once
 
+#include "RE/Bethesda/Atomic.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSLock.h"
 #include "RE/Bethesda/BSScript.h"
@@ -18,6 +19,7 @@ namespace RE
 	namespace BSScript
 	{
 		class IStore;
+		class IVirtualMachine;
 		class IVMDebugInterface;
 		class IVMSaveLoadInterface;
 		class Object;
@@ -31,12 +33,15 @@ namespace RE
 	class BSStorage;
 	class InputEnableLayerDestroyedEvent;
 	class TESForm;
+	class TESHitEvent;
 	class TESObjectREFR;
 
+	struct BGSRadiationDamageEvent;
 	struct PositionPlayerEvent;
 	struct TESFormDeleteEvent;
 	struct TESFormIDRemapEvent;
 	struct TESInitScriptEvent;
+	struct TESMagicEffectApplyEvent;
 	struct TESResolveNPCTemplatesEvent;
 	struct TESUniqueIDChangeEvent;
 
@@ -45,6 +50,13 @@ namespace RE
 		class DelayFunctor;
 
 		struct StatsEvent;
+
+		namespace Internal
+		{
+			class HitRegistrationList;
+			class MagicEffectApplyRegistrationList;
+			class RadiationDamageRegistrationList;
+		}
 
 		inline void LogFormError(
 			const TESForm* a_obj,
@@ -57,6 +69,27 @@ namespace RE
 			REL::Relocation<func_t> func{ REL::ID(1081933) };
 			return func(a_obj, a_error, a_vm, a_stackID, a_severity);
 		}
+
+		class __declspec(novtable) CombatEventHandler :
+			public BSTSingletonSDM<CombatEventHandler>,     // 18
+			public BSTEventSink<TESHitEvent>,               // 00
+			public BSTEventSink<TESMagicEffectApplyEvent>,  // 08
+			public BSTEventSink<BGSRadiationDamageEvent>    // 10
+		{
+		public:
+			static constexpr auto RTTI{ RTTI::GameScript__CombatEventHandler };
+			static constexpr auto VTABLE{ VTABLE::GameScript__CombatEventHandler };
+
+			// members
+			BSTSmartPointer<BSScript::IVirtualMachine> vm;                                                                  // 20
+			BSSpinLock hitLock;                                                                                             // 28
+			BSTHashMap<std::uint64_t, BSTSmartPointer<Internal::HitRegistrationList>> hitEvents;                            // 30
+			BSSpinLock magicEffectApplyLock;                                                                                // 60
+			BSTHashMap<std::uint64_t, BSTSmartPointer<Internal::MagicEffectApplyRegistrationList>> magicEffectApplyEvents;  // 68
+			BSSpinLock radiationDamageLock;                                                                                 // 98
+			BSTHashMap<std::uint64_t, BSTSmartPointer<Internal::RadiationDamageRegistrationList>> radiationDamageEvents;    // A0
+		};
+		static_assert(sizeof(CombatEventHandler) == 0xD0);
 
 		class __declspec(novtable) DelayFunctor :
 			public BSIntrusiveRefCounted  // 08
