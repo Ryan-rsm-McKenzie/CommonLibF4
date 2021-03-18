@@ -188,7 +188,7 @@ namespace cli
 		{
 			[[nodiscard]] bool operator()(const std::string& a_name, const std::string& a_value, DWORD& a_dst)
 			{
-				constexpr frozen::map<std::string_view, DWORD, 6> map = {
+				constexpr frozen::map<std::string_view, ::DWORD, 6> map = {
 					std::make_pair("realtime"sv, REALTIME_PRIORITY_CLASS),
 					std::make_pair("high"sv, HIGH_PRIORITY_CLASS),
 					std::make_pair("above_normal"sv, ABOVE_NORMAL_PRIORITY_CLASS),
@@ -834,8 +834,8 @@ void augment_environment(
 	std::string_view a_dll,
 	bool a_waitForDebugger)
 {
-	win32::set_environment_variable("F4SE_RUNTIME"sv, a_runtime);
 	win32::set_environment_variable("F4SE_DLL"sv, a_dll);
+	win32::set_environment_variable("F4SE_RUNTIME"sv, a_runtime);
 	win32::set_environment_variable("F4SE_WAITFORDEBUGGER"sv, (a_waitForDebugger ? "1"sv : "0"sv));
 }
 
