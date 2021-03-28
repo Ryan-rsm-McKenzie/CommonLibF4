@@ -340,12 +340,20 @@ namespace hook
 
 	int __cdecl thunk(void)
 	{
+		auto dll = win32::load_library(
+			win32::get_environment_variable("F4SE_DLL"sv));
+		const auto proc =
+			reinterpret_cast<void (*)()>(
+				win32::get_proc_address(dll.get(), "StartF4SE"sv));
+		proc();
+		(void)dll.release();  // intentionally leak handle to keep it loaded
+
 		return g_original();
 	}
 }
 
 // TODO: check thread exit codes
-void do_main()
+void do_initialize()
 {
 	const auto mod = win32::get_module_handle(
 		win32::get_environment_variable("F4SE_RUNTIME"sv));
@@ -355,25 +363,9 @@ void do_main()
 			reinterpret_cast<std::uintptr_t>(hook::thunk),
 			hook::g_dll,
 			hook::g_function));
-	stl::scope_exit timebomb([&]() {
-		patch_iat(
-			mod,
-			reinterpret_cast<std::uintptr_t>(hook::g_original),
-			hook::g_dll,
-			hook::g_function);
-	});
-
-	auto dll = win32::load_library(
-		win32::get_environment_variable("F4SE_DLL"sv));
-	const auto proc =
-		reinterpret_cast<void (*)()>(
-			win32::get_proc_address(dll.get(), "StartF4SE"sv));
-	proc();
-	(void)dll.release();  // intentionally leak handle to keep it loaded
-	timebomb.release();
 }
 
-int safe_main()
+int safe_initialize()
 {
 	const auto cerr = [](std::string_view a_err) {
 		boost::nowide::cerr
@@ -392,7 +384,7 @@ int safe_main()
 	}
 
 	try {
-		do_main();
+		do_initialize();
 	} catch (const std::exception& a_err) {
 		spdlog::error(a_err.what());
 		return EXIT_FAILURE;
@@ -404,26 +396,15 @@ int safe_main()
 	return EXIT_SUCCESS;
 }
 
-::BOOL WINAPI DllMain(
-	::HINSTANCE,
-	::DWORD a_reason,
-	::LPVOID)
+extern "C" ::INT_PTR __declspec(dllexport) WINAPI Initialize()
 {
 	if (win32::get_environment_variable("F4SE_WAITFORDEBUGGER"sv) == "1"sv) {
 		while (!::IsDebuggerPresent()) {}
 	}
 
-	::BOOL result = TRUE;
-
-	if (a_reason == DLL_PROCESS_ATTACH) {
-		static std::atomic_bool initialized{ false };
-		bool expected = false;
-		if (initialized.compare_exchange_strong(expected, true)) {
-			result = safe_main() == EXIT_SUCCESS ?
-                         TRUE :
-                         FALSE;
-		}
-	}
-
-	return result;
+	static std::atomic_bool initialized{ false };
+	bool expected = false;
+	return initialized.compare_exchange_strong(expected, true) ?
+               safe_initialize() :
+               EXIT_SUCCESS;
 }

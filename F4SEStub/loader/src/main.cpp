@@ -163,22 +163,17 @@ namespace cli
 			return result;
 		}
 
-		[[nodiscard]] auto do_parse(int a_argc, wchar_t* a_argv[])
+		[[nodiscard]] auto do_parse(std::span<const wchar_t*> a_args)
 			-> std::vector<std::string>
 		{
 			std::vector<std::string> args;
-			for (int i = 1; i < a_argc; ++i) {
-				std::wstring_view arg = a_argv[i];
-				auto utf8 = [](std::wstring_view a_str) {
-					auto str = normalize(a_str);
-					if (!a_str.empty() && a_str.front() == L'-') {
-						str = to_lower(str);
-					}
+			for (const std::wstring_view arg : a_args.subspan(1)) {
+				auto str = normalize(arg);
+				if (!arg.empty() && arg.front() == L'-') {
+					str = to_lower(str);
+				}
 
-					return unicode::narrow(str);
-				}(a_argv[i]);
-
-				args.push_back(std::move(utf8));
+				args.push_back(unicode::narrow(str));
 			}
 
 			return args;
@@ -237,7 +232,7 @@ namespace cli
 		bool waitfordebugger{ false };
 	};
 
-	[[nodiscard]] auto parse(int a_argc, wchar_t* a_argv[])
+	[[nodiscard]] auto parse(std::span<const wchar_t*> a_args)
 		-> std::optional<options>
 	{
 		args::ArgumentParser p{ "USAGE: f4se_loader.exe [options]"s };
@@ -265,7 +260,7 @@ namespace cli
 		args::Flag waitfordebugger{ p, ""s, "wait for a debugger to attach before proceeding"s, { "waitfordebugger"s } };
 
 		try {
-			const auto args = detail::do_parse(a_argc, a_argv);
+			const auto args = detail::do_parse(a_args);
 			p.ParseArgs(args.begin(), args.end());
 		} catch (const args::Help&) {
 			spdlog::trace(p);
@@ -953,9 +948,9 @@ void initialize_log()
 }
 
 // TODO: check thread/proc exit codes
-void do_main(int a_argc, wchar_t* a_argv[])
+void do_main(std::span<const wchar_t*> a_args)
 {
-	const auto options = cli::parse(a_argc, a_argv);
+	const auto options = cli::parse(a_args);
 	if (!options) {
 		return;
 	}
@@ -969,7 +964,7 @@ void do_main(int a_argc, wchar_t* a_argv[])
 	const auto [cave, context] = prepare_cave(
 		proc.get(),
 		(options->forcesteamloader ? "f4se_steam_loader.dll"sv : dllName),
-		(options->forcesteamloader ? ""s : "StartF4SE"s));
+		(options->forcesteamloader ? "Initialize"s : "StartF4SE"s));
 	const auto proxyThread = win32::create_remote_thread(
 		proc.get(),
 		reinterpret_cast<std::uint32_t (*)(void*)>(cave.get()),
@@ -1006,7 +1001,7 @@ int wmain(int a_argc, wchar_t* a_argv[])
 	}
 
 	try {
-		do_main(a_argc, a_argv);
+		do_main({ const_cast<const wchar_t**>(a_argv), static_cast<std::size_t>(a_argc) });
 	} catch (const std::exception& a_err) {
 		spdlog::error(a_err.what());
 		return EXIT_FAILURE;
