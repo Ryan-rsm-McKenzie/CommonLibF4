@@ -1305,14 +1305,14 @@ namespace RE
 		[[nodiscard]] bool IsInterior() const noexcept { return cellFlags.all(Flag::kInterior); }
 
 		// members
-		BSSpinLock grassCreateLock;                           // 30
-		BSSpinLock grassTaskLock;                             // 38
-		stl::enumeration<Flag, std::uint16_t> cellFlags;      // 40
-		std::uint16_t cellGameFlags;                          // 42
-		stl::enumeration<CELL_STATE, std::int8_t> cellState;  // 44
-		bool autoWaterLoaded;                                 // 45
-		bool cellDetached;                                    // 46
-		BSTSmartPointer<ExtraDataList> extraList;             // 48
+		BSSpinLock grassCreateLock;                            // 30
+		BSSpinLock grassTaskLock;                              // 38
+		stl::enumeration<Flag, std::uint16_t> cellFlags;       // 40
+		std::uint16_t cellGameFlags;                           // 42
+		stl::enumeration<CELL_STATE, std::uint8_t> cellState;  // 44
+		bool autoWaterLoaded;                                  // 45
+		bool cellDetached;                                     // 46
+		BSTSmartPointer<ExtraDataList> extraList;              // 48
 		union
 		{
 			void* cellData;
