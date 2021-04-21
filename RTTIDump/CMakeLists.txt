@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.20)
 
 # ---- Project ----
 
@@ -10,12 +10,12 @@ project(
 
 # ---- Include guards ----
 
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 	message(
 		FATAL_ERROR
-			"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
+		"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
 	)
-endif()
+endif ()
 
 # ---- Globals ----
 
@@ -54,7 +54,6 @@ if (MSVC)
 		/Zc:trigraphs	# Trigraphs Substitution
 		/Zc:wchar_t	# wchar_t Is Native Type
 
-		/experimental:external
 		/external:anglebrackets
 		/external:W0
 
@@ -66,7 +65,7 @@ if (MSVC)
 		"$<$<CONFIG:DEBUG>:/INCREMENTAL;/OPT:NOREF;/OPT:NOICF>"
 		"$<$<CONFIG:RELEASE>:/INCREMENTAL:NO;/OPT:REF;/OPT:ICF;/DEBUG:FULL>"
 	)
-endif()
+endif ()
 
 # ---- Dependencies ----
 
@@ -77,9 +76,9 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_DEBUG_RUNTIME ON)
 
-if(NOT TARGET CommonLibF4)
+if (NOT TARGET CommonLibF4)
 	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../CommonLibF4" CommonLibF4)
-endif()
+endif ()
 
 find_package(Boost
 	MODULE

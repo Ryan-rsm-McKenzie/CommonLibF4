@@ -3,7 +3,7 @@
 ## General Requirements
 
 ### Build Dependencies
-* [Visual Studio Community 2019 16.10.0 Preview 1.0](https://visualstudio.microsoft.com/vs/preview/)
+* [Visual Studio Community 2019 16.10.0 Preview 2.0](https://visualstudio.microsoft.com/vs/preview/)
 	* Desktop development with C++
 
 ### Development

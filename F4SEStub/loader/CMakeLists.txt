@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.20)
 
 # ---- Project ----
 
@@ -10,12 +10,12 @@ project(
 
 # ---- Include guards ----
 
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 	message(
 		FATAL_ERROR
-			"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
+		"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
 	)
-endif()
+endif ()
 
 # ---- Globals ----
 
@@ -54,7 +54,6 @@ if (MSVC)
 		/Zc:trigraphs	# Trigraphs Substitution
 		/Zc:wchar_t	# wchar_t Is Native Type
 
-		/experimental:external
 		/external:anglebrackets
 		/external:W0
 
@@ -66,7 +65,7 @@ if (MSVC)
 		"$<$<CONFIG:DEBUG>:/INCREMENTAL;/OPT:NOREF;/OPT:NOICF>"
 		"$<$<CONFIG:RELEASE>:/INCREMENTAL:NO;/OPT:REF;/OPT:ICF;/DEBUG:FULL>"
 	)
-endif()
+endif ()
 
 # ---- Dependencies ----
 
@@ -148,9 +147,22 @@ target_precompile_headers(
 
 # ---- File copying ----
 
-add_custom_command(
-	TARGET ${PROJECT_NAME}
-	POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> $ENV{Fallout4Path}
-	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE:${PROJECT_NAME}> $ENV{Fallout4Path}
-)
+if (COPY_BUILD)
+	if (NOT DEFINED Fallout4Path AND DEFINED ENV{Fallout4Path})
+		set(Fallout4Path $ENV{Fallout4Path})
+	endif ()
+
+	if (DEFINED Fallout4Path)
+		add_custom_command(
+			TARGET ${PROJECT_NAME}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ${Fallout4Path}
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE:${PROJECT_NAME}> ${Fallout4Path}
+		)
+	else ()
+		message(
+			WARNING
+			"Variable Fallout4Path is not defined. Skipping post-build copy command."
+		)
+	endif ()
+endif ()

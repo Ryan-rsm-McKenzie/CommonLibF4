@@ -1,18 +1,42 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.20)
+
+# ---- Options ----
+
+option(COPY_BUILD "Copy the build output to the Fallout 4 directory." ON)
+
+# ---- Cache build vars ----
+
+if (NOT DEFINED VCPKG_ROOT AND DEFINED ENV{VCPKG_ROOT})
+	set(VCPKG_ROOT $ENV{VCPKG_ROOT})
+endif ()
+
+if (DEFINED VCPKG_ROOT)
+	set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+	set(VCPKG_TARGET_TRIPLET "x64-windows-static-md" CACHE STRING "")
+else ()
+	message(
+		WARNING
+		"Variable VCPKG_ROOT is not set. Continuing without vcpkg."
+	)
+endif ()
 
 set(Boost_USE_STATIC_RUNTIME OFF CACHE BOOL "")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL" CACHE STRING "")
-set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
-set(VCPKG_TARGET_TRIPLET "x64-windows-static-md" CACHE STRING "")
+
+# ---- Project ----
 
 project(umbrella)
 
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+# ---- Include guards ----
+
+if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 	message(
 		FATAL_ERROR
-			"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
+		"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
 	)
-endif()
+endif ()
+
+# ---- Globals ----
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
@@ -27,15 +51,17 @@ if (MSVC)
 	)
 endif()
 
-function(conditionally_add_subdirectory SRC_DIR)
-	if(NOT TARGET ${SUBDIRECTORY})
+# ---- Add source files ----
+
+function (conditionally_add_subdirectory SRC_DIR)
+	if (NOT TARGET ${SUBDIRECTORY})
 		if (${ARGC} GREATER 1)
 			add_subdirectory(${SRC_DIR} ${ARGV1})
-		else()
+		else ()
 			add_subdirectory(${SRC_DIR})
-		endif()
-	endif()
-endfunction()
+		endif ()
+	endif ()
+endfunction ()
 
 conditionally_add_subdirectory(AddressLibDecoder)
 conditionally_add_subdirectory(AddressLibGen)

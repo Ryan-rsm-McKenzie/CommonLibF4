@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.20)
 
 # ---- Project ----
 
@@ -9,12 +9,12 @@ project(
 
 # ---- Include guards ----
 
-if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 	message(
 		FATAL_ERROR
-			"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
+		"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
 	)
-endif()
+endif ()
 
 # ---- Dependencies ----
 
@@ -82,7 +82,6 @@ if (MSVC)
 			/Zc:trigraphs	# Trigraphs Substitution
 			/Zc:wchar_t	# wchar_t Is Native Type
 
-			/experimental:external
 			/external:anglebrackets
 			/external:W0
 
@@ -114,7 +113,7 @@ if (MSVC)
 			/wd5204 # 'type-name': class has virtual functions, but its trivial destructor is not virtual; instances of objects derived from this class may not be destructed correctly
 			/wd5220 # 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 	)
-endif()
+endif ()
 
 target_compile_definitions(
 	${PROJECT_NAME}
