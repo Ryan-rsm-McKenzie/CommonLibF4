@@ -56,7 +56,7 @@ namespace RE
 		};                                                           // 00
 		ObjectRefHandle runOnRef;                                    // 08
 		std::uint32_t dataID;                                        // 0C
-		FUNCTION_DATA FunctionData;                                  // 10
+		FUNCTION_DATA functionData;                                  // 10
 		std::uint8_t compareOr: 1;                                   // 28:0
 		std::uint8_t aliasParams: 1;                                 // 28:1
 		std::uint8_t valueIsGlobal: 1;                               // 28:2

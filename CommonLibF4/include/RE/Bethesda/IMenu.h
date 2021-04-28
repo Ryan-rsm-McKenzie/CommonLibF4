@@ -203,6 +203,11 @@ namespace RE
 			uiMovie->Advance(a_timeDelta);
 		}
 
+		[[nodiscard]] bool IsMenuDisplayEnabled() const noexcept
+		{
+			return passesTopMenuTest && menuCanBeVisible;
+		}
+
 		void OnSetSafeRect()
 		{
 			using func_t = decltype(&IMenu::RefreshPlatform);
@@ -232,6 +237,15 @@ namespace RE
 		{
 			a_movie.GetVariable(std::addressof(menuObj), a_menuObjPath.data());
 			RegisterCodeObject(a_movie, menuObj);
+		}
+
+		void UpdateFlag(UI_MENU_FLAGS a_flag, bool a_set) noexcept
+		{
+			if (a_set) {
+				menuFlags.set(a_flag);
+			} else {
+				menuFlags.reset(a_flag);
+			}
 		}
 
 		// members
@@ -294,6 +308,56 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::GameMenuBase };
 		static constexpr auto VTABLE{ VTABLE::GameMenuBase };
+
+		// override (IMenu)
+		void SetIsTopButtonBar(bool a_isTopButtonBar) override  // 08
+		{
+			using func_t = decltype(&IMenu::SetIsTopButtonBar);
+			REL::Relocation<func_t> func{ REL::ID(1367353) };
+			return func(this, a_isTopButtonBar);
+		}
+
+		void OnMenuDisplayStateChanged() override  // 0A
+		{
+			using func_t = decltype(&IMenu::OnMenuDisplayStateChanged);
+			REL::Relocation<func_t> func{ REL::ID(1274450) };
+			return func(this);
+		}
+
+		void OnAddedToMenuStack() override  // 0B
+		{
+			using func_t = decltype(&IMenu::OnAddedToMenuStack);
+			REL::Relocation<func_t> func{ REL::ID(210529) };
+			return func(this);
+		}
+
+		void OnRemovedFromMenuStack() override  // 0C
+		{
+			using func_t = decltype(&IMenu::OnRemovedFromMenuStack);
+			REL::Relocation<func_t> func{ REL::ID(383045) };
+			return func(this);
+		}
+
+		bool CacheShaderFXQuadsForRenderer_Impl() override  // 10
+		{
+			using func_t = decltype(&IMenu::CacheShaderFXQuadsForRenderer_Impl);
+			REL::Relocation<func_t> func{ REL::ID(863029) };
+			return func(this);
+		}
+
+		void TransferCachedShaderFXQuadsForRenderer(const BSFixedString& a_rendererName) override  // 11
+		{
+			using func_t = decltype(&IMenu::TransferCachedShaderFXQuadsForRenderer);
+			REL::Relocation<func_t> func{ REL::ID(65166) };
+			return func(this, a_rendererName);
+		}
+
+		void SetViewportRect(const NiRect<float>& a_viewportRect) override  // 12
+		{
+			using func_t = decltype(&IMenu::SetViewportRect);
+			REL::Relocation<func_t> func{ REL::ID(1554334) };
+			return func(this, a_viewportRect);
+		}
 
 		// add
 		virtual void AppendShaderFXInfos(BSTAlignedArray<UIShaderFXInfo>& a_colorFXInfos, BSTAlignedArray<UIShaderFXInfo>& a_backgroundFXInfos) const  // 13
