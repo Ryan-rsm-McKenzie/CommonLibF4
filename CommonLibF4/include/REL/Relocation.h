@@ -657,10 +657,7 @@ namespace REL
 	public:
 		using value_type =
 			std::conditional_t<
-				std::disjunction_v<
-					std::is_member_pointer<T>,
-					std::is_function<
-						std::remove_pointer_t<T>>>,
+				std::is_member_pointer_v<T> || std::is_function_v<std::remove_pointer_t<T>>,
 				std::decay_t<T>,
 				T>;
 

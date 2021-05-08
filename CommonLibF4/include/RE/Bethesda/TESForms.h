@@ -731,6 +731,13 @@ namespace RE
 		[[nodiscard]] bool IsPlayerRef() const noexcept { return GetFormID() == 0x00000014; }
 		[[nodiscard]] bool IsWeapon() const noexcept { return Is(ENUM_FORM_ID::kWEAP); }
 
+		void SetTemporary()
+		{
+			using func_t = decltype(&TESForm::SetTemporary);
+			REL::Relocation<func_t> func{ REL::ID(1376557) };
+			return func(this);
+		}
+
 		template <
 			class T,
 			class = std::enable_if_t<

@@ -395,11 +395,40 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::Console };
 		static constexpr auto VTABLE{ VTABLE::Console };
+		static constexpr auto MENU_NAME = "Console"sv;
 
-		[[nodiscard]] static ObjectRefHandle& GetPickRef()
+		[[nodiscard]] static decltype(auto) GetCurrentPickIndex()
+		{
+			REL::Relocation<std::int32_t*> currentPickIndex{ REL::ID(1407033) };
+			return *currentPickIndex;
+		}
+
+		[[nodiscard]] static decltype(auto) GetPickRef()
 		{
 			REL::Relocation<ObjectRefHandle*> ref{ REL::ID(170742) };
 			return *ref;
+		}
+
+		[[nodiscard]] static decltype(auto) GetPickRefs()
+		{
+			REL::Relocation<BSTArray<ObjectRefHandle>*> pickRefs{ REL::ID(875116) };
+			return *pickRefs;
+		}
+
+		[[nodiscard]] static ObjectRefHandle GetCurrentPickREFR()
+		{
+			const auto idx = GetCurrentPickIndex();
+			const auto& refs = GetPickRefs();
+			return 0 <= idx && static_cast<std::size_t>(idx) < refs.size() ?
+			           refs[static_cast<std::size_t>(idx)] :
+                       ObjectRefHandle{};
+		}
+
+		void SetCurrentPickREFR(stl::not_null<ObjectRefHandle*> a_refr)
+		{
+			using func_t = decltype(&Console::SetCurrentPickREFR);
+			REL::Relocation<func_t> func{ REL::ID(79066) };
+			return func(this, a_refr);
 		}
 
 		// members
@@ -498,6 +527,7 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::WorkshopMenu };
 		static constexpr auto VTABLE{ VTABLE::WorkshopMenu };
+		static constexpr auto MENU_NAME = "WorkshopMenu"sv;
 
 		class FXWorkshopMenu;
 

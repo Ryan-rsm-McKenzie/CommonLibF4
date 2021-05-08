@@ -2,6 +2,7 @@
 
 #include "RE/Bethesda/BSStringT.h"
 #include "RE/Bethesda/BSTList.h"
+#include "RE/Bethesda/MemoryManager.h"
 #include "RE/Bethesda/TESForms.h"
 
 namespace RE
@@ -284,6 +285,12 @@ namespace RE
 	};
 	static_assert(sizeof(SCRIPT_FUNCTION) == 0x50);
 
+	class ScriptCompiler
+	{
+	public:
+	};
+	static_assert(std::is_empty_v<ScriptCompiler>);
+
 	class __declspec(novtable) Script :
 		public TESForm  // 00
 	{
@@ -301,10 +308,29 @@ namespace RE
 			return func(a_parameters, a_compiledParams, a_offset, a_refObject, a_container, a_script, a_scriptLocals, a_args...);
 		}
 
+		void CompileAndRun(ScriptCompiler* a_compiler, COMPILER_NAME a_compilerIndex, TESObjectREFR* a_ownerObject)
+		{
+			using func_t = decltype(&Script::CompileAndRun);
+			REL::Relocation<func_t> func{ REL::ID(526625) };
+			return func(this, a_compiler, a_compilerIndex, a_ownerObject);
+		}
+
+		void SetText(std::string_view a_text)
+		{
+			if (text) {
+				free(text);
+				text = nullptr;
+			}
+
+			text = calloc<char>(a_text.length() + 1);
+			std::memset(text, '\0', a_text.length() + 1);
+			std::memcpy(text, a_text.data(), a_text.length());
+		}
+
 		// members
 		SCRIPT_HEADER header;                                // 20
 		char* text;                                          // 38
-		char* data;                                          // 40
+		std::byte* data;                                     // 40
 		float profilerTimer;                                 // 48
 		float questScriptDelay;                              // 4C
 		float questScriptGetSecondsBuffer;                   // 50

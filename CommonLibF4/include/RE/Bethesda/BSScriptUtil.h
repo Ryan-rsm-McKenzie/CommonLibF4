@@ -717,6 +717,10 @@ namespace RE::BSScript
 	template <detail::object T>
 	[[nodiscard]] T* UnpackVariable(const Variable& a_var)
 	{
+		if (a_var.is<Object>() && get<Object>(a_var) == nullptr) {
+			return nullptr;
+		}
+
 		const auto result = [&]() -> void* {
 			if (!a_var.is<Object>()) {
 				assert(false);

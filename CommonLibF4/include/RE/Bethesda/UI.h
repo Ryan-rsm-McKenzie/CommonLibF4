@@ -78,6 +78,14 @@ namespace RE
 			return it != menuMap.end() ? it->second.menu : nullptr;
 		}
 
+		template <class T>
+		[[nodiscard]] Scaleform::Ptr<T> GetMenu() const  //
+			requires(requires { T::MENU_NAME; })
+		{
+			const auto ptr = GetMenu(T::MENU_NAME);
+			return Scaleform::Ptr{ static_cast<T*>(ptr.get()) };
+		}
+
 		[[nodiscard]] bool GetMenuOpen(const BSFixedString& a_name) const
 		{
 			const auto menu = GetMenu(a_name);

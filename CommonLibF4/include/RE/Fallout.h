@@ -66,6 +66,7 @@
 #include "RE/Bethesda/Events.h"
 #include "RE/Bethesda/FavoritesManager.h"
 #include "RE/Bethesda/FormComponents.h"
+#include "RE/Bethesda/FormFactory.h"
 #include "RE/Bethesda/FormUtil.h"
 #include "RE/Bethesda/GameScript.h"
 #include "RE/Bethesda/IMenu.h"

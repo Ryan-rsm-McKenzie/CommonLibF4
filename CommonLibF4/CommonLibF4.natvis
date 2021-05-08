@@ -75,13 +75,14 @@
 	</Type>
 
 	<Type Name="RE::BSSimpleList&lt;*&gt;">
-		<DisplayString Condition="*(uintptr_t*)(&amp;_listHead.item) == 0 &amp;&amp; _listHead.next == nullptr">empty</DisplayString>
-		<DisplayString Condition="*(uintptr_t*)(&amp;_listHead.item) != 0 || _listHead.next != nullptr">non-empty</DisplayString>
+		<Intrinsic Name="empty" Expression="!_root.next &amp;&amp; !_root.value"/>
+		<DisplayString Condition="empty()">empty</DisplayString>
+		<DisplayString Condition="empty()">non-empty</DisplayString>
 		<Expand>
 			<LinkedListItems>
-				<HeadPointer>&amp;_listHead</HeadPointer>
+				<HeadPointer>&amp;_root</HeadPointer>
 				<NextPointer>next</NextPointer>
-				<ValueNode>item</ValueNode>
+				<ValueNode>value</ValueNode>
 			</LinkedListItems>
 		</Expand>
 	</Type>
