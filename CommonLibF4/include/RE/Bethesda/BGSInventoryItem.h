@@ -128,6 +128,15 @@ namespace RE
 		static_assert(sizeof(ModifyModDataFunctor) == 0x30);
 
 		[[nodiscard]] std::uint32_t GetCount() const noexcept;
+		[[nodiscard]] Stack* GetStackByID(std::uint32_t a_stackID) const
+		{
+			auto iter = stackData.get();
+			while (a_stackID--) {
+				iter = iter->nextStack.get();
+			}
+
+			return iter;
+		}
 
 		// members
 		TESBoundObject* object;            // 00

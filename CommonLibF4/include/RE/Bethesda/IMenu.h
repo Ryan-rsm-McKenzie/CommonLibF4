@@ -395,7 +395,7 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::Console };
 		static constexpr auto VTABLE{ VTABLE::Console };
-		static constexpr auto MENU_NAME = "Console"sv;
+		static constexpr auto MENU_NAME{ "Console"sv };
 
 		[[nodiscard]] static decltype(auto) GetCurrentPickIndex()
 		{
@@ -527,7 +527,7 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::WorkshopMenu };
 		static constexpr auto VTABLE{ VTABLE::WorkshopMenu };
-		static constexpr auto MENU_NAME = "WorkshopMenu"sv;
+		static constexpr auto MENU_NAME{ "WorkshopMenu"sv };
 
 		class FXWorkshopMenu;
 

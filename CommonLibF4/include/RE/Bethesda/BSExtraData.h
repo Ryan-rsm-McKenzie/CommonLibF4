@@ -2,6 +2,7 @@
 
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSLock.h"
+#include "RE/Bethesda/BSPointerHandle.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTTuple.h"
@@ -11,11 +12,13 @@ namespace RE
 {
 	class BGSObjectInstanceExtra;
 	class BSExtraData;
+	class ExtraAliasInstanceArray;
 	class ExtraCellWaterType;
 	class ExtraInstanceData;
 	class ExtraLocation;
 	class ExtraMaterialSwap;
 	class ExtraPowerLinks;
+	class ExtraReferenceHandles;
 	class ExtraTextDisplayData;
 	class ExtraUniqueID;
 
@@ -49,7 +52,7 @@ namespace RE
 		kPackage,
 		kTrespassPackage,
 		kRunOncePackages,
-		kReferenceHandle,
+		kReferenceHandle,  // ExtraReferenceHandles
 		kFollower,
 		kLevCreaMod,
 		kGhost,
@@ -157,8 +160,8 @@ namespace RE
 		kAshpileRef,
 		kCreatureMovementSound,
 		kFollowerSwimBreadcrumbs,
-		kAliasInstanceArray,
-		kLocation,  // ExtraLocation
+		kAliasInstanceArray,  // ExtraAliasInstanceArray
+		kLocation,            // ExtraLocation
 		kMasterLocation,
 		kLocationRefType,
 		kPromotedRef,
@@ -243,9 +246,11 @@ namespace RE
 	class BGSLocation;
 	class BGSMaterialSwap;
 	class BGSMessage;
+	class BGSRefAlias;
 	class TBO_InstanceData;
 	class TESBoundObject;
 	class TESForm;
+	class TESPackage;
 	class TESQuest;
 	class TESWaterForm;
 
@@ -319,6 +324,20 @@ namespace RE
 		TESWaterForm* water;  // 18
 	};
 	static_assert(sizeof(ExtraCellWaterType) == 0x20);
+
+	class __declspec(novtable) ExtraReferenceHandles :
+		public BSExtraData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraReferenceHandles };
+		static constexpr auto VTABLE{ VTABLE::ExtraReferenceHandles };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kReferenceHandle };
+
+		// members
+		ObjectRefHandle originalRef;   // 18
+		ObjectRefHandle containerRef;  // 1C
+	};
+	static_assert(sizeof(ExtraReferenceHandles) == 0x20);
 
 	class __declspec(novtable) ExtraInstanceData :
 		public BSExtraData  // 00
@@ -394,6 +413,30 @@ namespace RE
 		}
 	};
 	static_assert(sizeof(BGSObjectInstanceExtra) == 0x28);
+
+	struct BGSRefAliasInstanceData
+	{
+	public:
+		// members
+		TESQuest* quest;                           // 00
+		BGSRefAlias* alias;                        // 08
+		BSTArray<TESPackage*>* instancedPackages;  // 10
+	};
+	static_assert(sizeof(BGSRefAliasInstanceData) == 0x18);
+
+	class __declspec(novtable) ExtraAliasInstanceArray :
+		public BSExtraData  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::ExtraAliasInstanceArray };
+		static constexpr auto VTABLE{ VTABLE::ExtraAliasInstanceArray };
+		static constexpr auto TYPE{ EXTRA_DATA_TYPE::kAliasInstanceArray };
+
+		// members
+		BSTArray<BGSRefAliasInstanceData> aliasArray;  // 18
+		BSReadWriteLock aliasArrayLock;                // 30
+	};
+	static_assert(sizeof(ExtraAliasInstanceArray) == 0x38);
 
 	class __declspec(novtable) ExtraLocation :
 		public BSExtraData  // 00

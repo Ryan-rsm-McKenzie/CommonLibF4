@@ -153,8 +153,8 @@ namespace RE
 
 	private:
 		// members
-		size_type _capacity: 31;  // 00:00
-		size_type _local: 1;      // 00:31
+		size_type _capacity: 31 { 0 };  // 00:00
+		size_type _local: 1 { 0 };      // 00:31
 		union
 		{
 			void* _heap{ nullptr };
