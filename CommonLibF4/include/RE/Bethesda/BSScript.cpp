@@ -162,7 +162,7 @@ namespace RE::BSScript
 			initialized = false;
 		}
 
-		const auto lock = reinterpret_cast<std::uintptr_t>(lockStructure) & ~static_cast<std::uintptr_t>(1);
+		auto lock = reinterpret_cast<std::uintptr_t>(lockStructure) & ~static_cast<std::uintptr_t>(1);
 		if (lock) {
 			stl::atomic_ref l{ lock };
 			--l;

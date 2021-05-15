@@ -29,6 +29,8 @@ set(headers ${headers}
 	include/RE/Bethesda/BGSPrimitive.h
 	include/RE/Bethesda/BGSStoryManagerTreeForm.h
 	include/RE/Bethesda/BGSTextureSet.h
+	include/RE/Bethesda/bhkCharacterController.h
+	include/RE/Bethesda/BSBound.h
 	include/RE/Bethesda/BSContainer.h
 	include/RE/Bethesda/BSExtraData.h
 	include/RE/Bethesda/BSFixedString.h
@@ -121,6 +123,7 @@ set(headers ${headers}
 	include/RE/Havok/hkArray.h
 	include/RE/Havok/hkBaseObject.h
 	include/RE/Havok/hkBaseTypes.h
+	include/RE/Havok/hkBlockStream.h
 	include/RE/Havok/hkHandle.h
 	include/RE/Havok/hkLifoAllocator.h
 	include/RE/Havok/hkMemoryAllocator.h
@@ -128,11 +131,16 @@ set(headers ${headers}
 	include/RE/Havok/hkMemorySystem.h
 	include/RE/Havok/hknpAllHitsCollector.h
 	include/RE/Havok/hknpBodyId.h
+	include/RE/Havok/hknpCharacterContext.h
+	include/RE/Havok/hknpCharacterState.h
+	include/RE/Havok/hknpCharacterSurfaceInfo.h
 	include/RE/Havok/hknpClosestUniqueBodyIdHitCollector.h
 	include/RE/Havok/hknpCollisionQueryCollector.h
 	include/RE/Havok/hknpCollisionResult.h
 	include/RE/Havok/hknpMaterialId.h
+	include/RE/Havok/hknpShape.h
 	include/RE/Havok/hknpUniqueBodyIdHitCollector.h
+	include/RE/Havok/hkReferencedObject.h
 	include/RE/Havok/hkRefPtr.h
 	include/RE/Havok/hkSimdFloat.h
 	include/RE/Havok/hkVector4.h
@@ -145,6 +153,7 @@ set(headers ${headers}
 	include/RE/NetImmerse/NiBound.h
 	include/RE/NetImmerse/NiCollisionObject.h
 	include/RE/NetImmerse/NiColor.h
+	include/RE/NetImmerse/NiExtraData.h
 	include/RE/NetImmerse/NiFile.h
 	include/RE/NetImmerse/NiFlags.h
 	include/RE/NetImmerse/NiMatrix3.h

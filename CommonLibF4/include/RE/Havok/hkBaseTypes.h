@@ -2,6 +2,17 @@
 
 namespace RE
 {
+	class hkBool
+	{
+	public:
+		~hkBool() noexcept {}  // intentional
+
+		bool b;
+	};
+
+	template <class E, class U>
+	using hkEnum = stl::enumeration<E, U>;
+
 	template <class E, class U>
 	using hkFlags = stl::enumeration<E, U>;
 

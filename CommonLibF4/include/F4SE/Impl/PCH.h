@@ -23,6 +23,7 @@
 #include <new>
 #include <optional>
 #include <ranges>
+#include <source_location>
 #include <span>
 #include <sstream>
 #include <stack>
@@ -143,48 +144,6 @@ namespace F4SE
 			template <class CharT, std::size_t N>
 			string(const CharT(&)[N]) -> string<CharT, N - 1>;
 		}
-
-		struct source_location
-		{
-		public:
-			constexpr source_location() noexcept = default;
-			constexpr source_location(const source_location&) noexcept = default;
-			constexpr source_location(source_location&&) noexcept = default;
-
-			~source_location() noexcept = default;
-
-			constexpr source_location& operator=(const source_location&) noexcept = default;
-			constexpr source_location& operator=(source_location&&) noexcept = default;
-
-			[[nodiscard]] static constexpr source_location current(
-				std::uint_least32_t a_line = __builtin_LINE(),
-				std::uint_least32_t a_column = __builtin_COLUMN(),
-				const char* a_fileName = __builtin_FILE(),
-				const char* a_functionName = __builtin_FUNCTION()) noexcept { return { a_line, a_column, a_fileName, a_functionName }; }
-
-			[[nodiscard]] constexpr std::uint_least32_t line() const noexcept { return _line; }
-			[[nodiscard]] constexpr std::uint_least32_t column() const noexcept { return _column; }
-			[[nodiscard]] constexpr const char* file_name() const noexcept { return _fileName; }
-			[[nodiscard]] constexpr const char* function_name() const noexcept { return _functionName; }
-
-		protected:
-			constexpr source_location(
-				std::uint_least32_t a_line,
-				std::uint_least32_t a_column,
-				const char* a_fileName,
-				const char* a_functionName) noexcept :
-				_line(a_line),
-				_column(a_column),
-				_fileName(a_fileName),
-				_functionName(a_functionName)
-			{}
-
-		private:
-			std::uint_least32_t _line{ 0 };
-			std::uint_least32_t _column{ 0 };
-			const char* _fileName{ "" };
-			const char* _functionName{ "" };
-		};
 
 		template <class EF>                                    //
 		requires(std::invocable<std::remove_reference_t<EF>>)  //
@@ -472,15 +431,15 @@ namespace F4SE
 
 		template <class T>
 		class atomic_ref :
-			public std::atomic_ref<std::remove_cv_t<T>>
+			public std::atomic_ref<T>
 		{
 		private:
-			using super = std::atomic_ref<std::remove_cv_t<T>>;
+			using super = std::atomic_ref<T>;
 
 		public:
 			using value_type = typename super::value_type;
 
-			explicit atomic_ref(T& a_obj) noexcept(std::is_nothrow_constructible_v<super, value_type&>) :
+			explicit atomic_ref(volatile T& a_obj) noexcept(std::is_nothrow_constructible_v<super, value_type&>) :
 				super(const_cast<value_type&>(a_obj))
 			{}
 
@@ -489,7 +448,7 @@ namespace F4SE
 		};
 
 		template <class T>
-		atomic_ref(T&) -> atomic_ref<T>;
+		atomic_ref(volatile T&) -> atomic_ref<T>;
 
 		template class atomic_ref<std::int8_t>;
 		template class atomic_ref<std::uint8_t>;
@@ -538,7 +497,7 @@ namespace F4SE
 			std::fill_n(begin, a_size, val);
 		}
 
-		[[noreturn]] inline void report_and_fail(std::string_view a_msg, source_location a_loc = source_location::current())
+		[[noreturn]] inline void report_and_fail(std::string_view a_msg, std::source_location a_loc = std::source_location::current())
 		{
 			const auto body = [&]() {
 				constexpr std::array directories{

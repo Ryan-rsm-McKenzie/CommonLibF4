@@ -11,7 +11,6 @@ namespace RE
 		virtual ~hkBaseObject() = default;  // 00
 
 		// add
-		// NOLINTNEXTLINE(bugprone-reserved-identifier)
 		virtual void __first_virtual_table_function__() { return; }  // 01
 	};
 	static_assert(sizeof(hkBaseObject) == 0x8);

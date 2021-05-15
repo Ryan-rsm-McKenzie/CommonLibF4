@@ -11,7 +11,7 @@
 		explicit a_func(                                                  \
 			T&& a_fmt,                                                    \
 			Args&&... a_args,                                             \
-			stl::source_location a_loc = stl::source_location::current()) \
+			std::source_location a_loc = std::source_location::current()) \
 		{                                                                 \
 			spdlog::log(                                                  \
 				spdlog::source_loc{                                       \
