@@ -11,7 +11,7 @@ if (NOT DEFINED VCPKG_ROOT AND DEFINED ENV{VCPKG_ROOT})
 endif ()
 
 if (DEFINED VCPKG_ROOT)
-	set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+	set(CMAKE_TOOLCHAIN_FILE "${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
 	set(VCPKG_TARGET_TRIPLET "x64-windows-static-md" CACHE STRING "")
 else ()
 	message(
