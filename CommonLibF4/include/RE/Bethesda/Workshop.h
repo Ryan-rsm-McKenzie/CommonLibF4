@@ -28,9 +28,8 @@ namespace RE
 		class PowerGrid;
 	}
 
-	struct Workshop
+	namespace Workshop
 	{
-	public:
 		struct BuildableAreaEvent;
 		struct PlacementStatusEvent;
 
@@ -113,26 +112,25 @@ namespace RE
 		};
 		static_assert(sizeof(WorkshopMenuNode) == 0x50);
 
-		[[nodiscard]] static WorkshopMenuNode* GetSelectedWorkshopMenuNode(std::uint32_t a_row, std::uint32_t& a_column)
+		[[nodiscard]] inline WorkshopMenuNode* GetSelectedWorkshopMenuNode(std::uint32_t a_row, std::uint32_t& a_column)
 		{
 			using func_t = decltype(&Workshop::GetSelectedWorkshopMenuNode);
 			REL::Relocation<func_t> func{ REL::ID(763948) };
 			return func(a_row, a_column);
 		}
 
-		static void ScrapReference(const ContextData& a_context, BSPointerHandleSmartPointer<BSPointerHandleManagerInterface<TESObjectREFR, HandleManager>>& a_scrapRef, BSTArray<BSTTuple<TESBoundObject*, std::uint32_t>>* a_rewards)
+		inline void ScrapReference(const ContextData& a_context, BSPointerHandleSmartPointer<BSPointerHandleManagerInterface<TESObjectREFR, HandleManager>>& a_scrapRef, BSTArray<BSTTuple<TESBoundObject*, std::uint32_t>>* a_rewards)
 		{
 			using func_t = decltype(&Workshop::ScrapReference);
 			REL::Relocation<func_t> func{ REL::ID(636327) };
 			return func(a_context, a_scrapRef, a_rewards);
 		}
 
-		[[nodiscard]] static bool WorkshopCanShowRecipe(BGSConstructibleObject* a_recipe, BGSKeyword* a_filter)
+		[[nodiscard]] inline bool WorkshopCanShowRecipe(BGSConstructibleObject* a_recipe, BGSKeyword* a_filter)
 		{
 			using func_t = decltype(&Workshop::WorkshopCanShowRecipe);
 			REL::Relocation<func_t> func{ REL::ID(239190) };
 			return func(a_recipe, a_filter);
 		}
-	};
-	static_assert(std::is_empty_v<Workshop>);
+	}
 }

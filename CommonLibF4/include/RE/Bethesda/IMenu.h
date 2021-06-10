@@ -16,7 +16,6 @@
 #include "RE/Bethesda/TESForms.h"
 #include "RE/Bethesda/UIMessage.h"
 #include "RE/Bethesda/UserEvents.h"
-#include "RE/Bethesda/Workshop.h"
 #include "RE/NetImmerse/NiColor.h"
 #include "RE/NetImmerse/NiMatrix3.h"
 #include "RE/NetImmerse/NiPoint2.h"
@@ -26,6 +25,12 @@
 
 namespace RE
 {
+	namespace Workshop
+	{
+		struct BuildableAreaEvent;
+		struct PlacementStatusEvent;
+	}
+
 	class BSGFxShaderFXTarget;
 	class ButtonHintBar;
 	class ExtraDataList;

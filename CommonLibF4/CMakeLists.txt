@@ -113,6 +113,13 @@ if (MSVC)
 			/wd5204 # 'type-name': class has virtual functions, but its trivial destructor is not virtual; instances of objects derived from this class may not be destructed correctly
 			/wd5220 # 'member': a non-static data member with a volatile qualified type no longer implies that compiler generated copy / move constructors and copy / move assignment operators are not trivial
 	)
+
+	target_compile_options(
+		${PROJECT_NAME}
+		PUBLIC
+			# disable warnings
+			/wd4201	# nonstandard extension used : nameless struct/union
+	)
 endif ()
 
 target_compile_definitions(

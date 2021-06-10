@@ -1694,6 +1694,30 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::BGSListForm };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kFLST };
 
+		[[nodiscard]] std::optional<std::uint32_t> GetItemIndex(const TESForm& a_item) const noexcept
+		{
+			if (scriptAddedTempForms) {
+				const auto it = std::find(
+					scriptAddedTempForms->begin(),
+					scriptAddedTempForms->end(),
+					a_item.formID);
+				if (it != scriptAddedTempForms->end()) {
+					return static_cast<std::uint32_t>(it - scriptAddedTempForms->begin());
+				}
+			}
+
+			const auto it = std::find(
+				arrayOfForms.begin(),
+				arrayOfForms.end(),
+				&a_item);
+			if (it != arrayOfForms.end()) {
+				const auto base = scriptAddedTempForms ? scriptAddedTempForms->size() : 0;
+				return base + static_cast<std::uint32_t>(it - arrayOfForms.begin());
+			}
+
+			return std::nullopt;
+		}
+
 		// members
 		BSTArray<TESForm*> arrayOfForms;                // 20
 		BSTArray<std::uint32_t>* scriptAddedTempForms;  // 38

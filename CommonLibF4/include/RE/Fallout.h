@@ -17,6 +17,7 @@
 #include "RE/Bethesda/BGSInventoryItem.h"
 #include "RE/Bethesda/BGSMod.h"
 #include "RE/Bethesda/BGSPrimitive.h"
+#include "RE/Bethesda/BGSSaveLoad.h"
 #include "RE/Bethesda/BGSStoryManagerTreeForm.h"
 #include "RE/Bethesda/BGSTextureSet.h"
 #include "RE/Bethesda/BSBound.h"
