@@ -36,6 +36,13 @@ namespace RE
 			return *singleton;
 		}
 
+		[[nodiscard]] bool CheckModsLoaded(bool a_everModded)
+		{
+			using func_t = decltype(&TESDataHandler::CheckModsLoaded);
+			REL::Relocation<func_t> func{ REL::ID(1432894) };
+			return func(this, a_everModded);
+		}
+
 		template <class T>
 		[[nodiscard]] BSTArray<T*>& GetFormArray() noexcept  //
 			requires(std::derived_from<T, TESForm> &&

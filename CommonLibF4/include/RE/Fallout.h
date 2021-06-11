@@ -44,6 +44,7 @@
 #include "RE/Bethesda/BSStringT.h"
 #include "RE/Bethesda/BSSystemFile.h"
 #include "RE/Bethesda/BSSystemFileStreamer.h"
+#include "RE/Bethesda/BSSystemUtility.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTBTree.h"
 #include "RE/Bethesda/BSTEvent.h"
