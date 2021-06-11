@@ -9,7 +9,7 @@ namespace RE
 	struct hknpCharacterInput;
 	struct hknpCharacterOutput;
 
-	class hknpCharacterState :
+	class __declspec(novtable) hknpCharacterState :
 		public hkReferencedObject  // 00
 	{
 	public:

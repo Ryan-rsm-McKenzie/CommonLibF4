@@ -5,7 +5,7 @@
 
 namespace RE
 {
-	class BSBound :
+	class __declspec(novtable) BSBound :
 		public NiExtraData  // 00
 	{
 	public:

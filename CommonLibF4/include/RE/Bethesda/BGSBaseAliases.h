@@ -7,7 +7,7 @@ namespace RE
 	class TESCondition;
 	class TESQuest;
 
-	class BGSBaseAlias
+	class __declspec(novtable) BGSBaseAlias
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::ExtraReferenceHandles };
@@ -63,7 +63,7 @@ namespace RE
 	};
 	static_assert(sizeof(BGSBaseAlias) == 0x28);
 
-	class BGSRefAlias :
+	class __declspec(novtable) BGSRefAlias :
 		public BGSBaseAlias  // 00
 	{
 	public:

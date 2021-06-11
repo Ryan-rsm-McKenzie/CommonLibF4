@@ -5,7 +5,7 @@
 
 namespace RE
 {
-	class NiExtraData :
+	class __declspec(novtable) NiExtraData :
 		public NiObject  // 00
 	{
 	public:

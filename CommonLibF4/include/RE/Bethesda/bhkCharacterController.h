@@ -56,7 +56,7 @@ namespace RE
 	};
 	static_assert(sizeof(hkStepInfo) == 0x10);
 
-	class bhkNPCollisionObjectBase :
+	class __declspec(novtable) bhkNPCollisionObjectBase :
 		public NiCollisionObject  // 00
 	{
 	public:
@@ -71,7 +71,7 @@ namespace RE
 	};
 	static_assert(sizeof(bhkNPCollisionObjectBase) == 0x20);
 
-	class bhkNPCollisionObject :
+	class __declspec(novtable) bhkNPCollisionObject :
 		public bhkNPCollisionObjectBase  // 00
 	{
 	public:
@@ -90,7 +90,7 @@ namespace RE
 	};
 	static_assert(sizeof(bhkNPCollisionObject) == 0x30);
 
-	class bhkNPCollisionObjectUnlinked :
+	class __declspec(novtable) bhkNPCollisionObjectUnlinked :
 		public bhkNPCollisionObject  // 00
 	{
 	public:
@@ -99,7 +99,7 @@ namespace RE
 	};
 	static_assert(sizeof(bhkNPCollisionObjectUnlinked) == 0x30);
 
-	class bhkCharacterController :
+	class __declspec(novtable) bhkCharacterController :
 		public bhkNPCollisionObjectUnlinked,                 // 000
 		public BSTEventSource<bhkCharacterMoveFinishEvent>,  // 030
 		public BSTEventSource<bhkNonSupportContactEvent>,    // 088

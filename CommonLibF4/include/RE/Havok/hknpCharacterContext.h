@@ -9,7 +9,7 @@ namespace RE
 {
 	class hknpCharacterStateManager;
 
-	class hknpCharacterContext :
+	class __declspec(novtable) hknpCharacterContext :
 		public hkReferencedObject  // 00
 	{
 	public:

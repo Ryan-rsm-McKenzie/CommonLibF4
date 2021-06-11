@@ -6,7 +6,7 @@ namespace RE
 {
 	class hkClass;
 
-	class hkReferencedObject :
+	class __declspec(novtable) hkReferencedObject :
 		public hkBaseObject  // 00
 	{
 	public:

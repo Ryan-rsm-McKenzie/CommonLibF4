@@ -80,7 +80,7 @@ namespace RE
 	};
 	static_assert(std::is_empty_v<hknpShapeType>);
 
-	class alignas(0x10) hknpShape :
+	class __declspec(novtable) alignas(0x10) hknpShape :
 		public hkReferencedObject  // 00
 	{
 	public:

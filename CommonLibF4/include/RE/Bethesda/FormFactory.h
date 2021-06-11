@@ -15,7 +15,7 @@ namespace RE
 
 	class TESForm;
 
-	class IFormFactory
+	class __declspec(novtable) IFormFactory
 	{
 	public:
 		static constexpr auto RTTI{ RTTI::IFormFactory };
@@ -43,7 +43,7 @@ namespace RE
 	static_assert(sizeof(IFormFactory) == 0x8);
 
 	template <class T, ENUM_FORM_ID ID = T::FORM_ID>
-	class ConcreteFormFactory :
+	class __declspec(novtable) ConcreteFormFactory :
 		public IFormFactory  // 00
 	{
 	public:
@@ -60,7 +60,7 @@ namespace RE
 	};
 
 	template <class T, ENUM_FORM_ID ID, OBJECT_TYPE TYPE, OBJECT_CATEGORY_TYPE CATEGORY>
-	class ConcreteObjectFormFactory :
+	class __declspec(novtable) ConcreteObjectFormFactory :
 		public ConcreteFormFactory<T, ID>  // 00
 	{
 	public:
