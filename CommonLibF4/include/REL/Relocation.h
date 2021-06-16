@@ -260,6 +260,11 @@ namespace REL
 		[[nodiscard]] constexpr reference operator[](std::size_t a_idx) noexcept { return _impl[a_idx]; }
 		[[nodiscard]] constexpr const_reference operator[](std::size_t a_idx) const noexcept { return _impl[a_idx]; }
 
+		[[nodiscard]] constexpr decltype(auto) begin() const noexcept { return _impl.begin(); }
+		[[nodiscard]] constexpr decltype(auto) cbegin() const noexcept { return _impl.cbegin(); }
+		[[nodiscard]] constexpr decltype(auto) end() const noexcept { return _impl.end(); }
+		[[nodiscard]] constexpr decltype(auto) cend() const noexcept { return _impl.cend(); }
+
 		[[nodiscard]] std::strong_ordering constexpr compare(const Version& a_rhs) const noexcept
 		{
 			for (std::size_t i = 0; i < _impl.size(); ++i) {
