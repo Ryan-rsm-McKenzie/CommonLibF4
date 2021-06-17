@@ -55,20 +55,7 @@ target_link_libraries(
 		spdlog::spdlog
 )
 
-# ---- File copying ----
-
-if (COPY_BUILD)
-	if (DEFINED Fallout4Path)
-		add_custom_command(
-			TARGET ${PROJECT_NAME}
-			POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ${Fallout4Path}/Data/F4SE/Plugins/
-			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE:${PROJECT_NAME}> ${Fallout4Path}/Data/F4SE/Plugins/
-		)
-	else ()
-		message(
-			WARNING
-			"Variable Fallout4Path is not defined. Skipping post-build copy command."
-		)
-	endif ()
-endif ()
+copy_files(
+	"$<TARGET_FILE:${PROJECT_NAME}>" "Data/F4SE/Plugins/"
+	"$<TARGET_PDB_FILE:${PROJECT_NAME}>" "Data/F4SE/Plugins/"
+)

@@ -1,18 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
-
-# ---- Options ----
-
-option(COPY_BUILD "Copy the build output to the Fallout 4 directory." OFF)
+include(cmake/common.cmake)
 
 # ---- Cache build vars ----
 
-macro(set_from_environment VARIABLE)
-	if (NOT DEFINED ${VARIABLE} AND DEFINED ENV{${VARIABLE}})
-		set(${VARIABLE} $ENV{${VARIABLE}})
-	endif ()
-endmacro()
-
-set_from_environment(Fallout4Path)
 set_from_environment(VCPKG_ROOT)
 
 if (DEFINED VCPKG_ROOT)

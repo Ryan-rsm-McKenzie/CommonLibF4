@@ -42,3 +42,8 @@ target_link_libraries(
 		robin_hood::robin_hood
 		spdlog::spdlog
 )
+
+copy_files(
+	"$<TARGET_FILE:${PROJECT_NAME}>" "Data/F4SE/Plugins/"
+	"$<TARGET_PDB_FILE:${PROJECT_NAME}>" "Data/F4SE/Plugins/"
+)
