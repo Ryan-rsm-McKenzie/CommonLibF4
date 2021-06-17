@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
 
-include("cmake/headerlist.cmake")
 include("cmake/sourcelist.cmake")
 
 include(../../cmake/common.cmake)
@@ -13,8 +12,7 @@ add_project(
 		"${CMAKE_CURRENT_BINARY_DIR}/include"
 		src
 	GROUPED_FILES
-		${headers}
-		${sources}
+		${SOURCES}
 		.clang-format
 	MISC_FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/include/Version.h"
