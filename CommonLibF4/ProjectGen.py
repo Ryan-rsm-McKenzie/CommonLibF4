@@ -56,15 +56,15 @@ def make_cmake():
 
 	def do_make(a_filename, a_varname, a_files):
 		out = open("cmake/" + a_filename + ".cmake", "w", encoding="utf-8")
-		out.write("set(" + a_varname + " ${" + a_varname + "}\n")
+		out.write("set({}\n".format(a_varname))
 
 		for file in a_files:
-			out.write("\t" + file + "\n")
+			out.write("\t{}\n".format(file))
 
 		out.write(")\n")
 
-	do_make("headerlist", "headers", headers)
-	do_make("sourcelist", "sources", sources)
+	do_make("headerlist", "HEADERS", headers)
+	do_make("sourcelist", "SOURCES", sources)
 
 def main():
 	cur = os.path.dirname(os.path.realpath(__file__))

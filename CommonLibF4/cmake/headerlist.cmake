@@ -1,4 +1,4 @@
-set(headers ${headers}
+set(HEADERS
 	include/F4SE/API.h
 	include/F4SE/F4SE.h
 	include/F4SE/Interfaces.h

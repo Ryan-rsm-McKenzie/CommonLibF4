@@ -1,4 +1,4 @@
-.git/
-.idea/
+/.idea
+/.vscode
 /cmake-build*
 /build*

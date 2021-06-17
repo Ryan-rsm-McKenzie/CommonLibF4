@@ -1,4 +1,4 @@
-set(sources ${sources}
+set(SOURCES
 	include/F4SE/API.cpp
 	include/F4SE/Interfaces.cpp
 	include/F4SE/Logger.cpp

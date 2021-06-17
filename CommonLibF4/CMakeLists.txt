@@ -35,8 +35,8 @@ source_group(
 	TREE
 		${CMAKE_CURRENT_SOURCE_DIR}
 	FILES
-		${headers}
-		${sources}
+		${HEADERS}
+		${SOURCES}
 )
 
 # ---- Create library ----
@@ -46,8 +46,8 @@ include(GNUInstallDirs)
 add_library(
 	${PROJECT_NAME}
 	STATIC
-	${headers}
-	${sources}
+	${HEADERS}
+	${SOURCES}
 	.clang-format
 	CommonLibF4.natvis
 )
@@ -165,7 +165,7 @@ install(
 )
 
 install(
-	FILES ${headers}
+	FILES ${HEADERS}
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
