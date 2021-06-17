@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
+# ---- Options ----
+
+option(COPY_BUILD "Copy the build output to the Fallout 4 directory." OFF)
+
 # ---- Cache build vars ----
 
 macro(set_from_environment VARIABLE)
@@ -8,6 +12,7 @@ macro(set_from_environment VARIABLE)
 	endif ()
 endmacro()
 
+set_from_environment(Fallout4Path)
 set_from_environment(VCPKG_ROOT)
 
 if (DEFINED VCPKG_ROOT)
@@ -32,8 +37,14 @@ project(
 )
 
 configure_file(
-	"${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in"
-	"${CMAKE_CURRENT_BINARY_DIR}/version.rc"
+	${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.h.in
+	${CMAKE_CURRENT_BINARY_DIR}/include/Version.h
+	@ONLY
+)
+
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in
+	${CMAKE_CURRENT_BINARY_DIR}/version.rc
 	@ONLY
 )
 
@@ -47,6 +58,14 @@ if (PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif ()
 
 # ---- Globals ----
+
+if (MSVC)
+	if (NOT ${CMAKE_GENERATOR} STREQUAL "Ninja")
+		add_compile_options(
+			/MP	# Build with Multiple Processes
+		)
+	endif ()
+endif ()
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF)
@@ -63,14 +82,16 @@ find_package(spdlog REQUIRED CONFIG)
 
 # ---- Add source files ----
 
-set(SOURCES
-	src/main.cpp
-	src/PCH.h
-)
+include(cmake/sourcelist.cmake)
 
 source_group(
 	TREE ${CMAKE_CURRENT_SOURCE_DIR}
 	FILES ${SOURCES}
+)
+
+source_group(
+	TREE ${CMAKE_CURRENT_BINARY_DIR}
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/include/Version.h
 )
 
 # ---- Create DLL ----
@@ -98,7 +119,8 @@ target_compile_features(
 target_include_directories(
 	${PROJECT_NAME}
 	PRIVATE
-		"${CMAKE_CURRENT_SOURCE_DIR}/src"
+		${CMAKE_CURRENT_BINARY_DIR}/include
+		${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_link_libraries(
@@ -165,3 +187,48 @@ if (MSVC)
 			"$<$<CONFIG:RELEASE>:/INCREMENTAL:NO;/OPT:REF;/OPT:ICF;/DEBUG:FULL>"
 	)
 endif ()
+
+# ---- File copying ----
+
+if (COPY_BUILD)
+	if (DEFINED Fallout4Path)
+		add_custom_command(
+			TARGET ${PROJECT_NAME}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> ${Fallout4Path}/Data/F4SE/Plugins/
+			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_PDB_FILE:${PROJECT_NAME}> ${Fallout4Path}/Data/F4SE/Plugins/
+		)
+	else ()
+		message(
+			WARNING
+			"Variable Fallout4Path is not defined. Skipping post-build copy command."
+		)
+	endif ()
+endif ()
+
+# ---- Build artifacts ----
+
+set(SCRIPT "scripts/archive_artifacts.py")
+
+add_custom_target(
+	create_artifact
+	COMMAND
+		"${CMAKE_CURRENT_SOURCE_DIR}/${SCRIPT}"
+		"--name=\"${PROJECT_NAME}\""
+		"--dll=\"$<TARGET_FILE:${PROJECT_NAME}>\""
+		"--pdb=\"$<TARGET_PDB_FILE:${PROJECT_NAME}>\""
+	WORKING_DIRECTORY
+		${CMAKE_CURRENT_BINARY_DIR}
+	SOURCES
+		${SCRIPT}
+)
+
+add_dependencies(
+	create_artifact
+	${PROJECT_NAME}
+)
+
+source_group(
+	TREE ${CMAKE_CURRENT_SOURCE_DIR}
+	FILES ${SCRIPT}
+)

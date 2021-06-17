@@ -8,7 +8,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 		return false;
 	}
 
-	*path /= "ExampleProject.log"sv;
+	*path /= fmt::format(FMT_STRING("{}.log"), Version::PROJECT);
 	auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
 #endif
 
@@ -24,9 +24,11 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 	spdlog::set_default_logger(std::move(log));
 	spdlog::set_pattern("%g(%#): [%^%l%$] %v"s);
 
+	logger::info(FMT_STRING("{} v{}"), Version::PROJECT, Version::NAME);
+
 	a_info->infoVersion = F4SE::PluginInfo::kVersion;
-	a_info->name = "ExampleProject";
-	a_info->version = 1;
+	a_info->name = Version::PROJECT.data();
+	a_info->version = Version::MAJOR;
 
 	if (a_f4se->IsEditor()) {
 		logger::critical("loaded in editor"sv);
@@ -35,7 +37,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 
 	const auto ver = a_f4se->RuntimeVersion();
 	if (ver < F4SE::RUNTIME_1_10_162) {
-		logger::critical("unsupported runtime v{}"sv, ver.string());
+		logger::critical(FMT_STRING("unsupported runtime v{}"), ver.string());
 		return false;
 	}
 
