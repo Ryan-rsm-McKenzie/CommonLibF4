@@ -759,7 +759,7 @@ namespace RE
 			Hash,
 			KeyEq,
 			BSTScatterTableTraits<Key, T>,
-			typename BSTStaticHashMapBase<N>::Allocator>;
+			BSTStaticHashMapBase<N>::template Allocator>;
 
 	template <
 		class Key,
