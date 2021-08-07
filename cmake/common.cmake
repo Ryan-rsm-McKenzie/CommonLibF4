@@ -1,8 +1,6 @@
-cmake_minimum_required(VERSION 3.20)
-
 macro(set_from_environment VARIABLE)
-	if(NOT DEFINED ${VARIABLE} AND DEFINED ENV{${VARIABLE}})
-		set(${VARIABLE} $ENV{${VARIABLE}})
+	if(NOT DEFINED "${VARIABLE}" AND DEFINED "ENV{${VARIABLE}}")
+		set("${VARIABLE}" "$ENV{${VARIABLE}}")
 	endif()
 endmacro()
 
@@ -30,11 +28,11 @@ macro(add_project)
 	)
 
 	cmake_parse_arguments(
-		${_PREFIX}
+		"${_PREFIX}"
 		"${_OPTIONS}"
 		"${_ONE_VALUE_ARGS}"
 		"${_MULTI_VALUE_ARGS}"
-		${ARGN}
+		"${ARGN}"
 	)
 
 	foreach(_ARG ${_REQUIRED})
@@ -105,11 +103,8 @@ macro(add_project)
 
 	# ---- Include guards ----
 
-	if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-		message(
-			FATAL_ERROR
-			"In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
-		)
+	if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
+		message(FATAL_ERROR "in-source builds are not allowed")
 	endif()
 
 	# ---- Add target ----
@@ -117,14 +112,14 @@ macro(add_project)
 	cmake_language(
 		CALL
 		"add_${${_PREFIX}_TARGET_TYPE}"	# add_executable/add_library
-		${PROJECT_NAME}
+		"${PROJECT_NAME}"
 		"${${_PREFIX}_LIBRARY_TYPE}"
 		${${_PREFIX}_GROUPED_FILES}
 		${${_PREFIX}_MISC_FILES}
 	)
 
 	set_target_properties(
-		${PROJECT_NAME}
+		"${PROJECT_NAME}"
 		PROPERTIES
 			CXX_STANDARD 20
 			CXX_STANDARD_REQUIRED ON
@@ -133,84 +128,49 @@ macro(add_project)
 	)
 
 	target_compile_definitions(
-		${PROJECT_NAME}
+		"${PROJECT_NAME}"
 		PRIVATE
 			_UNICODE
 			${${_PREFIX}_COMPILE_DEFINITIONS}
 	)
 
 	target_include_directories(
-		${PROJECT_NAME}
+		"${PROJECT_NAME}"
 		PRIVATE
 			${${_PREFIX}_INCLUDE_DIRECTORIES}
 	)
 
 	target_precompile_headers(
-		${PROJECT_NAME}
+		"${PROJECT_NAME}"
 		PRIVATE
 			${${_PREFIX}_PRECOMPILED_HEADERS}
 	)
 
 	if(MSVC)
 		target_compile_options(
-			${PROJECT_NAME}
+			"${PROJECT_NAME}"
 			PRIVATE
 				/sdl	# Enable Additional Security Checks
 				/utf-8	# Set Source and Executable character sets to UTF-8
 				/Zi	# Debug Information Format
 
 				/permissive-	# Standards conformance
-
-				/Zc:alignedNew	# C++17 over-aligned allocation
-				/Zc:auto	# Deduce Variable Type
-				/Zc:char8_t
-				/Zc:__cplusplus	# Enable updated __cplusplus macro
-				/Zc:externC
-				/Zc:externConstexpr	# Enable extern constexpr variables
-				/Zc:forScope	# Force Conformance in for Loop Scope
-				/Zc:hiddenFriend
-				/Zc:implicitNoexcept	# Implicit Exception Specifiers
-				/Zc:lambda
-				/Zc:noexceptTypes	# C++17 noexcept rules
-				/Zc:preprocessor	# Enable preprocessor conformance mode
-				/Zc:referenceBinding	# Enforce reference binding rules
-				/Zc:rvalueCast	# Enforce type conversion rules
-				/Zc:sizedDealloc	# Enable Global Sized Deallocation Functions
-				/Zc:strictStrings	# Disable string literal type conversion
-				/Zc:ternary	# Enforce conditional operator rules
-				/Zc:threadSafeInit	# Thread-safe Local Static Initialization
-				/Zc:tlsGuards
-				/Zc:trigraphs	# Trigraphs Substitution
-				/Zc:wchar_t	# wchar_t Is Native Type
-
-				/external:anglebrackets
-				/external:W0
-
-				/W4	# Warning level
-				/WX	# Warning level (warnings are errors)
 		)
 
 		target_link_options(
-			${PROJECT_NAME}
+			"${PROJECT_NAME}"
 			PRIVATE
 				/WX	# Treat Linker Warnings as Errors
 
 				"$<$<CONFIG:DEBUG>:/INCREMENTAL;/OPT:NOREF;/OPT:NOICF>"
 				"$<$<CONFIG:RELEASE>:/INCREMENTAL:NO;/OPT:REF;/OPT:ICF;/DEBUG:FULL>"
 		)
-
-		if(NOT CMAKE_GENERATOR STREQUAL "Ninja")
-			target_compile_options(
-				${PROJECT_NAME}
-				PRIVATE
-					/MP	# Build with Multiple Processes
-			)
-		endif()
 	endif()
 
 	source_group(
-		TREE ${CMAKE_CURRENT_SOURCE_DIR}
-		FILES ${${_PREFIX}_GROUPED_FILES}
+		TREE "${CMAKE_CURRENT_SOURCE_DIR}"
+		FILES
+			${${_PREFIX}_GROUPED_FILES}
 	)
 
 	# ---- Cleanup local variables ----
@@ -222,7 +182,7 @@ macro(add_project)
 endmacro()
 
 macro(copy_files)
-	if(NOT ${ARGC} GREATER 0)
+	if(NOT "${ARGC}" GREATER 0)
 		message(FATAL_ERROR "Invalid number of arguments.")
 	endif()
 
@@ -239,19 +199,19 @@ macro(copy_files)
 		set_from_environment(Fallout4Path)
 		if(DEFINED Fallout4Path)
 			math(EXPR _PAIRS "${ARGC} / 2 - 1")
-			foreach(_IDX RANGE ${_PAIRS})
+			foreach(_IDX RANGE "${_PAIRS}")
 				math(EXPR _IDX "${_IDX} * 2")
 				math(EXPR _IDXN "${_IDX} + 1")
 
-				list(GET _ARGS ${_IDX} _FROM)
-				list(GET _ARGS ${_IDXN} _TO)
+				list(GET _ARGS "${_IDX}" _FROM)
+				list(GET _ARGS "${_IDXN}" _TO)
 
 				cmake_path(SET _TO NORMALIZE "${Fallout4Path}/${_TO}")
 
 				add_custom_command(
-					TARGET ${PROJECT_NAME}
+					TARGET "${PROJECT_NAME}"
 					POST_BUILD
-					COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_FROM}" "${_TO}"
+					COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${_FROM}" "${_TO}"
 				)
 			endforeach()
 		else()

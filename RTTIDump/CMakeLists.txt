@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.20)
-
-include(../cmake/common.cmake)
 add_project(
 	TARGET_TYPE LIBRARY
 	LIBRARY_TYPE SHARED
@@ -9,19 +6,17 @@ add_project(
 	INCLUDE_DIRECTORIES
 		src
 	GROUPED_FILES
-		src/main.cpp
-		src/PCH.cpp
-		src/PCH.h
-		.clang-format
+		"src/main.cpp"
+		"src/PCH.cpp"
+		"src/PCH.h"
+		".clang-format"
 	PRECOMPILED_HEADERS
-		src/PCH.h
+		"src/PCH.h"
 )
 
-set(Boost_USE_STATIC_LIBS ON)
-
-if (NOT TARGET CommonLibF4)
+if(NOT TARGET CommonLibF4)
 	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../CommonLibF4" CommonLibF4)
-endif ()
+endif()
 
 find_package(Boost
 	MODULE
@@ -33,7 +28,7 @@ find_package(robin_hood REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
 
 target_link_libraries(
-	${PROJECT_NAME}
+	"${PROJECT_NAME}"
 	PUBLIC
 		Boost::headers
 		Boost::regex

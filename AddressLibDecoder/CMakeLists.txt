@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.20)
-
-include(../cmake/common.cmake)
 add_project(
 	TARGET_TYPE EXECUTABLE
 	PROJECT AddressLibDecoder
@@ -8,11 +5,9 @@ add_project(
 	INCLUDE_DIRECTORIES
 		src
 	GROUPED_FILES
-		src/main.cpp
-		.clang-format
+		"src/main.cpp"
+		".clang-format"
 )
-
-set(Boost_USE_STATIC_LIBS ON)
 
 find_package(Boost
 	MODULE
@@ -23,7 +18,7 @@ find_package(Boost
 find_package(fmt REQUIRED CONFIG)
 
 target_link_libraries(
-	${PROJECT_NAME}
+	"${PROJECT_NAME}"
 	PUBLIC
 		Boost::iostreams
 		fmt::fmt

@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.20)
-
-include(../../cmake/common.cmake)
 add_project(
 	TARGET_TYPE LIBRARY
 	LIBRARY_TYPE SHARED
@@ -9,14 +6,12 @@ add_project(
 	INCLUDE_DIRECTORIES
 		src
 	GROUPED_FILES
-		src/main.cpp
-		src/PCH.h
-		.clang-format
+		"src/main.cpp"
+		"src/PCH.h"
+		".clang-format"
 	PRECOMPILED_HEADERS
-		src/PCH.h
+		"src/PCH.h"
 )
-
-set(Boost_USE_STATIC_LIBS ON)
 
 find_package(
 	Boost

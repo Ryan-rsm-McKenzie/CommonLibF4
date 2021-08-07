@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 3.20)
-
-include(../../cmake/common.cmake)
 add_project(
 	TARGET_TYPE EXECUTABLE
 	PROJECT f4se_loader
@@ -8,14 +5,12 @@ add_project(
 	INCLUDE_DIRECTORIES
 		src
 	GROUPED_FILES
-		src/main.cpp
-		src/PCH.h
-		.clang-format
+		"src/main.cpp"
+		"src/PCH.h"
+		".clang-format"
 	PRECOMPILED_HEADERS
-		src/PCH.h
+		"src/PCH.h"
 )
-
-set(Boost_USE_STATIC_LIBS ON)
 
 find_package(args REQUIRED CONFIG)
 find_package(
@@ -31,7 +26,7 @@ find_package(spdlog REQUIRED CONFIG)
 find_package(xbyak REQUIRED CONFIG)
 
 target_link_libraries(
-	${PROJECT_NAME}
+	"${PROJECT_NAME}"
 	PRIVATE
 		Boost::nowide
 		fmt::fmt
