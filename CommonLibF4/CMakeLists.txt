@@ -28,14 +28,12 @@ find_package(spdlog REQUIRED CONFIG)
 
 # ---- Add source files ----
 
-include("cmake/headerlist.cmake")
 include("cmake/sourcelist.cmake")
 
 source_group(
 	TREE
 		${CMAKE_CURRENT_SOURCE_DIR}
 	FILES
-		${HEADERS}
 		${SOURCES}
 )
 
@@ -46,7 +44,6 @@ include(GNUInstallDirs)
 add_library(
 	${PROJECT_NAME}
 	STATIC
-	${HEADERS}
 	${SOURCES}
 	.clang-format
 	CommonLibF4.natvis
@@ -165,7 +162,10 @@ install(
 )
 
 install(
-	FILES ${HEADERS}
+	DIRECTORY
+		"include/F4SE"
+		"include/RE"
+		"include/REL"
 	DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
