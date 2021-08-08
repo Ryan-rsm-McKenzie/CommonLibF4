@@ -21,9 +21,9 @@
 #pragma warning(pop)
 
 #ifdef NDEBUG
-#include <spdlog/sinks/basic_file_sink.h>
+#	include <spdlog/sinks/basic_file_sink.h>
 #else
-#include <spdlog/sinks/msvc_sink.h>
+#	include <spdlog/sinks/msvc_sink.h>
 #endif
 
 #define DLLEXPORT __declspec(dllexport)

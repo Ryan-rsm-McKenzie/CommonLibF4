@@ -425,7 +425,7 @@ namespace RE
 			const auto idx = GetCurrentPickIndex();
 			const auto& refs = GetPickRefs();
 			return 0 <= idx && static_cast<std::size_t>(idx) < refs.size() ?
-			           refs[static_cast<std::size_t>(idx)] :
+                       refs[static_cast<std::size_t>(idx)] :
                        ObjectRefHandle{};
 		}
 

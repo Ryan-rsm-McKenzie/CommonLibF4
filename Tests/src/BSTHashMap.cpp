@@ -284,33 +284,33 @@ BOOST_TEST_GLOBAL_CONFIGURATION(LogCfg);
 
 BOOST_AUTO_TEST_SUITE(test_scatter_table)
 
-	[[nodiscard]] const key_type& get1(const key_type& a_value) { return a_value; }
-	[[nodiscard]] const key_type& get2(const RE::BSTTuple<const key_type, mapped_type>& a_value) { return a_value.first; }
-	[[nodiscard]] auto make1(key_type a_key, mapped_type) { return a_key; };
-	[[nodiscard]] auto make2(key_type a_key, mapped_type a_idx) { return std::make_pair(std::move(a_key), a_idx); };
+[[nodiscard]] const key_type& get1(const key_type& a_value) { return a_value; }
+[[nodiscard]] const key_type& get2(const RE::BSTTuple<const key_type, mapped_type>& a_value) { return a_value.first; }
+[[nodiscard]] auto make1(key_type a_key, mapped_type) { return a_key; };
+[[nodiscard]] auto make2(key_type a_key, mapped_type a_idx) { return std::make_pair(std::move(a_key), a_idx); };
 
-	BOOST_AUTO_TEST_CASE(test_hash_map)
-	{
-		evaluate<RE::BSTHashMap<key_type, mapped_type>>(get2, make2, true);
-		evaluate<RE::BSTHashMap<key_type, mapped_type, bad_hasher>>(get2, make2, true);
-	}
+BOOST_AUTO_TEST_CASE(test_hash_map)
+{
+	evaluate<RE::BSTHashMap<key_type, mapped_type>>(get2, make2, true);
+	evaluate<RE::BSTHashMap<key_type, mapped_type, bad_hasher>>(get2, make2, true);
+}
 
-	BOOST_AUTO_TEST_CASE(test_set)
-	{
-		evaluate<RE::BSTSet<key_type>>(get1, make1, true);
-		evaluate<RE::BSTSet<key_type, bad_hasher>>(get1, make1, true);
-	}
+BOOST_AUTO_TEST_CASE(test_set)
+{
+	evaluate<RE::BSTSet<key_type>>(get1, make1, true);
+	evaluate<RE::BSTSet<key_type, bad_hasher>>(get1, make1, true);
+}
 
-	BOOST_AUTO_TEST_CASE(test_static_hash_map)
-	{
-		evaluate<RE::BSTStaticHashMap<key_type, mapped_type, 1u << 5>>(get2, make2, false);
-		evaluate<RE::BSTStaticHashMap<key_type, mapped_type, 1u << 5, bad_hasher>>(get2, make2, false);
-	}
+BOOST_AUTO_TEST_CASE(test_static_hash_map)
+{
+	evaluate<RE::BSTStaticHashMap<key_type, mapped_type, 1u << 5>>(get2, make2, false);
+	evaluate<RE::BSTStaticHashMap<key_type, mapped_type, 1u << 5, bad_hasher>>(get2, make2, false);
+}
 
-	BOOST_AUTO_TEST_CASE(test_scrap_hash_map)
-	{
-		evaluate<RE::BSTScrapHashMap<key_type, mapped_type>>(get2, make2, false);
-		evaluate<RE::BSTScrapHashMap<key_type, mapped_type, bad_hasher>>(get2, make2, false);
-	}
+BOOST_AUTO_TEST_CASE(test_scrap_hash_map)
+{
+	evaluate<RE::BSTScrapHashMap<key_type, mapped_type>>(get2, make2, false);
+	evaluate<RE::BSTScrapHashMap<key_type, mapped_type, bad_hasher>>(get2, make2, false);
+}
 
 BOOST_AUTO_TEST_SUITE_END()
