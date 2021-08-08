@@ -150,11 +150,13 @@ macro(add_project)
 		target_compile_options(
 			"${PROJECT_NAME}"
 			PRIVATE
-				/sdl	# Enable Additional Security Checks
-				/utf-8	# Set Source and Executable character sets to UTF-8
-				/Zi	# Debug Information Format
+				"/sdl"	# Enable Additional Security Checks
+				"/utf-8"	# Set Source and Executable character sets to UTF-8
+				"/Zi"	# Debug Information Format
 
-				/permissive-	# Standards conformance
+				"/permissive-"	# Standards conformance
+
+				"/Zc:preprocessor"	# Enable preprocessor conformance mode
 		)
 
 		target_link_options(

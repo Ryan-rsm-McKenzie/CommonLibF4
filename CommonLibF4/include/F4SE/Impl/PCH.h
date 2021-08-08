@@ -22,7 +22,6 @@
 #include <memory>
 #include <new>
 #include <optional>
-#include <ranges>
 #include <source_location>
 #include <span>
 #include <sstream>
@@ -39,7 +38,7 @@ static_assert(
 	std::is_integral_v<std::time_t> && sizeof(std::time_t) == sizeof(std::size_t),
 	"wrap std::time_t instead");
 
-#pragma warning(push)
+#pragma warning(push, 0)
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/iterator/function_input_iterator.hpp>
 #include <boost/iterator/iterator_facade.hpp>

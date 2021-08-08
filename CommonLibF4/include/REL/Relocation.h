@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #define REL_MAKE_MEMBER_FUNCTION_POD_TYPE_HELPER_IMPL(a_nopropQual, a_propQual, ...)              \
 	template <                                                                                    \
 		class R,                                                                                  \
@@ -409,7 +410,7 @@ namespace REL
 				return WinAPI::GetEnvironmentVariable(
 					ENVIRONMENT.data(),
 					_filename.data(),
-					_filename.size());
+					static_cast<std::uint32_t>(_filename.size()));
 			};
 
 			_filename.resize(getFilename());

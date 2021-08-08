@@ -145,31 +145,7 @@ if (MSVC)
 			/Zi	# Debug Information Format
 
 			/permissive-	# Standards conformance
-
-			/Zc:alignedNew	# C++17 over-aligned allocation
-			/Zc:auto	# Deduce Variable Type
-			/Zc:char8_t
-			/Zc:__cplusplus	# Enable updated __cplusplus macro
-			/Zc:externC
-			/Zc:externConstexpr	# Enable extern constexpr variables
-			/Zc:forScope	# Force Conformance in for Loop Scope
-			/Zc:hiddenFriend
-			/Zc:implicitNoexcept	# Implicit Exception Specifiers
-			/Zc:lambda
-			/Zc:noexceptTypes	# C++17 noexcept rules
 			/Zc:preprocessor	# Enable preprocessor conformance mode
-			/Zc:referenceBinding	# Enforce reference binding rules
-			/Zc:rvalueCast	# Enforce type conversion rules
-			/Zc:sizedDealloc	# Enable Global Sized Deallocation Functions
-			/Zc:strictStrings	# Disable string literal type conversion
-			/Zc:ternary	# Enforce conditional operator rules
-			/Zc:threadSafeInit	# Thread-safe Local Static Initialization
-			/Zc:tlsGuards
-			/Zc:trigraphs	# Trigraphs Substitution
-			/Zc:wchar_t	# wchar_t Is Native Type
-
-			/external:anglebrackets
-			/external:W0
 
 			/W4	# Warning level
 			/WX	# Warning level (warnings are errors)
