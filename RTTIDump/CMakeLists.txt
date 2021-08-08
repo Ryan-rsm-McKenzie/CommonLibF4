@@ -9,7 +9,6 @@ add_project(
 		"src/main.cpp"
 		"src/PCH.cpp"
 		"src/PCH.h"
-		".clang-format"
 	PRECOMPILED_HEADERS
 		"src/PCH.h"
 )

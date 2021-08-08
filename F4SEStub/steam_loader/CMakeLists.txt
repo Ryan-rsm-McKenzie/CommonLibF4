@@ -8,7 +8,6 @@ add_project(
 	GROUPED_FILES
 		"src/main.cpp"
 		"src/PCH.h"
-		".clang-format"
 	PRECOMPILED_HEADERS
 		"src/PCH.h"
 )

@@ -31,7 +31,7 @@ add_library(
 	"${PROJECT_NAME}"
 	STATIC
 	${SOURCES}
-	".clang-format"
+	"../.clang-format"
 	"CommonLibF4.natvis"
 )
 

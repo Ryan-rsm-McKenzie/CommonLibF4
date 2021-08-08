@@ -10,7 +10,6 @@ add_project(
 		src
 	GROUPED_FILES
 		${SOURCES}
-		".clang-format"
 	MISC_FILES
 		"${CMAKE_CURRENT_BINARY_DIR}/include/Version.h"
 		"${CMAKE_CURRENT_BINARY_DIR}/version.rc"

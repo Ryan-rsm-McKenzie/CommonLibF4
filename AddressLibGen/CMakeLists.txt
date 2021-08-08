@@ -6,7 +6,6 @@ add_project(
 		src
 	GROUPED_FILES
 		"src/main.cpp"
-		".clang-format"
 )
 
 find_package(Boost
