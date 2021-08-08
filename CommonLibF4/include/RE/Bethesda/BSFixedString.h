@@ -19,26 +19,99 @@ namespace RE
 			using reference = value_type&;
 			using const_reference = const value_type&;
 
+		private:
+			class Wrapper
+			{
+			public:
+				Wrapper() = default;
+
+				Wrapper(const Wrapper& a_rhs) :
+					_data(a_rhs._data)
+				{
+					try_acquire();
+				}
+
+				Wrapper(Wrapper&& a_rhs) noexcept :
+					_data(std::exchange(a_rhs._data, nullptr))
+				{}
+
+				~Wrapper() { try_release(); }
+
+				Wrapper& operator=(const Wrapper& a_rhs)
+				{
+					if (this != std::addressof(a_rhs)) {
+						try_release();
+						_data = a_rhs._data;
+						try_acquire();
+					}
+					return *this;
+				}
+
+				Wrapper& operator=(Wrapper&& a_rhs) noexcept
+				{
+					if (this != std::addressof(a_rhs)) {
+						_data = std::exchange(a_rhs._data, nullptr);
+					}
+					return *this;
+				}
+
+				void assign(const_pointer a_string)
+				{
+					try_release();
+					if (a_string) {
+						GetEntry<value_type>(_data, a_string, CS);
+					}
+				}
+
+				[[nodiscard]] const_pointer data() const noexcept
+				{
+					const auto cstr = _data ? _data->data<value_type>() : nullptr;
+					return cstr ? cstr : EMPTY;
+				}
+
+				[[nodiscard]] const RE::BSStringPool::Entry* leaf() const noexcept { return _data ? _data->leaf() : nullptr; }
+
+				[[nodiscard]] const RE::BSStringPool::Entry* raw() const noexcept { return _data; }
+
+				[[nodiscard]] size_type size() const noexcept { return _data ? _data->size() : 0; }
+
+			private:
+				static constexpr const value_type EMPTY[]{ 0 };
+
+				void try_acquire()
+				{
+					if (_data) {
+						_data->acquire();
+					}
+				}
+
+				void try_release()
+				{
+					if (_data) {
+						BSStringPool::Entry::release(_data);
+						_data = nullptr;
+					}
+				}
+
+				BSStringPool::Entry* _data{ nullptr };
+			};
+
+		public:
 			BSFixedString() noexcept = default;
 
 			template <bool B>
 			BSFixedString(const BSFixedString<value_type, B>& a_rhs) :
-				_data(a_rhs._data)
-			{
-				try_acquire();
-			}
+				_wrap(a_rhs._wrap)
+			{}
 
 			template <bool B>
 			BSFixedString(BSFixedString<value_type, B>&& a_rhs) noexcept :
-				_data(std::exchange(a_rhs._data, nullptr))
+				_wrap(std::move(a_rhs._wrap))
 			{}
 
-			BSFixedString(const_pointer a_string)  // NOLINT(google-explicit-constructor)
-			{
-				if (a_string) {
-					GetEntry<value_type>(_data, a_string, CS);
-				}
-			}
+			BSFixedString(const_pointer a_string) { _wrap.assign(a_string); }
+
+			~BSFixedString() {}
 
 			template <class T>
 			BSFixedString(const T& a_string)  //
@@ -49,38 +122,28 @@ namespace RE
 			{
 				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
 				if (!view.empty()) {
-					GetEntry<value_type>(_data, view.data(), CS);
+					assert(view.data()[view.length()] == value_type{});
+					_wrap.assign(view.data());
 				}
 			}
-
-			~BSFixedString() { try_release(); }
 
 			template <bool B>
 			BSFixedString& operator=(const BSFixedString<value_type, B>& a_rhs)
 			{
-				if (this != std::addressof(a_rhs)) {
-					try_release();
-					_data = a_rhs._data;
-					try_acquire();
-				}
+				_wrap = a_rhs._wrap;
 				return *this;
 			}
 
 			template <bool B>
 			BSFixedString& operator=(BSFixedString<value_type, B>&& a_rhs)
 			{
-				if (this != std::addressof(a_rhs)) {
-					_data = std::exchange(a_rhs._data, nullptr);
-				}
+				_wrap = std::move(a_rhs._wrap);
 				return *this;
 			}
 
 			BSFixedString& operator=(const_pointer a_string)
 			{
-				try_release();
-				if (a_string) {
-					GetEntry<value_type>(_data, a_string, CS);
-				}
+				_wrap.assign(a_string);
 				return *this;
 			}
 
@@ -92,9 +155,9 @@ namespace RE
 						 !std::same_as<T, BSFixedString<value_type, false>>)
 			{
 				const auto view = static_cast<std::basic_string_view<value_type>>(a_string);
-				try_release();
 				if (!view.empty()) {
-					GetEntry<value_type>(_data, view.data(), CS);
+					assert(view.data()[view.length()] == value_type{});
+					_wrap.assign(view.data());
 				}
 				return *this;
 			}
@@ -102,11 +165,7 @@ namespace RE
 			[[nodiscard]] const_reference front() const noexcept { return data()[0]; }
 			[[nodiscard]] const_reference back() const noexcept { return data()[size() - 1]; }
 
-			[[nodiscard]] const_pointer data() const noexcept
-			{
-				const auto cstr = _data ? _data->data<value_type>() : nullptr;
-				return cstr ? cstr : EMPTY;
-			}
+			[[nodiscard]] const_pointer data() const noexcept { return _wrap.data(); }
 
 			[[nodiscard]] const_pointer c_str() const noexcept { return data(); }
 
@@ -114,16 +173,15 @@ namespace RE
 
 			[[nodiscard]] bool empty() const noexcept { return size() == 0; }
 
-			[[nodiscard]] size_type size() const noexcept { return _data ? _data->size() : 0; }
-			[[nodiscard]] size_type length() const noexcept { return _data ? _data->length() : 0; }
+			[[nodiscard]] size_type size() const noexcept { return _wrap.size(); }
+			[[nodiscard]] size_type length() const noexcept { return _wrap.size(); }
 
 			template <class T>
 			[[nodiscard]] friend bool operator==(const T& a_lhs, const T& a_rhs) noexcept
 				requires(std::same_as<T, BSFixedString>)
 			{
-				const auto leaf = [](const BSFixedString& a_elem) { return a_elem._data ? a_elem._data->leaf() : nullptr; };
-				const auto lLeaf = leaf(a_lhs);
-				const auto rLeaf = leaf(a_rhs);
+				const auto lLeaf = a_lhs._wrap.leaf();
+				const auto rLeaf = a_rhs._wrap.leaf();
 				if (lLeaf == rLeaf) {
 					return true;
 				} else if (a_lhs.empty() && a_rhs.empty()) {
@@ -148,7 +206,7 @@ namespace RE
 			template <class>
 			friend struct RE::BSCRC32;
 
-			[[nodiscard]] const void* hash_accessor() const noexcept { return _data; }
+			[[nodiscard]] const void* hash_accessor() const noexcept { return _wrap.raw(); }
 
 		private:
 			template <class, bool>
@@ -172,19 +230,8 @@ namespace RE
 				}
 			}
 
-			void try_acquire()
-			{
-				if (_data) {
-					_data->acquire();
-				}
-			}
-
-			void try_release() { BSStringPool::Entry::release(_data); }
-
-			static constexpr const value_type EMPTY[]{ 0 };
-
 			// members
-			BSStringPool::Entry* _data{ nullptr };  // 0
+			Wrapper _wrap;  // 0
 		};
 
 		extern template class BSFixedString<char, false>;
