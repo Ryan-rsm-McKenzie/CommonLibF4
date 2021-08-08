@@ -812,7 +812,8 @@ namespace RE::BSScript
 					  std::same_as<T, BSFixedStringCS>) {
 			return get<BSFixedString>(a_var);
 		} else {
-			return T(static_cast<std::string_view>(get<BSFixedString>(a_var)));
+			const auto str = get<BSFixedString>(a_var);
+			return T(static_cast<std::string_view>(str));
 		}
 	}
 
@@ -1029,11 +1030,16 @@ namespace RE::BSScript
 			const auto pframe = std::addressof(a_stackFrame);
 			const auto page = a_stack.GetPageForFrame(pframe);
 			const auto args = [&]<class T>(std::in_place_type_t<T>, std::size_t a_index) {
-				return UnpackVariable<detail::decay_t<T>>(
-					a_stack.GetStackFrameVariable(
-						pframe,
-						static_cast<std::uint32_t>(a_index),
-						page));
+				if (a_stackFrame.size > a_index) {
+					return UnpackVariable<detail::decay_t<T>>(
+						a_stack.GetStackFrameVariable(
+							pframe,
+							static_cast<std::uint32_t>(a_index),
+							page));
+				} else {
+					assert(false);
+					return T();
+				}
 			};
 
 			if constexpr (LONG) {
