@@ -111,8 +111,6 @@ namespace RE
 
 			BSFixedString(const_pointer a_string) { _wrap.assign(a_string); }
 
-			~BSFixedString() {}
-
 			template <class T>
 			BSFixedString(const T& a_string)  //
 				requires(std::convertible_to<const T&, std::basic_string_view<value_type>> &&
@@ -126,6 +124,8 @@ namespace RE
 					_wrap.assign(view.data());
 				}
 			}
+
+			~BSFixedString() {}
 
 			template <bool B>
 			BSFixedString& operator=(const BSFixedString<value_type, B>& a_rhs)
