@@ -402,6 +402,13 @@ namespace RE
 		static constexpr auto VTABLE{ VTABLE::Console };
 		static constexpr auto MENU_NAME{ "Console"sv };
 
+		static void ExecuteCommand(const char* a_command)
+		{
+			using func_t = decltype(&Console::ExecuteCommand);
+			REL::Relocation<func_t> func{ REL::ID(1061864) };
+			return func(a_command);
+		}
+
 		[[nodiscard]] static decltype(auto) GetCurrentPickIndex()
 		{
 			REL::Relocation<std::int32_t*> currentPickIndex{ REL::ID(1407033) };
