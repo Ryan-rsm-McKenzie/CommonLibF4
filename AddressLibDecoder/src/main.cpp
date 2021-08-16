@@ -11,8 +11,8 @@
 #include <type_traits>
 #include <utility>
 
-#include <boost/iostreams/device/mapped_file.hpp>
 #include <fmt/format.h>
+#include <mmio/mmio.hpp>
 #pragma warning(pop)
 
 using namespace std::literals;
@@ -26,13 +26,12 @@ struct Pair
 int main(int a_argc, char* a_argv[])
 {
 	try {
-		boost::iostreams::mapped_file_source input;
+		mmio::mapped_file_source input;
 		std::ofstream output;
 
 		for (int i = 1; i < a_argc; ++i) {
 			std::filesystem::path filename = a_argv[static_cast<std::size_t>(i)];
-			input.open(filename.string());
-			if (!input.is_open()) {
+			if (!input.open(filename.string())) {
 				throw std::runtime_error("failed to open: "s + filename.string());
 			}
 

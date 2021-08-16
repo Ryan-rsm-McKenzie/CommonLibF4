@@ -8,17 +8,12 @@ add_project(
 		"src/main.cpp"
 )
 
-find_package(Boost
-	MODULE
-	REQUIRED
-	COMPONENTS
-		iostreams
-)
 find_package(fmt REQUIRED CONFIG)
+find_package(mmio REQUIRED CONFIG)
 
 target_link_libraries(
 	"${PROJECT_NAME}"
 	PUBLIC
-		Boost::iostreams
 		fmt::fmt
+		mmio::mmio
 )

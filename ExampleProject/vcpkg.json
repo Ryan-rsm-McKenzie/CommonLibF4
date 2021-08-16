@@ -5,10 +5,11 @@
   "homepage": "https://github.com/Ryan-rsm-McKenzie/CommonLibF4",
   "license": "MIT",
   "dependencies": [
-    "boost-iostreams",
     "boost-iterator",
     "boost-predef",
     "boost-stl-interfaces",
+    "fmt",
+    "mmio",
     "spdlog"
   ]
 }

@@ -4,15 +4,15 @@
   "dependencies": [
     "args",
     "boost-algorithm",
-    "boost-iostreams",
     "boost-iterator",
     "boost-nowide",
     "boost-predef",
     "boost-regex",
     "boost-stl-interfaces",
-    "boost-test",
+    "catch2",
     "fmt",
     "frozen",
+    "mmio",
     "robin-hood-hashing",
     "spdlog",
     "xbyak"

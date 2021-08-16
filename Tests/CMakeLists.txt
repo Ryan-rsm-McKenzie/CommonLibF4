@@ -8,21 +8,21 @@ add_project(
 		src
 	GROUPED_FILES
 		"src/BSTHashMap.cpp"
+		"src/main.cpp"
 		"src/pch.h"
 	PRECOMPILED_HEADERS
 		"src/pch.h"
 )
 
-find_package(Boost
-	MODULE
-	REQUIRED
-	COMPONENTS
-		unit_test_framework
-)
+find_package(Boost MODULE REQUIRED)
+find_package(Catch2 REQUIRED CONFIG)
+
+include(Catch)
+catch_discover_tests("${PROJECT_NAME}")
 
 target_link_libraries(
 	"${PROJECT_NAME}"
 	PRIVATE
 		Boost::headers
-		Boost::unit_test_framework
+		Catch2::Catch2
 )

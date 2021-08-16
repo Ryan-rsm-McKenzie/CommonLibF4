@@ -39,12 +39,12 @@ static_assert(
 	"wrap std::time_t instead");
 
 #pragma warning(push, 0)
-#include <boost/iostreams/device/mapped_file.hpp>
 #include <boost/iterator/function_input_iterator.hpp>
-#include <boost/iterator/iterator_facade.hpp>
 #include <boost/predef.h>
 #include <boost/stl_interfaces/iterator_interface.hpp>
 #include <boost/stl_interfaces/sequence_container_interface.hpp>
+#include <fmt/format.h>
+#include <mmio/mmio.hpp>
 #include <spdlog/spdlog.h>
 #pragma warning(pop)
 

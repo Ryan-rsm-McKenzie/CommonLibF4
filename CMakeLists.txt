@@ -17,6 +17,8 @@ function(conditionally_add_subdirectory SRC_DIR)
 	endif()
 endfunction()
 
+include(CTest)
+
 conditionally_add_subdirectory(AddressLibDecoder)
 conditionally_add_subdirectory(AddressLibGen)
 conditionally_add_subdirectory(CommonLibF4)

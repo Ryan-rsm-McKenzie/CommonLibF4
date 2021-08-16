@@ -9,12 +9,8 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 	message(FATAL_ERROR "in-source builds are not allowed")
 endif()
 
-find_package(Boost
-	MODULE
-	REQUIRED
-	COMPONENTS
-		iostreams
-)
+find_package(Boost MODULE REQUIRED)
+find_package(mmio REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
 
 include("cmake/sourcelist.cmake")
@@ -103,7 +99,7 @@ target_link_libraries(
 	"${PROJECT_NAME}"
 	PUBLIC
 		Boost::headers
-		Boost::iostreams
+		mmio::mmio
 		spdlog::spdlog
 		Version.lib
 )
