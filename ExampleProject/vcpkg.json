@@ -5,7 +5,6 @@
   "homepage": "https://github.com/Ryan-rsm-McKenzie/CommonLibF4",
   "license": "MIT",
   "dependencies": [
-    "boost-iterator",
     "boost-stl-interfaces",
     "fmt",
     "mmio",

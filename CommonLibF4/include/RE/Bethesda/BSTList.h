@@ -235,8 +235,8 @@ namespace RE
 			const auto gen = [&]() noexcept -> const_reference { return a_value; };
 			return insert_after(
 				a_pos,
-				boost::iterators::make_function_input_iterator(gen, size_type{ 0 }),
-				boost::iterators::make_function_input_iterator(gen, a_count));
+				stl::counted_function_iterator{ gen, a_count },
+				stl::counted_function_iterator<decltype(gen)>{});
 		}
 
 		// 4)
