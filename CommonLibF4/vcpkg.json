@@ -7,7 +7,6 @@
   "supports": "windows & x64",
   "dependencies": [
     "boost-iterator",
-    "boost-predef",
     "boost-stl-interfaces",
     "fmt",
     "mmio",

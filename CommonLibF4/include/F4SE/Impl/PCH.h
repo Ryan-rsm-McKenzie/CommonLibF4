@@ -40,7 +40,6 @@ static_assert(
 
 #pragma warning(push, 0)
 #include <boost/iterator/function_input_iterator.hpp>
-#include <boost/predef.h>
 #include <boost/stl_interfaces/iterator_interface.hpp>
 #include <boost/stl_interfaces/sequence_container_interface.hpp>
 #include <fmt/format.h>

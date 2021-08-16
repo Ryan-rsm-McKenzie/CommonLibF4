@@ -6,7 +6,6 @@
   "license": "MIT",
   "dependencies": [
     "boost-iterator",
-    "boost-predef",
     "boost-stl-interfaces",
     "fmt",
     "mmio",
