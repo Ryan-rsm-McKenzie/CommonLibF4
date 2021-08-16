@@ -44,13 +44,13 @@ private:
 		const auto segment = REL::Module::get().segment(REL::Segment::data);
 		const std::span haystack{ segment.pointer<const char>(), segment.size() };
 
-		boost::algorithm::knuth_morris_pratt kmp(a_name.cbegin(), a_name.cend());
-		const auto it = kmp(haystack.begin(), haystack.end());
+		std::boyer_moore_horspool_searcher searcher(a_name.cbegin(), a_name.cend());
+		const auto [first, last] = searcher(haystack.begin(), haystack.end());
 
-		if (it.first == it.second) {
+		if (first == last) {
 			throw std::runtime_error("failed to find type descriptor"s);
 		} else {
-			return reinterpret_cast<const RE::RTTI::TypeDescriptor*>(std::to_address(it.first) - 0x10);
+			return reinterpret_cast<const RE::RTTI::TypeDescriptor*>(std::to_address(first) - 0x10);
 		}
 	}
 

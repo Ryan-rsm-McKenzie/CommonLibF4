@@ -3,7 +3,6 @@
   "version-string": "1",
   "dependencies": [
     "args",
-    "boost-algorithm",
     "boost-iterator",
     "boost-regex",
     "boost-stl-interfaces",
