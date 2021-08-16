@@ -87,17 +87,18 @@ namespace win32
 
 namespace unicode
 {
-	using boost::nowide::narrow;
-	using boost::nowide::widen;
+	using nowide::cerr;
+	using nowide::narrow;
+	using nowide::widen;
 
 	[[nodiscard]] std::string narrow(std::wstring_view a_str)
 	{
-		return boost::nowide::narrow(a_str.data(), a_str.size());
+		return nowide::narrow(a_str.data(), a_str.size());
 	}
 
 	[[nodiscard]] std::wstring widen(std::string_view a_str)
 	{
-		return boost::nowide::widen(a_str.data(), a_str.size());
+		return nowide::widen(a_str.data(), a_str.size());
 	}
 }
 
@@ -426,7 +427,7 @@ namespace win32
 		std::optional<::DWORD> a_prio)
 		-> std::pair<unique_module, unique_thread>
 	{
-		const auto proc = boost::nowide::widen(a_proc.data(), a_proc.size());
+		const auto proc = unicode::widen(a_proc.data(), a_proc.size());
 		unique_process_information pi;
 		unique_startup_info si;
 		si->cb = sizeof(decltype(si)::value_type);
@@ -983,7 +984,7 @@ void do_main(std::span<const wchar_t*> a_args)
 int wmain(int a_argc, wchar_t* a_argv[])
 {
 	const auto cerr = [](std::string_view a_err) {
-		boost::nowide::cerr
+		unicode::cerr
 			<< "failed to initialize log with error:\n"
 			<< "\t" << a_err << '\n';
 	};

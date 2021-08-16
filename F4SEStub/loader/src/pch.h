@@ -66,10 +66,10 @@
 
 #pragma warning(push)
 #include <args.hxx>
-#include <boost/nowide/convert.hpp>
-#include <boost/nowide/iostream.hpp>
 #include <fmt/format.h>
 #include <frozen/map.h>
+#include <nowide/convert.hpp>
+#include <nowide/iostream.hpp>
 #include <spdlog/spdlog.h>
 
 #include <Windows.h>

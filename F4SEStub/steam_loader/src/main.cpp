@@ -67,17 +67,18 @@ namespace stl
 
 namespace unicode
 {
-	using boost::nowide::narrow;
-	using boost::nowide::widen;
+	using nowide::cerr;
+	using nowide::narrow;
+	using nowide::widen;
 
 	[[nodiscard]] std::string narrow(std::wstring_view a_str)
 	{
-		return boost::nowide::narrow(a_str.data(), a_str.size());
+		return nowide::narrow(a_str.data(), a_str.size());
 	}
 
 	[[nodiscard]] std::wstring widen(std::string_view a_str)
 	{
-		return boost::nowide::widen(a_str.data(), a_str.size());
+		return nowide::widen(a_str.data(), a_str.size());
 	}
 }
 
@@ -368,7 +369,7 @@ void do_initialize()
 int safe_initialize()
 {
 	const auto cerr = [](std::string_view a_err) {
-		boost::nowide::cerr
+		unicode::cerr
 			<< "failed to initialize log with error:\n"
 			<< "\t" << a_err << '\n';
 	};

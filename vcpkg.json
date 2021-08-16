@@ -5,7 +5,6 @@
     "args",
     "boost-algorithm",
     "boost-iterator",
-    "boost-nowide",
     "boost-predef",
     "boost-regex",
     "boost-stl-interfaces",
@@ -13,6 +12,7 @@
     "fmt",
     "frozen",
     "mmio",
+    "nowide",
     "robin-hood-hashing",
     "spdlog",
     "xbyak"
