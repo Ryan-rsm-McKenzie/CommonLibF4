@@ -48,6 +48,12 @@ target_link_libraries(
 		spdlog::spdlog
 )
 
+target_compile_options(
+	"${PROJECT_NAME}"
+	PRIVATE
+		"/Zc:preprocessor"	# Enable preprocessor conformance mode
+)
+
 copy_files(
 	"$<TARGET_FILE:${PROJECT_NAME}>" "Data/F4SE/Plugins/"
 	"$<TARGET_PDB_FILE:${PROJECT_NAME}>" "Data/F4SE/Plugins/"

@@ -155,8 +155,6 @@ macro(add_project)
 				"/Zi"	# Debug Information Format
 
 				"/permissive-"	# Standards conformance
-
-				"/Zc:preprocessor"	# Enable preprocessor conformance mode
 		)
 
 		target_link_options(
