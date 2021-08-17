@@ -1,4 +1,5 @@
 #pragma warning(push)
+#pragma warning(disable: 4702)  // unreachable code
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -11,13 +12,14 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <set>
 #include <sstream>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
-#include <boost/regex.hpp>
+#include <ctre.hpp>
 #include <robin_hood.h>
 #pragma warning(pop)
 
@@ -115,22 +117,26 @@ using files_t = std::vector<std::tuple<Version, Version, std::filesystem::path>>
 [[nodiscard]] files_t get_files(const std::filesystem::path& a_root)
 {
 	files_t results;
-	boost::wregex regex(L"(\\d+)\\.(\\d+)\\.(\\d+)_(\\d+)\\.(\\d+)\\.(\\d+)\\.txt"s, boost::regex::ECMAScript);
+	constexpr auto matcher = ctre::match<u8R"((\d+)\.(\d+)\.(\d+)_(\d+)\.(\d+)\.(\d+)\.txt)">;
 	for (const auto& entry : std::filesystem::directory_iterator(a_root)) {
 		if (entry.is_regular_file()) {
 			const auto filename = entry.path().filename();
-			boost::wsmatch matches;
-			if (boost::regex_match(filename.native(), matches, regex) && matches.size() == 7) {
+			if (const auto matches = matcher(filename.string()); matches) {  // todo: u8string
 				results.emplace_back();
 				auto& [lversion, rversion, path] = results.back();
 
-				lversion[0] = static_cast<std::uint16_t>(std::stoull(matches[1]));
-				lversion[1] = static_cast<std::uint16_t>(std::stoull(matches[2]));
-				lversion[2] = static_cast<std::uint16_t>(std::stoull(matches[3]));
+				const auto extract = [&]<std::size_t I>(std::in_place_index_t<I>) {
+					return static_cast<std::uint16_t>(
+						std::stoull(matches.get<I>().to_string()));
+				};
 
-				rversion[0] = static_cast<std::uint16_t>(std::stoull(matches[4]));
-				rversion[1] = static_cast<std::uint16_t>(std::stoull(matches[5]));
-				rversion[2] = static_cast<std::uint16_t>(std::stoull(matches[6]));
+				lversion[0] = extract(std::in_place_index<1>);
+				lversion[1] = extract(std::in_place_index<2>);
+				lversion[2] = extract(std::in_place_index<3>);
+
+				rversion[0] = extract(std::in_place_index<4>);
+				rversion[1] = extract(std::in_place_index<5>);
+				rversion[2] = extract(std::in_place_index<6>);
 
 				path = entry.path();
 			}

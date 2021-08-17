@@ -3,9 +3,9 @@
   "version-string": "1",
   "dependencies": [
     "args",
-    "boost-regex",
     "boost-stl-interfaces",
     "catch2",
+    "ctre",
     "fmt",
     "frozen",
     "mmio",

@@ -17,20 +17,12 @@ if(NOT TARGET CommonLibF4)
 	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../CommonLibF4" CommonLibF4)
 endif()
 
-find_package(Boost
-	MODULE
-	REQUIRED
-	COMPONENTS
-		regex
-)
 find_package(robin_hood REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
 
 target_link_libraries(
 	"${PROJECT_NAME}"
 	PUBLIC
-		Boost::headers
-		Boost::regex
 		CommonLibF4::CommonLibF4
 		Dbghelp.lib
 		robin_hood::robin_hood

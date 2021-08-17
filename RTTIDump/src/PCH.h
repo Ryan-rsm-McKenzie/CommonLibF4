@@ -15,7 +15,9 @@
 #include <utility>
 #include <vector>
 
-#include <boost/regex.hpp>
+#pragma warning(push)
+#pragma warning(disable: 4702)  // unreachable code
+#include <ctre.hpp>
 #include <robin_hood.h>
 
 #ifdef NDEBUG
@@ -23,6 +25,7 @@
 #else
 #	include <spdlog/sinks/msvc_sink.h>
 #endif
+#pragma warning(pop)
 
 #define DLLEXPORT __declspec(dllexport)
 

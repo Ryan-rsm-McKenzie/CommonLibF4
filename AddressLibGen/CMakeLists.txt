@@ -8,17 +8,12 @@ add_project(
 		"src/main.cpp"
 )
 
-find_package(Boost
-	MODULE
-	REQUIRED
-	COMPONENTS
-		regex
-)
+find_package(ctre REQUIRED CONFIG)
 find_package(robin_hood REQUIRED CONFIG)
 
 target_link_libraries(
 	"${PROJECT_NAME}"
 	PRIVATE
-		Boost::regex
+		ctre::ctre
 		robin_hood::robin_hood
 )
