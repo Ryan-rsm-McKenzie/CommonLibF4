@@ -58,7 +58,7 @@ namespace RE
 
 		void DecrementRef(AlchemyItem* a_alchItem)
 		{
-			using func_t = decltype(&BGSCreatedObjectManager::IncrementRef);
+			using func_t = decltype(&BGSCreatedObjectManager::DecrementRef);
 			REL::Relocation<func_t> func{ REL::ID(230928) };
 			return func(this, a_alchItem);
 		}
