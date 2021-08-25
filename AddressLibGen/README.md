@@ -1,4 +1,3 @@
 ## Build Dependencies
-* [Boost](https://www.boost.org/)
-	* Regex
+* [ctre](https://github.com/hanickadot/compile-time-regular-expressions)
 * [robin-hood-hashing](https://github.com/martinus/robin-hood-hashing)
