@@ -59,6 +59,8 @@ namespace RE
 			return *singleton;
 		}
 
+		void SetIgnoreKeyboardMouse(bool a_value) noexcept { ignoreKeyboardMouse = a_value; }
+
 		// members
 		InputContext* controlMaps[stl::to_underlying(UserEvents::INPUT_CONTEXT_ID::kTotal)];          // 008
 		BSTArray<LinkedMapping> linkedMappings;                                                       // 110

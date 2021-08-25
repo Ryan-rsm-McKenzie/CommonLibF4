@@ -29,4 +29,13 @@ namespace RE
 		bool inputEventHandlingEnabled{ true };  // 08
 	};
 	static_assert(sizeof(BSInputEventUser) == 0x10);
+
+	struct __declspec(novtable) DisconnectHandler :
+		public BSInputEventUser
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::DisconnectHandler };
+		static constexpr auto VTABLE{ VTABLE::DisconnectHandler };
+	};
+	static_assert(sizeof(DisconnectHandler) == 0x10);
 }

@@ -85,6 +85,7 @@ set(SOURCES
 	include/RE/Bethesda/InputEvent.h
 	include/RE/Bethesda/MagicItems.h
 	include/RE/Bethesda/MemoryManager.h
+	include/RE/Bethesda/MenuControls.h
 	include/RE/Bethesda/Movement.h
 	include/RE/Bethesda/NavMesh.h
 	include/RE/Bethesda/NavMeshInfoMap.h

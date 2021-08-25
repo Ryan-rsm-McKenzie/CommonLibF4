@@ -105,6 +105,13 @@ namespace RE
 			GetEventSource<T>()->RegisterSink(a_sink);
 		}
 
+		void UpdateControllerType()
+		{
+			using func_t = decltype(&UI::UpdateControllerType);
+			REL::Relocation<func_t> func{ REL::ID(175796) };
+			return func(this);
+		}
+
 		template <class T>
 		void UnregisterSink(BSTEventSink<T>* a_sink)
 		{
@@ -131,4 +138,14 @@ namespace RE
 		bool freezeFrameScreenshotReady;                   // 24A
 	};
 	static_assert(sizeof(UI) == 0x250);
+
+	namespace UIUtils
+	{
+		inline void UpdateGamepadDependentButtonCodes(bool a_usingGamepad)
+		{
+			using func_t = decltype(&UpdateGamepadDependentButtonCodes);
+			REL::Relocation<func_t> func{ REL::ID(190238) };
+			return func(a_usingGamepad);
+		}
+	}
 }
