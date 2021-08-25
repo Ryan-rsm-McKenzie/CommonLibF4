@@ -20,7 +20,7 @@ namespace RE
 		kMouseMove,
 		kCursorMove,
 		kChar,
-		kTumbstick,
+		kThumbstick,
 		kDeviceConnect,
 		kKinect,
 		kNone
@@ -252,7 +252,7 @@ namespace RE
 	public:
 		static constexpr auto RTTI{ RTTI::ThumbstickEvent };
 		static constexpr auto VTABLE{ VTABLE::ThumbstickEvent };
-		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kTumbstick };
+		static constexpr auto TYPE{ INPUT_EVENT_TYPE::kThumbstick };
 
 		enum THUMBSTICK_ID : std::int32_t
 		{

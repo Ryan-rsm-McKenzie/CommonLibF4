@@ -12,7 +12,7 @@ namespace RE
 
 		kSupported,
 
-		kKinect = kSupported,
+		kKinect = 3,
 		kVirtualKeyboard,
 
 		kTotal
