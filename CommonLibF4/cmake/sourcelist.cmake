@@ -33,6 +33,7 @@ set(SOURCES
 	include/RE/Bethesda/BSHavok.h
 	include/RE/Bethesda/BSInputDeviceManager.h
 	include/RE/Bethesda/BSInputEventReceiver.h
+	include/RE/Bethesda/BSInputEventSingleUser.h
 	include/RE/Bethesda/BSInputEventUser.h
 	include/RE/Bethesda/BSLock.h
 	include/RE/Bethesda/BSMTAManager.h
@@ -86,6 +87,7 @@ set(SOURCES
 	include/RE/Bethesda/MagicItems.h
 	include/RE/Bethesda/MemoryManager.h
 	include/RE/Bethesda/MenuControls.h
+	include/RE/Bethesda/MenuCursor.h
 	include/RE/Bethesda/Movement.h
 	include/RE/Bethesda/NavMesh.h
 	include/RE/Bethesda/NavMeshInfoMap.h

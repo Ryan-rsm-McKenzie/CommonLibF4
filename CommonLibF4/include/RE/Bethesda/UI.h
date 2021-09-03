@@ -92,6 +92,13 @@ namespace RE
 			return menu ? menu->OnStack() : false;
 		}
 
+		void RefreshCursor()
+		{
+			using func_t = decltype(&UI::RefreshCursor);
+			REL::Relocation<func_t> func{ REL::ID(1436639) };
+			return func(this);
+		}
+
 		void RegisterMenu(const char* a_menu, Create_t* a_create, StaticUpdate_t* a_staticUpdate = nullptr)
 		{
 			using func_t = decltype(&UI::RegisterMenu);

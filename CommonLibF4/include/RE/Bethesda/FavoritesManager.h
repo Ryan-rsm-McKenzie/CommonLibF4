@@ -1,7 +1,6 @@
 #pragma once
 
-#include "RE/Bethesda/BSInputEventReceiver.h"
-#include "RE/Bethesda/BSInputEventUser.h"
+#include "RE/Bethesda/BSInputEventSingleUser.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTEvent.h"
 #include "RE/Bethesda/BSTHashMap.h"
@@ -29,16 +28,6 @@ namespace RE
 	{
 		struct FavoriteChangedEvent;
 	}
-
-	class __declspec(novtable) BSInputEventSingleUser :
-		public BSInputEventReceiver,  // 00
-		public BSInputEventUser       // 10
-	{
-	public:
-		static constexpr auto RTTI{ RTTI::BSInputEventSingleUser };
-		static constexpr auto VTABLE{ VTABLE::BSInputEventSingleUser };
-	};
-	static_assert(sizeof(BSInputEventSingleUser) == 0x20);
 
 	class __declspec(novtable) FavoritesManager :
 		public BSInputEventSingleUser,                                     // 000

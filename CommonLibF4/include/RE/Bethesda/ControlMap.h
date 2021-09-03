@@ -59,6 +59,20 @@ namespace RE
 			return *singleton;
 		}
 
+		bool PopInputContext(UserEvents::INPUT_CONTEXT_ID a_context)
+		{
+			using func_t = decltype(&ControlMap::PopInputContext);
+			REL::Relocation<func_t> func{ REL::ID(74587) };
+			return func(this, a_context);
+		}
+
+		void PushInputContext(UserEvents::INPUT_CONTEXT_ID a_context)
+		{
+			using func_t = decltype(&ControlMap::PushInputContext);
+			REL::Relocation<func_t> func{ REL::ID(1404410) };
+			return func(this, a_context);
+		}
+
 		void SetIgnoreKeyboardMouse(bool a_value) noexcept { ignoreKeyboardMouse = a_value; }
 
 		// members

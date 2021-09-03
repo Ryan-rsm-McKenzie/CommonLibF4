@@ -6,6 +6,7 @@
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSInputEventUser.h"
 #include "RE/Bethesda/BSPointerHandle.h"
+#include "RE/Bethesda/BSSoundHandle.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/BSTInterpolator.h"
@@ -34,15 +35,19 @@ namespace RE
 	class BSGFxShaderFXTarget;
 	class ButtonHintBar;
 	class ExtraDataList;
+	class MenuOpenCloseEvent;
 	class NiAVObject;
+	class NiTexture;
 	class TESBoundObject;
 	class TESForm;
 	class TESObjectREFR;
 	class UserEventEnabledEvent;
 	class WorkshopMenuGeometry;
 
+	struct IdleInputEvent;
 	struct LoadedInventoryModel;
 	struct PickRefUpdateEvent;
+	struct PipboyValueChangedEvent;
 
 	enum class MENU_RENDER_CONTEXT : std::int32_t
 	{
@@ -578,4 +583,253 @@ namespace RE
 		msvc::unique_ptr<FXWorkshopMenu> workshopMenuBase;                                                              // 438
 	};
 	static_assert(sizeof(WorkshopMenu) == 0x440);
+
+	class __declspec(novtable) PipboySubMenu :
+		public BSTEventSink<PipboyValueChangedEvent>  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboySubMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboySubMenu };
+
+		// override (BSTEventSink<PipboyValueChangedEvent>)
+		BSEventNotifyControl ProcessEvent(const PipboyValueChangedEvent& a_event, BSTEventSource<PipboyValueChangedEvent>* a_source) override
+		{
+			using func_t = decltype(&PipboySubMenu::ProcessEvent);
+			REL::Relocation<func_t> func{ REL::ID(893703) };
+			return func(this, a_event, a_source);
+		}
+
+		// add
+		virtual void UpdateData() = 0;  // 02
+
+		// members
+		Scaleform::GFx::Value& dataObj;  // 08
+		Scaleform::GFx::Value& menuObj;  // 10
+	};
+	static_assert(sizeof(PipboySubMenu) == 0x18);
+
+	class __declspec(novtable) PipboyStatsMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyStatsMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyStatsMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyStatsMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(332518) };
+			return func(this);
+		}
+
+		// members
+		BSSoundHandle perkSound;  // 18
+	};
+	static_assert(sizeof(PipboyStatsMenu) == 0x20);
+
+	class __declspec(novtable) PipboySpecialMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboySpecialMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboySpecialMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboySpecialMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(1426810) };
+			return func(this);
+		}
+	};
+	static_assert(sizeof(PipboySpecialMenu) == 0x18);
+
+	class __declspec(novtable) PipboyPerksMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyPerksMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyPerksMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyPerksMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(783380) };
+			return func(this);
+		}
+	};
+	static_assert(sizeof(PipboyPerksMenu) == 0x18);
+
+	class __declspec(novtable) PipboyInventoryMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyInventoryMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyInventoryMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyInventoryMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(762897) };
+			return func(this);
+		}
+	};
+	static_assert(sizeof(PipboyInventoryMenu) == 0x18);
+
+	class __declspec(novtable) PipboyQuestMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyQuestMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyQuestMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyQuestMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(1495929) };
+			return func(this);
+		}
+	};
+	static_assert(sizeof(PipboyQuestMenu) == 0x18);
+
+	class __declspec(novtable) PipboyWorkshopMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyWorkshopMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyWorkshopMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyWorkshopMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(1370368) };
+			return func(this);
+		}
+	};
+	static_assert(sizeof(PipboyWorkshopMenu) == 0x18);
+
+	class __declspec(novtable) PipboyLogMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyLogMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyLogMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyLogMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(672256) };
+			return func(this);
+		}
+	};
+	static_assert(sizeof(PipboyLogMenu) == 0x18);
+
+	class BSScaleformExternalTexture
+	{
+	public:
+		// members
+		NiPointer<NiTexture> gamebryoTexture;  // 00
+		std::uint32_t renderTarget;            // 08
+		BSFixedString texturePath;             // 10
+	};
+	static_assert(sizeof(BSScaleformExternalTexture) == 0x18);
+
+	class __declspec(novtable) PipboyMapMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyMapMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyMapMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyMapMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(92696) };
+			return func(this);
+		}
+
+		// members
+		BSScaleformExternalTexture worldMapTexture;  // 18
+		Scaleform::GFx::Value mapPageObj;            // 30
+		std::uint32_t centeredQuestMarkerID;         // 50
+		std::uint32_t centeredMapMarkerID;           // 54
+		std::uint32_t queuedFastTravelId;            // 58
+		bool mapTexturesSentToMenu;                  // 5C
+		bool requestedDelayedLocalMapRender;         // 5D
+	};
+	static_assert(sizeof(PipboyMapMenu) == 0x60);
+
+	class __declspec(novtable) PipboyRadioMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyRadioMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyRadioMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyRadioMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(713423) };
+			return func(this);
+		}
+
+		// members
+		bool radioModeOn;  // 18
+	};
+	static_assert(sizeof(PipboyRadioMenu) == 0x20);
+
+	class __declspec(novtable) PipboyPlayerInfoMenu :
+		public PipboySubMenu  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyPlayerInfoMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyPlayerInfoMenu };
+
+		// override (PipboySubMenu)
+		void UpdateData() override
+		{
+			using func_t = decltype(&PipboyPlayerInfoMenu::UpdateData);
+			REL::Relocation<func_t> func{ REL::ID(426990) };
+			return func(this);
+		}
+	};
+	static_assert(sizeof(PipboyPlayerInfoMenu) == 0x18);
+
+	class __declspec(novtable) PipboyMenu :
+		public GameMenuBase,                      // 000
+		public BSTEventSink<MenuOpenCloseEvent>,  // 0E0
+		public BSTEventSink<IdleInputEvent>       // 0E8
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::PipboyMenu };
+		static constexpr auto VTABLE{ VTABLE::PipboyMenu };
+		static constexpr auto MENU_NAME{ "PipboyMenu"sv };
+
+		// members
+		Scaleform::GFx::Value dataObj;           // 0F0
+		PipboyStatsMenu statsMenuObj;            // 110
+		PipboySpecialMenu specialMenuObj;        // 130
+		PipboyPerksMenu perksMenuObj;            // 148
+		PipboyInventoryMenu inventoryMenuObj;    // 160
+		PipboyQuestMenu questMenuObj;            // 178
+		PipboyWorkshopMenu workshopMenuObj;      // 190
+		PipboyLogMenu logMenuObj;                // 1A8
+		PipboyMapMenu mapMenuObj;                // 1C0
+		PipboyRadioMenu radioMenuObj;            // 220
+		PipboyPlayerInfoMenu playerInfoMenuObj;  // 240
+		std::int8_t disableInputCounter;         // 258
+		bool pipboyCursorEnabled;                // 259
+		bool showingModalMessage;                // 25A
+		bool pipboyHiddenByAnotherMenu;          // 25B
+		bool performFastTravelCheck;             // 25C
+	};
+	static_assert(sizeof(PipboyMenu) == 0x260);
 }
