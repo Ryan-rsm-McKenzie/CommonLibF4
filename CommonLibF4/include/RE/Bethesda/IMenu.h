@@ -18,8 +18,8 @@
 #include "RE/Bethesda/SWFToCodeFunctionHandler.h"
 #include "RE/Bethesda/TESForms.h"
 #include "RE/Bethesda/UIMessage.h"
+#include "RE/Bethesda/UIShaderFXInfo.h"
 #include "RE/Bethesda/UserEvents.h"
-#include "RE/NetImmerse/NiColor.h"
 #include "RE/NetImmerse/NiMatrix3.h"
 #include "RE/NetImmerse/NiPoint2.h"
 #include "RE/NetImmerse/NiPoint3.h"
@@ -69,6 +69,31 @@ namespace RE
 		kData,
 		kMap,
 		kRadio
+	};
+
+	enum class UI_DEPTH_PRIORITY
+	{
+		kUndefined,
+		k3DUnderHUD,
+		kBook,
+		kScope,
+		kSWFLoader,
+		kHUD,
+		kStandard,
+		kStandard3DModel,
+		kPipboy,
+		kTerminal,
+		kGameMessage,
+		kPauseMenu,
+		kLoadingFader,
+		kLoading3DModel,
+		kLoadingMenu,
+		kMessage,
+		kButtonBarMenu,
+		kButtonBarSupressingMenu,
+		kDebug,
+		kConsole,
+		kCursor
 	};
 
 	enum class UI_MENU_FLAGS : std::uint32_t
@@ -227,7 +252,7 @@ namespace RE
 
 		virtual bool CanAdvanceMovie(bool a_pauseMenuShowing)  // 0D
 		{
-			return !a_pauseMenuShowing || depthPriority > 10 || AdvancesUnderPauseMenu();
+			return !a_pauseMenuShowing || depthPriority > UI_DEPTH_PRIORITY::kGameMessage || AdvancesUnderPauseMenu();
 		}
 
 		virtual bool CanHandleWhenDisabled([[maybe_unused]] const ButtonEvent* a_event) { return false; }                      // 0E
@@ -290,6 +315,8 @@ namespace RE
 			}
 		}
 
+		[[nodiscard]] bool UsesCursor() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kUsesCursor); }
+
 		// members
 		Scaleform::GFx::Value menuObj;                                                                                     // 20
 		Scaleform::Ptr<Scaleform::GFx::Movie> uiMovie;                                                                     // 40
@@ -301,39 +328,10 @@ namespace RE
 		bool menuCanBeVisible{ true };                                                                                     // 61
 		bool hasQuadsForCumstomRenderer{ false };                                                                          // 62
 		bool hasDoneFirstAdvanceMovie{ false };                                                                            // 63
-		std::int8_t depthPriority{ 6 };                                                                                    // 64
+		stl::enumeration<UI_DEPTH_PRIORITY, std::uint8_t> depthPriority{ UI_DEPTH_PRIORITY::kStandard };                   // 64
 		stl::enumeration<UserEvents::INPUT_CONTEXT_ID, std::int32_t> inputContext{ UserEvents::INPUT_CONTEXT_ID::kNone };  // 68
 	};
 	static_assert(sizeof(IMenu) == 0x70);
-
-	struct UIShaderColors
-	{
-	public:
-		enum class Flags
-		{
-			kBackgroundQuad = 1u << 0,
-			kColorMultiplier = 1u << 1,
-			kVerticalGradient = 1u << 2,
-			kUseAlphaForDropshadow = 1u << 3
-		};
-
-		// members
-		NiRect<float> backgroundQuad;                          // 00
-		NiColorA backgroundColor;                              // 10
-		NiColorA colorMultipliers;                             // 20
-		float colorBrightness;                                 // 30
-		stl::enumeration<Flags, std::uint32_t> enabledStates;  // 34
-	};
-	static_assert(sizeof(UIShaderColors) == 0x38);
-
-	struct alignas(0x10) UIShaderFXInfo
-	{
-	public:
-		// members
-		NiRect<float> renderQuad;  // 00
-		UIShaderColors shaderFX;   // 10
-	};
-	static_assert(sizeof(UIShaderFXInfo) == 0x50);
 
 	class HUDModeType
 	{

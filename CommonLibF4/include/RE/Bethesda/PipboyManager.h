@@ -58,6 +58,13 @@ namespace RE
 			return *singleton;
 		}
 
+		void RefreshPipboyRenderSurface()
+		{
+			using func_t = decltype(&PipboyManager::RefreshPipboyRenderSurface);
+			REL::Relocation<func_t> func{ REL::ID(81339) };
+			return func(this);
+		}
+
 		void UpdateCursorConstraint(bool a_enable)
 		{
 			using func_t = decltype(&PipboyManager::UpdateCursorConstraint);

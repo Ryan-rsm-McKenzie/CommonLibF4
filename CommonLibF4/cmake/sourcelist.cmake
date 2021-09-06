@@ -84,6 +84,7 @@ set(SOURCES
 	include/RE/Bethesda/IMovementInterface.h
 	include/RE/Bethesda/InputDevice.h
 	include/RE/Bethesda/InputEvent.h
+	include/RE/Bethesda/Interface3D.h
 	include/RE/Bethesda/Inventory3DManager.h
 	include/RE/Bethesda/MagicItems.h
 	include/RE/Bethesda/MemoryManager.h
@@ -120,6 +121,7 @@ set(SOURCES
 	include/RE/Bethesda/UI.h
 	include/RE/Bethesda/UIMessage.h
 	include/RE/Bethesda/UIMessageQueue.h
+	include/RE/Bethesda/UIShaderFXInfo.h
 	include/RE/Bethesda/UserEvents.h
 	include/RE/Bethesda/Workshop.h
 	include/RE/Bethesda/bhkCharacterController.h
