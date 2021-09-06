@@ -84,6 +84,7 @@ set(SOURCES
 	include/RE/Bethesda/IMovementInterface.h
 	include/RE/Bethesda/InputDevice.h
 	include/RE/Bethesda/InputEvent.h
+	include/RE/Bethesda/Inventory3DManager.h
 	include/RE/Bethesda/MagicItems.h
 	include/RE/Bethesda/MemoryManager.h
 	include/RE/Bethesda/MenuControls.h
@@ -91,8 +92,10 @@ set(SOURCES
 	include/RE/Bethesda/Movement.h
 	include/RE/Bethesda/NavMesh.h
 	include/RE/Bethesda/NavMeshInfoMap.h
+	include/RE/Bethesda/PipboyManager.h
 	include/RE/Bethesda/PlayerCharacter.h
 	include/RE/Bethesda/PlayerControls.h
+	include/RE/Bethesda/PowerArmor.h
 	include/RE/Bethesda/PowerUtils.h
 	include/RE/Bethesda/Projectiles.h
 	include/RE/Bethesda/SWFToCodeFunctionHandler.h
@@ -234,6 +237,7 @@ set(SOURCES
 	src/RE/Bethesda/BSScript.cpp
 	src/RE/Bethesda/Calendar.cpp
 	src/RE/Bethesda/FormComponents.cpp
+	src/RE/Bethesda/MenuCursor.cpp
 	src/RE/Bethesda/TESBoundAnimObjects.cpp
 	src/RE/Bethesda/TESForms.cpp
 	src/RE/Bethesda/TESObjectREFRs.cpp

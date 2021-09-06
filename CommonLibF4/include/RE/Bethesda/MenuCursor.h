@@ -26,6 +26,24 @@ namespace RE
 			return func(this);
 		}
 
+		void ClearConstraints() noexcept
+		{
+			leftConstraintPct = 0.0f;
+			rightConstraintPct = 0.0f;
+			topConstraintPct = 0.0f;
+			bottomConstraintPct = 0.0f;
+		}
+
+		void ConstrainForPipboy();
+		void ConstrainForPipboyPA();
+
+		void SetCursorConstraintsRaw(std::uint32_t a_tlx, std::uint32_t a_tly, std::uint32_t a_width, std::uint32_t a_height)
+		{
+			using func_t = decltype(&MenuCursor::SetCursorConstraintsRaw);
+			REL::Relocation<func_t> func{ REL::ID(907092) };
+			return func(this, a_tlx, a_tly, a_width, a_height);
+		}
+
 		// members
 		std::int32_t cursorPosX;          // 24
 		std::int32_t cursorPosY;          // 28

@@ -2,17 +2,19 @@
 
 #include "RE/Bethesda/Atomic.h"
 #include "RE/Bethesda/BGSCreatedObjectManager.h"
-#include "RE/Bethesda/BGSInventoryItem.h"
 #include "RE/Bethesda/BSFixedString.h"
 #include "RE/Bethesda/BSInputEventUser.h"
 #include "RE/Bethesda/BSPointerHandle.h"
 #include "RE/Bethesda/BSSoundHandle.h"
 #include "RE/Bethesda/BSTArray.h"
+#include "RE/Bethesda/BSTEvent.h"
 #include "RE/Bethesda/BSTHashMap.h"
 #include "RE/Bethesda/BSTInterpolator.h"
 #include "RE/Bethesda/BSTOptional.h"
+#include "RE/Bethesda/BSTSingleton.h"
 #include "RE/Bethesda/BSTSmartPointer.h"
 #include "RE/Bethesda/BSTTuple.h"
+#include "RE/Bethesda/Inventory3DManager.h"
 #include "RE/Bethesda/SWFToCodeFunctionHandler.h"
 #include "RE/Bethesda/TESForms.h"
 #include "RE/Bethesda/UIMessage.h"
@@ -45,9 +47,9 @@ namespace RE
 	class WorkshopMenuGeometry;
 
 	struct IdleInputEvent;
-	struct LoadedInventoryModel;
 	struct PickRefUpdateEvent;
 	struct PipboyValueChangedEvent;
+	struct UIAdvanceMenusFunctionCompleteEvent;
 
 	enum class MENU_RENDER_CONTEXT : std::int32_t
 	{
@@ -58,6 +60,15 @@ namespace RE
 		kRenderImagespace,
 		kEnsureDisplayMenuCalled,
 		kPostDisplay
+	};
+
+	enum class PIPBOY_PAGES : std::uint32_t
+	{
+		kStat,
+		kInv,
+		kData,
+		kMap,
+		kRadio
 	};
 
 	enum class UI_MENU_FLAGS : std::uint32_t
@@ -91,6 +102,26 @@ namespace RE
 		kLargeScaleformRenderCacheMode = 1 << 26,
 		kUsesMovementToDirection = 1 << 27
 	};
+
+	class __declspec(novtable) FlatScreenModel :
+		public BSTSingletonSDM<FlatScreenModel>,                  // 08
+		public BSTEventSink<UIAdvanceMenusFunctionCompleteEvent>  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::FlatScreenModel };
+		static constexpr auto VTABLE{ VTABLE::FlatScreenModel };
+
+		[[nodiscard]] static FlatScreenModel* GetSingleton()
+		{
+			REL::Relocation<FlatScreenModel**> singleton{ REL::ID(847741) };
+			return *singleton;
+		}
+
+		// members
+		BSFixedString customRendererName;  // 10
+		void* model;                       // 18 - TODO
+	};
+	static_assert(sizeof(FlatScreenModel) == 0x20);
 
 	class IMenu :
 		public SWFToCodeFunctionHandler,  // 00
@@ -205,7 +236,8 @@ namespace RE
 		virtual void TransferCachedShaderFXQuadsForRenderer([[maybe_unused]] const BSFixedString& a_rendererName) { return; }  // 11
 		virtual void SetViewportRect([[maybe_unused]] const NiRect<float>& a_viewportRect) { return; }                         // 12
 
-		[[nodiscard]] constexpr bool AdvancesUnderPauseMenu() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kAdvancesUnderPauseMenu); }
+		[[nodiscard]] bool AdvancesUnderPauseMenu() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kAdvancesUnderPauseMenu); }
+		[[nodiscard]] bool AssignsCursorToRenderer() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kAssignCursorToRenderer); }
 
 		void DoAdvanceMovie(float a_timeDelta)
 		{
@@ -241,7 +273,7 @@ namespace RE
 			return func(this);
 		}
 
-		[[nodiscard]] constexpr bool RendersUnderPauseMenu() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kRendersUnderPauseMenu); }
+		[[nodiscard]] bool RendersUnderPauseMenu() const noexcept { return menuFlags.all(UI_MENU_FLAGS::kRendersUnderPauseMenu); }
 
 		void SetMenuCodeObject(Scaleform::GFx::Movie& a_movie, stl::zstring a_menuObjPath)
 		{
@@ -483,56 +515,6 @@ namespace RE
 		std::uint16_t row;          // 4C
 	};
 	static_assert(sizeof(DisplayItemModel) == 0x50);
-
-	namespace nsInventory3DManager
-	{
-		class NewInventoryMenuItemLoadTask;
-	}
-
-	class __declspec(novtable) Inventory3DManager :
-		public BSInputEventUser  // 000
-	{
-	public:
-		static constexpr auto RTTI{ RTTI::Inventory3DManager };
-		static constexpr auto VTABLE{ VTABLE::Inventory3DManager };
-
-		// members
-		bool useBoundForScale: 1;                                                // 010:0
-		bool startedZoomThisFrame: 1;                                            // 010:1
-		bool useStoredModelPosition: 1;                                          // 010:2
-		bool rotating: 1;                                                        // 010:3
-		bool modelPositionInScreenCoords: 1;                                     // 010:4
-		bool centerOnBoundCenter: 1;                                             // 010:5
-		NiPoint3 modelPosition;                                                  // 014
-		float modelScale;                                                        // 020
-		alignas(0x10) BSTArray<LoadedInventoryModel> loadedModels;               // 030
-		NiPoint3 initialPosition;                                                // 048
-		NiPoint3 storedPostion;                                                  // 054
-		NiMatrix3 initialRotation;                                               // 060
-		NiQuaternion storedRotation;                                             // 090
-		NiPoint2 previousInput;                                                  // 0A0
-		NiPointer<nsInventory3DManager::NewInventoryMenuItemLoadTask> loadTask;  // 0A8
-		TESObjectREFR* tempRef;                                                  // 0B0
-		BSTSmartPointer<ExtraDataList> originalExtra;                            // 0B8
-		BSFixedString str3DRendererName;                                         // 0C0
-		BGSInventoryItem queuedDisplayItem;                                      // 0C8
-		std::uint32_t itemExtraIndex;                                            // 0D8
-		TESForm* itemBase;                                                       // 0E0
-		std::int8_t disableInputUserCount;                                       // 0E8
-		BSTSet<BSFixedString> disableRendererUsers;                              // 0F0
-		float storedXRotation;                                                   // 120
-		float zoomDirection;                                                     // 124
-		float zoomProgress;                                                      // 128
-		float minZoomModifier;                                                   // 12C
-		float maxZoomModifier;                                                   // 130
-		std::uint32_t hightlightedPart;                                          // 134
-		bool queueShowItem;                                                      // 138
-		bool mouseRotation;                                                      // 139
-		bool prevUsesCursorFlag;                                                 // 13A
-		bool prevUpdateUsesCursorFlag;                                           // 13B
-		bool addedLightsToScene;                                                 // 13C
-	};
-	static_assert(sizeof(Inventory3DManager) == 0x140);
 
 	class __declspec(novtable) WorkshopMenu :
 		public GameMenuBase,                                 // 000
@@ -832,4 +814,17 @@ namespace RE
 		bool performFastTravelCheck;             // 25C
 	};
 	static_assert(sizeof(PipboyMenu) == 0x260);
+
+	class __declspec(novtable) CursorMenu :
+		public GameMenuBase  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::CursorMenu };
+		static constexpr auto VTABLE{ VTABLE::CursorMenu };
+		static constexpr auto MENU_NAME{ "CursorMenu"sv };
+
+		// members
+		msvc::unique_ptr<BSGFxShaderFXTarget> cursor;  // E0
+	};
+	static_assert(sizeof(CursorMenu) == 0xE8);
 }
