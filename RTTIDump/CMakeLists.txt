@@ -19,6 +19,7 @@ endif()
 
 find_package(robin_hood REQUIRED CONFIG)
 find_package(spdlog REQUIRED CONFIG)
+find_package(srell MODULE REQUIRED)
 
 target_link_libraries(
 	"${PROJECT_NAME}"
@@ -27,6 +28,7 @@ target_link_libraries(
 		Dbghelp.lib
 		robin_hood::robin_hood
 		spdlog::spdlog
+		srell::srell
 )
 
 copy_files(

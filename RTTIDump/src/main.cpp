@@ -126,29 +126,25 @@ private:
 
 [[nodiscard]] std::string sanitize_name(std::string a_name)
 {
-	const auto translate = [&](std::string_view a_subview) {
-		return std::make_pair(
-			a_name.begin() + (std::to_address(a_subview.begin()) - std::to_address(a_name.begin())),
-			a_name.begin() + (std::to_address(a_subview.end()) - std::to_address(a_name.begin())));
+	static const std::array expressions{
+		std::make_pair(
+			srell::regex{ R"regex((`anonymous namespace'|[ &'*\-`]){1})regex"s, srell::regex::ECMAScript },
+			std::function{ [](std::string& a_name, const srell::ssub_match& a_match) {
+				a_name.erase(a_match.first, a_match.second);
+			} }),
+		std::make_pair(
+			srell::regex{ R"regex(([(),:<>]){1})regex"s, srell::regex::ECMAScript },
+			std::function{ [](std::string& a_name, const srell::ssub_match& a_match) {
+				a_name.replace(a_match.first, a_match.second, "_"sv);
+			} }),
 	};
 
-	{
-		constexpr auto matcher = ctre::search<R"((`anonymous namespace'|[ &'*\-`]){1})">;
-		decltype(matcher(a_name)) match;
-		while ((match = matcher(a_name)), match) {
-			const auto view = match.get<1>().to_view();
-			const auto [from, to] = translate(view);
-			a_name.erase(from, to);
-		}
-	}
-
-	{
-		constexpr auto matcher = ctre::search<R"(([(),:<>]){1})">;
-		decltype(matcher(a_name)) match;
-		while ((match = matcher(a_name)), match) {
-			const auto view = match.get<1>().to_view();
-			const auto [from, to] = translate(view);
-			a_name.replace(from, to, "_"sv);
+	srell::smatch matches;
+	for (const auto& [expr, callback] : expressions) {
+		while (srell::regex_search(a_name, matches, expr)) {
+			for (std::size_t i = 1; i < matches.size(); ++i) {
+				callback(a_name, matches[static_cast<int>(i)]);
+			}
 		}
 	}
 

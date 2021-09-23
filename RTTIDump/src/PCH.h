@@ -15,17 +15,14 @@
 #include <utility>
 #include <vector>
 
-#pragma warning(push)
-#pragma warning(disable: 4702)  // unreachable code
-#include <ctre.hpp>
 #include <robin_hood.h>
+#include <srell.hpp>
 
 #ifdef NDEBUG
 #	include <spdlog/sinks/basic_file_sink.h>
 #else
 #	include <spdlog/sinks/msvc_sink.h>
 #endif
-#pragma warning(pop)
 
 #define DLLEXPORT __declspec(dllexport)
 

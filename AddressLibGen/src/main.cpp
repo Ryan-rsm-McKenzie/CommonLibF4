@@ -19,8 +19,8 @@
 #include <utility>
 #include <vector>
 
-#include <ctre.hpp>
 #include <robin_hood.h>
+#include <srell.hpp>
 #pragma warning(pop)
 
 using namespace std::literals;
@@ -117,17 +117,17 @@ using files_t = std::vector<std::tuple<Version, Version, std::filesystem::path>>
 [[nodiscard]] files_t get_files(const std::filesystem::path& a_root)
 {
 	files_t results;
-	constexpr auto matcher = ctre::match<u8R"((\d+)\.(\d+)\.(\d+)_(\d+)\.(\d+)\.(\d+)\.txt)">;
+	srell::wregex regex(L"(\\d+)\\.(\\d+)\\.(\\d+)_(\\d+)\\.(\\d+)\\.(\\d+)\\.txt"s, srell::regex::ECMAScript);
 	for (const auto& entry : std::filesystem::directory_iterator(a_root)) {
 		if (entry.is_regular_file()) {
 			const auto filename = entry.path().filename();
-			if (const auto matches = matcher(filename.string()); matches) {  // todo: u8string
+			srell::wsmatch matches;
+			if (srell::regex_match(filename.native(), matches, regex) && matches.size() == 7) {
 				results.emplace_back();
 				auto& [lversion, rversion, path] = results.back();
 
 				const auto extract = [&]<std::size_t I>(std::in_place_index_t<I>) {
-					return static_cast<std::uint16_t>(
-						std::stoull(matches.get<I>().to_string()));
+					return static_cast<std::uint16_t>(std::stoull(matches[I]));
 				};
 
 				lversion[0] = extract(std::in_place_index<1>);

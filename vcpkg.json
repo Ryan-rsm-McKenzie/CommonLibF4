@@ -5,13 +5,13 @@
     "args",
     "boost-stl-interfaces",
     "catch2",
-    "ctre",
     "fmt",
     "frozen",
     "mmio",
     "nowide",
     "robin-hood-hashing",
     "spdlog",
+    "srell",
     "xbyak"
   ]
 }

@@ -19,6 +19,8 @@ endfunction()
 
 include(CTest)
 
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
 conditionally_add_subdirectory(AddressLibDecoder)
 conditionally_add_subdirectory(AddressLibGen)
 conditionally_add_subdirectory(CommonLibF4)
