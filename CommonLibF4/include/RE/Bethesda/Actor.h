@@ -819,8 +819,8 @@ namespace RE
 	static_assert(sizeof(Actor) == 0x490);
 
 	class ActorEquipManager :
-		BSTSingletonSDM<ActorEquipManager>,            // 00
-		BSTEventSource<ActorEquipManagerEvent::Event>  // 08
+		public BSTSingletonSDM<ActorEquipManager>,            // 00
+		public BSTEventSource<ActorEquipManagerEvent::Event>  // 08
 	{
 	public:
 		[[nodiscard]] static ActorEquipManager* GetSingleton()
