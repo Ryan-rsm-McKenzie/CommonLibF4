@@ -20,6 +20,12 @@ find_package(Catch2 REQUIRED CONFIG)
 include(Catch)
 catch_discover_tests("${PROJECT_NAME}")
 
+target_compile_definitions(
+	"${PROJECT_NAME}"
+	PRIVATE
+		BOOST_STL_INTERFACES_DISABLE_CONCEPTS
+)
+
 target_link_libraries(
 	"${PROJECT_NAME}"
 	PRIVATE

@@ -73,6 +73,7 @@ endif()
 target_compile_definitions(
 	"${PROJECT_NAME}"
 	PUBLIC
+		BOOST_STL_INTERFACES_DISABLE_CONCEPTS
 		WINVER=0x0601	# windows 7, minimum supported version by fallout 4
 		_WIN32_WINNT=0x0601
 )
