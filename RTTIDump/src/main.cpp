@@ -217,7 +217,7 @@ void dump_rtti()
 
 				results.emplace_back(sanitize_name(std::move(name)), rid, std::move(vids));
 			} catch (const std::exception&) {
-				logger::error(decode_name(typeDescriptor));
+				logger::error("{}"sv, decode_name(typeDescriptor));
 				continue;
 			}
 		}
@@ -379,7 +379,7 @@ void MessageHandler(F4SE::MessagingInterface::Message* a_message)
 			dump_rtti();
 			dump_nirtti();
 		} catch (const std::exception& e) {
-			logger::error(e.what());
+			logger::error("{}"sv, e.what());
 		}
 		break;
 	default:

@@ -64,7 +64,7 @@
 #include <utility>
 #include <vector>
 
-#pragma warning(push)
+#pragma warning(push, 0)
 #include <args.hxx>
 #include <fmt/format.h>
 #include <frozen/map.h>

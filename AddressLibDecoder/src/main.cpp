@@ -48,7 +48,7 @@ int main(int a_argc, char* a_argv[])
 				const auto width = fmt::format(FMT_STRING("{}"), data.back().id);
 				const auto format = fmt::format(FMT_STRING("{{: >{}}}\t{{:0>7X}}\n"), width.length());
 				for (const auto& elem : data) {
-					output << fmt::format(format, elem.id, elem.offset);
+					output << fmt::format(fmt::runtime(format), elem.id, elem.offset);
 				}
 			}
 

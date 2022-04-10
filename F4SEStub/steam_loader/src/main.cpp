@@ -236,16 +236,18 @@ namespace util
 		}
 	}
 
-	template <class... Args>
-	[[noreturn]] void error(Args&&... a_args)
+	template <class T>
+	[[noreturn]] void error(T&& a_error)
 	{
-		if constexpr (sizeof...(Args) <= 1) {
-			throw std::runtime_error{ std::string(std::forward<Args>(a_args)...) };
-		} else {
-			throw std::runtime_error{
-				fmt::format(std::forward<Args>(a_args)...)
-			};
-		}
+		throw std::runtime_error{ std::string(std::forward<T>(a_error)) };
+	}
+
+	template <class... Args>
+	[[noreturn]] void error(fmt::format_string<Args...> a_fmt, Args&&... a_args)
+	{
+		throw std::runtime_error{
+			fmt::format(a_fmt, std::forward<Args>(a_args)...)
+		};
 	}
 
 	void safe_write(
