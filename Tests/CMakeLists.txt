@@ -8,7 +8,6 @@ add_project(
 		src
 	GROUPED_FILES
 		"src/BSTHashMap.cpp"
-		"src/main.cpp"
 		"src/pch.h"
 	PRECOMPILED_HEADERS
 		"src/pch.h"
@@ -30,5 +29,5 @@ target_link_libraries(
 	"${PROJECT_NAME}"
 	PRIVATE
 		Boost::headers
-		Catch2::Catch2
+		Catch2::Catch2WithMain
 )

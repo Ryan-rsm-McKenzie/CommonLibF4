@@ -110,7 +110,7 @@ namespace RE
 
 #include "RE/Bethesda/BSTHashMap.h"
 
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 struct bad_hasher
 {

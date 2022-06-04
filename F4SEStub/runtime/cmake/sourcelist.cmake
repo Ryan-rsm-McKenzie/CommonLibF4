@@ -1,5 +1,4 @@
 set(SOURCES
-	src/PCH.cpp
 	src/PCH.h
 	src/Papyrus/Actor.h
 	src/Papyrus/ActorBase.h
