@@ -137,8 +137,8 @@ namespace RE
 		public TESDescription         // 0F0
 	{
 	public:
-		static constexpr auto RTTI{ RTTI::EnchantmentItem };
-		static constexpr auto VTABLE{ VTABLE::EnchantmentItem };
+		static constexpr auto RTTI{ RTTI::SpellItem };
+		static constexpr auto VTABLE{ VTABLE::SpellItem };
 		static constexpr auto FORM_ID{ ENUM_FORM_ID::kSPEL };
 
 		class Data :
