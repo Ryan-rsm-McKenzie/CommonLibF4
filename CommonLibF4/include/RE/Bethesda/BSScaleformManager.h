@@ -38,6 +38,13 @@ namespace RE
 		public BSTEventSource<SFRendererInitializedEvent>  // 000
 	{
 	public:
+		void Initialize()
+		{
+			using func_t = decltype(&BSScaleformRenderer::Initialize);
+			REL::Relocation<func_t> func{ REL::ID(1403529) };
+			return func(this);
+		}
+
 		// members
 		Scaleform::Ptr<Scaleform::Render::Renderer2D> renderer;            // 058
 		Scaleform::Ptr<Scaleform::Render::HAL> renderConfig;               // 060
