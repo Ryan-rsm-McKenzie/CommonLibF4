@@ -655,7 +655,7 @@ namespace REL
 	private:
 		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
 
-		std::uint64_t _id{ 0 };
+		std::uint64_t _id{ static_cast<std::uint64_t>(-1) };
 	};
 
 	template <class T>
@@ -753,7 +753,7 @@ namespace REL
 			return write_vfunc(a_idx, stl::unrestricted_cast<std::uintptr_t>(a_newFunc));
 		}
 
-	private :
+	private:
 		// clang-format off
 		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
 		// clang-format on
