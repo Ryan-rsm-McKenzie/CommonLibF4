@@ -734,7 +734,7 @@ namespace RE
 		void SetTemporary()
 		{
 			using func_t = decltype(&TESForm::SetTemporary);
-			REL::Relocation<func_t> func{ REL::ID(1376557) };
+			REL::Relocation<func_t> func{ REL::ID(482454) };
 			return func(this);
 		}
 
