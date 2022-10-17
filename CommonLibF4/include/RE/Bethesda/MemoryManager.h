@@ -289,7 +289,11 @@ namespace RE
 
 	[[nodiscard]] inline void* calloc(std::size_t a_num, std::size_t a_size)
 	{
-		return malloc(a_num * a_size);
+		const auto ret = malloc(a_num * a_size);
+		if (ret) {
+			std::memset(ret, 0, a_num * a_size);
+		}
+		return ret;
 	}
 
 	template <class T>
