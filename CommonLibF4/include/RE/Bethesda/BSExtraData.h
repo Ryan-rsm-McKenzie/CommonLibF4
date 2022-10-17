@@ -619,11 +619,7 @@ namespace RE
 			return !((stl::to_underlying(a_type) - 11) & ~0x22u) && a_type != EXTRA_DATA_TYPE::kLeveledCreature;
 		}
 
-		void CreateFlags()
-		{
-			_flags = calloc<std::uint8_t>(N);
-			std::memset(_flags, 0, N);
-		}
+		void CreateFlags() { _flags = calloc<std::uint8_t>(N); }
 
 		[[nodiscard]] std::span<std::uint8_t> GetFlags() const noexcept
 		{
