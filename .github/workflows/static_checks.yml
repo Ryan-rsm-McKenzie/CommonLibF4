@@ -1,0 +1,35 @@
+﻿name: Static checks
+
+on: [ pull_request ]
+
+jobs:
+  check-clang-formatting:
+    name: "Check Formatting"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+      # we get the necessary commits below
+        fetch-depth: 0
+
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    # If we're on another branch, make sure we have master
+    - name: fetch rest of history
+      run: |
+        git fetch --prune
+        echo $(git branch --all)
+        CURR_BRANCH=$(git branch --show-current)
+        if [ "$CURR_BRANCH" = "" ]; then
+          CURR_BRANCH=$(git rev-parse HEAD)
+        fi
+        if [ "$CURR_BRANCH" != "master" ]; then
+          git checkout --track origin/master
+          git checkout $CURR_BRANCH
+        fi
+        echo $(git branch --all)
+    - name: check clang_format
+      run: bash ./.github/scripts/check_clang_format.sh
