@@ -13,5 +13,8 @@
     "spdlog",
     "srell",
     "xbyak"
-  ]
+  ],
+  "vcpkg-configuration": {
+    "overlay-ports": [ "./cmake/ports/" ]
+  }
 }
