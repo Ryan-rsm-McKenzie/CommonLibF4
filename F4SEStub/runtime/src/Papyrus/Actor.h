@@ -15,8 +15,8 @@ namespace Papyrus
 			if (middleHigh) {
 				const auto& furn =
 					a_self.interactingState != RE::INTERACTING_STATE::kNotInteracting ?
-                        middleHigh->currentFurniture :
-                        middleHigh->occupiedFurniture;
+						middleHigh->currentFurniture :
+						middleHigh->occupiedFurniture;
 				return furn.get().get();
 			} else {
 				return nullptr;
@@ -76,8 +76,8 @@ namespace Papyrus
 
 			const auto object =
 				a_self.biped ?
-                    a_self.biped->object[stl::to_underlying(a_slotIndex)].parent.object :  // TODO: GetCurrentBiped()?
-                    nullptr;
+					a_self.biped->object[stl::to_underlying(a_slotIndex)].parent.object :  // TODO: GetCurrentBiped()?
+					nullptr;
 			const auto inv = a_self.inventoryList;
 			if (!object || !inv) {
 				return std::nullopt;

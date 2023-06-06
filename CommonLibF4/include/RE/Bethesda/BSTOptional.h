@@ -360,10 +360,10 @@ namespace RE
 			return value();
 		}
 
-	private :
+	private:
 		constexpr void
-		do_reset()  //
-		noexcept(std::is_nothrow_destructible_v<value_type>)
+			do_reset()  //
+			noexcept(std::is_nothrow_destructible_v<value_type>)
 		{
 			if (has_value()) {
 				std::destroy_at(std::addressof(_value));

@@ -675,8 +675,8 @@ namespace win32
 
 		const ::DWORD time =
 			a_time == std::chrono::milliseconds::max() ?
-                INFINITE :
-                static_cast<::DWORD>(a_time.count());
+				INFINITE :
+				static_cast<::DWORD>(a_time.count());
 
 		if (::WaitForSingleObject(
 				reinterpret_cast<::HANDLE>(a_thread),
@@ -840,10 +840,10 @@ void augment_environment(
 {
 	auto exe =
 		a_options.altexe ?
-            *a_options.altexe :
+			*a_options.altexe :
 		a_options.editor ?
-            "CreationKit.exe"s :
-            "Fallout4.exe"s;
+			"CreationKit.exe"s :
+			"Fallout4.exe"s;
 	auto dll = [&]() {
 		if (a_options.altdll) {
 			return *a_options.altdll;
@@ -852,8 +852,8 @@ void augment_environment(
 			return fmt::format(
 				FMT_STRING("{}_{}_{}_{}.dll"),
 				(a_options.editor ?
-                        "f4se_editor"s :
-                        "f4se"s),
+						"f4se_editor"s :
+						"f4se"s),
 				version[0],
 				version[1],
 				version[2]);
@@ -920,8 +920,8 @@ void initialize_log()
 
 	args.libFileName = reinterpret_cast<::LPCWSTR>(mem.get() + calc.offset_of(type_t::kLibFileName));
 	args.procName = !a_init.empty() ?
-                        reinterpret_cast<::LPCSTR>(mem.get() + calc.offset_of(type_t::kProcName)) :
-                        nullptr;
+	                    reinterpret_cast<::LPCSTR>(mem.get() + calc.offset_of(type_t::kProcName)) :
+	                    nullptr;
 
 	const auto write = [&](type_t a_type, const void* a_src) {
 		std::memcpy(

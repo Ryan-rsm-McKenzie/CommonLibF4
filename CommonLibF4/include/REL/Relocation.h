@@ -753,7 +753,7 @@ namespace REL
 			return write_vfunc(a_idx, stl::unrestricted_cast<std::uintptr_t>(a_newFunc));
 		}
 
-	private :
+	private:
 		// clang-format off
 		[[nodiscard]] static std::uintptr_t base() { return Module::get().base(); }
 		// clang-format on

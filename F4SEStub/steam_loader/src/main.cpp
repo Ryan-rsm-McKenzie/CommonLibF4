@@ -408,6 +408,6 @@ extern "C" ::INT_PTR __declspec(dllexport) WINAPI Initialize()
 	static std::atomic_bool initialized{ false };
 	bool expected = false;
 	return initialized.compare_exchange_strong(expected, true) ?
-               safe_initialize() :
-               EXIT_SUCCESS;
+	           safe_initialize() :
+	           EXIT_SUCCESS;
 }

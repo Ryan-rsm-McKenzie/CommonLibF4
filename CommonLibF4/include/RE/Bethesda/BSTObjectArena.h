@@ -236,8 +236,8 @@ namespace RE
 			if (!_tail || _end == _tail->cend()) {
 				const auto page =
 					_free ?
-                        std::exchange(_free, _free->next) :  // pull from free list
-                        std::construct_at<Page>(
+						std::exchange(_free, _free->next) :  // pull from free list
+						std::construct_at<Page>(
 							allocator_type::allocate_bytes(sizeof(Page)));  // go to heap
 				if (page) {
 					page->next = nullptr;

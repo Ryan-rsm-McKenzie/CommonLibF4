@@ -467,8 +467,8 @@ namespace RE
 			const auto idx = GetCurrentPickIndex();
 			const auto& refs = GetPickRefs();
 			return 0 <= idx && static_cast<std::size_t>(idx) < refs.size() ?
-                       refs[static_cast<std::size_t>(idx)] :
-                       ObjectRefHandle{};
+			           refs[static_cast<std::size_t>(idx)] :
+			           ObjectRefHandle{};
 		}
 
 		void SetCurrentPickREFR(stl::not_null<ObjectRefHandle*> a_refr)

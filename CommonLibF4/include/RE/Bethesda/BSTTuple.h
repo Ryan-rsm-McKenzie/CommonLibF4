@@ -205,7 +205,7 @@ namespace RE
 		return a_lhs.first < a_rhs.first   ? true :
 		       a_rhs.first < a_lhs.first   ? false :
 		       a_lhs.second < a_rhs.second ? true :
-                                             false;
+		                                     false;
 	}
 
 	template <class T1, class T2>

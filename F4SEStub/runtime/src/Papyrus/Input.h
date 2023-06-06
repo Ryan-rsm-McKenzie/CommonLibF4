@@ -143,8 +143,8 @@ namespace Papyrus
 				const auto controls = RE::ControlMap::GetSingleton();
 				const auto context =
 					controls ?
-                        controls->controlMaps[stl::to_underlying(RE::UserEvents::INPUT_CONTEXT_ID::kMainGameplay)] :
-                        nullptr;
+						controls->controlMaps[stl::to_underlying(RE::UserEvents::INPUT_CONTEXT_ID::kMainGameplay)] :
+						nullptr;
 				if (context) {
 					const auto& mappings = context->deviceMappings[stl::to_underlying(a_device)];
 					const auto it = std::find_if(
@@ -191,8 +191,8 @@ namespace Papyrus
 			const auto controls = RE::ControlMap::GetSingleton();
 			const auto context =
 				controls ?
-                    controls->controlMaps[stl::to_underlying(Context::kMainGameplay)] :
-                    nullptr;
+					controls->controlMaps[stl::to_underlying(Context::kMainGameplay)] :
+					nullptr;
 			std::optional<std::int32_t> key;
 			if (context) {
 				const auto find = [&](RE::INPUT_DEVICE a_device) -> std::optional<std::int32_t> {
@@ -203,8 +203,8 @@ namespace Papyrus
 						mappings.end(),
 						[&](const auto& a_mapping) { return a_mapping.eventID == a_control; });
 					return it != mappings.end() ?
-                               std::make_optional(it->inputKey) :
-                               std::nullopt;
+					           std::make_optional(it->inputKey) :
+					           std::nullopt;
 				};
 
 				if (a_deviceType != RE::INPUT_DEVICE::kNone) {

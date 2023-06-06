@@ -293,8 +293,8 @@ namespace RE::msvc
 					 !std::is_array_v<U> &&
 					 std::same_as<E, deleter_type> &&
 					 (std::is_reference_v<deleter_type> ?
-                             std::is_nothrow_constructible_v<deleter_type, const E&> :
-                             std::is_nothrow_constructible_v<deleter_type, E&&>)) :
+							 std::is_nothrow_constructible_v<deleter_type, const E&> :
+							 std::is_nothrow_constructible_v<deleter_type, E&&>)) :
 			super(std::move(a_rhs))
 		{}
 
@@ -312,8 +312,8 @@ namespace RE::msvc
 		// 1a
 		unique_ptr& operator=(unique_ptr&& a_rhs) noexcept  //
 			requires(((std::is_reference_v<deleter_type> ?
-                             std::is_nothrow_copy_assignable_v<std::remove_reference_t<deleter_type>> :
-                             std::is_nothrow_move_assignable_v<deleter_type>)) &&
+							 std::is_nothrow_copy_assignable_v<std::remove_reference_t<deleter_type>> :
+							 std::is_nothrow_move_assignable_v<deleter_type>)) &&
 					 std::is_move_assignable_v<deleter_type>)
 		{
 			if (this != std::addressof(a_rhs)) {
@@ -327,8 +327,8 @@ namespace RE::msvc
 		template <class U, class E>
 		unique_ptr& operator=(unique_ptr<U, E>&& a_rhs) noexcept  //
 			requires(((std::is_reference_v<deleter_type> ?
-                             std::is_nothrow_copy_assignable_v<std::remove_reference_t<deleter_type>> :
-                             std::is_nothrow_move_assignable_v<deleter_type>)) &&
+							 std::is_nothrow_copy_assignable_v<std::remove_reference_t<deleter_type>> :
+							 std::is_nothrow_move_assignable_v<deleter_type>)) &&
 					 !std::is_array_v<U> &&
 					 std::convertible_to<typename unique_ptr<U, E>::pointer, pointer> &&
 					 std::is_assignable_v<deleter_type, E&&>)
@@ -511,8 +511,8 @@ namespace RE::msvc
 					  std::same_as<typename unique_ptr<U, E>::pointer, typename unique_ptr<U, E>::element_type*> &&
 					  std::convertible_to<typename unique_ptr<U, E>::element_type (*)[], element_type (*)[]> &&
 					  (std::is_reference_v<deleter_type> ?
-                              std::same_as<E, deleter_type> && std::is_nothrow_constructible_v<deleter_type, const E&> :
-                              std::convertible_to<E, deleter_type> && std::is_nothrow_constructible_v<deleter_type, E&&>))) :
+							  std::same_as<E, deleter_type> && std::is_nothrow_constructible_v<deleter_type, const E&> :
+							  std::convertible_to<E, deleter_type> && std::is_nothrow_constructible_v<deleter_type, E&&>))) :
 			super(std::move(a_rhs))
 		{}
 
@@ -530,8 +530,8 @@ namespace RE::msvc
 		// 1a
 		unique_ptr& operator=(unique_ptr&& a_rhs) noexcept  //
 			requires(((std::is_reference_v<deleter_type> ?
-                             std::is_nothrow_copy_assignable_v<std::remove_reference_t<deleter_type>> :
-                             std::is_nothrow_move_assignable_v<deleter_type>)) &&
+							 std::is_nothrow_copy_assignable_v<std::remove_reference_t<deleter_type>> :
+							 std::is_nothrow_move_assignable_v<deleter_type>)) &&
 					 std::is_move_assignable_v<deleter_type>)
 		{
 			if (this != std::addressof(a_rhs)) {

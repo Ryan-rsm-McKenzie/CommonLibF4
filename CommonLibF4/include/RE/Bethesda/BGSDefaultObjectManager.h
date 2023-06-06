@@ -454,8 +454,8 @@ namespace RE
 		{
 			assert(a_obj < DEFAULT_OBJECT::kTotal);
 			return objectInitArray[stl::to_underlying(a_obj)] ?
-                       objectArray[stl::to_underlying(a_obj)] :
-                       nullptr;
+			           objectArray[stl::to_underlying(a_obj)] :
+			           nullptr;
 		}
 
 		template <class T>

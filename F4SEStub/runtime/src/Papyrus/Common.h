@@ -22,8 +22,8 @@ namespace Papyrus
 					for (auto stack = item.stackData.get(); stack; stack = stack->nextStack.get()) {
 						const auto xID =
 							stack->extra ?
-                                stack->extra->GetByType<RE::ExtraUniqueID>() :
-                                nullptr;
+								stack->extra->GetByType<RE::ExtraUniqueID>() :
+								nullptr;
 						if (xID && xID->uniqueID == uniqueID) {
 							return std::make_pair(item.object, stack->extra);
 						}

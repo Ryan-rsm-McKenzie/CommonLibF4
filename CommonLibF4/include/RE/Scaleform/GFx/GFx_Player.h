@@ -576,8 +576,8 @@ namespace RE::Scaleform::GFx
 		{
 			assert(IsString());
 			return IsManagedValue() ?
-                       *_value.mstring :
-                       _value.string;
+			           *_value.mstring :
+			           _value.string;
 		}
 
 		bool HasMember(stl::zstring a_name) const
