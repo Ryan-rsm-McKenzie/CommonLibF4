@@ -16,7 +16,7 @@ jobs:
           python-version: '3.9'
 
       - name: Run clang-format
-        run: find -type f \( -name *.h -o -name *.cpp \) | xargs clang-format-12 -style=file -i
+        run: find -type f \( -name *.h -o -name *.cpp \) | xargs clang-format-14 -style=file -i
 
       - name: Glob files
         run: python ${{ github.workspace }}/CommonLibF4/scripts/glob_files.py
