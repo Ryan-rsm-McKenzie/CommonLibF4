@@ -7,9 +7,9 @@
     "catch2",
     "fmt",
     "frozen",
-    "mmio",
     "nowide",
     "robin-hood-hashing",
+    "rsm-mmio",
     "spdlog",
     "srell",
     "xbyak"
