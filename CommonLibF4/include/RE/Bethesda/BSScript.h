@@ -223,6 +223,11 @@ namespace RE
 		};
 		static_assert(sizeof(TypeInfo) == 0x8);
 
+		namespace detail
+		{
+			struct variable_raw_accessor;
+		}
+
 		class Variable
 		{
 		public:
@@ -319,78 +324,6 @@ namespace RE
 			F4_HEAP_REDEFINE_NEW(Variable);
 
 			template <class T>
-			[[nodiscard]] friend BSTSmartPointer<Object> get(const Variable& a_var)  //
-				requires(std::same_as<T, Object>)
-			{
-				assert(a_var.is<Object>());
-				return a_var.value.o;
-			}
-
-			template <class T>
-			[[nodiscard]] friend BSFixedString get(const Variable& a_var)  //
-				requires(std::same_as<T, BSFixedString>)
-			{
-				assert(a_var.is<BSFixedString>());
-				return a_var.value.s;
-			}
-
-			template <class T>
-			[[nodiscard]] friend std::uint32_t get(const Variable& a_var)  //
-				requires(std::same_as<T, std::uint32_t>)
-			{
-				assert(a_var.is<std::uint32_t>());
-				return a_var.value.u;
-			}
-
-			template <class T>
-			[[nodiscard]] friend std::int32_t get(const Variable& a_var)  //
-				requires(std::same_as<T, std::int32_t>)
-			{
-				assert(a_var.is<std::int32_t>());
-				return a_var.value.i;
-			}
-
-			template <class T>
-			[[nodiscard]] friend float get(const Variable& a_var)  //
-				requires(std::same_as<T, float>)
-			{
-				assert(a_var.is<float>());
-				return a_var.value.f;
-			}
-
-			template <class T>
-			[[nodiscard]] friend bool get(const Variable& a_var)  //
-				requires(std::same_as<T, bool>)
-			{
-				assert(a_var.is<bool>());
-				return a_var.value.b;
-			}
-
-			template <class T>
-			[[nodiscard]] friend stl::observer<Variable*> get(const Variable& a_var)  //
-				requires(std::same_as<T, Variable>)
-			{
-				assert(a_var.is<Variable>());
-				return a_var.value.v;
-			}
-
-			template <class T>
-			[[nodiscard]] friend BSTSmartPointer<Struct> get(const Variable& a_var)  //
-				requires(std::same_as<T, Struct>)
-			{
-				assert(a_var.is<Struct>());
-				return a_var.value.t;
-			}
-
-			template <class T>
-			[[nodiscard]] friend BSTSmartPointer<Array> get(const Variable& a_var)  //
-				requires(std::same_as<T, Array>)
-			{
-				assert(a_var.is<Array>());
-				return a_var.value.a;
-			}
-
-			template <class T>
 			[[nodiscard]] bool is() const  //
 				requires(std::same_as<T, std::nullptr_t>)
 			{
@@ -457,6 +390,8 @@ namespace RE
 			void reset();
 
 		private:
+			friend detail::variable_raw_accessor;
+
 			using RawType = TypeInfo::RawType;
 
 			void copy(const Variable& a_rhs);
@@ -497,6 +432,92 @@ namespace RE
 			} value;  // 08
 		};
 		static_assert(sizeof(Variable) == 0x10);
+
+		namespace detail
+		{
+			struct variable_raw_accessor
+			{
+			public:
+				template <class T>
+				[[nodiscard]] static auto&& get_raw(T&& a_var)  //
+					requires(std::same_as<std::remove_cvref_t<T>, Variable>)
+				{
+					return std::forward<T>(a_var).value;
+				}
+			};
+		}
+
+		template <class T>
+		[[nodiscard]] BSTSmartPointer<Object> get(const Variable& a_var)  //
+			requires(std::same_as<T, Object>)
+		{
+			assert(a_var.is<Object>());
+			return detail::variable_raw_accessor::get_raw(a_var).o;
+		}
+
+		template <class T>
+		[[nodiscard]] BSFixedString get(const Variable& a_var)  //
+			requires(std::same_as<T, BSFixedString>)
+		{
+			assert(a_var.is<BSFixedString>());
+			return detail::variable_raw_accessor::get_raw(a_var).s;
+		}
+
+		template <class T>
+		[[nodiscard]] std::uint32_t get(const Variable& a_var)  //
+			requires(std::same_as<T, std::uint32_t>)
+		{
+			assert(a_var.is<std::uint32_t>());
+			return detail::variable_raw_accessor::get_raw(a_var).u;
+		}
+
+		template <class T>
+		[[nodiscard]] std::int32_t get(const Variable& a_var)  //
+			requires(std::same_as<T, std::int32_t>)
+		{
+			assert(a_var.is<std::int32_t>());
+			return detail::variable_raw_accessor::get_raw(a_var).i;
+		}
+
+		template <class T>
+		[[nodiscard]] float get(const Variable& a_var)  //
+			requires(std::same_as<T, float>)
+		{
+			assert(a_var.is<float>());
+			return detail::variable_raw_accessor::get_raw(a_var).f;
+		}
+
+		template <class T>
+		[[nodiscard]] bool get(const Variable& a_var)  //
+			requires(std::same_as<T, bool>)
+		{
+			assert(a_var.is<bool>());
+			return detail::variable_raw_accessor::get_raw(a_var).b;
+		}
+
+		template <class T>
+		[[nodiscard]] stl::observer<Variable*> get(const Variable& a_var)  //
+			requires(std::same_as<T, Variable>)
+		{
+			assert(a_var.is<Variable>());
+			return detail::variable_raw_accessor::get_raw(a_var).v;
+		}
+
+		template <class T>
+		[[nodiscard]] BSTSmartPointer<Struct> get(const Variable& a_var)  //
+			requires(std::same_as<T, Struct>)
+		{
+			assert(a_var.is<Struct>());
+			return detail::variable_raw_accessor::get_raw(a_var).t;
+		}
+
+		template <class T>
+		[[nodiscard]] BSTSmartPointer<Array> get(const Variable& a_var)  //
+			requires(std::same_as<T, Array>)
+		{
+			assert(a_var.is<Array>());
+			return detail::variable_raw_accessor::get_raw(a_var).a;
+		}
 
 		class Object
 		{

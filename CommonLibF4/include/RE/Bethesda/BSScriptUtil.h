@@ -700,7 +700,7 @@ namespace RE::BSScript
 	namespace detail
 	{
 		template <class T>
-		__forceinline void PackVariable(Variable & a_var, T && a_val)
+		__forceinline void PackVariable(Variable& a_var, T&& a_val)
 		{
 			BSScript::PackVariable(a_var, std::forward<T>(a_val));
 		}
