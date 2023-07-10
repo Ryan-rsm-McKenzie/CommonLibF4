@@ -114,7 +114,7 @@ namespace Papyrus
 			BIND(SetPriority);
 			BIND(SetWorkbenchKeyword);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

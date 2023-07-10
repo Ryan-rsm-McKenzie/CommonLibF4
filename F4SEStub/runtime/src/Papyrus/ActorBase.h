@@ -95,7 +95,7 @@ namespace Papyrus
 			BIND(HasHeadPartOverlays);
 			BIND(SetBodyWeight);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

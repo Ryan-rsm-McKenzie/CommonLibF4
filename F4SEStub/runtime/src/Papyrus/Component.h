@@ -51,7 +51,7 @@ namespace Papyrus
 			BIND(SetScrapItem);
 			BIND(SetScrapScalar);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

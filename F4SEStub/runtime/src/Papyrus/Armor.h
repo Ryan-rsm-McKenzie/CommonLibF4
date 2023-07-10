@@ -23,7 +23,7 @@ namespace Papyrus
 
 			BIND(GetArmorAddons);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

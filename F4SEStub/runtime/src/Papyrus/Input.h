@@ -251,7 +251,7 @@ namespace Papyrus
 			BIND(GetMappedControl, true);
 			BIND(GetMappedKey, true);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

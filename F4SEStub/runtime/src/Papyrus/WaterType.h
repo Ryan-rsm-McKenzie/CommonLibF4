@@ -51,7 +51,7 @@ namespace Papyrus
 			BIND(SetConsumeSpell);
 			BIND(SetContactSpell);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

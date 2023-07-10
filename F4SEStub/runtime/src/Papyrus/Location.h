@@ -61,7 +61,7 @@ namespace Papyrus
 			BIND(SetEncounterZone);
 			BIND(SetParent);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

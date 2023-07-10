@@ -107,7 +107,7 @@ namespace Papyrus
 			BIND(SetRank);
 			BIND(SetWorkshop);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

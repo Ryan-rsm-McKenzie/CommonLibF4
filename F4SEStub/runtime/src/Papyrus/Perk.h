@@ -62,7 +62,7 @@ namespace Papyrus
 			BIND(IsHidden);
 			BIND(IsPlayable);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

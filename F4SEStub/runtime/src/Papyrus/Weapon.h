@@ -31,7 +31,7 @@ namespace Papyrus
 			BIND(GetEmbeddedMod);
 			BIND(SetEmbeddedMod);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

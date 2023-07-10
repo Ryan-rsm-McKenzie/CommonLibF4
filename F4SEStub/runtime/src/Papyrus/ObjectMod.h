@@ -157,7 +157,7 @@ namespace Papyrus
 			BIND(SetMaxRank);
 			BIND(SetPriority);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

@@ -46,7 +46,7 @@ namespace Papyrus
 			BIND(GetMiscComponents);
 			BIND(SetMiscComponents);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

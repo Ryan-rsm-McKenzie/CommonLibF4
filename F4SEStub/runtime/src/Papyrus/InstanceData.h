@@ -438,7 +438,7 @@ namespace Papyrus
 			//BIND(SetStagger);
 			//BIND(SetWeight);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

@@ -173,7 +173,7 @@ namespace Papyrus
 			BIND(SetGameSettingString);
 			BIND(UpdateThirdPerson);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

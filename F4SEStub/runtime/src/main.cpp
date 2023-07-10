@@ -31,13 +31,13 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 	a_info->version = Version::MAJOR;
 
 	if (a_f4se->IsEditor()) {
-		logger::critical("loaded in editor"sv);
+		logger::critical("loaded in editor");
 		return false;
 	}
 
 	const auto ver = a_f4se->RuntimeVersion();
 	if (ver < F4SE::RUNTIME_1_10_162) {
-		logger::critical("unsupported runtime v{}"sv, ver.string());
+		logger::critical("unsupported runtime v{}", ver.string());
 		return false;
 	}
 
@@ -48,7 +48,7 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Load(const F4SE::LoadInterface* a_f
 {
 	F4SE::Init(a_f4se);
 
-	logger::info("loaded f4se stub v{}"sv, Version::NAME);
+	logger::info("loaded f4se stub v{}", Version::NAME);
 
 	const auto papyrus = F4SE::GetPapyrusInterface();
 	papyrus->Register(Papyrus::Bind);

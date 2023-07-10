@@ -114,7 +114,7 @@ namespace Papyrus
 			//BIND(RegisterCustomMenu, true);
 			//BIND(Set, true);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

@@ -24,7 +24,7 @@ namespace Papyrus
 
 			BIND(GetAdditionalRaces);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

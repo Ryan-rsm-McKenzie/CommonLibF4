@@ -68,7 +68,7 @@ namespace Papyrus
 		WaterType::Bind(*a_vm);
 		Weapon::Bind(*a_vm);
 
-		logger::info("bound all scripts"sv);
+		logger::info("bound all scripts");
 		return true;
 	}
 }

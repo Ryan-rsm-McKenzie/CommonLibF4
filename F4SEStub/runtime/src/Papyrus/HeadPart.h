@@ -65,7 +65,7 @@ namespace Papyrus
 			BIND(IsExtraPart);
 			BIND(SetValidRaces);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

@@ -34,7 +34,7 @@ namespace Papyrus
 			BIND(GetDefaultObject);
 			BIND(Set);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

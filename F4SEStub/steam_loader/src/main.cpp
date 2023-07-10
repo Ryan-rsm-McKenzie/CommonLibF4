@@ -280,7 +280,7 @@ void* get_iat(
 	assert(a_module != nullptr);
 	const auto dosHeader = reinterpret_cast<::IMAGE_DOS_HEADER*>(a_module);
 	if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE) {
-		util::error("invalid dos header"sv);
+		util::error("invalid dos header");
 	}
 
 	const auto ntHeader = util::adjust_pointer<::IMAGE_NT_HEADERS>(dosHeader, dosHeader->e_lfanew);
@@ -306,7 +306,7 @@ void* get_iat(
 		}
 	}
 
-	util::error("failed to find {}!{}"sv, a_dll, a_function);
+	util::error("failed to find {}!{}", a_dll, a_function);
 }
 
 void initialize_log()
@@ -392,7 +392,7 @@ int safe_initialize()
 		spdlog::error(a_err.what());
 		return EXIT_FAILURE;
 	} catch (...) {
-		spdlog::error("caught unknown exception"sv);
+		spdlog::error("caught unknown exception");
 		return EXIT_FAILURE;
 	}
 

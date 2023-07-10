@@ -17,7 +17,7 @@ namespace Papyrus
 
 			BIND(GetWaterType);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }

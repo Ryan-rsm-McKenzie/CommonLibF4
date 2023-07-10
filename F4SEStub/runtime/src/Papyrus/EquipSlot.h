@@ -24,7 +24,7 @@ namespace Papyrus
 
 			BIND(GetParents);
 
-			logger::info("bound {} script"sv, obj);
+			logger::info("bound {} script", obj);
 		}
 	}
 }
