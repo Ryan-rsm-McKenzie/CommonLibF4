@@ -106,6 +106,12 @@ namespace RE
 				return _cur == a_rhs._cur;
 			}
 
+			template <class V>
+			[[nodiscard]] bool operator!=(const iterator_base<V>& a_rhs) noexcept
+			{
+				return !(*this == a_rhs);
+			}
+
 		protected:
 			template <class>
 			friend class BSSimpleList;
