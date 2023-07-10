@@ -1,3 +1,7 @@
+template <>
+struct fmt::formatter<args::ArgumentParser> : fmt::ostream_formatter
+{};
+
 namespace stl
 {
 	template <class EF>                                    //
