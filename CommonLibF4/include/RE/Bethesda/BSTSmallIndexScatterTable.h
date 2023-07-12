@@ -7,7 +7,7 @@ namespace RE
 	// this index is used to index an array, which is also provided externally
 	// essentially implements a scatter table with chaining for conflict resolution
 	// it is honestly impressive how awful this data structure is, bethesda never fails to impress
-	template <class T, class Accessor>
+	template <class Traits, class Accessor>
 	class BSTSmallIndexScatterTable
 	{
 	public:
@@ -24,4 +24,5 @@ namespace RE
 		std::uint32_t avail;     // 18
 		std::uint32_t lastFree;  // 1C
 	};
+	// static_assert(sizeof(BSTSmallIndexScatterTable) == 0x20);
 }
