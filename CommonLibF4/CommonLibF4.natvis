@@ -146,11 +146,11 @@
 	</Type>
 
 	<Type Name="RE::detail::BSFixedString&lt;*&gt;">
-		<DisplayString Condition="_wrap._data != nullptr">{*_wrap._data,na}</DisplayString>
-		<DisplayString Condition="_wrap._data == nullptr">&quot;&quot;</DisplayString>
+		<DisplayString Condition="_data != nullptr">{*_data,na}</DisplayString>
+		<DisplayString Condition="_data == nullptr">&quot;&quot;</DisplayString>
 		<Expand>
-			<Item Name="[data]" Condition="_wrap._data != nullptr">_wrap._data</Item>
-			<Item Name="[data]" Condition="_wrap._data == nullptr">"empty"</Item>
+			<Item Name="[data]" Condition="_data != nullptr">_data</Item>
+			<Item Name="[data]" Condition="_data == nullptr">"empty"</Item>
 		</Expand>
 	</Type>
 
