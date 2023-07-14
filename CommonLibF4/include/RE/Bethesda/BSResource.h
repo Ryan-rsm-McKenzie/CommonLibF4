@@ -5,6 +5,8 @@
 #include "RE/Bethesda/BSSystemFile.h"
 #include "RE/Bethesda/BSTArray.h"
 #include "RE/Bethesda/BSTSingleton.h"
+#include "RE/Bethesda/BSTSmartPointer.h"
+#include "RE/NetImmerse/NiBinaryStream.h"
 
 namespace RE
 {
@@ -331,4 +333,24 @@ namespace RE::BSResource
 		REL::Relocation<func_t> func{ REL::ID(918408) };
 		return func(a_location, a_priority);
 	}
+}
+
+namespace RE
+{
+	class __declspec(novtable) BSResourceNiBinaryStream :
+		public NiBinaryStream  // 00
+	{
+	public:
+		static constexpr auto RTTI{ RTTI::BSResourceNiBinaryStream };
+		static constexpr auto VTABLE{ VTABLE::BSResourceNiBinaryStream };
+
+		struct BufferType;
+
+		// members
+		BSTSmartPointer<BSResource::Stream> stream;    // 10
+		BSResourceNiBinaryStream::BufferType* buffer;  // 18
+		std::uint64_t streamPos;                       // 20
+		BSResource::ErrorCode lastError;               // 28
+	};
+	static_assert(sizeof(BSResourceNiBinaryStream) == 0x30);
 }

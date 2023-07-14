@@ -11,11 +11,24 @@ namespace RE
 	struct ID3D11PixelShader;
 	struct ID3D11VertexShader;
 
-	struct BSGraphics
+	namespace BSGraphics
 	{
 		enum class TextureAddressMode;
 
 		class Texture;
+
+		struct TextureHeader
+		{
+		public:
+			// members
+			std::uint16_t height = 0;   // 0
+			std::uint16_t width = 0;    // 2
+			std::uint8_t mipCount = 0;  // 3
+			std::uint8_t format = 0;    // 5
+			std::uint8_t flags = 0;     // 6
+			std::uint8_t tilemode = 0;  // 7
+		};
+		static_assert(sizeof(TextureHeader) == 0x8);
 
 		class ConstantGroup
 		{
@@ -89,8 +102,7 @@ namespace RE
 			std::int8_t constantTable[32]{ 0 };            // 68
 		};
 		static_assert(sizeof(VertexShader) == 0x88);
-	};
-	static_assert(std::is_empty_v<BSGraphics>);
+	}
 
 	namespace BSShaderTechniqueIDMap
 	{
