@@ -118,6 +118,8 @@ namespace RE::BSResource
 		virtual ErrorCode DoGetInfo(
 			[[maybe_unused]] Info& a_result) { return ErrorCode::kUnsupported; }  // 04
 
+		[[nodiscard]] bool IsWritable() const noexcept { return (this->flags & 0x1) != 0; }
+
 		F4_HEAP_REDEFINE_NEW(StreamBase);
 
 		std::uint32_t IncRef()

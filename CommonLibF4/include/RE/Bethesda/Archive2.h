@@ -235,6 +235,14 @@ namespace RE::BSResource::Archive2
 
 		bool DoGetIsFromArchive() const override { return true; }  // 13
 
+		[[nodiscard]] bool IsCompressedStandard() const noexcept { return (this->flags & 0x100) != 0; }
+		[[nodiscard]] bool IsCompressedPlatform() const noexcept { return (this->flags & 0x200) != 0; }
+		[[nodiscard]] bool IsCompressed() const noexcept { return (this->flags & 0x300) != 0; }
+		[[nodiscard]] bool CtxInFullRead() const noexcept { return (this->flags & 0x400) != 0; }
+		[[nodiscard]] bool CtxInScrapHeap() const noexcept { return (this->flags & 0x800) != 0; }
+		[[nodiscard]] bool CtxMultiplexed() const noexcept { return (this->flags & 0x1000) != 0; }
+		[[nodiscard]] bool HasEmbeddedName() const noexcept { return (this->flags & 0x2000) != 0; }
+
 		// members
 		BSTSmartPointer<Stream> source;  // 10
 		union
