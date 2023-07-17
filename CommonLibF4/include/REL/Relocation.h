@@ -371,8 +371,7 @@ namespace REL
 			}
 
 			template <std::size_t Index, char C, char... Rest>
-				requires(sizeof...(Rest) > 0)
-			constexpr uint8_t read_version(std::array<typename REL::Version::value_type, 4>& result)
+			requires(sizeof...(Rest) > 0) constexpr uint8_t read_version(std::array<typename REL::Version::value_type, 4>& result)
 			{
 				static_assert(C == '.' || (C >= '0' && C <= '9'), "Invalid character in semantic version literal.");
 				static_assert(Index < 4, "Too many components in semantic version literal.");
