@@ -116,6 +116,8 @@ namespace F4SE
 				using const_reference = const char_type&;
 				using size_type = std::size_t;
 
+				static constexpr auto npos = static_cast<std::size_t>(-1);
+
 				consteval string(const_pointer a_string) noexcept
 				{
 					for (size_type i = 0; i < N; ++i) {
@@ -130,10 +132,17 @@ namespace F4SE
 				}
 
 				[[nodiscard]] consteval const_reference back() const noexcept { return (*this)[size() - 1]; }
-				[[nodiscard]] consteval const_pointer data() const noexcept { return c; }
+				[[nodiscard]] consteval const_pointer   data() const noexcept { return c; }
+				[[nodiscard]] consteval bool            empty() const noexcept { return size() == 0; }
 				[[nodiscard]] consteval const_reference front() const noexcept { return (*this)[0]; }
-				[[nodiscard]] consteval size_type length() const noexcept { return N; }
-				[[nodiscard]] consteval size_type size() const noexcept { return length(); }
+				[[nodiscard]] consteval size_type       length() const noexcept { return N; }
+				[[nodiscard]] consteval size_type       size() const noexcept { return length(); }
+
+				template <std::size_t POS = 0, std::size_t COUNT = npos>
+				[[nodiscard]] consteval auto substr() const noexcept
+				{
+					return string<CharT, COUNT != npos ? COUNT : N - POS>(data() + POS);
+				}
 
 				char_type c[N]{ static_cast<char_type>('\0') };
 			};
